@@ -1,0 +1,244 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Modal } from "@/components/ui/Modal";
+import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
+import { Users, Search, Mail, Phone, ShoppingBag, IndianRupee } from "lucide-react";
+import toast from "react-hot-toast";
+import type { UUID } from "crypto";
+
+interface Customer {
+  id: UUID;
+  name: string;
+  email: string;
+  phone?: string;
+  avatar_url?: string;
+  created_at: string;
+  order_count: number;
+  total_spent: number;
+}
+
+export default function AdminCustomersPage() {
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [customerOrders, setCustomerOrders] = useState<unknown[]>([]);
+  const [ordersLoading, setOrdersLoading] = useState(false);
+
+  const fetchCustomers = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      const res = await fetch(`/api/admin/customers?${params}`);
+      const data = await res.json();
+      if (data.success) setCustomers(data.data);
+    } catch {
+      toast.error("Failed to load customers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const debounce = setTimeout(fetchCustomers, 300);
+    return () => clearTimeout(debounce);
+  }, [search]);
+
+  const viewCustomer = async (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setOrdersLoading(true);
+    try {
+      const res = await fetch(`/api/admin/orders?search=${customer.email}`);
+      const data = await res.json();
+      if (data.success) setCustomerOrders(data.data || []);
+    } catch {
+      setCustomerOrders([]);
+    } finally {
+      setOrdersLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold">Customers</h1>
+        <p className="text-sm text-gray-500">
+          View and manage your customers
+        </p>
+      </div>
+
+      <div className="relative max-w-sm">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search by name or email..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
+        />
+      </div>
+
+      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500">
+                <th className="px-4 py-3">Customer</th>
+                <th className="px-4 py-3">Email</th>
+                <th className="px-4 py-3">Phone</th>
+                <th className="px-4 py-3">Orders</th>
+                <th className="px-4 py-3">Total Spent</th>
+                <th className="px-4 py-3">Joined</th>
+                <th className="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                    Loading...
+                  </td>
+                </tr>
+              ) : customers.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                    <Users className="mx-auto mb-2 h-8 w-8" />
+                    No customers found
+                  </td>
+                </tr>
+              ) : (
+                customers.map((customer) => (
+                  <tr key={customer.id} className="border-b last:border-0 hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
+                          {getInitials(customer.name)}
+                        </div>
+                        <span className="font-medium">{customer.name}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-600">{customer.email}</td>
+                    <td className="px-4 py-3 text-gray-500">
+                      {customer.phone || "-"}
+                    </td>
+                    <td className="px-4 py-3 font-medium">{customer.order_count}</td>
+                    <td className="px-4 py-3 font-medium">
+                      {formatPrice(customer.total_spent)}
+                    </td>
+                    <td className="px-4 py-3 text-xs text-gray-500">
+                      {formatDate(customer.created_at)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => viewCustomer(customer)}
+                      >
+                        View Details
+                      </Button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <Modal
+        isOpen={!!selectedCustomer}
+        onClose={() => setSelectedCustomer(null)}
+        title="Customer Details"
+        size="lg"
+      >
+        {selectedCustomer && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center text-lg font-bold">
+                {getInitials(selectedCustomer.name)}
+              </div>
+              <div>
+                <h3 className="text-lg font-bold">{selectedCustomer.name}</h3>
+                <div className="flex items-center gap-3 text-sm text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <Mail className="h-3.5 w-3.5" />
+                    {selectedCustomer.email}
+                  </span>
+                  {selectedCustomer.phone && (
+                    <span className="flex items-center gap-1">
+                      <Phone className="h-3.5 w-3.5" />
+                      {selectedCustomer.phone}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="rounded-lg bg-gray-50 p-4">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                  <ShoppingBag className="h-4 w-4" />
+                  Total Orders
+                </div>
+                <p className="text-2xl font-bold">{selectedCustomer.order_count}</p>
+              </div>
+              <div className="rounded-lg bg-gray-50 p-4">
+                <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+                  <IndianRupee className="h-4 w-4" />
+                  Total Spent
+                </div>
+                <p className="text-2xl font-bold">
+                  {formatPrice(selectedCustomer.total_spent)}
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-500 mb-2">
+                Recent Orders
+              </p>
+              {ordersLoading ? (
+                <p className="text-sm text-gray-400">Loading...</p>
+              ) : customerOrders.length === 0 ? (
+                <p className="text-sm text-gray-400">No orders yet</p>
+              ) : (
+                <div className="space-y-2">
+                  {(customerOrders as Array<{
+                    order_id: string;
+                    total: number;
+                    order_status: string;
+                    created_at: string;
+                  }>).slice(0, 5).map((order) => (
+                    <div
+                      key={order.order_id}
+                      className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                    >
+                      <div>
+                        <p className="text-sm font-medium">{order.order_id}</p>
+                        <p className="text-xs text-gray-500">
+                          {formatDate(order.created_at)}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium">
+                          {formatPrice(order.total)}
+                        </p>
+                        <p className="text-xs text-gray-500 capitalize">
+                          {order.order_status}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+}

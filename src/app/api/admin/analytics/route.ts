@@ -1,0 +1,130 @@
+import { NextResponse } from "next/server";
+import { createServerSupabase } from "@/lib/supabase/server";
+import type { AnalyticsSummary } from "@/types";
+
+export async function GET() {
+  try {
+    const supabase = await createServerSupabase();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      return NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+    const [productsCount, customersCount, ordersAll, ordersToday, ordersMonth, orders30d] =
+      await Promise.all([
+        supabase.from("products").select("*", { count: "exact", head: true }),
+        supabase
+          .from("profiles")
+          .select("*", { count: "exact", head: true })
+          .eq("role", "customer"),
+        supabase.from("orders").select("total, order_status, created_at"),
+        supabase
+          .from("orders")
+          .select("total", { count: "exact", head: true })
+          .gte("created_at", todayStart),
+        supabase
+          .from("orders")
+          .select("total", { count: "exact", head: true })
+          .gte("created_at", monthStart),
+        supabase
+          .from("orders")
+          .select("total, order_status, created_at")
+          .gte("created_at", thirtyDaysAgo),
+      ]);
+
+    const allOrders = ordersAll.data || [];
+    const recentOrders = orders30d.data || [];
+
+    const totalRevenue = allOrders
+      .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+      .reduce((sum, o) => sum + (o.total || 0), 0);
+
+    const revenueToday = (ordersToday.data || []).reduce(
+      (sum, o) => sum + (o.total || 0),
+      0
+    );
+
+    const revenueMonth = (ordersMonth.data || []).reduce(
+      (sum, o) => sum + (o.total || 0),
+      0
+    );
+
+    const ordersByStatus = allOrders.reduce<
+      Record<string, number>
+    >((acc, o) => {
+      acc[o.order_status] = (acc[o.order_status] || 0) + 1;
+      return acc;
+    }, {});
+
+    const revenueByDayMap = recentOrders
+      .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+      .reduce<Record<string, number>>((acc, o) => {
+        const day = new Date(o.created_at).toISOString().split("T")[0];
+        acc[day] = (acc[day] || 0) + (o.total || 0);
+        return acc;
+      }, {});
+
+    const revenueByDay = Object.entries(revenueByDayMap)
+      .map(([date, revenue]) => ({ date, revenue }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+
+    const productSales = allOrders
+      .filter((o) => o.order_status === "delivered")
+      .flatMap((o) => {
+        const items = (o as { items?: { product_name?: string; quantity?: number; price?: number }[] }).items || [];
+        return items.map((i) => ({
+          name: i.product_name || "Unknown",
+          sales: i.quantity || 0,
+          revenue: (i.price || 0) * (i.quantity || 0),
+        }));
+      })
+      .reduce<Record<string, { sales: number; revenue: number }>>((acc, item) => {
+        if (!acc[item.name]) {
+          acc[item.name] = { sales: 0, revenue: 0 };
+        }
+        acc[item.name].sales += item.sales;
+        acc[item.name].revenue += item.revenue;
+        return acc;
+      }, {});
+
+    const topProducts = Object.entries(productSales)
+      .map(([name, data]) => ({ name, sales: data.sales, revenue: data.revenue }))
+      .sort((a, b) => b.sales - a.sales)
+      .slice(0, 10);
+
+    const analytics: AnalyticsSummary = {
+      total_revenue: totalRevenue,
+      total_orders: allOrders.length,
+      total_customers: customersCount.count || 0,
+      total_products: productsCount.count || 0,
+      revenue_today: revenueToday,
+      orders_today: ordersToday.count || 0,
+      revenue_month: revenueMonth,
+      orders_month: ordersMonth.count || 0,
+      top_products: topProducts,
+      orders_by_status: Object.entries(ordersByStatus).map(([status, count]) => ({
+        status,
+        count,
+      })),
+      revenue_by_day: revenueByDay,
+    };
+
+    return NextResponse.json({ success: true, data: analytics });
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

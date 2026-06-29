@@ -1,0 +1,646 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import { Modal } from "@/components/ui/Modal";
+import { Badge } from "@/components/ui/Badge";
+import { formatPrice, formatDate } from "@/lib/utils/format";
+import { CATEGORIES, SIZES } from "@/lib/constants/categories";
+import {
+  Search,
+  Plus,
+  Pencil,
+  Trash2,
+  Package,
+  X,
+  GripVertical,
+} from "lucide-react";
+import toast from "react-hot-toast";
+import type { Product, ColorOption } from "@/types";
+
+interface ProductForm {
+  name: string;
+  description: string;
+  price: string;
+  compare_price: string;
+  category: string;
+  subcategory: string;
+  sizes: string[];
+  colors: ColorOption[];
+  images: string[];
+  tags: string;
+  stock: string;
+  material: string;
+  care_instructions: string;
+  is_new: boolean;
+  is_best_seller: boolean;
+  is_sale: boolean;
+  sale_percent: string;
+}
+
+const emptyForm: ProductForm = {
+  name: "",
+  description: "",
+  price: "",
+  compare_price: "",
+  category: "new-arrivals",
+  subcategory: "",
+  sizes: [],
+  colors: [],
+  images: [""],
+  tags: "",
+  stock: "0",
+  material: "",
+  care_instructions: "",
+  is_new: false,
+  is_best_seller: false,
+  is_sale: false,
+  sale_percent: "",
+};
+
+export default function AdminProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [form, setForm] = useState<ProductForm>(emptyForm);
+  const [saving, setSaving] = useState(false);
+
+  const fetchProducts = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set("search", search);
+      const res = await fetch(`/api/admin/products?${params}`);
+      const data = await res.json();
+      if (data.success) setProducts(data.data);
+    } catch {
+      toast.error("Failed to load products");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [search]);
+
+  const openAdd = () => {
+    setEditingProduct(null);
+    setForm(emptyForm);
+    setShowModal(true);
+  };
+
+  const openEdit = (product: Product) => {
+    setEditingProduct(product);
+    setForm({
+      name: product.name,
+      description: product.description,
+      price: String(product.price),
+      compare_price: product.compare_price ? String(product.compare_price) : "",
+      category: product.category,
+      subcategory: product.subcategory || "",
+      sizes: product.sizes,
+      colors: product.colors,
+      images: product.images.length > 0 ? product.images : [""],
+      tags: product.tags.join(", "),
+      stock: String(product.stock),
+      material: product.material || "",
+      care_instructions: product.care_instructions || "",
+      is_new: product.is_new,
+      is_best_seller: product.is_best_seller,
+      is_sale: product.is_sale,
+      sale_percent: product.sale_percent ? String(product.sale_percent) : "",
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = async () => {
+    if (!form.name || !form.price) {
+      toast.error("Name and price are required");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const payload = {
+        ...form,
+        tags: form.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
+        images: form.images.filter(Boolean),
+        colors: form.colors,
+        compare_price: form.compare_price || null,
+        sale_percent: form.sale_percent || null,
+        ...(editingProduct ? { id: editingProduct.id } : {}),
+      };
+
+      const res = await fetch(
+        editingProduct ? `/api/admin/products` : `/api/admin/products`,
+        {
+          method: editingProduct ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        }
+      );
+
+      const data = await res.json();
+      if (data.success) {
+        toast.success(editingProduct ? "Product updated" : "Product created");
+        setShowModal(false);
+        fetchProducts();
+      } else {
+        toast.error(data.error);
+      }
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleDelete = async (product: Product) => {
+    if (!window.confirm(`Delete "${product.name}"? This cannot be undone.`))
+      return;
+
+    try {
+      const res = await fetch(`/api/admin/products?id=${product.id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Product deleted");
+        fetchProducts();
+      } else {
+        toast.error(data.error);
+      }
+    } catch {
+      toast.error("Failed to delete");
+    }
+  };
+
+  const toggleSize = (size: string) => {
+    setForm((prev) => ({
+      ...prev,
+      sizes: prev.sizes.includes(size)
+        ? prev.sizes.filter((s) => s !== size)
+        : [...prev.sizes, size],
+    }));
+  };
+
+  const addColor = () => {
+    setForm((prev) => ({
+      ...prev,
+      colors: [...prev.colors, { name: "", hex: "#000000" }],
+    }));
+  };
+
+  const updateColor = (index: number, field: keyof ColorOption, value: string) => {
+    setForm((prev) => {
+      const colors = [...prev.colors];
+      colors[index] = { ...colors[index], [field]: value };
+      return { ...prev, colors };
+    });
+  };
+
+  const removeColor = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      colors: prev.colors.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addImage = () => {
+    setForm((prev) => ({ ...prev, images: [...prev.images, ""] }));
+  };
+
+  const updateImage = (index: number, value: string) => {
+    setForm((prev) => {
+      const images = [...prev.images];
+      images[index] = value;
+      return { ...prev, images };
+    });
+  };
+
+  const removeImage = (index: number) => {
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Products</h1>
+          <p className="text-sm text-gray-500">
+            Manage your product catalog
+          </p>
+        </div>
+        <Button onClick={openAdd}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Product
+        </Button>
+      </div>
+
+      <div className="flex items-center gap-3">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500">
+                <th className="px-4 py-3">Product</th>
+                <th className="px-4 py-3">Category</th>
+                <th className="px-4 py-3">Price</th>
+                <th className="px-4 py-3">Stock</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Date</th>
+                <th className="px-4 py-3 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                    Loading...
+                  </td>
+                </tr>
+              ) : products.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                    <Package className="mx-auto mb-2 h-8 w-8" />
+                    No products found
+                  </td>
+                </tr>
+              ) : (
+                products.map((product) => (
+                  <tr key={product.id} className="border-b last:border-0 hover:bg-gray-50">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+                          {product.images[0] ? (
+                            <img
+                              src={product.images[0]}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <Package className="h-5 w-5 text-gray-400" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="font-medium truncate max-w-[200px]">
+                            {product.name}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {product.slug}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-600 capitalize">
+                      {product.category.replace("-", " ")}
+                    </td>
+                    <td className="px-4 py-3 font-medium">
+                      {formatPrice(product.price)}
+                      {product.compare_price && (
+                        <span className="ml-1 text-xs text-gray-400 line-through">
+                          {formatPrice(product.compare_price)}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={
+                          product.stock > 0
+                            ? "text-green-600"
+                            : "text-red-600"
+                        }
+                      >
+                        {product.stock}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1 flex-wrap">
+                        {product.is_new && <Badge variant="new">New</Badge>}
+                        {product.is_best_seller && (
+                          <Badge variant="best">Best</Badge>
+                        )}
+                        {product.is_sale && <Badge variant="sale">Sale</Badge>}
+                        {!product.is_new &&
+                          !product.is_best_seller &&
+                          !product.is_sale && (
+                            <span className="text-xs text-gray-400">-</span>
+                          )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-gray-500 text-xs">
+                      {formatDate(product.created_at)}
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <div className="flex justify-end gap-1">
+                        <button
+                          onClick={() => openEdit(product)}
+                          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(product)}
+                          className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingProduct ? "Edit Product" : "Add Product"}
+        size="xl"
+      >
+        <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
+          <Input
+            label="Product Name"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            required
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Description
+            </label>
+            <textarea
+              value={form.description}
+              onChange={(e) =>
+                setForm({ ...form, description: e.target.value })
+              }
+              rows={3}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-black"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Price (₹)"
+              type="number"
+              value={form.price}
+              onChange={(e) => setForm({ ...form, price: e.target.value })}
+              required
+            />
+            <Input
+              label="Compare Price (₹)"
+              type="number"
+              value={form.compare_price}
+              onChange={(e) =>
+                setForm({ ...form, compare_price: e.target.value })
+              }
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              label="Category"
+              value={form.category}
+              onChange={(e) => setForm({ ...form, category: e.target.value })}
+              options={CATEGORIES.map((c) => ({
+                value: c.id,
+                label: c.name,
+              }))}
+            />
+            <Input
+              label="Subcategory"
+              value={form.subcategory}
+              onChange={(e) =>
+                setForm({ ...form, subcategory: e.target.value })
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Sizes
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {SIZES.map((size) => (
+                <button
+                  key={size}
+                  type="button"
+                  onClick={() => toggleSize(size)}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                    form.sizes.includes(size)
+                      ? "bg-black text-white border-black"
+                      : "bg-white text-gray-700 border-gray-300 hover:border-black"
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Colors
+              </label>
+              <button
+                type="button"
+                onClick={addColor}
+                className="text-xs text-black hover:underline"
+              >
+                + Add Color
+              </button>
+            </div>
+            <div className="space-y-2">
+              {form.colors.map((color, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Input
+                    placeholder="Color name"
+                    value={color.name}
+                    onChange={(e) => updateColor(i, "name", e.target.value)}
+                  />
+                  <input
+                    type="color"
+                    value={color.hex}
+                    onChange={(e) => updateColor(i, "hex", e.target.value)}
+                    className="h-9 w-9 rounded border cursor-pointer"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeColor(i)}
+                    className="p-1 text-gray-400 hover:text-red-500"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Images (URLs)
+              </label>
+              <button
+                type="button"
+                onClick={addImage}
+                className="text-xs text-black hover:underline"
+              >
+                + Add Image
+              </button>
+            </div>
+            <div className="space-y-2">
+              {form.images.map((url, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <Input
+                    placeholder="https://example.com/image.jpg"
+                    value={url}
+                    onChange={(e) => updateImage(i, e.target.value)}
+                  />
+                  {form.images.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeImage(i)}
+                      className="p-1 text-gray-400 hover:text-red-500"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                  {url && (
+                    <div className="h-9 w-9 rounded border overflow-hidden flex-shrink-0">
+                      <img
+                        src={url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).style.display = "none";
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Input
+              label="Stock"
+              type="number"
+              value={form.stock}
+              onChange={(e) => setForm({ ...form, stock: e.target.value })}
+            />
+            <Input
+              label="Sale %"
+              type="number"
+              value={form.sale_percent}
+              onChange={(e) =>
+                setForm({ ...form, sale_percent: e.target.value })
+              }
+            />
+          </div>
+
+          <Input
+            label="Tags (comma separated)"
+            value={form.tags}
+            onChange={(e) => setForm({ ...form, tags: e.target.value })}
+            placeholder="summer, trendy, casual"
+          />
+
+          <Input
+            label="Material"
+            value={form.material}
+            onChange={(e) => setForm({ ...form, material: e.target.value })}
+          />
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Care Instructions
+            </label>
+            <textarea
+              value={form.care_instructions}
+              onChange={(e) =>
+                setForm({ ...form, care_instructions: e.target.value })
+              }
+              rows={2}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-black"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.is_new}
+                onChange={(e) =>
+                  setForm({ ...form, is_new: e.target.checked })
+                }
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">New Arrival</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.is_best_seller}
+                onChange={(e) =>
+                  setForm({ ...form, is_best_seller: e.target.checked })
+                }
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">Best Seller</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.is_sale}
+                onChange={(e) =>
+                  setForm({ ...form, is_sale: e.target.checked })
+                }
+                className="rounded border-gray-300"
+              />
+              <span className="text-sm">On Sale</span>
+            </label>
+          </div>
+        </div>
+
+        <div className="mt-6 flex justify-end gap-3 border-t pt-4">
+          <Button variant="outline" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button onClick={handleSave} isLoading={saving}>
+            {editingProduct ? "Update Product" : "Create Product"}
+          </Button>
+        </div>
+      </Modal>
+    </div>
+  );
+}

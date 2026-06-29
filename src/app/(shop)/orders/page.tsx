@@ -1,0 +1,105 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { useAuthStore } from "@/lib/store/auth";
+import { formatPrice, formatDate } from "@/lib/utils/format";
+import { ORDER_STATUSES } from "@/lib/constants/categories";
+import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Package, ChevronRight } from "lucide-react";
+import type { Order } from "@/types";
+
+export default function OrdersPage() {
+  const router = useRouter();
+  const { user } = useAuthStore();
+  const supabase = createClient();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    loadOrders();
+  }, [user]);
+
+  async function loadOrders() {
+    const { data, error } = await supabase
+      .from("orders")
+      .select("*")
+      .eq("user_id", user?.id)
+      .order("created_at", { ascending: false });
+
+    if (!error && data) setOrders(data as Order[]);
+    setLoading(false);
+  }
+
+  if (!user) return null;
+
+  function getStatusStyle(value: string) {
+    const status = ORDER_STATUSES.find((s) => s.value === value);
+    return status?.color ?? "text-gray-600 bg-gray-50";
+  }
+
+  function getStatusLabel(value: string) {
+    const status = ORDER_STATUSES.find((s) => s.value === value);
+    return status?.label ?? value;
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+      <h1 className="text-2xl font-bold mb-8">My Orders</h1>
+
+      {loading ? (
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-28 w-full rounded-xl" />
+          ))}
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="text-center py-16">
+          <Package className="mx-auto h-12 w-12 text-gray-300 mb-4" />
+          <h2 className="text-lg font-medium text-gray-900 mb-2">No orders yet</h2>
+          <p className="text-gray-500 mb-6">Start shopping to see your orders here</p>
+          <Link href="/products">
+            <Button>Browse Products</Button>
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <Link
+              key={order.id}
+              href={`/order/${order.id}`}
+              className="block bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="font-mono text-sm text-gray-500">
+                      #{order.order_id}
+                    </span>
+                    <span
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(order.order_status)}`}
+                    >
+                      {getStatusLabel(order.order_status)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-500">
+                    {formatDate(order.created_at)} &middot; {order.items.length} item{order.items.length !== 1 ? "s" : ""}
+                  </p>
+                  <p className="text-lg font-semibold mt-1">{formatPrice(order.total)}</p>
+                </div>
+                <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
