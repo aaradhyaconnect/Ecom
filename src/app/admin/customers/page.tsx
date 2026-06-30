@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
-import { Users, Search, Mail, Phone, ShoppingBag, IndianRupee } from "lucide-react";
+import { Users, Search, Mail, Phone, ShoppingBag, IndianRupee, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import toast from "react-hot-toast";
 import type { UUID } from "crypto";
 
@@ -22,31 +21,41 @@ interface Customer {
 
 export default function AdminCustomersPage() {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [customerOrders, setCustomerOrders] = useState<unknown[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
 
-  const fetchCustomers = async () => {
+  const limit = 20;
+  const totalPages = Math.ceil(total / limit);
+
+  const fetchCustomers = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
+      params.set("page", String(page));
+      params.set("limit", String(limit));
       const res = await fetch(`/api/admin/customers?${params}`);
       const data = await res.json();
-      if (data.success) setCustomers(data.data);
+      if (data.success) {
+        setCustomers(data.data);
+        setTotal(data.total);
+      }
     } catch {
       toast.error("Failed to load customers");
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, page]);
 
   useEffect(() => {
     const debounce = setTimeout(fetchCustomers, 300);
     return () => clearTimeout(debounce);
-  }, [search]);
+  }, [fetchCustomers]);
 
   const viewCustomer = async (customer: Customer) => {
     setSelectedCustomer(customer);
@@ -62,13 +71,40 @@ export default function AdminCustomersPage() {
     }
   };
 
+  const exportCustomers = () => {
+    const headers = ["Name", "Email", "Phone", "Orders", "Total Spent", "Joined"];
+    const rows = customers.map((c) => [
+      c.name,
+      c.email,
+      c.phone || "",
+      String(c.order_count),
+      String(c.total_spent),
+      formatDate(c.created_at),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `customers-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Customers exported");
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Customers</h1>
-        <p className="text-sm text-gray-500">
-          View and manage your customers
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Customers</h1>
+          <p className="text-sm text-gray-500">
+            View and manage your customers
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportCustomers}>
+          <Download className="h-4 w-4 mr-2" />
+          Export CSV
+        </Button>
       </div>
 
       <div className="relative max-w-sm">
@@ -77,7 +113,7 @@ export default function AdminCustomersPage() {
           type="text"
           placeholder="Search by name or email..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
         />
       </div>
@@ -148,6 +184,32 @@ export default function AdminCustomersPage() {
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">
+            Page {page} of {totalPages} ({total} customers)
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Modal
         isOpen={!!selectedCustomer}

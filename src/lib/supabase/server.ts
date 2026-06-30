@@ -1,6 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
+import type { User } from "@supabase/supabase-js";
 
 export async function createServerSupabase() {
   const cookieStore = await cookies();
@@ -52,4 +54,39 @@ export async function createAdminClient() {
       },
     }
   );
+}
+
+export async function requireAdmin(): Promise<
+  { supabase: Awaited<ReturnType<typeof createServerSupabase>>; user: User } | { response: NextResponse }
+> {
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      response: NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      ),
+    };
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") {
+    return {
+      response: NextResponse.json(
+        { success: false, error: "Forbidden" },
+        { status: 403 }
+      ),
+    };
+  }
+
+  return { supabase, user };
 }

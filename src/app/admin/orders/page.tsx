@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -8,7 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
-import { Search, ShoppingCart, Eye, X, Truck } from "lucide-react";
+import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Order } from "@/types";
 
@@ -19,9 +19,11 @@ const statusOptions = [
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [page, setPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
   const [trackingForm, setTrackingForm] = useState({
@@ -30,25 +32,33 @@ export default function AdminOrdersPage() {
     estimated_delivery: "",
   });
 
-  const fetchOrders = async () => {
+  const limit = 20;
+  const totalPages = Math.ceil(total / limit);
+
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
+      params.set("page", String(page));
+      params.set("limit", String(limit));
       const res = await fetch(`/api/admin/orders?${params}`);
       const data = await res.json();
-      if (data.success) setOrders(data.data);
+      if (data.success) {
+        setOrders(data.data);
+        setTotal(data.total);
+      }
     } catch {
       toast.error("Failed to load orders");
     } finally {
       setLoading(false);
     }
-  };
+  }, [search, statusFilter, page]);
 
   useEffect(() => {
     fetchOrders();
-  }, [search, statusFilter]);
+  }, [fetchOrders]);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -113,13 +123,39 @@ export default function AdminOrdersPage() {
     return s?.color || "text-gray-600 bg-gray-50";
   };
 
+  const exportOrders = () => {
+    const headers = ["Order ID", "Customer", "Status", "Payment", "Total", "Date"];
+    const rows = orders.map((o) => [
+      o.order_id,
+      (o as unknown as Record<string, Record<string, string>>).profiles?.name || "N/A",
+      o.order_status,
+      o.payment_status,
+      String(o.total),
+      formatDate(o.created_at),
+    ]);
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `orders-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Orders exported");
+  };
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">Orders</h1>
-        <p className="text-sm text-gray-500">
-          Manage and track customer orders
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Orders</h1>
+          <p className="text-sm text-gray-500">
+            Manage and track customer orders
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={exportOrders}>
+          Export CSV
+        </Button>
       </div>
 
       <div className="flex flex-col sm:flex-row gap-3">
@@ -129,14 +165,14 @@ export default function AdminOrdersPage() {
             type="text"
             placeholder="Search by order ID or customer..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
           />
         </div>
         <div className="w-full sm:w-48">
           <Select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             options={statusOptions}
           />
         </div>
@@ -243,6 +279,32 @@ export default function AdminOrdersPage() {
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">
+            Page {page} of {totalPages} ({total} orders)
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page <= 1}
+              onClick={() => setPage(page - 1)}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       <Modal
         isOpen={!!selectedOrder}

@@ -33,26 +33,33 @@ export function DashboardClient({
   analytics: AnalyticsSummary;
   recentOrders: Order[];
 }) {
+  const revenueTrend = analytics.revenue_last_month > 0
+    ? Math.round(((analytics.revenue_month - analytics.revenue_last_month) / analytics.revenue_last_month) * 100)
+    : 0;
+  const ordersTrend = analytics.orders_last_month > 0
+    ? Math.round(((analytics.orders_month - analytics.orders_last_month) / analytics.orders_last_month) * 100)
+    : 0;
+
   const cards = [
     {
       label: "Total Revenue",
       value: formatPrice(analytics.total_revenue),
       icon: IndianRupee,
-      trend: "+12.5%",
-      up: true,
+      trend: `${revenueTrend >= 0 ? "+" : ""}${revenueTrend}% this month`,
+      up: revenueTrend >= 0,
     },
     {
       label: "Total Orders",
       value: analytics.total_orders,
       icon: ShoppingCart,
-      trend: `+${analytics.orders_today} today`,
-      up: true,
+      trend: `${ordersTrend >= 0 ? "+" : ""}${ordersTrend}% this month`,
+      up: ordersTrend >= 0,
     },
     {
       label: "Total Customers",
       value: analytics.total_customers,
       icon: Users,
-      trend: "+5.2%",
+      trend: `${analytics.orders_today} orders today`,
       up: true,
     },
     {

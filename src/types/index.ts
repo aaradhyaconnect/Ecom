@@ -171,6 +171,8 @@ export interface AnalyticsSummary {
   orders_today: number;
   revenue_month: number;
   orders_month: number;
+  revenue_last_month: number;
+  orders_last_month: number;
   top_products: { name: string; sales: number; revenue: number }[];
   orders_by_status: { status: string; count: number }[];
   revenue_by_day: { date: string; revenue: number }[];

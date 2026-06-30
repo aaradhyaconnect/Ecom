@@ -1,20 +1,12 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 import type { Order } from "@/types";
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createServerSupabase();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const url = new URL(request.url);
     const status = url.searchParams.get("status") || "";

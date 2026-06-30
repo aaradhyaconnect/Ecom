@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 import type { Order } from "@/types";
 
 export async function GET(
@@ -7,18 +7,10 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createServerSupabase();
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
     const { id } = await params;
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
 
     const { data, error } = await supabase
       .from("orders")
@@ -47,18 +39,10 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = await createServerSupabase();
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
     const { id } = await params;
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
 
     const body = await request.json();
 

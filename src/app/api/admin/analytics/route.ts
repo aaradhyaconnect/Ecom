@@ -1,27 +1,21 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 import type { AnalyticsSummary } from "@/types";
 
 export async function GET() {
   try {
-    const supabase = await createServerSupabase();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
+    const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-    const [productsCount, customersCount, ordersAll, ordersToday, ordersMonth, orders30d] =
+    const [productsCount, customersCount, ordersAll, ordersToday, ordersMonth, ordersLastMonth, orders30d] =
       await Promise.all([
         supabase.from("products").select("*", { count: "exact", head: true }),
         supabase
@@ -37,6 +31,11 @@ export async function GET() {
           .from("orders")
           .select("total", { count: "exact", head: true })
           .gte("created_at", monthStart),
+        supabase
+          .from("orders")
+          .select("total")
+          .gte("created_at", lastMonthStart)
+          .lte("created_at", lastMonthEnd),
         supabase
           .from("orders")
           .select("total, order_status, created_at")
@@ -56,6 +55,11 @@ export async function GET() {
     );
 
     const revenueMonth = (ordersMonth.data || []).reduce(
+      (sum, o) => sum + (o.total || 0),
+      0
+    );
+
+    const revenueLastMonth = (ordersLastMonth.data || []).reduce(
       (sum, o) => sum + (o.total || 0),
       0
     );
@@ -112,6 +116,8 @@ export async function GET() {
       orders_today: ordersToday.count || 0,
       revenue_month: revenueMonth,
       orders_month: ordersMonth.count || 0,
+      revenue_last_month: revenueLastMonth,
+      orders_last_month: ordersLastMonth.data?.length || 0,
       top_products: topProducts,
       orders_by_status: Object.entries(ordersByStatus).map(([status, count]) => ({
         status,

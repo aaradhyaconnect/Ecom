@@ -9,13 +9,13 @@ import {
   ShoppingCart,
   Users,
   Tag,
-  Image,
-  BarChart3,
+  Warehouse,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin", label: "Home", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/inventory", label: "Stock", icon: Warehouse },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/coupons", label: "Coupons", icon: Tag },

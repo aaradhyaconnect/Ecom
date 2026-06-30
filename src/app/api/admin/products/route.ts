@@ -1,21 +1,13 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils/format";
 import type { Product } from "@/types";
 
 export async function GET(request: Request) {
   try {
-    const supabase = await createServerSupabase();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const url = new URL(request.url);
     const search = url.searchParams.get("search") || "";
@@ -54,7 +46,7 @@ export async function GET(request: Request) {
       page,
       limit,
     });
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 }
@@ -64,17 +56,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createServerSupabase();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const body = await request.json();
     const slug = slugify(body.name);
@@ -129,7 +113,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, data: data as Product });
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Invalid request body" },
       { status: 400 }
@@ -139,17 +123,9 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const supabase = await createServerSupabase();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const body = await request.json();
     const { id, ...updates } = body;
@@ -184,7 +160,7 @@ export async function PUT(request: Request) {
     }
 
     return NextResponse.json({ success: true, data: data as Product });
-  } catch (e) {
+  } catch {
     return NextResponse.json(
       { success: false, error: "Invalid request body" },
       { status: 400 }
@@ -194,17 +170,9 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const supabase = await createServerSupabase();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json(
-        { success: false, error: "Unauthorized" },
-        { status: 401 }
-      );
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const url = new URL(request.url);
     const id = url.searchParams.get("id");
