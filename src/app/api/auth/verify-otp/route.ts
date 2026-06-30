@@ -3,16 +3,57 @@ import { createServerSupabase } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
-    const { email, token } = await request.json();
+    const { email, phone, token } = await request.json();
 
-    if (!email || !token) {
+    if ((!email && !phone) || !token) {
       return NextResponse.json(
-        { success: false, error: "Email and OTP are required" },
+        { success: false, error: "Email or phone and OTP are required" },
         { status: 400 }
       );
     }
 
     const supabase = await createServerSupabase();
+
+    if (phone) {
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone,
+        token,
+        type: "sms",
+      });
+
+      if (error) {
+        return NextResponse.json(
+          { success: false, error: error.message },
+          { status: 400 }
+        );
+      }
+
+      if (data.user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("role")
+          .eq("id", data.user.id)
+          .single();
+
+        if (!profile) {
+          await supabase.from("profiles").upsert({
+            id: data.user.id,
+            email: data.user.email || "",
+            name: data.user.user_metadata?.name || phone,
+            phone,
+            role: "customer",
+          });
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          user: data.user,
+          session: data.session,
+        },
+      });
+    }
 
     const { data, error } = await supabase.auth.verifyOtp({
       email,
@@ -25,6 +66,23 @@ export async function POST(request: Request) {
         { success: false, error: error.message },
         { status: 400 }
       );
+    }
+
+    if (data.user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", data.user.id)
+        .single();
+
+      if (!profile) {
+        await supabase.from("profiles").upsert({
+          id: data.user.id,
+          email: data.user.email || "",
+          name: data.user.user_metadata?.name || email.split("@")[0],
+          role: "customer",
+        });
+      }
     }
 
     return NextResponse.json({

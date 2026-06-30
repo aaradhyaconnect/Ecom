@@ -6,22 +6,22 @@ import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import type { Product } from "@/types";
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
 }
 
-async function getProduct(slug: string): Promise<Product | null> {
+async function getProduct(id: string): Promise<Product | null> {
   const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*")
-    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .or(`slug.eq.${id},id.eq.${id}`)
     .maybeSingle();
   return data as Product | null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
-  const product = await getProduct(slug);
+  const { id } = await params;
+  const product = await getProduct(id);
 
   if (!product) {
     return { title: "Product Not Found" };
@@ -39,8 +39,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
-  const { slug } = await params;
-  const product = await getProduct(slug);
+  const { id } = await params;
+  const product = await getProduct(id);
 
   if (!product) {
     notFound();
