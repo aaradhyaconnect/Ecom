@@ -54,15 +54,15 @@ export function ProductDetailClient({
   const lowStock = product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = () => {
-    if (!selectedSize) {
+    if (product.sizes.length > 0 && !selectedSize) {
       toast.error("Please select a size");
       return;
     }
-    if (!selectedColor) {
+    if (colors.length > 0 && !selectedColor) {
       toast.error("Please select a color");
       return;
     }
-    addItem(product, quantity, selectedSize, selectedColor);
+    addItem(product, quantity, selectedSize || "default", selectedColor || "default");
     toast.success("Added to cart!");
   };
 
@@ -79,7 +79,7 @@ export function ProductDetailClient({
   const categoryName = categoryMap[product.category] || product.category.replace(/-/g, " ");
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
       {/* Breadcrumbs */}
       <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted mb-8 tracking-wide">
         <Link href="/" className="hover:text-charcoal transition-colors">
@@ -107,9 +107,9 @@ export function ProductDetailClient({
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
         {/* Images */}
-        <div className="space-y-4">
-          <div className="relative aspect-[4/5] rounded-xl overflow-hidden bg-ivory-dark group">
-            {product.images?.[selectedImage] && (
+        <div className="space-y-4 animate-in slide-up">
+          <div className="relative aspect-[4/5] overflow-hidden bg-ivory-dark group">
+            {product.images?.[selectedImage] ? (
               <Image
                 src={product.images[selectedImage]}
                 alt={product.name}
@@ -117,6 +117,14 @@ export function ProductDetailClient({
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
                 preload
+              />
+            ) : (
+              <Image
+                src="/placeholder.svg"
+                alt={product.name}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
               />
             )}
             <div className="absolute top-4 left-4 flex flex-col gap-1.5">
@@ -137,7 +145,7 @@ export function ProductDetailClient({
                   key={idx}
                   onClick={() => setSelectedImage(idx)}
                   className={cn(
-                    "relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 border-2 transition-all duration-300",
+                    "relative w-20 h-20 overflow-hidden flex-shrink-0 border-2 transition-all duration-300",
                     idx === selectedImage
                       ? "border-charcoal"
                       : "border-transparent hover:border-ivory-dark"
@@ -157,8 +165,8 @@ export function ProductDetailClient({
         </div>
 
         {/* Details */}
-        <div className="flex flex-col gap-6">
-          <div>
+        <div className="flex flex-col gap-6 stagger-children">
+          <div className="animate-in slide-up">
             <p className="text-[11px] text-charcoal-muted uppercase tracking-[0.2em] mb-2">
               {categoryName}
               {product.subcategory && ` / ${product.subcategory}`}
@@ -176,21 +184,18 @@ export function ProductDetailClient({
             </div>
           </div>
 
-          <div className="flex items-baseline gap-3">
+          <div className="animate-in slide-up flex items-baseline gap-3">
             <span className="text-2xl font-bold text-charcoal">
               {formatPrice(product.price)}
             </span>
             {product.compare_price && (
-              <>
-                <span className="text-lg text-charcoal-muted/40 line-through">
-                  {formatPrice(product.compare_price)}
-                </span>
-                <Badge variant="sale">-{discount}%</Badge>
-              </>
+              <span className="text-lg text-charcoal-muted/40 line-through">
+                {formatPrice(product.compare_price)}
+              </span>
             )}
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="animate-in slide-up flex items-center gap-2">
             <span
               className={cn(
                 "w-2 h-2 rounded-full",
@@ -206,20 +211,28 @@ export function ProductDetailClient({
             </span>
           </div>
 
-          <hr className="border-ivory-dark" />
+          <hr className="border-ivory-dark animate-in slide-up" />
 
-          {product.sizes.length > 0 && (
-            <div>
-              <h3 className="text-sm font-semibold text-charcoal mb-3">
-                Size: <span className="font-normal text-charcoal-muted">{selectedSize}</span>
-              </h3>
+          {product.sizes.length > 0 ? (
+            <div className="animate-in slide-up">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-semibold text-charcoal">
+                  Size: <span className="font-normal text-charcoal-muted">{selectedSize}</span>
+                </h3>
+                <Link
+                  href="/size-guide"
+                  className="text-[10px] text-charcoal-muted hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
+                >
+                  Size Guide
+                </Link>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((size) => (
                   <button
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={cn(
-                      "px-4 py-2.5 rounded-lg text-sm font-medium border transition-all duration-300",
+                      "px-4 py-2.5 text-sm font-medium border transition-all duration-300",
                       selectedSize === size
                         ? "bg-charcoal text-ivory border-charcoal"
                         : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"
@@ -230,10 +243,15 @@ export function ProductDetailClient({
                 ))}
               </div>
             </div>
+          ) : (
+            <div className="animate-in slide-up">
+              <h3 className="text-sm font-semibold text-charcoal mb-1">Size</h3>
+              <p className="text-sm text-charcoal-muted">One Size</p>
+            </div>
           )}
 
-          {colors.length > 0 && (
-            <div>
+          {colors.length > 0 ? (
+            <div className="animate-in slide-up">
               <h3 className="text-sm font-semibold text-charcoal mb-3">
                 Color:{" "}
                 <span className="font-normal text-charcoal-muted">{selectedColor}</span>
@@ -253,6 +271,11 @@ export function ProductDetailClient({
                     title={color.name}
                     aria-label={color.name}
                   >
+                    {selectedColor === color.name && (
+                      <svg className="absolute inset-0 m-auto w-4 h-4" viewBox="0 0 24 24" fill="none" stroke={color.hex === "#FFFFFF" || color.hex === "#FFFFF0" ? "#1A1A1A" : "#FFFFFF"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    )}
                     {color.image && (
                       <Image
                         src={color.image}
@@ -266,15 +289,20 @@ export function ProductDetailClient({
                 ))}
               </div>
             </div>
+          ) : (
+            <div className="animate-in slide-up">
+              <h3 className="text-sm font-semibold text-charcoal mb-1">Color</h3>
+              <p className="text-sm text-charcoal-muted">Classic</p>
+            </div>
           )}
 
-          <div>
+          <div className="animate-in slide-up">
             <h3 className="text-sm font-semibold text-charcoal mb-3">Quantity</h3>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
-                className="w-10 h-10 rounded-lg border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
+                className="w-10 h-10 border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
               >
                 <Minus className="h-4 w-4 text-charcoal-muted" />
               </button>
@@ -282,14 +310,14 @@ export function ProductDetailClient({
               <button
                 onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                 disabled={quantity >= product.stock}
-                className="w-10 h-10 rounded-lg border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
+                className="w-10 h-10 border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
               >
                 <Plus className="h-4 w-4 text-charcoal-muted" />
               </button>
             </div>
           </div>
 
-          <div className="flex gap-3">
+          <div className="animate-in slide-up flex gap-3">
             <Button
               size="lg"
               fullWidth
@@ -314,14 +342,14 @@ export function ProductDetailClient({
             </Button>
           </div>
 
-          <div className="flex items-center gap-2.5 text-sm text-charcoal-muted bg-ivory-dark/50 rounded-xl px-4 py-3">
+          <div className="animate-in slide-up flex items-center gap-2.5 text-sm text-charcoal-muted bg-ivory-dark/50 px-4 py-3">
             <Truck className="h-5 w-5 flex-shrink-0 text-gold-dark" />
-            <span>Free shipping on orders above ₹499</span>
+            <span>Free shipping on orders above ₹999</span>
           </div>
 
-          <hr className="border-ivory-dark" />
+          <hr className="border-ivory-dark animate-in slide-up" />
 
-          <div>
+          <div className="animate-in slide-up">
             <h3 className="text-sm font-semibold text-charcoal mb-2">Description</h3>
             <p className="text-sm text-charcoal-muted leading-relaxed">
               {product.description}
@@ -329,14 +357,14 @@ export function ProductDetailClient({
           </div>
 
           {product.material && (
-            <div>
+            <div className="animate-in slide-up">
               <h3 className="text-sm font-semibold text-charcoal mb-1">Material</h3>
               <p className="text-sm text-charcoal-muted">{product.material}</p>
             </div>
           )}
 
           {product.care_instructions && (
-            <div>
+            <div className="animate-in slide-up">
               <h3 className="text-sm font-semibold text-charcoal mb-1">Care Instructions</h3>
               <p className="text-sm text-charcoal-muted whitespace-pre-line">
                 {product.care_instructions}
@@ -345,11 +373,11 @@ export function ProductDetailClient({
           )}
 
           {product.tags && product.tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
+            <div className="animate-in slide-up flex flex-wrap gap-2">
               {product.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-ivory-dark text-charcoal-muted text-xs rounded-full"
+                  className="px-3 py-1 bg-ivory-dark text-charcoal-muted text-xs"
                 >
                   {tag}
                 </span>
@@ -371,13 +399,31 @@ export function ProductDetailClient({
           <h2 className="text-2xl font-serif font-bold text-charcoal mb-8">
             Related Products
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5 stagger-children">
             {relatedProducts.map((rp) => (
               <ProductCard key={rp.id} product={rp} />
             ))}
           </div>
         </div>
       )}
+
+      {/* Mobile Sticky Add to Cart */}
+      <div className="fixed bottom-0 left-0 right-0 bg-ivory border-t border-ivory-dark p-4 flex items-center gap-4 lg:hidden z-30">
+        <div className="flex-1">
+          <p className="text-lg font-bold text-charcoal">{formatPrice(product.price)}</p>
+          {product.compare_price && (
+            <p className="text-xs text-charcoal-muted/50 line-through">{formatPrice(product.compare_price)}</p>
+          )}
+        </div>
+        <Button
+          size="lg"
+          onClick={handleAddToCart}
+          disabled={!inStock}
+          className="flex-shrink-0"
+        >
+          {inStock ? "Add to Cart" : "Out of Stock"}
+        </Button>
+      </div>
     </div>
   );
 }

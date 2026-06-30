@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { getProduct, getRelatedProducts } from "@/lib/supabase/queries";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
+import { ProductDetailSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
 
 interface Props {
@@ -32,9 +34,40 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function ProductPage({ params }: Props) {
-  const { slug } = await params;
+function ProductJsonLd({ product }: { product: Product }) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description,
+    image: product.images,
+    brand: { "@type": "Brand", name: "HAINJU" },
+    offers: {
+      "@type": "Offer",
+      price: product.price,
+      priceCurrency: "INR",
+      availability: product.stock > 0
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+    },
+    ...(product.rating > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: product.rating,
+        reviewCount: product.review_count,
+      },
+    }),
+  };
 
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+    />
+  );
+}
+
+async function ProductContent({ slug }: { slug: string }) {
   let product: Product | null = null;
   try {
     product = await getProduct(slug);
@@ -53,6 +86,19 @@ export default async function ProductPage({ params }: Props) {
   );
 
   return (
-    <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+    <>
+      <ProductJsonLd product={product} />
+      <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+    </>
+  );
+}
+
+export default async function ProductPage({ params }: Props) {
+  const { slug } = await params;
+
+  return (
+    <Suspense fallback={<ProductDetailSkeleton />}>
+      <ProductContent slug={slug} />
+    </Suspense>
   );
 }
