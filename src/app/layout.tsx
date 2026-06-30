@@ -6,7 +6,7 @@ import { Providers } from "./providers";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#000000",
+  themeColor: "#FFFFF0",
 };
 
 const inter = Inter({
@@ -69,7 +69,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-      <body className="font-sans antialiased bg-white text-gray-900">
+      <body className="font-sans antialiased bg-ivory text-charcoal">
         <Providers>{children}</Providers>
       </body>
     </html>

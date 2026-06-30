@@ -1,9 +1,11 @@
+const R2 = 'https://pub-5f274d699fd14be18a8456b06f1732ec.r2.dev';
+
 export const CATEGORIES = [
-  { id: "women-clothing", name: "Women's Clothing", slug: "women-clothing", image: "/images/categories/women-clothing.jpg" },
-  { id: "artificial-jewellery", name: "Artificial Jewellery", slug: "artificial-jewellery", image: "/images/categories/jewellery.jpg" },
-  { id: "new-arrivals", name: "New Arrivals", slug: "new-arrivals", image: "/images/categories/new-arrivals.jpg" },
-  { id: "best-sellers", name: "Best Sellers", slug: "best-sellers", image: "/images/categories/best-sellers.jpg" },
-  { id: "sale", name: "Sale", slug: "sale", image: "/images/categories/sale.jpg" },
+  { id: "women-clothing", name: "Women's Clothing", slug: "women-clothing", image: `${R2}/categories/women-clothing.webp` },
+  { id: "artificial-jewellery", name: "Artificial Jewellery", slug: "artificial-jewellery", image: `${R2}/categories/artificial-jewellery.webp` },
+  { id: "new-arrivals", name: "New Arrivals", slug: "new-arrivals", image: `${R2}/categories/new-arrivals.webp` },
+  { id: "best-sellers", name: "Best Sellers", slug: "best-sellers", image: `${R2}/categories/best-sellers.webp` },
+  { id: "sale", name: "Sale", slug: "sale", image: `${R2}/categories/sale.webp` },
 ] as const;
 
 export const SORT_OPTIONS = [

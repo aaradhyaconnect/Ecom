@@ -21,15 +21,16 @@ export function ProductGrid({ products, isLoading, columns = 4 }: ProductGridPro
 
   if (products.length === 0) {
     return (
-      <div className="text-center py-16">
-        <p className="text-gray-500 text-lg">No products found</p>
-        <p className="text-gray-400 text-sm mt-1">Try adjusting your filters</p>
+      <div className="text-center py-20">
+        <div className="w-16 h-[1px] bg-gold/40 mx-auto mb-6" />
+        <p className="text-charcoal text-lg font-medium">No products found</p>
+        <p className="text-charcoal-muted text-sm mt-2">Try adjusting your filters</p>
       </div>
     );
   }
 
   return (
-    <div className={`grid grid-cols-2 ${columns >= 3 ? "md:grid-cols-3" : ""} ${columns >= 4 ? "lg:grid-cols-4" : ""} gap-4 md:gap-6`}>
+    <div className={`grid grid-cols-2 ${columns >= 3 ? "md:grid-cols-3" : ""} ${columns >= 4 ? "lg:grid-cols-4" : ""} gap-3 md:gap-5 stagger-children`}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

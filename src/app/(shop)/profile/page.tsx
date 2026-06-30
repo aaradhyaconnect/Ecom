@@ -144,16 +144,19 @@ export default function ProfilePage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold mb-8">My Profile</h1>
+      <div className="mb-8">
+        <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Account</span>
+        <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">My Profile</h1>
+      </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="h-16 w-16 rounded-full bg-black text-white flex items-center justify-center text-xl font-bold flex-shrink-0">
+      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-ivory-dark">
+          <div className="h-16 w-16 bg-charcoal text-ivory flex items-center justify-center text-xl font-bold flex-shrink-0">
             {getInitials(user.name)}
           </div>
           <div>
-            <h2 className="text-lg font-semibold">{user.name}</h2>
-            <p className="text-sm text-gray-500">{user.email}</p>
+            <h2 className="text-lg font-serif font-bold text-charcoal">{user.name}</h2>
+            <p className="text-sm text-charcoal-muted">{user.email}</p>
           </div>
         </div>
 
@@ -175,11 +178,11 @@ export default function ProfilePage() {
         </Button>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-gray-500" />
-            <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+            <MapPin className="h-4 w-4 text-charcoal-muted" />
+            <h2 className="font-serif font-bold text-sm text-charcoal uppercase tracking-wider">
               Addresses
             </h2>
           </div>
@@ -193,7 +196,7 @@ export default function ProfilePage() {
         </div>
 
         {showAddressForm && (
-          <div className="bg-gray-50 rounded-lg p-4 mb-4 space-y-3">
+          <div className="bg-ivory-dark/30 p-4 mb-4 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input
                 label="Full Name"
@@ -254,7 +257,7 @@ export default function ProfilePage() {
         )}
 
         {addresses.length === 0 && !showAddressForm && (
-          <p className="text-sm text-gray-400 py-4 text-center">
+          <p className="text-sm text-charcoal-muted/50 py-4 text-center">
             No saved addresses
           </p>
         )}
@@ -263,15 +266,15 @@ export default function ProfilePage() {
           {addresses.map((addr, idx) => (
             <div
               key={idx}
-              className="flex items-start justify-between border border-gray-100 rounded-lg p-3"
+              className="flex items-start justify-between border border-ivory-dark p-3"
             >
-              <div className="text-sm text-gray-700">
+              <div className="text-sm text-charcoal">
                 <p className="font-medium">{addr.full_name}</p>
                 <p>{addr.street}</p>
                 <p>
                   {addr.city}, {addr.state} &ndash; {addr.pincode}
                 </p>
-                <p className="text-gray-500">{addr.phone}</p>
+                <p className="text-charcoal-muted">{addr.phone}</p>
               </div>
               <button
                 onClick={() => handleRemoveAddress(idx)}
@@ -284,50 +287,50 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Package className="h-4 w-4 text-gray-500" />
-            <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+            <Package className="h-4 w-4 text-charcoal-muted" />
+            <h2 className="font-serif font-bold text-sm text-charcoal uppercase tracking-wider">
               Recent Orders
             </h2>
           </div>
           <Link
             href="/orders"
-            className="text-sm font-medium text-black hover:underline"
+            className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted hover:text-charcoal transition-colors"
           >
             View All
           </Link>
         </div>
 
         {orders.length === 0 ? (
-          <p className="text-sm text-gray-400 py-4 text-center">No orders yet</p>
+          <p className="text-sm text-charcoal-muted/50 py-4 text-center">No orders yet</p>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-ivory-dark">
             {orders.map((order) => (
               <Link
                 key={order.id}
                 href={`/order/${order.id}`}
-                className="flex items-center justify-between py-3 hover:bg-gray-50 -mx-6 px-6 transition-colors"
+                className="flex items-center justify-between py-3 hover:bg-ivory-dark/30 -mx-6 px-6 transition-colors"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-sm text-gray-500">
+                    <span className="font-mono text-sm text-charcoal-muted">
                       #{order.order_id}
                     </span>
                     <span
-                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(order.order_status)}`}
+                      className={`inline-flex items-center px-2 py-0.5 text-xs font-medium ${getStatusStyle(order.order_status)}`}
                     >
                       {getStatusLabel(order.order_status)}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-0.5">
+                  <p className="text-xs text-charcoal-muted/60 mt-0.5">
                     {formatDate(order.created_at)} &middot; {order.items.length} item{order.items.length !== 1 ? "s" : ""}
                   </p>
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 ml-4">
-                  <span className="text-sm font-semibold">{formatPrice(order.total)}</span>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm font-semibold text-charcoal">{formatPrice(order.total)}</span>
+                  <ChevronRight className="h-4 w-4 text-charcoal-muted" />
                 </div>
               </Link>
             ))}

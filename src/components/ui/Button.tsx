@@ -30,16 +30,16 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+          "inline-flex items-center justify-center font-medium transition-all duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold disabled:opacity-50 disabled:cursor-not-allowed",
           {
-            "bg-black text-white hover:bg-gray-800 active:bg-gray-900":
+            "bg-charcoal text-ivory hover:bg-charcoal-light active:bg-charcoal":
               variant === "primary",
-            "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300":
+            "bg-gold/10 text-gold-dark hover:bg-gold/20 border border-gold/20":
               variant === "secondary",
-            "border-2 border-black text-black hover:bg-black hover:text-white":
+            "border border-charcoal text-charcoal hover:bg-charcoal hover:text-ivory":
               variant === "outline",
-            "text-gray-700 hover:bg-gray-100 hover:text-black": variant === "ghost",
-            "bg-red-600 text-white hover:bg-red-700": variant === "danger",
+            "text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal": variant === "ghost",
+            "bg-rose-400/10 text-rose-500 hover:bg-rose-400/20": variant === "danger",
           },
           {
             "px-3 py-1.5 text-xs": size === "sm",

@@ -67,12 +67,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 animate-in slide-up">
+    <div className="bg-ivory border border-ivory-dark p-8 animate-in slide-up">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-serif font-bold text-gray-900">
+        <h1 className="text-2xl font-serif font-bold text-charcoal">
           Welcome Back
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-charcoal-muted text-sm mt-1">
            Sign in to your HAINJU account
         </p>
       </div>
@@ -99,7 +99,7 @@ export default function LoginPage() {
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 transition-colors"
+            className="absolute right-3 top-[38px] text-charcoal-muted hover:text-charcoal transition-colors"
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" />

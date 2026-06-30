@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
 import { useWishlistStore } from "@/lib/store/wishlist";
@@ -22,19 +22,21 @@ export function ProductCard({ product, priority }: ProductCardProps) {
     : 0;
 
   return (
-    <div className="group relative">
+    <div className="group relative animate-in slide-up">
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 mb-3">
+        <div className="relative aspect-[3/4] rounded-sm overflow-hidden bg-ivory-dark mb-4">
           {product.images?.[0] && (
             <img
               src={product.images[0]}
               alt={product.name}
               loading={priority ? "eager" : "lazy"}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000 ease-out"
             />
           )}
 
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <div className="absolute inset-0 bg-charcoal/0 group-hover:bg-charcoal/5 transition-colors duration-500" />
+
+          <div className="absolute top-3 left-3 flex flex-col gap-1.5">
             {product.is_new && <Badge variant="new">New</Badge>}
             {product.is_sale && discount > 0 && (
               <Badge variant="sale">-{discount}%</Badge>
@@ -50,20 +52,27 @@ export function ProductCard({ product, priority }: ProductCardProps) {
               toggleItem(product);
             }}
             className={cn(
-              "absolute top-2 right-2 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm transition-all duration-200 hover:scale-110",
-              inWishlist ? "text-red-500" : "text-gray-600"
+              "absolute top-3 right-3 p-2.5 rounded-full bg-ivory/90 backdrop-blur-sm shadow-sm transition-all duration-300 hover:scale-110 opacity-0 group-hover:opacity-100",
+              inWishlist ? "text-rose-400" : "text-charcoal-muted hover:text-rose-400"
             )}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
             <Heart
-              className="h-4 w-4"
+              className="h-3.5 w-3.5"
               fill={inWishlist ? "currentColor" : "none"}
             />
           </button>
 
+          <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <button className="w-full bg-charcoal text-ivory text-xs font-medium uppercase tracking-wider py-2.5 flex items-center justify-center gap-2 hover:bg-charcoal-light transition-colors">
+              <ShoppingBag className="h-3.5 w-3.5" />
+              Quick Add
+            </button>
+          </div>
+
           {product.stock <= 0 && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <span className="text-white text-sm font-medium uppercase tracking-wider">
+            <div className="absolute inset-0 bg-charcoal/50 flex items-center justify-center">
+              <span className="text-ivory text-xs font-medium uppercase tracking-[0.2em]">
                 Out of Stock
               </span>
             </div>
@@ -72,14 +81,14 @@ export function ProductCard({ product, priority }: ProductCardProps) {
       </Link>
 
       <Link href={`/product/${product.slug}`} className="block">
-        <h3 className="text-sm font-medium text-gray-900 truncate group-hover:underline">
+        <h3 className="text-sm font-medium text-charcoal truncate group-hover:text-gold-dark transition-colors duration-300">
           {product.name}
         </h3>
-        <p className="text-xs text-gray-500 mt-0.5 capitalize">{product.category.replace("-", " ")}</p>
-        <div className="flex items-center gap-2 mt-1">
-          <span className="text-sm font-semibold">{formatPrice(product.price)}</span>
+        <p className="text-xs text-charcoal-muted mt-1 capitalize tracking-wide">{product.category.replace("-", " ")}</p>
+        <div className="flex items-center gap-2 mt-1.5">
+          <span className="text-sm font-semibold text-charcoal">{formatPrice(product.price)}</span>
           {product.compare_price && (
-            <span className="text-xs text-gray-400 line-through">
+            <span className="text-xs text-charcoal-muted/60 line-through">
               {formatPrice(product.compare_price)}
             </span>
           )}

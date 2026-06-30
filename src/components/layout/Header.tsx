@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useCartStore } from "@/lib/store/cart";
+import { useWishlistStore } from "@/lib/store/wishlist";
 import { useUIStore } from "@/lib/store/ui";
 import { useAuthStore } from "@/lib/store/auth";
 import { NAV_LINKS, SITE } from "@/lib/constants/site";
@@ -25,7 +26,7 @@ export function Header() {
   const { user } = useAuthStore();
   const { isMobileMenuOpen, toggleMobileMenu, closeMobileMenu, openCart, openSearch } = useUIStore();
   const cartCount = useCartStore((s) => s.getItemCount());
-  const wishlistCount = useCartStore((s) => s.items.length);
+  const wishlistCount = useWishlistStore((s) => s.items.length);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -40,93 +41,119 @@ export function Header() {
     <>
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40 transition-all duration-300",
+          "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
           isScrolled || !isHome
-            ? "bg-white shadow-sm"
+            ? "bg-ivory/95 backdrop-blur-md shadow-sm"
             : "bg-transparent"
         )}
       >
+        <div className={cn(
+          "absolute bottom-0 left-0 right-0 h-[1px] transition-opacity duration-500",
+          isScrolled || !isHome ? "opacity-100" : "opacity-0",
+          "bg-gradient-to-r from-transparent via-gold/40 to-transparent"
+        )} />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
             <button
-              className="lg:hidden p-2 -ml-2"
+              className="lg:hidden p-2 -ml-2 relative z-50"
               onClick={toggleMobileMenu}
               aria-label="Menu"
             >
-              {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <div className="w-5 h-4 flex flex-col justify-between">
+                <span className={cn(
+                  "block h-[1.5px] w-full transition-all duration-300",
+                  isMobileMenuOpen ? "rotate-45 translate-y-[7px] bg-charcoal" : isScrolled || !isHome ? "bg-charcoal" : "bg-white"
+                )} />
+                <span className={cn(
+                  "block h-[1.5px] w-full transition-all duration-300",
+                  isMobileMenuOpen ? "opacity-0" : isScrolled || !isHome ? "bg-charcoal" : "bg-white"
+                )} />
+                <span className={cn(
+                  "block h-[1.5px] w-full transition-all duration-300",
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-[7px] bg-charcoal" : isScrolled || !isHome ? "bg-charcoal" : "bg-white"
+                )} />
+              </div>
             </button>
 
             <Link
               href="/"
               className={cn(
-                "text-xl lg:text-2xl font-bold tracking-widest transition-colors",
-                isScrolled || !isHome ? "text-black" : "text-white"
+                "text-xl lg:text-2xl font-bold tracking-[0.3em] transition-colors font-serif",
+                isScrolled || !isHome ? "text-charcoal" : "text-white"
               )}
             >
               {SITE.name}
             </Link>
 
-            <nav className="hidden lg:flex items-center space-x-8">
+            <nav className="hidden lg:flex items-center space-x-10">
               {NAV_LINKS.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   className={cn(
-                    "text-sm font-medium uppercase tracking-wider hover:opacity-70 transition-opacity",
-                    isScrolled || !isHome ? "text-gray-800" : "text-white",
-                    pathname === link.href && "opacity-70"
+                    "relative text-xs font-medium uppercase tracking-[0.15em] transition-colors duration-300 group",
+                    isScrolled || !isHome ? "text-charcoal-muted hover:text-charcoal" : "text-white/80 hover:text-white"
                   )}
                 >
                   {link.label}
+                  <span className={cn(
+                    "absolute -bottom-1 left-0 right-0 h-[1px] transition-all duration-300 scale-x-0 group-hover:scale-x-100",
+                    pathname === link.href ? "scale-x-100 bg-gold" : "bg-gold"
+                  )} />
                 </Link>
               ))}
             </nav>
 
-            <div className="flex items-center space-x-3 lg:space-x-4">
+            <div className="flex items-center space-x-1 sm:space-x-2">
               <button
                 onClick={openSearch}
                 className={cn(
-                  "p-2 hover:opacity-70 transition-opacity",
-                  isScrolled || !isHome ? "text-gray-800" : "text-white"
+                  "p-2.5 hover:scale-110 transition-all duration-200 rounded-full",
+                  isScrolled || !isHome ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark" : "text-white/80 hover:text-white"
                 )}
                 aria-label="Search"
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-4 w-4" />
               </button>
 
               <Link
                 href={user ? "/wishlist" : "/login"}
                 className={cn(
-                  "hidden sm:block p-2 hover:opacity-70 transition-opacity relative",
-                  isScrolled || !isHome ? "text-gray-800" : "text-white"
+                  "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 rounded-full relative",
+                  isScrolled || !isHome ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark" : "text-white/80 hover:text-white"
                 )}
                 aria-label="Wishlist"
               >
-                <Heart className="h-5 w-5" />
+                <Heart className="h-4 w-4" />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 bg-charcoal text-ivory text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-in">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </span>
+                )}
               </Link>
 
               <Link
                 href={user ? "/profile" : "/login"}
                 className={cn(
-                  "hidden sm:block p-2 hover:opacity-70 transition-opacity",
-                  isScrolled || !isHome ? "text-gray-800" : "text-white"
+                  "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 rounded-full",
+                  isScrolled || !isHome ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark" : "text-white/80 hover:text-white"
                 )}
                 aria-label="Account"
               >
-                <User className="h-5 w-5" />
+                <User className="h-4 w-4" />
               </Link>
 
               <button
                 onClick={openCart}
                 className={cn(
-                  "p-2 hover:opacity-70 transition-opacity relative",
-                  isScrolled || !isHome ? "text-gray-800" : "text-white"
+                  "p-2.5 hover:scale-110 transition-all duration-200 rounded-full relative",
+                  isScrolled || !isHome ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark" : "text-white/80 hover:text-white"
                 )}
                 aria-label="Cart"
               >
-                <ShoppingBag className="h-5 w-5" />
+                <ShoppingBag className="h-4 w-4" />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-black text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-in">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
                 )}
@@ -137,39 +164,62 @@ export function Header() {
 
         <div
           className={cn(
-            "lg:hidden fixed inset-0 top-16 bg-white z-50 transition-transform duration-300",
-            isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+            "lg:hidden fixed inset-0 z-50 transition-all duration-400",
+            isMobileMenuOpen ? "pointer-events-auto" : "pointer-events-none"
           )}
         >
-          <nav className="flex flex-col p-6 space-y-6">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={closeMobileMenu}
-                className="text-lg font-medium text-gray-800 hover:text-black transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <hr className="border-gray-200" />
-            <Link
-              href={user ? "/profile" : "/login"}
-              onClick={closeMobileMenu}
-              className="text-lg font-medium text-gray-800 hover:text-black transition-colors flex items-center gap-2"
-            >
-              <User className="h-5 w-5" />
-              {user ? "My Account" : "Sign In"}
-            </Link>
-            <Link
-              href="/wishlist"
-              onClick={closeMobileMenu}
-              className="text-lg font-medium text-gray-800 hover:text-black transition-colors flex items-center gap-2"
-            >
-              <Heart className="h-5 w-5" />
-              Wishlist
-            </Link>
-          </nav>
+          <div
+            className={cn(
+              "absolute inset-0 bg-black/20 backdrop-blur-sm transition-opacity duration-400",
+              isMobileMenuOpen ? "opacity-100" : "opacity-0"
+            )}
+            onClick={closeMobileMenu}
+          />
+          <div
+            className={cn(
+              "absolute top-0 right-0 bottom-0 w-72 bg-ivory shadow-2xl transition-transform duration-400",
+              isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+            )}
+          >
+            <nav className="flex flex-col p-8 pt-12 space-y-1">
+              {NAV_LINKS.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={closeMobileMenu}
+                  className={cn(
+                    "text-base font-medium text-charcoal-muted hover:text-charcoal transition-colors py-3 border-b border-ivory-dark/50",
+                    pathname === link.href && "text-charcoal"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="pt-6 space-y-4">
+                <Link
+                  href={user ? "/profile" : "/login"}
+                  onClick={closeMobileMenu}
+                  className="text-base font-medium text-charcoal-muted hover:text-charcoal transition-colors flex items-center gap-3"
+                >
+                  <User className="h-4 w-4" />
+                  {user ? "My Account" : "Sign In"}
+                </Link>
+                <Link
+                  href="/wishlist"
+                  onClick={closeMobileMenu}
+                  className="text-base font-medium text-charcoal-muted hover:text-charcoal transition-colors flex items-center gap-3"
+                >
+                  <Heart className="h-4 w-4" />
+                  Wishlist
+                  {wishlistCount > 0 && (
+                    <span className="bg-charcoal text-ivory text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center ml-auto">
+                      {wishlistCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
+            </nav>
+          </div>
         </div>
       </header>
 

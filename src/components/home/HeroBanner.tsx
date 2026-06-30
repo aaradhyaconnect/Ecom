@@ -13,7 +13,8 @@ const slides = [
     description: "Unique pieces crafted for the modern trendsetter",
     cta: "Shop Now",
     href: "/products/new-arrivals",
-    bg: "bg-gradient-to-r from-stone-900 via-stone-800 to-stone-700",
+    bg: "from-charcoal via-charcoal-light to-charcoal",
+    pattern: "radial-gradient(circle at 20% 50%, rgba(197,165,90,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,240,0.03) 0%, transparent 50%)",
   },
   {
     title: "Exquisite Jewellery",
@@ -21,15 +22,17 @@ const slides = [
     description: "Handpicked resale treasures that make a statement",
     cta: "Explore Collection",
     href: "/products/artificial-jewellery",
-    bg: "bg-gradient-to-r from-amber-900 via-amber-800 to-stone-800",
+    bg: "from-gold-dark via-charcoal-light to-charcoal",
+    pattern: "radial-gradient(circle at 30% 60%, rgba(197,165,90,0.12) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(232,213,163,0.06) 0%, transparent 50%)",
   },
   {
     title: "Season's Sale",
     subtitle: "Up to 50% Off",
-    description: "Limited time offers on premium fashion",
+    description: "Limited time offers on premium fashion & jewellery",
     cta: "Shop Sale",
     href: "/products/sale",
-    bg: "bg-gradient-to-r from-rose-900 via-rose-800 to-stone-900",
+    bg: "from-charcoal via-gold-dark/40 to-charcoal-light",
+    pattern: "radial-gradient(circle at 50% 80%, rgba(197,165,90,0.15) 0%, transparent 50%), radial-gradient(circle at 20% 20%, rgba(232,213,163,0.05) 0%, transparent 50%)",
   },
 ];
 
@@ -45,65 +48,75 @@ export function HeroBanner() {
   }, [next]);
 
   return (
-    <section className="relative h-[70vh] min-h-[500px] max-h-[800px] overflow-hidden">
+    <section className="relative h-[80vh] min-h-[550px] max-h-[900px] overflow-hidden">
       {slides.map((slide, i) => (
         <div
           key={i}
           className={cn(
-            "absolute inset-0 transition-opacity duration-700",
+            "absolute inset-0 transition-all duration-1000 ease-out",
             i === current ? "opacity-100" : "opacity-0 pointer-events-none"
           )}
         >
-          <div className={cn("absolute inset-0", slide.bg)} />
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-gradient-to-br" style={{ backgroundImage: slide.pattern }} />
+          <div className={cn("absolute inset-0 bg-gradient-to-br", slide.bg)} />
+          <div className="absolute inset-0 bg-charcoal/30" />
+          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
           <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <div className="max-w-lg text-white animate-in slide-up">
-              <p className="text-sm uppercase tracking-[0.3em] mb-4 opacity-80">
-                {slide.subtitle}
-              </p>
-              <h1 className="text-4xl sm:text-5xl lg:text-7xl font-serif font-bold leading-tight mb-4">
+            <div key={current} className="max-w-xl text-ivory">
+              <div className="animate-in slide-up" style={{ animationDelay: "0ms" }}>
+                <div className="flex items-center gap-4 mb-6">
+                  <span className="h-[1px] w-12 bg-gold/60" />
+                  <span className="text-xs uppercase tracking-[0.3em] text-gold-light font-medium">
+                    {slide.subtitle}
+                  </span>
+                </div>
+              </div>
+              <h1 className="animate-in slide-up text-4xl sm:text-5xl lg:text-7xl font-serif font-bold leading-tight mb-6 text-ivory" style={{ animationDelay: "150ms" }}>
                 {slide.title}
               </h1>
-              <p className="text-base sm:text-lg opacity-80 mb-8">
+              <p className="animate-in slide-up text-base sm:text-lg text-ivory/70 mb-10 max-w-md leading-relaxed" style={{ animationDelay: "300ms" }}>
                 {slide.description}
               </p>
-              <Link href={slide.href}>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-white text-white hover:bg-white hover:text-black"
-                >
-                  {slide.cta}
-                </Button>
-              </Link>
+              <div className="animate-in slide-up" style={{ animationDelay: "450ms" }}>
+                <Link href={slide.href}>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    className="border-gold/60 text-gold-light hover:bg-gold/10 hover:border-gold transition-all duration-300 tracking-wider uppercase text-xs"
+                  >
+                    {slide.cta}
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ivory to-transparent" />
         </div>
       ))}
 
       <button
         onClick={prev}
-        className="absolute left-4 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors hidden sm:block"
+        className="absolute left-6 top-1/2 -translate-y-1/2 p-3 text-ivory/40 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block z-10"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-8 w-8" />
+        <ChevronLeft className="h-6 w-6" />
       </button>
       <button
         onClick={next}
-        className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors hidden sm:block"
+        className="absolute right-6 top-1/2 -translate-y-1/2 p-3 text-ivory/40 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block z-10"
         aria-label="Next slide"
       >
-        <ChevronRight className="h-8 w-8" />
+        <ChevronRight className="h-6 w-6" />
       </button>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
+      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-3 z-10">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
             className={cn(
-              "w-2 h-2 rounded-full transition-all duration-300",
-              i === current ? "bg-white w-8" : "bg-white/40"
+              "rounded-full transition-all duration-500",
+              i === current ? "w-12 h-1.5 bg-gold" : "w-3 h-1.5 bg-ivory/30 hover:bg-ivory/50"
             )}
             aria-label={`Go to slide ${i + 1}`}
           />

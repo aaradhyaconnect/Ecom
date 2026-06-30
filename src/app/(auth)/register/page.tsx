@@ -70,12 +70,12 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 animate-in slide-up">
+    <div className="bg-ivory border border-ivory-dark p-8 animate-in slide-up">
       <div className="text-center mb-8">
-        <h1 className="text-2xl font-serif font-bold text-gray-900">
+        <h1 className="text-2xl font-serif font-bold text-charcoal">
           Create Account
         </h1>
-        <p className="text-gray-500 text-sm mt-1">
+        <p className="text-charcoal-muted text-sm mt-1">
            Join HAINJU today
         </p>
       </div>

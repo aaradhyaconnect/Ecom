@@ -28,11 +28,11 @@ export default function WishlistPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-        <Heart className="h-20 w-20 text-gray-300 mb-6" />
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+        <Heart className="h-20 w-20 text-charcoal/10 mb-6" />
+        <h1 className="text-2xl font-serif font-bold text-charcoal mb-2">
           Your wishlist is empty
         </h1>
-        <p className="text-gray-500 mb-8">
+        <p className="text-charcoal-muted mb-8">
           Save your favorite items here
         </p>
         <Link href="/products/new-arrivals">
@@ -48,12 +48,15 @@ export default function WishlistPage() {
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl lg:text-3xl font-semibold">
-          My Wishlist ({items.length})
-        </h1>
+        <div>
+          <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Wishlist</span>
+          <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">
+            My Wishlist ({items.length})
+          </h1>
+        </div>
         <Link
           href="/products/new-arrivals"
-          className="text-sm text-gray-600 hover:text-black underline underline-offset-4"
+          className="text-xs uppercase tracking-[0.2em] text-charcoal-muted hover:text-charcoal transition-colors"
         >
           Continue Shopping
         </Link>
@@ -73,7 +76,7 @@ export default function WishlistPage() {
           return (
             <div key={product.id} className="group relative">
               <Link href={`/product/${product.slug}`} className="block">
-                <div className="relative aspect-[3/4] rounded-xl overflow-hidden bg-gray-100 mb-3">
+                <div className="relative aspect-[3/4] bg-charcoal/5 mb-3">
                   {product.images?.[0] && (
                     <img
                       src={product.images[0]}
@@ -95,7 +98,7 @@ export default function WishlistPage() {
                       removeItem(product.id);
                       toast.success("Removed from wishlist");
                     }}
-                    className="absolute top-2 right-2 p-2 rounded-full bg-white/80 backdrop-blur-sm shadow-sm hover:scale-110 transition-all"
+                    className="absolute top-2 right-2 p-2 bg-ivory/80 backdrop-blur-sm shadow-sm hover:scale-110 transition-all"
                   >
                     <Trash2 className="h-4 w-4 text-red-500" />
                   </button>
@@ -103,18 +106,18 @@ export default function WishlistPage() {
               </Link>
 
               <Link href={`/product/${product.slug}`} className="block">
-                <h3 className="text-sm font-medium text-gray-900 truncate group-hover:underline">
+                <h3 className="text-sm font-medium text-charcoal truncate group-hover:text-gold transition-colors">
                   {product.name}
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5 capitalize">
+                <p className="text-xs text-charcoal-muted mt-0.5 capitalize">
                   {product.category.replace("-", " ")}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-sm font-semibold">
+                  <span className="text-sm font-semibold text-charcoal">
                     {formatPrice(product.price)}
                   </span>
                   {product.compare_price && (
-                    <span className="text-xs text-gray-400 line-through">
+                    <span className="text-xs text-charcoal-muted/60 line-through">
                       {formatPrice(product.compare_price)}
                     </span>
                   )}

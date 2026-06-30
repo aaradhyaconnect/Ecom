@@ -96,8 +96,8 @@ export default function OrderDetailPage({
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <Skeleton className="h-8 w-48 mb-6" />
-        <Skeleton className="h-64 w-full rounded-xl mb-4" />
-        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-64 w-full mb-4" />
+        <Skeleton className="h-48 w-full" />
       </div>
     );
   }
@@ -112,28 +112,29 @@ export default function OrderDetailPage({
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <button
         onClick={() => router.push("/orders")}
-        className="text-sm text-gray-500 hover:text-black mb-4 inline-flex items-center gap-1 transition-colors"
+        className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal mb-6 inline-flex items-center gap-1 transition-colors"
       >
         &larr; Back to Orders
       </button>
 
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold">Order #{order.order_id}</h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Order Details</span>
+          <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">Order #{order.order_id}</h1>
+          <p className="text-sm text-charcoal-muted mt-1">
             Placed on {formatDate(order.created_at)}
           </p>
         </div>
         <span
-          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(order.order_status)}`}
+          className={`inline-flex items-center px-3 py-1 text-sm font-medium ${getStatusColor(order.order_status)}`}
         >
           {getStatusLabel(order.order_status)}
         </span>
       </div>
 
       {!cancelled && !returned && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-          <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-4">
+        <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+          <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-4">
             Order Status
           </h2>
           <div className="relative">
@@ -144,11 +145,11 @@ export default function OrderDetailPage({
                 return (
                   <div key={step} className="flex flex-col items-center relative z-10">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
+                      className={`w-10 h-10 flex items-center justify-center text-sm font-bold transition-all ${
                         isActive
-                          ? "bg-black text-white"
-                          : "bg-gray-100 text-gray-400"
-                      } ${isCurrent ? "ring-4 ring-gray-200" : ""}`}
+                          ? "bg-charcoal text-ivory"
+                          : "bg-charcoal/5 text-charcoal-muted"
+                      } ${isCurrent ? "ring-4 ring-gold/30" : ""}`}
                     >
                       {isActive && idx < currentStep ? (
                         <Check className="h-5 w-5" />
@@ -158,7 +159,7 @@ export default function OrderDetailPage({
                     </div>
                     <span
                       className={`text-xs mt-2 text-center font-medium ${
-                        isActive ? "text-black" : "text-gray-400"
+                        isActive ? "text-charcoal" : "text-charcoal-muted"
                       }`}
                     >
                       {getStatusLabel(step)}
@@ -173,8 +174,8 @@ export default function OrderDetailPage({
                 return (
                   <div key={step} className="flex items-center gap-3">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
-                        isActive ? "bg-black text-white" : "bg-gray-100 text-gray-400"
+                      className={`w-8 h-8 flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                        isActive ? "bg-charcoal text-ivory" : "bg-charcoal/5 text-charcoal-muted"
                       }`}
                     >
                       {isActive && idx < currentStep ? (
@@ -183,7 +184,7 @@ export default function OrderDetailPage({
                         idx + 1
                       )}
                     </div>
-                    <span className={`text-sm ${isActive ? "text-black font-medium" : "text-gray-400"}`}>
+                    <span className={`text-sm ${isActive ? "font-medium text-charcoal" : "text-charcoal-muted"}`}>
                       {getStatusLabel(step)}
                     </span>
                   </div>
@@ -195,7 +196,7 @@ export default function OrderDetailPage({
       )}
 
       {cancelled && (
-        <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+        <div className="bg-red-50 border border-red-200 p-6 mb-6">
           <div className="flex items-center gap-3">
             <X className="h-6 w-6 text-red-500" />
             <div>
@@ -209,27 +210,27 @@ export default function OrderDetailPage({
       )}
 
       {returned && (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-6">
+        <div className="bg-charcoal/5 border border-ivory-dark p-6 mb-6">
           <div className="flex items-center gap-3">
-            <Package className="h-6 w-6 text-gray-500" />
+            <Package className="h-6 w-6 text-charcoal-muted" />
             <div>
-              <p className="font-medium text-gray-800">Order Returned</p>
-              <p className="text-sm text-gray-600">This order has been returned</p>
+              <p className="font-medium text-charcoal">Order Returned</p>
+              <p className="text-sm text-charcoal-muted">This order has been returned</p>
             </div>
           </div>
         </div>
       )}
 
       {order.tracking_id && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
+        <div className="bg-ivory border border-ivory-dark p-6 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Truck className="h-5 w-5 text-gray-500" />
+              <Truck className="h-5 w-5 text-charcoal-muted" />
               <div>
-                <p className="font-medium">Tracking ID</p>
-                <p className="text-sm text-gray-500 font-mono">{order.tracking_id}</p>
+                <p className="font-medium text-charcoal">Tracking ID</p>
+                <p className="text-sm text-charcoal-muted font-mono">{order.tracking_id}</p>
                 {order.courier_name && (
-                  <p className="text-xs text-gray-400">{order.courier_name}</p>
+                  <p className="text-xs text-charcoal-muted/60">{order.courier_name}</p>
                 )}
               </div>
             </div>
@@ -237,27 +238,27 @@ export default function OrderDetailPage({
               href={`https://shiprocket.co/tracking/${order.tracking_id}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-medium text-black hover:underline"
+              className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.1em] font-medium text-charcoal hover:text-gold transition-colors"
             >
               Track <ExternalLink className="h-3 w-3" />
             </a>
           </div>
           {order.estimated_delivery && (
-            <p className="text-sm text-gray-500 mt-2">
+            <p className="text-sm text-charcoal-muted mt-2">
               Estimated delivery: {formatDate(order.estimated_delivery)}
             </p>
           )}
         </div>
       )}
 
-      <div className="bg-white border border-gray-200 rounded-xl p-6 mb-6">
-        <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-4">
+      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+        <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-4">
           Items ({order.items.length})
         </h2>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-ivory-dark">
           {order.items.map((item) => (
             <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
-              <div className="relative h-20 w-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-50">
+              <div className="relative h-20 w-20 flex-shrink-0 bg-charcoal/5">
                 <Image
                   src={item.product.images[0] ?? "/placeholder.png"}
                   alt={item.product.name}
@@ -267,11 +268,11 @@ export default function OrderDetailPage({
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm">{item.product.name}</p>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <p className="font-medium text-sm text-charcoal">{item.product.name}</p>
+                <p className="text-xs text-charcoal-muted mt-0.5">
                   {item.color} &middot; {item.size} &middot; Qty: {item.quantity}
                 </p>
-                <p className="text-sm font-semibold mt-1">
+                <p className="text-sm font-semibold text-charcoal mt-1">
                   {formatPrice(item.product.price * item.quantity)}
                 </p>
               </div>
@@ -281,14 +282,14 @@ export default function OrderDetailPage({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="bg-ivory border border-ivory-dark p-6">
           <div className="flex items-center gap-2 mb-3">
-            <MapPin className="h-4 w-4 text-gray-500" />
-            <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+            <MapPin className="h-4 w-4 text-charcoal-muted" />
+            <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">
               Shipping Address
             </h2>
           </div>
-          <div className="text-sm text-gray-700 space-y-0.5">
+          <div className="text-sm text-charcoal space-y-0.5">
             <p className="font-medium">{order.shipping_address.full_name}</p>
             <p>{order.shipping_address.street}</p>
             <p>
@@ -298,14 +299,14 @@ export default function OrderDetailPage({
           </div>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="bg-ivory border border-ivory-dark p-6">
           <div className="flex items-center gap-2 mb-3">
-            <CreditCard className="h-4 w-4 text-gray-500" />
-            <h2 className="font-semibold text-sm text-gray-500 uppercase tracking-wider">
+            <CreditCard className="h-4 w-4 text-charcoal-muted" />
+            <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">
               Payment Info
             </h2>
           </div>
-          <div className="text-sm text-gray-700 space-y-0.5">
+          <div className="text-sm text-charcoal space-y-0.5">
             <p>
               Method:{" "}
               <span className="font-medium">
@@ -327,12 +328,12 @@ export default function OrderDetailPage({
               </span>
             </p>
           </div>
-          <div className="border-t border-gray-100 mt-4 pt-4 space-y-1 text-sm">
-            <div className="flex justify-between text-gray-500">
+          <div className="border-t border-ivory-dark mt-4 pt-4 space-y-1 text-sm">
+            <div className="flex justify-between text-charcoal-muted">
               <span>Subtotal</span>
               <span>{formatPrice(order.subtotal)}</span>
             </div>
-            <div className="flex justify-between text-gray-500">
+            <div className="flex justify-between text-charcoal-muted">
               <span>Shipping</span>
               <span>{order.shipping_charge === 0 ? "Free" : formatPrice(order.shipping_charge)}</span>
             </div>
@@ -342,7 +343,7 @@ export default function OrderDetailPage({
                 <span>&minus;{formatPrice(order.discount)}</span>
               </div>
             )}
-            <div className="flex justify-between font-semibold text-gray-900 pt-2 border-t border-gray-100">
+            <div className="flex justify-between font-semibold text-charcoal pt-2 border-t border-ivory-dark">
               <span>Total</span>
               <span>{formatPrice(order.total)}</span>
             </div>
@@ -351,7 +352,7 @@ export default function OrderDetailPage({
       </div>
 
       {isCancelable(order.order_status) && (
-        <div className="text-center py-4">
+        <div className="text-center py-4 border-t border-ivory-dark">
           <Button
             variant="danger"
             size="md"

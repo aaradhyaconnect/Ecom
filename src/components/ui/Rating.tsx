@@ -15,7 +15,7 @@ export function Rating({ rating, reviewCount, size = "sm", showCount }: RatingPr
         <Star
           key={star}
           className={cn(
-            "text-amber-400",
+            "text-gold",
             size === "sm" && "h-3 w-3",
             size === "md" && "h-4 w-4",
             size === "lg" && "h-5 w-5"

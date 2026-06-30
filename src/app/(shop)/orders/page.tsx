@@ -52,19 +52,22 @@ export default function OrdersPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="text-2xl font-bold mb-8">My Orders</h1>
+      <div className="mb-8">
+        <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Orders</span>
+        <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">My Orders</h1>
+      </div>
 
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-28 w-full rounded-xl" />
+            <Skeleton key={i} className="h-28 w-full" />
           ))}
         </div>
       ) : orders.length === 0 ? (
         <div className="text-center py-16">
-          <Package className="mx-auto h-12 w-12 text-gray-300 mb-4" />
-          <h2 className="text-lg font-medium text-gray-900 mb-2">No orders yet</h2>
-          <p className="text-gray-500 mb-6">Start shopping to see your orders here</p>
+          <Package className="mx-auto h-12 w-12 text-charcoal/10 mb-4" />
+          <h2 className="text-lg font-serif font-bold text-charcoal mb-2">No orders yet</h2>
+          <p className="text-charcoal-muted mb-6">Start shopping to see your orders here</p>
           <Link href="/products">
             <Button>Browse Products</Button>
           </Link>
@@ -75,26 +78,26 @@ export default function OrdersPage() {
             <Link
               key={order.id}
               href={`/order/${order.id}`}
-              className="block bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
+              className="block bg-ivory border border-ivory-dark p-5 hover:border-gold/30 transition-all"
             >
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="font-mono text-sm text-gray-500">
+                    <span className="font-mono text-sm text-charcoal-muted">
                       #{order.order_id}
                     </span>
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusStyle(order.order_status)}`}
+                      className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium ${getStatusStyle(order.order_status)}`}
                     >
                       {getStatusLabel(order.order_status)}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-charcoal-muted">
                     {formatDate(order.created_at)} &middot; {order.items.length} item{order.items.length !== 1 ? "s" : ""}
                   </p>
-                  <p className="text-lg font-semibold mt-1">{formatPrice(order.total)}</p>
+                  <p className="text-lg font-semibold text-charcoal mt-1">{formatPrice(order.total)}</p>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                <ChevronRight className="h-5 w-5 text-charcoal-muted flex-shrink-0" />
               </div>
             </Link>
           ))}
