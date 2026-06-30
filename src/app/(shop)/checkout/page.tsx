@@ -1,16 +1,45 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuth } from "@/hooks/useAuth";
-import { formatPrice, generateOrderId } from "@/lib/utils/format";
+import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import type { Address } from "@/types";
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
+  }
+}
+
+interface RazorpayOptions {
+  key: string | undefined;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  prefill: { name: string; email: string | undefined; contact: string };
+  theme: { color: string };
+  handler: (response: RazorpayResponse) => void;
+  modal: { ondismiss: () => void };
+}
+
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+  open: () => void;
+}
 
 interface FormErrors {
   [key: string]: string;
@@ -80,7 +109,7 @@ export default function CheckoutPage() {
 
   const loadRazorpayScript = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      if ((window as any).Razorpay) {
+      if (window.Razorpay) {
         resolve(true);
         return;
       }
@@ -165,7 +194,7 @@ export default function CheckoutPage() {
             contact: address.phone,
           },
           theme: { color: "#000000" },
-          handler: async function (response: any) {
+          handler: async function (response: RazorpayResponse) {
             try {
               const verifyRes = await fetch("/api/payment/verify", {
                 method: "POST",
@@ -199,7 +228,7 @@ export default function CheckoutPage() {
           },
         };
 
-        const razorpay = new (window as any).Razorpay(options);
+        const razorpay = new (window.Razorpay!)(options);
         razorpay.open();
       }
     } catch {

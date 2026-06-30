@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/lib/supabase/server";
-import { AdminSidebar } from "./_components/admin-sidebar";
-import { AdminHeader } from "./_components/admin-header";
-import { AdminMobileNav } from "./_components/admin-mobile-nav";
+import { AdminSidebar } from "../_components/admin-sidebar";
+import { AdminHeader } from "../_components/admin-header";
+import { AdminMobileNav } from "../_components/admin-mobile-nav";
+import type { User as UserType } from "@/types";
 
 export default async function AdminLayout({
   children,
@@ -19,24 +20,18 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", authUser.id)
-    .single();
-
-  if (profile?.role !== "admin") {
+  if (authUser?.user_metadata?.role !== "admin") {
     redirect("/admin/login");
   }
 
-  const user = {
-    id: profile.id,
-    email: profile.email,
-    name: profile.name,
-    phone: profile.phone,
-    avatar_url: profile.avatar_url,
-    role: profile.role,
-    created_at: profile.created_at,
+  const user: UserType = {
+    id: authUser.id as string as UserType["id"],
+    email: authUser.email ?? "",
+    name: authUser.user_metadata?.name ?? authUser.email?.split("@")[0] ?? "Admin",
+    phone: authUser.phone ?? "",
+    avatar_url: authUser.user_metadata?.avatar_url ?? undefined,
+    role: "admin",
+    created_at: authUser.created_at,
   };
 
   return (

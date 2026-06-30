@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { error } = await supabase.from("cart_items").upsert(
-      items.map((item: any) => ({
+      items.map((item: { product_id: string; quantity: number; size: string; color: string }) => ({
         user_id: user.id,
         product_id: item.product_id,
         quantity: item.quantity,
@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     return Response.json({ success: true, message: "Cart saved" });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: "Internal server error" },
       { status: 500 }

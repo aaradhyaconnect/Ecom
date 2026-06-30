@@ -24,19 +24,20 @@ export default function OrdersPage() {
       router.push("/login");
       return;
     }
+
+    async function loadOrders() {
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false });
+
+      if (!error && data) setOrders(data as Order[]);
+      setLoading(false);
+    }
+
     loadOrders();
-  }, [user]);
-
-  async function loadOrders() {
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("user_id", user?.id)
-      .order("created_at", { ascending: false });
-
-    if (!error && data) setOrders(data as Order[]);
-    setLoading(false);
-  }
+  }, [user, supabase, router]);
 
   if (!user) return null;
 

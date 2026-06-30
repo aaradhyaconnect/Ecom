@@ -4,7 +4,6 @@ import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
 import { ProductGrid } from "./ProductGrid";
-import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 import type { Product } from "@/types";
 

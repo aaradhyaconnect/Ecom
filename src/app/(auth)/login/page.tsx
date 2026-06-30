@@ -68,14 +68,20 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
-      if (error) toast.error(error.message);
+      if (error) {
+        toast.error(error.message);
+        setIsLoading(false);
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch {
       toast.error("Failed to sign in with Google");
-    } finally {
       setIsLoading(false);
     }
   }

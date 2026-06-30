@@ -99,7 +99,6 @@ export default function InventoryPage() {
 
   const lowStockCount = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
-  const inStockCount = products.filter((p) => p.stock > 5).length;
 
   return (
     <div className="space-y-6">

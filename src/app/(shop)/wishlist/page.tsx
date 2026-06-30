@@ -12,7 +12,7 @@ import type { Product } from "@/types";
 
 export default function WishlistPage() {
   const { items, removeItem } = useWishlistStore();
-  const { addItem, isInCart, items: cartItems } = useCartStore();
+  const { addItem, items: cartItems } = useCartStore();
 
   const handleAddToCart = (product: Product) => {
     const size = product.sizes[0] || "M";

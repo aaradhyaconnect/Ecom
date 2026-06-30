@@ -33,46 +33,48 @@ export function DashboardClient({
   analytics: AnalyticsSummary;
   recentOrders: Order[];
 }) {
-  const revenueTrend = analytics.revenue_last_month > 0
-    ? Math.round(((analytics.revenue_month - analytics.revenue_last_month) / analytics.revenue_last_month) * 100)
+  const a = analytics || {};
+  const revenueTrend = (a.revenue_last_month ?? 0) > 0
+    ? Math.round((((a.revenue_month ?? 0) - (a.revenue_last_month ?? 0)) / (a.revenue_last_month ?? 1)) * 100)
     : 0;
-  const ordersTrend = analytics.orders_last_month > 0
-    ? Math.round(((analytics.orders_month - analytics.orders_last_month) / analytics.orders_last_month) * 100)
+  const ordersTrend = (a.orders_last_month ?? 0) > 0
+    ? Math.round((((a.orders_month ?? 0) - (a.orders_last_month ?? 0)) / (a.orders_last_month ?? 1)) * 100)
     : 0;
 
   const cards = [
     {
       label: "Total Revenue",
-      value: formatPrice(analytics.total_revenue),
+      value: formatPrice(a.total_revenue ?? 0),
       icon: IndianRupee,
       trend: `${revenueTrend >= 0 ? "+" : ""}${revenueTrend}% this month`,
       up: revenueTrend >= 0,
     },
     {
       label: "Total Orders",
-      value: analytics.total_orders,
+      value: a.total_orders ?? 0,
       icon: ShoppingCart,
       trend: `${ordersTrend >= 0 ? "+" : ""}${ordersTrend}% this month`,
       up: ordersTrend >= 0,
     },
     {
       label: "Total Customers",
-      value: analytics.total_customers,
+      value: a.total_customers ?? 0,
       icon: Users,
-      trend: `${analytics.orders_today} orders today`,
+      trend: "All time",
       up: true,
     },
     {
       label: "Total Products",
-      value: analytics.total_products,
+      value: a.total_products ?? 0,
       icon: Package,
-      trend: "Active",
+      trend: "All time",
       up: true,
     },
   ];
 
+  const revenueDays = a.revenue_by_day || [];
   const maxRevenue = Math.max(
-    ...analytics.revenue_by_day.map((d) => d.revenue),
+    ...revenueDays.map((d) => d.revenue),
     1
   );
 
@@ -120,7 +122,7 @@ export function DashboardClient({
         <div className="rounded-xl border bg-white p-5 shadow-sm lg:col-span-2">
           <h2 className="mb-4 text-sm font-semibold">Revenue (Last 30 Days)</h2>
           <div className="flex items-end gap-1.5 h-40">
-            {analytics.revenue_by_day.map((day) => (
+            {revenueDays.map((day) => (
               <div
                 key={day.date}
                 className="flex-1 rounded-t bg-black/80 hover:bg-black transition-colors relative group"
@@ -133,9 +135,9 @@ export function DashboardClient({
             ))}
           </div>
           <div className="mt-2 flex justify-between text-[10px] text-gray-400">
-            <span>{analytics.revenue_by_day[0]?.date?.slice(5)}</span>
+            <span>{revenueDays[0]?.date?.slice(5)}</span>
             <span>
-              {analytics.revenue_by_day[analytics.revenue_by_day.length - 1]?.date?.slice(5)}
+              {revenueDays[revenueDays.length - 1]?.date?.slice(5)}
             </span>
           </div>
         </div>
@@ -143,7 +145,7 @@ export function DashboardClient({
         <div className="rounded-xl border bg-white p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">Top Products</h2>
           <div className="space-y-3">
-            {analytics.top_products.slice(0, 5).map((product, i) => (
+            {(a.top_products || []).slice(0, 5).map((product, i) => (
               <div
                 key={product.name}
                 className="flex items-center justify-between"
@@ -161,7 +163,7 @@ export function DashboardClient({
                 </span>
               </div>
             ))}
-            {analytics.top_products.length === 0 && (
+            {(a.top_products || []).length === 0 && (
               <p className="text-sm text-gray-400">No data yet</p>
             )}
           </div>

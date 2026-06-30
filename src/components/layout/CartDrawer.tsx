@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils/cn";
 import { useCartStore } from "@/lib/store/cart";
 import { useUIStore } from "@/lib/store/ui";
 import { formatPrice } from "@/lib/utils/format";

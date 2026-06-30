@@ -73,13 +73,7 @@ export async function requireAdmin(): Promise<
     };
   }
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.role !== "admin") {
+  if (user?.user_metadata?.role !== "admin") {
     return {
       response: NextResponse.json(
         { success: false, error: "Forbidden" },

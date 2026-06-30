@@ -25,19 +25,21 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("/api/admin/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+      const { data: { user }, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
-      const data = await res.json();
-      if (!data.success) {
-        toast.error(data.error || "Login failed");
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (user?.user_metadata?.role !== "admin") {
+        await supabase.auth.signOut();
+        toast.error("Unauthorized. Admin access required.");
         return;
       }
       toast.success("Welcome back!");
-      router.push("/admin");
-      router.refresh();
+      window.location.href = "/admin";
     } catch {
       toast.error("Something went wrong");
     } finally {
@@ -48,14 +50,20 @@ export default function AdminLoginPage() {
   const handleGoogleLogin = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
-      if (error) toast.error(error.message);
+      if (error) {
+        toast.error(error.message);
+        setLoading(false);
+        return;
+      }
+      if (data?.url) {
+        window.location.href = data.url;
+      }
     } catch {
       toast.error("Failed to sign in with Google");
-    } finally {
       setLoading(false);
     }
   };

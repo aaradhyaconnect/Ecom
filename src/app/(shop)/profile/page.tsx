@@ -10,7 +10,7 @@ import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { User, Package, MapPin, LogOut, ChevronRight } from "lucide-react";
+import { Package, MapPin, LogOut, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Order, Address } from "@/types";
 
@@ -42,31 +42,32 @@ export default function ProfilePage() {
     }
     setName(user.name ?? "");
     setPhone(user.phone ?? "");
+
+    async function loadOrders() {
+      const { data } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+
+      if (data) setOrders(data as Order[]);
+      setLoading(false);
+    }
+
+    async function loadProfile() {
+      const { data } = await supabase
+        .from("profiles")
+        .select("addresses")
+        .eq("id", user?.id)
+        .single();
+
+      if (data?.addresses) setAddresses(data.addresses as Address[]);
+    }
+
     loadOrders();
     loadProfile();
-  }, [user]);
-
-  async function loadOrders() {
-    const { data } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("user_id", user?.id)
-      .order("created_at", { ascending: false })
-      .limit(5);
-
-    if (data) setOrders(data as Order[]);
-    setLoading(false);
-  }
-
-  async function loadProfile() {
-    const { data } = await supabase
-      .from("profiles")
-      .select("addresses")
-      .eq("id", user?.id)
-      .single();
-
-    if (data?.addresses) setAddresses(data.addresses as Address[]);
-  }
+  }, [user, supabase, router]);
 
   async function handleSaveProfile() {
     setSaving(true);

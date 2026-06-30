@@ -5,7 +5,6 @@ import {
   IndianRupee,
   ShoppingCart,
   TrendingUp,
-  TrendingDown,
   Package,
 } from "lucide-react";
 import { formatPrice, formatDateShort } from "@/lib/utils/format";

@@ -41,25 +41,26 @@ export default function OrderDetailPage({
       router.push("/login");
       return;
     }
-    loadOrder();
-  }, [user]);
 
-  async function loadOrder() {
-    const { id } = await params;
-    const { data, error } = await supabase
-      .from("orders")
-      .select("*")
-      .eq("id", id)
-      .eq("user_id", user?.id)
-      .single();
+    async function loadOrder() {
+      const { id } = await params;
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("id", id)
+        .eq("user_id", user?.id)
+        .single();
 
-    if (error || !data) {
-      router.push("/orders");
-      return;
+      if (error || !data) {
+        router.push("/orders");
+        return;
+      }
+      setOrder(data as Order);
+      setLoading(false);
     }
-    setOrder(data as Order);
-    setLoading(false);
-  }
+
+    loadOrder();
+  }, [user, params, supabase, router]);
 
   async function handleCancel() {
     if (!order) return;

@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
-import { Badge } from "@/components/ui/Badge";
 import { formatDate } from "@/lib/utils/format";
-import { Tag, Plus, Pencil, Trash2, X } from "lucide-react";
+import { Tag, Plus, Pencil, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Coupon } from "@/types";
 

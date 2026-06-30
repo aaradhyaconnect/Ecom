@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
-import { Image, Plus, Pencil, Trash2, GripVertical, EyeOff, Eye } from "lucide-react";
+import { Image, Plus, Pencil, Trash2, EyeOff, Eye } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Banner } from "@/types";
 

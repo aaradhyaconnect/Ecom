@@ -115,7 +115,7 @@ export async function POST(request: NextRequest) {
         razorpay_order: razorpayOrder,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     const message =
       error instanceof Error ? error.message : "Internal server error";
     return Response.json(

@@ -15,7 +15,6 @@ import {
   Trash2,
   Package,
   X,
-  GripVertical,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Product, ColorOption } from "@/types";
@@ -60,23 +59,36 @@ const emptyForm: ProductForm = {
   sale_percent: "",
 };
 
+const ITEMS_PER_PAGE = 12;
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("");
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [form, setForm] = useState<ProductForm>(emptyForm);
   const [saving, setSaving] = useState(false);
+
+  const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
 
   const fetchProducts = async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
+      if (category) params.set("category", category);
+      params.set("page", String(page));
+      params.set("limit", String(ITEMS_PER_PAGE));
       const res = await fetch(`/api/admin/products?${params}`);
       const data = await res.json();
-      if (data.success) setProducts(data.data);
+      if (data.success) {
+        setProducts(data.data);
+        setTotal(data.total);
+      }
     } catch {
       toast.error("Failed to load products");
     } finally {
@@ -86,7 +98,11 @@ export default function AdminProductsPage() {
 
   useEffect(() => {
     fetchProducts();
-  }, [search]);
+  }, [search, category, page]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, category]);
 
   const openAdd = () => {
     setEditingProduct(null);
@@ -259,6 +275,18 @@ export default function AdminProductsPage() {
             className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
           />
         </div>
+        <select
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+          className="rounded-lg border border-gray-300 py-2.5 px-3 text-sm focus:ring-2 focus:ring-black focus:border-black"
+        >
+          <option value="">All Categories</option>
+          {CATEGORIES.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
@@ -277,11 +305,25 @@ export default function AdminProductsPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
-                    Loading...
-                  </td>
-                </tr>
+                Array.from({ length: 5 }).map((_, i) => (
+                  <tr key={i} className="border-b">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-lg bg-gray-100 animate-pulse" />
+                        <div className="space-y-1.5">
+                          <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
+                          <div className="h-3 w-20 bg-gray-100 rounded animate-pulse" />
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3"><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-14 bg-gray-100 rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-8 bg-gray-100 rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-5 w-12 bg-gray-100 rounded-full animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></td>
+                  </tr>
+                ))
               ) : products.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
@@ -377,6 +419,55 @@ export default function AdminProductsPage() {
           </table>
         </div>
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-gray-500">
+            Showing {((page - 1) * ITEMS_PER_PAGE) + 1}–{Math.min(page * ITEMS_PER_PAGE, total)} of {total}
+          </p>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Previous
+            </button>
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+              let pageNum: number;
+              if (totalPages <= 5) {
+                pageNum = i + 1;
+              } else if (page <= 3) {
+                pageNum = i + 1;
+              } else if (page >= totalPages - 2) {
+                pageNum = totalPages - 4 + i;
+              } else {
+                pageNum = page - 2 + i;
+              }
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                    page === pageNum
+                      ? "bg-black text-white"
+                      : "border border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       <Modal
         isOpen={showModal}
