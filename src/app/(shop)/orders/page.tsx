@@ -43,7 +43,7 @@ export default function OrdersPage() {
 
   function getStatusStyle(value: string) {
     const status = ORDER_STATUSES.find((s) => s.value === value);
-    return status?.color ?? "text-gray-600 bg-gray-50";
+    return status?.color ?? "text-charcoal-muted bg-ivory-dark/50";
   }
 
   function getStatusLabel(value: string) {

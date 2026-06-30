@@ -34,13 +34,13 @@ export default async function SearchPage({ searchParams }: Props) {
         <h1 className="text-2xl md:text-3xl font-semibold">
           {query ? (
             <>
-              Search results for &ldquo;<span className="text-gray-500">{query}</span>&rdquo;
+              Search results for &ldquo;<span className="text-charcoal-muted">{query}</span>&rdquo;
             </>
           ) : (
             "All Products"
           )}
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-charcoal-muted mt-1">
           {result.total} {result.total === 1 ? "product" : "products"} found
         </p>
       </div>

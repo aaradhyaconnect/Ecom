@@ -145,14 +145,14 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-ivory px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
           <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-black">
             <LayoutDashboard className="h-6 w-6 text-white" />
           </div>
           <h1 className="text-2xl font-bold">Admin Login</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-charcoal-muted">
             Sign in to manage your store
           </p>
         </div>
@@ -161,12 +161,12 @@ export default function AdminLoginPage() {
           onSubmit={method === "password" ? handlePasswordLogin : (e) => { e.preventDefault(); handleVerifyOTP(); }}
           className="space-y-4 rounded-2xl bg-white p-6 shadow-sm border"
         >
-          <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-2">
+          <div className="flex gap-1 p-1 bg-ivory-dark mb-2">
             <button
               type="button"
               onClick={() => setMethod("password")}
               className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${
-                method === "password" ? "bg-white text-black shadow-sm" : "text-gray-500"
+                method === "password" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
               }`}
             >
               Password
@@ -175,7 +175,7 @@ export default function AdminLoginPage() {
               type="button"
               onClick={() => setMethod("otp")}
               className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${
-                method === "otp" ? "bg-white text-black shadow-sm" : "text-gray-500"
+                method === "otp" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
               }`}
             >
               OTP
@@ -206,7 +206,7 @@ export default function AdminLoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-9 text-gray-400 hover:text-gray-600"
+                  className="absolute right-3 top-9 text-charcoal-muted/60 hover:text-charcoal"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -214,12 +214,12 @@ export default function AdminLoginPage() {
             </>
           ) : !otpSent ? (
             <>
-              <div className="flex gap-2 p-1 bg-gray-100 rounded-lg">
+              <div className="flex gap-2 p-1 bg-ivory-dark">
                 <button
                   type="button"
                   onClick={() => setOtpMethod("email")}
                   className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                    otpMethod === "email" ? "bg-white text-black shadow-sm" : "text-gray-500"
+                    otpMethod === "email" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
                   }`}
                 >
                   <Mail className="h-3.5 w-3.5" /> Email
@@ -228,7 +228,7 @@ export default function AdminLoginPage() {
                   type="button"
                   onClick={() => setOtpMethod("phone")}
                   className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                    otpMethod === "phone" ? "bg-white text-black shadow-sm" : "text-gray-500"
+                    otpMethod === "phone" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
                   }`}
                 >
                   <Phone className="h-3.5 w-3.5" /> Phone
@@ -280,7 +280,7 @@ export default function AdminLoginPage() {
                       }
                     }}
                     name={`otp-${index}`}
-                    className="w-11 h-12 text-center text-lg font-semibold border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black"
+                    className="w-11 h-12 text-center text-lg font-semibold border border-ivory-dark rounded-lg focus:border-gold/60 focus:ring-0"
                   />
                 ))}
               </div>
@@ -290,7 +290,7 @@ export default function AdminLoginPage() {
               <button
                 type="button"
                 onClick={() => { setOtpSent(false); setOtp(["", "", "", "", "", ""]); }}
-                className="text-xs text-gray-500 hover:text-black mx-auto block"
+                className="text-xs text-charcoal-muted hover:text-charcoal mx-auto block"
               >
                 Change {otpMethod}
               </button>
@@ -306,10 +306,10 @@ export default function AdminLoginPage() {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
+            <div className="w-full border-t border-ivory-dark" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-gray-50 px-4 text-gray-400">or</span>
+            <span className="bg-ivory px-4 text-charcoal-muted/60">or</span>
           </div>
         </div>
 

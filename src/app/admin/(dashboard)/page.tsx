@@ -20,11 +20,13 @@ export default async function AdminDashboardPage() {
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString();
 
-  const [ordersAll, ordersToday, ordersMonth, ordersLastMonth] = await Promise.all([
+  const [ordersAll, ordersToday, ordersMonth, ordersLastMonth, productsCount, customersCount] = await Promise.all([
     supabase.from("orders").select("total, order_status, created_at"),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", todayStart),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", monthStart),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", lastMonthStart).lte("created_at", lastMonthEnd),
+    supabase.from("products").select("*", { count: "exact", head: true }),
+    supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "customer"),
   ]);
 
   const allOrders = ordersAll.data || [];
@@ -55,8 +57,8 @@ export default async function AdminDashboardPage() {
   const analytics: AnalyticsSummary = {
     total_revenue: totalRevenue,
     total_orders: allOrders.length,
-    total_customers: 0,
-    total_products: 0,
+    total_customers: customersCount.count || 0,
+    total_products: productsCount.count || 0,
     revenue_today: todayOrders
       .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
       .reduce((sum, o) => sum + (o.total || 0), 0),

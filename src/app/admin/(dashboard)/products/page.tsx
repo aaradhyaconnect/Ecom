@@ -253,8 +253,8 @@ export default function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Products</h1>
-          <p className="text-sm text-gray-500">
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Products</h1>
+          <p className="text-sm text-charcoal-muted">
             Manage your product catalog
           </p>
         </div>
@@ -266,19 +266,19 @@ export default function AdminProductsPage() {
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted" />
           <input
             type="text"
             placeholder="Search products..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
+            className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0 outline-none transition-colors bg-ivory text-charcoal placeholder:text-charcoal-muted"
           />
         </div>
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}
-          className="rounded-lg border border-gray-300 py-2.5 px-3 text-sm focus:ring-2 focus:ring-black focus:border-black"
+          className="border border-ivory-dark py-2.5 px-3 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
         >
           <option value="">All Categories</option>
           {CATEGORIES.map((c) => (
@@ -289,11 +289,11 @@ export default function AdminProductsPage() {
         </select>
       </div>
 
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      <div className="border border-ivory-dark bg-ivory overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500">
+              <tr className="border-b border-ivory-dark bg-ivory-dark text-left text-xs font-medium text-charcoal-muted uppercase tracking-wider">
                 <th className="px-4 py-3">Product</th>
                 <th className="px-4 py-3">Category</th>
                 <th className="px-4 py-3">Price</th>
@@ -306,37 +306,37 @@ export default function AdminProductsPage() {
             <tbody>
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="border-b">
+                  <tr key={i} className="border-b border-ivory-dark">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-gray-100 animate-pulse" />
+                        <div className="h-10 w-10 bg-ivory-dark animate-pulse" />
                         <div className="space-y-1.5">
-                          <div className="h-4 w-32 bg-gray-100 rounded animate-pulse" />
-                          <div className="h-3 w-20 bg-gray-100 rounded animate-pulse" />
+                          <div className="h-4 w-32 bg-ivory-dark rounded animate-pulse" />
+                          <div className="h-3 w-20 bg-ivory-dark rounded animate-pulse" />
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3"><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-14 bg-gray-100 rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-8 bg-gray-100 rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-5 w-12 bg-gray-100 rounded-full animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-16 bg-gray-100 rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-16 bg-ivory-dark rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-14 bg-ivory-dark rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-8 bg-ivory-dark rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-5 w-12 bg-ivory-dark rounded-full animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-16 bg-ivory-dark rounded animate-pulse" /></td>
+                    <td className="px-4 py-3"><div className="h-4 w-16 bg-ivory-dark rounded animate-pulse" /></td>
                   </tr>
                 ))
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">
                     <Package className="mx-auto mb-2 h-8 w-8" />
                     No products found
                   </td>
                 </tr>
               ) : (
                 products.map((product) => (
-                  <tr key={product.id} className="border-b last:border-0 hover:bg-gray-50">
+                  <tr key={product.id} className="border-b border-ivory-dark last:border-0 hover:bg-ivory-dark/50 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center overflow-hidden">
+                        <div className="h-10 w-10 bg-ivory-dark flex items-center justify-center overflow-hidden">
                           {product.images[0] ? (
                             <img
                               src={product.images[0]}
@@ -344,26 +344,26 @@ export default function AdminProductsPage() {
                               className="h-full w-full object-cover"
                             />
                           ) : (
-                            <Package className="h-5 w-5 text-gray-400" />
+                            <Package className="h-5 w-5 text-charcoal-muted" />
                           )}
                         </div>
                         <div>
-                          <p className="font-medium truncate max-w-[200px]">
+                          <p className="font-medium truncate max-w-[200px] text-charcoal">
                             {product.name}
                           </p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-charcoal-muted">
                             {product.slug}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600 capitalize">
+                    <td className="px-4 py-3 text-charcoal-muted capitalize">
                       {product.category.replace("-", " ")}
                     </td>
-                    <td className="px-4 py-3 font-medium">
+                    <td className="px-4 py-3 font-medium text-charcoal">
                       {formatPrice(product.price)}
                       {product.compare_price && (
-                        <span className="ml-1 text-xs text-gray-400 line-through">
+                        <span className="ml-1 text-xs text-charcoal-muted line-through">
                           {formatPrice(product.compare_price)}
                         </span>
                       )}
@@ -373,7 +373,7 @@ export default function AdminProductsPage() {
                         className={
                           product.stock > 0
                             ? "text-green-600"
-                            : "text-red-600"
+                            : "text-rose-500"
                         }
                       >
                         {product.stock}
@@ -389,24 +389,24 @@ export default function AdminProductsPage() {
                         {!product.is_new &&
                           !product.is_best_seller &&
                           !product.is_sale && (
-                            <span className="text-xs text-gray-400">-</span>
+                            <span className="text-xs text-charcoal-muted">-</span>
                           )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">
+                    <td className="px-4 py-3 text-charcoal-muted text-xs">
                       {formatDate(product.created_at)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => openEdit(product)}
-                          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(product)}
-                          className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -422,14 +422,14 @@ export default function AdminProductsPage() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Showing {((page - 1) * ITEMS_PER_PAGE) + 1}–{Math.min(page * ITEMS_PER_PAGE, total)} of {total}
           </p>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 text-sm font-medium border border-ivory-dark hover:bg-ivory-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
@@ -448,10 +448,10 @@ export default function AdminProductsPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                  className={`w-9 h-9 text-sm font-medium transition-colors ${
                     page === pageNum
-                      ? "bg-black text-white"
-                      : "border border-gray-300 hover:bg-gray-50"
+                      ? "bg-charcoal text-ivory"
+                      : "border border-ivory-dark hover:bg-ivory-dark"
                   }`}
                 >
                   {pageNum}
@@ -461,7 +461,7 @@ export default function AdminProductsPage() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium border border-gray-300 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 text-sm font-medium border border-ivory-dark hover:bg-ivory-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>
@@ -484,7 +484,7 @@ export default function AdminProductsPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-charcoal mb-1">
               Description
             </label>
             <textarea
@@ -493,7 +493,7 @@ export default function AdminProductsPage() {
                 setForm({ ...form, description: e.target.value })
               }
               rows={3}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-black"
+              className="w-full border border-ivory-dark px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
             />
           </div>
 
@@ -535,7 +535,7 @@ export default function AdminProductsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-sm font-medium text-charcoal mb-2">
               Sizes
             </label>
             <div className="flex flex-wrap gap-2">
@@ -544,10 +544,10 @@ export default function AdminProductsPage() {
                   key={size}
                   type="button"
                   onClick={() => toggleSize(size)}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
+                  className={`px-3 py-1.5 text-sm font-medium border transition-colors ${
                     form.sizes.includes(size)
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-gray-700 border-gray-300 hover:border-black"
+                      ? "bg-charcoal text-ivory border-charcoal"
+                      : "bg-ivory text-charcoal border-ivory-dark hover:border-charcoal"
                   }`}
                 >
                   {size}
@@ -558,13 +558,13 @@ export default function AdminProductsPage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-charcoal">
                 Colors
               </label>
               <button
                 type="button"
                 onClick={addColor}
-                className="text-xs text-black hover:underline"
+                className="text-xs text-charcoal hover:text-gold-dark transition-colors"
               >
                 + Add Color
               </button>
@@ -581,12 +581,12 @@ export default function AdminProductsPage() {
                     type="color"
                     value={color.hex}
                     onChange={(e) => updateColor(i, "hex", e.target.value)}
-                    className="h-9 w-9 rounded border cursor-pointer"
+                    className="h-9 w-9 border border-ivory-dark cursor-pointer"
                   />
                   <button
                     type="button"
                     onClick={() => removeColor(i)}
-                    className="p-1 text-gray-400 hover:text-red-500"
+                    className="p-1 text-charcoal-muted hover:text-rose-500"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -597,13 +597,13 @@ export default function AdminProductsPage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-700">
+              <label className="block text-sm font-medium text-charcoal">
                 Images (URLs)
               </label>
               <button
                 type="button"
                 onClick={addImage}
-                className="text-xs text-black hover:underline"
+                className="text-xs text-charcoal hover:text-gold-dark transition-colors"
               >
                 + Add Image
               </button>
@@ -620,13 +620,13 @@ export default function AdminProductsPage() {
                     <button
                       type="button"
                       onClick={() => removeImage(i)}
-                      className="p-1 text-gray-400 hover:text-red-500"
+                      className="p-1 text-charcoal-muted hover:text-rose-500"
                     >
                       <X className="h-4 w-4" />
                     </button>
                   )}
                   {url && (
-                    <div className="h-9 w-9 rounded border overflow-hidden flex-shrink-0">
+                    <div className="h-9 w-9 border border-ivory-dark overflow-hidden flex-shrink-0">
                       <img
                         src={url}
                         alt=""
@@ -673,7 +673,7 @@ export default function AdminProductsPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-charcoal mb-1">
               Care Instructions
             </label>
             <textarea
@@ -682,7 +682,7 @@ export default function AdminProductsPage() {
                 setForm({ ...form, care_instructions: e.target.value })
               }
               rows={2}
-              className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:ring-2 focus:ring-black focus:border-black"
+              className="w-full border border-ivory-dark px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
             />
           </div>
 
@@ -694,9 +694,9 @@ export default function AdminProductsPage() {
                 onChange={(e) =>
                   setForm({ ...form, is_new: e.target.checked })
                 }
-                className="rounded border-gray-300"
+                className="border-ivory-dark accent-charcoal"
               />
-              <span className="text-sm">New Arrival</span>
+              <span className="text-sm text-charcoal">New Arrival</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -705,9 +705,9 @@ export default function AdminProductsPage() {
                 onChange={(e) =>
                   setForm({ ...form, is_best_seller: e.target.checked })
                 }
-                className="rounded border-gray-300"
+                className="border-ivory-dark accent-charcoal"
               />
-              <span className="text-sm">Best Seller</span>
+              <span className="text-sm text-charcoal">Best Seller</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
               <input
@@ -716,9 +716,9 @@ export default function AdminProductsPage() {
                 onChange={(e) =>
                   setForm({ ...form, is_sale: e.target.checked })
                 }
-                className="rounded border-gray-300"
+                className="border-ivory-dark accent-charcoal"
               />
-              <span className="text-sm">On Sale</span>
+              <span className="text-sm text-charcoal">On Sale</span>
             </label>
           </div>
         </div>

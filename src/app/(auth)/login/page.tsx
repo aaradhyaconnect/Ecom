@@ -93,19 +93,19 @@ export default function LoginPage() {
         <p className="text-charcoal-muted text-sm mt-1">Sign in to your HAINJU account</p>
       </div>
 
-      <div className="flex gap-1 p-1 bg-ivory-dark rounded-lg mb-6">
+      <div className="flex gap-1 p-1 bg-ivory-dark mb-6">
         <button
           onClick={() => setAuthMethod("password")}
-          className={`flex-1 py-2.5 rounded-md text-xs font-medium transition-colors ${
-            authMethod === "password" ? "bg-white text-charcoal shadow-sm" : "text-charcoal-muted"
+          className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
+            authMethod === "password" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
           }`}
         >
           Email & Password
         </button>
         <button
           onClick={() => setAuthMethod("otp")}
-          className={`flex-1 py-2.5 rounded-md text-xs font-medium transition-colors ${
-            authMethod === "otp" ? "bg-white text-charcoal shadow-sm" : "text-charcoal-muted"
+          className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
+            authMethod === "otp" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
           }`}
         >
           OTP
@@ -143,12 +143,12 @@ export default function LoginPage() {
           </>
         ) : (
           <>
-            <div className="flex gap-1 p-1 bg-ivory-dark rounded-lg">
+            <div className="flex gap-1 p-1 bg-ivory-dark">
               <button
                 type="button"
                 onClick={() => setOtpChannel("email")}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                  otpChannel === "email" ? "bg-white text-charcoal shadow-sm" : "text-charcoal-muted"
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+                  otpChannel === "email" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
                 }`}
               >
                 <Mail className="h-3.5 w-3.5" /> Email
@@ -156,8 +156,8 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setOtpChannel("phone")}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                  otpChannel === "phone" ? "bg-white text-charcoal shadow-sm" : "text-charcoal-muted"
+                className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+                  otpChannel === "phone" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
                 }`}
               >
                 <Phone className="h-3.5 w-3.5" /> Phone
@@ -192,10 +192,10 @@ export default function LoginPage() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-ivory-dark" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-ivory px-4 text-gray-400">or continue with</span>
+          <span className="bg-ivory px-4 text-charcoal-muted/60">or continue with</span>
         </div>
       </div>
 
@@ -209,9 +209,9 @@ export default function LoginPage() {
         Google
       </Button>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-charcoal-muted">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-medium text-black hover:underline">
+        <Link href="/register" className="font-medium text-charcoal hover:text-gold-dark transition-colors">
           Create one
         </Link>
       </p>

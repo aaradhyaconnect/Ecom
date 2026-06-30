@@ -168,7 +168,7 @@ export default function AdminCouponsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Coupons</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Create and manage discount coupons
           </p>
         </div>
@@ -178,11 +178,11 @@ export default function AdminCouponsPage() {
         </Button>
       </div>
 
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      <div className="border bg-ivory shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500">
+              <tr className="border-b bg-ivory-dark/50 text-left text-xs font-medium text-charcoal-muted">
                 <th className="px-4 py-3">Code</th>
                 <th className="px-4 py-3">Discount</th>
                 <th className="px-4 py-3">Usage</th>
@@ -195,20 +195,20 @@ export default function AdminCouponsPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
                     Loading...
                   </td>
                 </tr>
               ) : coupons.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
                     <Tag className="mx-auto mb-2 h-8 w-8" />
                     No coupons found
                   </td>
                 </tr>
               ) : (
                 coupons.map((coupon) => (
-                  <tr key={coupon.id} className="border-b last:border-0 hover:bg-gray-50">
+                  <tr key={coupon.id} className="border-b last:border-0 hover:bg-ivory-dark/50">
                     <td className="px-4 py-3">
                       <span className="font-mono font-bold text-sm">
                         {coupon.code}
@@ -219,7 +219,7 @@ export default function AdminCouponsPage() {
                         ? `${coupon.discount_value}%`
                         : `₹${coupon.discount_value}`}
                       {coupon.max_discount && (
-                        <span className="text-xs text-gray-400 ml-1">
+                        <span className="text-xs text-charcoal-muted/60 ml-1">
                           (max ₹{coupon.max_discount})
                         </span>
                       )}
@@ -238,25 +238,25 @@ export default function AdminCouponsPage() {
                           className={
                             isExpired(coupon.expires_at)
                               ? "text-red-500"
-                              : "text-gray-500"
+                              : "text-charcoal-muted"
                           }
                         >
                           {formatDate(coupon.expires_at)}
                           {isExpired(coupon.expires_at) && " (Expired)"}
                         </span>
                       ) : (
-                        <span className="text-gray-400">Never</span>
+                        <span className="text-charcoal-muted/60">Never</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
                       <button
                         onClick={() => toggleActive(coupon)}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          coupon.is_active ? "bg-green-500" : "bg-gray-300"
+                          coupon.is_active ? "bg-green-500" : "bg-ivory-dark"
                         }`}
                       >
                         <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          className={`inline-block h-4 w-4 transform rounded-full bg-ivory transition-transform ${
                             coupon.is_active ? "translate-x-6" : "translate-x-1"
                           }`}
                         />
@@ -266,13 +266,13 @@ export default function AdminCouponsPage() {
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => openEdit(coupon)}
-                          className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(coupon)}
-                          className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className="p-2 text-charcoal-muted hover:bg-red-50 hover:text-red-600 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>
@@ -374,7 +374,7 @@ export default function AdminCouponsPage() {
               onChange={(e) =>
                 setForm({ ...form, is_active: e.target.checked })
               }
-              className="rounded border-gray-300"
+              className="border-ivory-dark"
             />
             <span className="text-sm font-medium">Active</span>
           </label>

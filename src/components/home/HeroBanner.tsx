@@ -2,10 +2,21 @@
 
 import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
-const slides = [
+interface BannerSlide {
+  title: string;
+  subtitle: string;
+  description: string;
+  cta: string;
+  href: string;
+  image?: string;
+  accent: string;
+}
+
+const fallbackSlides: BannerSlide[] = [
   {
     title: "Elevate Your Style",
     subtitle: "Self-Designed Clothing Collection",
@@ -32,11 +43,12 @@ const slides = [
   },
 ];
 
-export function HeroBanner() {
+export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] }) {
+  const slides = initialSlides && initialSlides.length > 0 ? initialSlides : fallbackSlides;
   const [current, setCurrent] = useState(0);
 
-  const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), []);
-  const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), []);
+  const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), [slides.length]);
+  const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), [slides.length]);
 
   useEffect(() => {
     const timer = setInterval(next, 6000);
@@ -53,7 +65,21 @@ export function HeroBanner() {
             i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           )}
         >
-          <div className={cn("absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal-light to-charcoal", slide.accent)} />
+          {slide.image ? (
+            <div className="absolute inset-0">
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={i === 0}
+              />
+              <div className="absolute inset-0 bg-charcoal/60" />
+            </div>
+          ) : (
+            <div className={cn("absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal-light to-charcoal", slide.accent)} />
+          )}
 
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: `radial-gradient(circle at 25% 25%, rgba(197,165,90,0.3) 0%, transparent 50%),

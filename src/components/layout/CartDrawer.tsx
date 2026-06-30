@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useUIStore } from "@/lib/store/ui";
@@ -44,13 +45,23 @@ export function CartDrawer() {
               <>
                 <div className="flex-1 overflow-auto p-4 space-y-3">
                   {items.map((item) => (
-                    <div key={item.id} className="flex gap-4 bg-white p-3 border border-ivory-dark/50">
-                      <div className="w-20 h-24 overflow-hidden bg-ivory-dark flex-shrink-0">
-                        {item.product.images?.[0] && (
-                          <img
+                    <div key={item.id} className="flex gap-4 bg-ivory p-3 border border-ivory-dark/50">
+                      <div className="w-20 h-24 overflow-hidden bg-ivory-dark flex-shrink-0 relative">
+                        {item.product.images?.[0] ? (
+                          <Image
                             src={item.product.images[0]}
                             alt={item.product.name}
-                            className="w-full h-full object-cover"
+                            fill
+                            sizes="80px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <Image
+                            src="/placeholder.svg"
+                            alt={item.product.name}
+                            fill
+                            sizes="80px"
+                            className="object-cover"
                           />
                         )}
                       </div>

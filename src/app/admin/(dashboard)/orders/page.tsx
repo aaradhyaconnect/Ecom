@@ -120,7 +120,7 @@ export default function AdminOrdersPage() {
 
   const statusColor = (status: string) => {
     const s = ORDER_STATUSES.find((o) => o.value === status);
-    return s?.color || "text-gray-600 bg-gray-50";
+    return s?.color || "text-charcoal-muted bg-ivory-dark/50";
   };
 
   const exportOrders = () => {
@@ -149,7 +149,7 @@ export default function AdminOrdersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Orders</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Manage and track customer orders
           </p>
         </div>
@@ -160,13 +160,13 @@ export default function AdminOrdersPage() {
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted/60" />
           <input
             type="text"
             placeholder="Search by order ID or customer..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
+            className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0"
           />
         </div>
         <div className="w-full sm:w-48">
@@ -178,11 +178,11 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      <div className="border bg-ivory shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500">
+              <tr className="border-b bg-ivory-dark/50 text-left text-xs font-medium text-charcoal-muted">
                 <th className="px-4 py-3">Order ID</th>
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Status</th>
@@ -195,13 +195,13 @@ export default function AdminOrdersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
                     Loading...
                   </td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
                     <ShoppingCart className="mx-auto mb-2 h-8 w-8" />
                     No orders found
                   </td>
@@ -210,7 +210,7 @@ export default function AdminOrdersPage() {
                 orders.map((order) => (
                   <tr
                     key={order.id}
-                    className="border-b last:border-0 hover:bg-gray-50"
+                    className="border-b last:border-0 hover:bg-ivory-dark/50"
                   >
                     <td className="px-4 py-3 font-medium">
                       {order.order_id}
@@ -221,12 +221,12 @@ export default function AdminOrdersPage() {
                           <p className="font-medium">
                             {((order as unknown as Record<string, unknown>).profiles as Record<string, unknown>)?.name as string || "N/A"}
                           </p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-xs text-charcoal-muted/60">
                             {((order as unknown as Record<string, unknown>).profiles as Record<string, unknown>)?.email as string || ""}
                           </p>
                         </div>
                       ) : (
-                        <span className="text-gray-400">N/A</span>
+                        <span className="text-charcoal-muted/60">N/A</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -236,7 +236,7 @@ export default function AdminOrdersPage() {
                           handleStatusChange(order.id, e.target.value)
                         }
                         disabled={updatingId === order.id}
-                        className={`rounded-lg px-2 py-1 text-xs font-medium border-0 cursor-pointer ${statusColor(order.order_status)}`}
+                        className={`px-2 py-1 text-xs font-medium border-0 cursor-pointer ${statusColor(order.order_status)}`}
                       >
                         {ORDER_STATUSES.map((s) => (
                           <option key={s.value} value={s.value}>
@@ -261,13 +261,13 @@ export default function AdminOrdersPage() {
                     <td className="px-4 py-3 font-medium">
                       {formatPrice(order.total)}
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-500">
+                    <td className="px-4 py-3 text-xs text-charcoal-muted">
                       {formatDate(order.created_at)}
                     </td>
                     <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => viewOrder(order)}
-                        className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                        className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
                       >
                         <Eye className="h-4 w-4" />
                       </button>
@@ -282,7 +282,7 @@ export default function AdminOrdersPage() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Page {page} of {totalPages} ({total} orders)
           </p>
           <div className="flex items-center gap-2">
@@ -316,14 +316,14 @@ export default function AdminOrdersPage() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-xs text-gray-500 mb-1">Order Status</p>
+                <p className="text-xs text-charcoal-muted mb-1">Order Status</p>
                 <select
                   value={selectedOrder.order_status}
                   onChange={(e) =>
                     handleStatusChange(selectedOrder.id, e.target.value)
                   }
                   disabled={updatingId === selectedOrder.id}
-                  className={`rounded-lg px-3 py-1.5 text-sm font-medium border cursor-pointer ${statusColor(selectedOrder.order_status)}`}
+                  className={`px-3 py-1.5 text-sm font-medium border cursor-pointer ${statusColor(selectedOrder.order_status)}`}
                 >
                   {ORDER_STATUSES.map((s) => (
                     <option key={s.value} value={s.value}>
@@ -333,40 +333,40 @@ export default function AdminOrdersPage() {
                 </select>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-1">Payment</p>
+                <p className="text-xs text-charcoal-muted mb-1">Payment</p>
                 <p className="text-sm font-medium capitalize">
                   {selectedOrder.payment_method} ({selectedOrder.payment_status})
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-1">Subtotal</p>
+                <p className="text-xs text-charcoal-muted mb-1">Subtotal</p>
                 <p className="text-sm font-medium">
                   {formatPrice(selectedOrder.subtotal)}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 mb-1">Total</p>
+                <p className="text-xs text-charcoal-muted mb-1">Total</p>
                 <p className="text-sm font-bold">
                   {formatPrice(selectedOrder.total)}
                 </p>
               </div>
               {selectedOrder.coupon_code && (
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Coupon</p>
+                  <p className="text-xs text-charcoal-muted mb-1">Coupon</p>
                   <p className="text-sm font-medium">
                     {selectedOrder.coupon_code} (-{formatPrice(selectedOrder.discount)})
                   </p>
                 </div>
               )}
               <div>
-                <p className="text-xs text-gray-500 mb-1">Date</p>
+                <p className="text-xs text-charcoal-muted mb-1">Date</p>
                 <p className="text-sm">{formatDate(selectedOrder.created_at)}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-xs font-medium text-gray-500 mb-1">Shipping Address</p>
+              <div className="bg-ivory-dark/50 p-3">
+                <p className="text-xs font-medium text-charcoal-muted mb-1">Shipping Address</p>
                 <p className="text-sm">{selectedOrder.shipping_address.full_name}</p>
                 <p className="text-sm">{selectedOrder.shipping_address.phone}</p>
                 <p className="text-sm">{selectedOrder.shipping_address.street}</p>
@@ -376,8 +376,8 @@ export default function AdminOrdersPage() {
                   {selectedOrder.shipping_address.pincode}
                 </p>
               </div>
-              <div className="rounded-lg bg-gray-50 p-3">
-                <p className="text-xs font-medium text-gray-500 mb-1">Billing Address</p>
+              <div className="bg-ivory-dark/50 p-3">
+                <p className="text-xs font-medium text-charcoal-muted mb-1">Billing Address</p>
                 <p className="text-sm">{selectedOrder.billing_address.full_name}</p>
                 <p className="text-sm">{selectedOrder.billing_address.phone}</p>
                 <p className="text-sm">{selectedOrder.billing_address.street}</p>
@@ -390,18 +390,18 @@ export default function AdminOrdersPage() {
             </div>
 
             <div>
-              <p className="text-xs font-medium text-gray-500 mb-2">Items</p>
+              <p className="text-xs font-medium text-charcoal-muted mb-2">Items</p>
               <div className="space-y-2">
                 {selectedOrder.items.map((item, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                    className="flex items-center justify-between bg-ivory-dark/50 p-3"
                   >
                     <div>
                       <p className="text-sm font-medium">
                         {item.product?.name || "Product"}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-charcoal-muted">
                         Size: {item.size} | Color: {item.color} | Qty:{" "}
                         {item.quantity}
                       </p>

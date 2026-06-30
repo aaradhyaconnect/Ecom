@@ -29,10 +29,10 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r bg-white lg:block">
-      <div className="flex h-16 items-center border-b px-6">
-        <Link href="/admin" className="text-xl font-bold tracking-tight">
-          HAINJU<span className="text-gray-400"> ADMIN</span>
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-ivory-dark bg-ivory lg:block">
+      <div className="flex h-16 items-center border-b border-ivory-dark px-6">
+        <Link href="/admin" className="text-xl font-serif font-bold tracking-[0.15em] text-charcoal">
+          HAINJU<span className="text-charcoal-muted font-sans text-xs tracking-[0.3em] ml-2">ADMIN</span>
         </Link>
       </div>
       <nav className="space-y-1 p-4">
@@ -46,10 +46,10 @@ export function AdminSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors duration-300",
                 isActive
-                  ? "bg-black text-white"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-black"
+                  ? "bg-charcoal text-ivory"
+                  : "text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal"
               )}
             >
               <item.icon className="h-4 w-4" />

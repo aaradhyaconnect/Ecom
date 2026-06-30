@@ -24,7 +24,7 @@ export function Rating({ rating, reviewCount, size = "sm", showCount }: RatingPr
         />
       ))}
       {showCount && reviewCount !== undefined && (
-        <span className="text-xs text-gray-500 ml-1">({reviewCount})</span>
+        <span className="text-xs text-charcoal-muted ml-1">({reviewCount})</span>
       )}
     </div>
   );

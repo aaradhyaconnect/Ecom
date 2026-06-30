@@ -177,7 +177,7 @@ export default function AdminBannersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Banners</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Manage homepage banners and promotions
           </p>
         </div>
@@ -188,11 +188,11 @@ export default function AdminBannersPage() {
       </div>
 
       {loading ? (
-        <div className="rounded-xl border bg-white p-12 text-center text-gray-400">
+        <div className="border bg-ivory p-12 text-center text-charcoal-muted/60">
           Loading...
         </div>
       ) : banners.length === 0 ? (
-        <div className="rounded-xl border bg-white p-12 text-center text-gray-400">
+        <div className="border bg-ivory p-12 text-center text-charcoal-muted/60">
           <Image className="mx-auto mb-2 h-8 w-8" />
           No banners yet
         </div>
@@ -201,28 +201,28 @@ export default function AdminBannersPage() {
           {banners.map((banner, index) => (
             <div
               key={banner.id}
-              className="rounded-xl border bg-white shadow-sm overflow-hidden"
+              className="border bg-ivory shadow-sm overflow-hidden"
             >
               <div className="flex items-start gap-4 p-4">
                 <div className="flex flex-col items-center gap-1 pt-1">
                   <button
                     onClick={() => moveBanner(index, "up")}
                     disabled={index === 0}
-                    className="p-1 text-gray-400 hover:text-black disabled:opacity-30"
+                    className="p-1 text-charcoal-muted/60 hover:text-charcoal disabled:opacity-30"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
                   </button>
-                  <span className="text-xs font-mono text-gray-400">{banner.order}</span>
+                  <span className="text-xs font-mono text-charcoal-muted/60">{banner.order}</span>
                   <button
                     onClick={() => moveBanner(index, "down")}
                     disabled={index === banners.length - 1}
-                    className="p-1 text-gray-400 hover:text-black disabled:opacity-30"
+                    className="p-1 text-charcoal-muted/60 hover:text-charcoal disabled:opacity-30"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </button>
                 </div>
 
-                <div className="h-20 w-36 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                <div className="h-20 w-36 bg-ivory-dark overflow-hidden flex-shrink-0">
                   {banner.image ? (
                     <img
                       src={banner.image}
@@ -231,7 +231,7 @@ export default function AdminBannersPage() {
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
-                      <Image className="h-6 w-6 text-gray-300" />
+                      <Image className="h-6 w-6 text-charcoal-muted/40" />
                     </div>
                   )}
                 </div>
@@ -240,13 +240,13 @@ export default function AdminBannersPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium truncate">{banner.title}</h3>
                     {!banner.is_active && (
-                      <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded">
+                      <span className="text-xs text-charcoal-muted/60 bg-ivory-dark px-2 py-0.5 rounded">
                         Hidden
                       </span>
                     )}
                   </div>
                   {banner.subtitle && (
-                    <p className="text-sm text-gray-500 truncate">
+                    <p className="text-sm text-charcoal-muted truncate">
                       {banner.subtitle}
                     </p>
                   )}
@@ -260,7 +260,7 @@ export default function AdminBannersPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => toggleActive(banner)}
-                    className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 transition-colors"
+                    className="p-2 text-charcoal-muted hover:bg-ivory-dark transition-colors"
                     title={banner.is_active ? "Hide" : "Show"}
                   >
                     {banner.is_active ? (
@@ -271,13 +271,13 @@ export default function AdminBannersPage() {
                   </button>
                   <button
                     onClick={() => openEdit(banner)}
-                    className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-black transition-colors"
+                    className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
                   >
                     <Pencil className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDelete(banner)}
-                    className="rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                    className="p-2 text-charcoal-muted hover:bg-red-50 hover:text-red-600 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -313,7 +313,7 @@ export default function AdminBannersPage() {
             required
           />
           {form.image && (
-            <div className="h-32 rounded-lg bg-gray-100 overflow-hidden">
+            <div className="h-32 bg-ivory-dark overflow-hidden">
               <img
                 src={form.image}
                 alt="Preview"
@@ -343,7 +343,7 @@ export default function AdminBannersPage() {
               onChange={(e) =>
                 setForm({ ...form, is_active: e.target.checked })
               }
-              className="rounded border-gray-300"
+              className="rounded border-ivory-dark"
             />
             <span className="text-sm font-medium">Active</span>
           </label>

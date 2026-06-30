@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Search, X, ArrowUpRight } from "lucide-react";
 import { useUIStore } from "@/lib/store/ui";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -98,12 +99,22 @@ export function SearchModal() {
                   onClick={closeSearch}
                   className="flex items-center gap-4 p-3 hover:bg-ivory-dark/50 transition-colors group"
                 >
-                  <div className="w-16 h-20 overflow-hidden bg-ivory-dark flex-shrink-0">
-                    {product.images?.[0] && (
-                      <img
+                  <div className="w-16 h-20 overflow-hidden bg-ivory-dark flex-shrink-0 relative">
+                    {product.images?.[0] ? (
+                      <Image
                         src={product.images[0]}
                         alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        sizes="64px"
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <Image
+                        src="/placeholder.svg"
+                        alt={product.name}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
                       />
                     )}
                   </div>

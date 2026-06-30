@@ -97,7 +97,7 @@ export default function AdminCustomersPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Customers</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             View and manage your customers
           </p>
         </div>
@@ -108,21 +108,21 @@ export default function AdminCustomersPage() {
       </div>
 
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted/60" />
         <input
           type="text"
           placeholder="Search by name or email..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="w-full rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-black focus:border-black"
+          className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0"
         />
       </div>
 
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      <div className="border bg-ivory shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs font-medium text-gray-500">
+              <tr className="border-b bg-ivory-dark/50 text-left text-xs font-medium text-charcoal-muted">
                 <th className="px-4 py-3">Customer</th>
                 <th className="px-4 py-3">Email</th>
                 <th className="px-4 py-3">Phone</th>
@@ -135,37 +135,37 @@ export default function AdminCustomersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
                     Loading...
                   </td>
                 </tr>
               ) : customers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-gray-400">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
                     <Users className="mx-auto mb-2 h-8 w-8" />
                     No customers found
                   </td>
                 </tr>
               ) : (
                 customers.map((customer) => (
-                  <tr key={customer.id} className="border-b last:border-0 hover:bg-gray-50">
+                  <tr key={customer.id} className="border-b last:border-0 hover:bg-ivory-dark/50">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-gray-200 flex items-center justify-center text-sm font-medium">
+                        <div className="h-9 w-9 rounded-full bg-ivory-dark flex items-center justify-center text-sm font-medium">
                           {getInitials(customer.name)}
                         </div>
                         <span className="font-medium">{customer.name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">{customer.email}</td>
-                    <td className="px-4 py-3 text-gray-500">
+                    <td className="px-4 py-3 text-charcoal-muted">{customer.email}</td>
+                    <td className="px-4 py-3 text-charcoal-muted">
                       {customer.phone || "-"}
                     </td>
                     <td className="px-4 py-3 font-medium">{customer.order_count}</td>
                     <td className="px-4 py-3 font-medium">
                       {formatPrice(customer.total_spent)}
                     </td>
-                    <td className="px-4 py-3 text-xs text-gray-500">
+                    <td className="px-4 py-3 text-xs text-charcoal-muted">
                       {formatDate(customer.created_at)}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -187,7 +187,7 @@ export default function AdminCustomersPage() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Page {page} of {totalPages} ({total} customers)
           </p>
           <div className="flex items-center gap-2">
@@ -220,12 +220,12 @@ export default function AdminCustomersPage() {
         {selectedCustomer && (
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-full bg-gray-200 flex items-center justify-center text-lg font-bold">
+              <div className="h-14 w-14 rounded-full bg-ivory-dark flex items-center justify-center text-lg font-bold">
                 {getInitials(selectedCustomer.name)}
               </div>
               <div>
                 <h3 className="text-lg font-bold">{selectedCustomer.name}</h3>
-                <div className="flex items-center gap-3 text-sm text-gray-500">
+                <div className="flex items-center gap-3 text-sm text-charcoal-muted">
                   <span className="flex items-center gap-1">
                     <Mail className="h-3.5 w-3.5" />
                     {selectedCustomer.email}
@@ -241,15 +241,15 @@ export default function AdminCustomersPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="rounded-lg bg-gray-50 p-4">
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+              <div className="bg-ivory-dark/50 p-4">
+                <div className="flex items-center gap-2 text-sm text-charcoal-muted mb-1">
                   <ShoppingBag className="h-4 w-4" />
                   Total Orders
                 </div>
                 <p className="text-2xl font-bold">{selectedCustomer.order_count}</p>
               </div>
-              <div className="rounded-lg bg-gray-50 p-4">
-                <div className="flex items-center gap-2 text-sm text-gray-500 mb-1">
+              <div className="bg-ivory-dark/50 p-4">
+                <div className="flex items-center gap-2 text-sm text-charcoal-muted mb-1">
                   <IndianRupee className="h-4 w-4" />
                   Total Spent
                 </div>
@@ -260,13 +260,13 @@ export default function AdminCustomersPage() {
             </div>
 
             <div>
-              <p className="text-sm font-medium text-gray-500 mb-2">
+              <p className="text-sm font-medium text-charcoal-muted mb-2">
                 Recent Orders
               </p>
               {ordersLoading ? (
-                <p className="text-sm text-gray-400">Loading...</p>
+                <p className="text-sm text-charcoal-muted/60">Loading...</p>
               ) : customerOrders.length === 0 ? (
-                <p className="text-sm text-gray-400">No orders yet</p>
+                <p className="text-sm text-charcoal-muted/60">No orders yet</p>
               ) : (
                 <div className="space-y-2">
                   {(customerOrders as Array<{
@@ -277,11 +277,11 @@ export default function AdminCustomersPage() {
                   }>).slice(0, 5).map((order) => (
                     <div
                       key={order.order_id}
-                      className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                      className="flex items-center justify-between bg-ivory-dark/50 p-3"
                     >
                       <div>
                         <p className="text-sm font-medium">{order.order_id}</p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-charcoal-muted">
                           {formatDate(order.created_at)}
                         </p>
                       </div>
@@ -289,7 +289,7 @@ export default function AdminCustomersPage() {
                         <p className="text-sm font-medium">
                           {formatPrice(order.total)}
                         </p>
-                        <p className="text-xs text-gray-500 capitalize">
+                        <p className="text-xs text-charcoal-muted capitalize">
                           {order.order_status}
                         </p>
                       </div>

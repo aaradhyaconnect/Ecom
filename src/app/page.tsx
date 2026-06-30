@@ -3,11 +3,28 @@ import { CategoryShowcase } from "@/components/home/CategoryShowcase";
 import { Features } from "@/components/home/Features";
 import { Newsletter } from "@/components/home/Newsletter";
 import { ProductSection } from "@/components/home/ProductSection";
+import { getBanners } from "@/lib/supabase/queries";
 
-export default function HomePage() {
+export default async function HomePage() {
+  let bannerSlides;
+  try {
+    const banners = await getBanners();
+    bannerSlides = banners.map((b) => ({
+      title: b.title,
+      subtitle: b.subtitle || "",
+      description: "",
+      cta: "Shop Now",
+      href: b.link || "/products/new-arrivals",
+      image: b.image || undefined,
+      accent: "from-amber-900/20",
+    }));
+  } catch {
+    bannerSlides = undefined;
+  }
+
   return (
     <>
-      <HeroBanner />
+      <HeroBanner initialSlides={bannerSlides} />
       <Features />
       <ProductSection
         title="New Arrivals"

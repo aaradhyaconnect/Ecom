@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, ShoppingBag, Star } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
@@ -55,12 +56,22 @@ export function ProductCard({ product, priority }: ProductCardProps) {
     >
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[3/4] overflow-hidden bg-ivory-dark mb-4">
-          {displayImage && (
-            <img
+          {displayImage ? (
+            <Image
               src={displayImage}
               alt={product.name}
-              loading={priority ? "eager" : "lazy"}
-              className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              priority={priority}
+              className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
+            />
+          ) : (
+            <Image
+              src="/placeholder.svg"
+              alt={product.name}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover"
             />
           )}
 

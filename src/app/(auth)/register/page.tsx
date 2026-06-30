@@ -151,7 +151,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-gray-400 hover:text-gray-600 transition-colors"
+                className="absolute right-3 top-[38px] text-charcoal-muted/60 hover:text-charcoal transition-colors"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -177,10 +177,10 @@ export default function RegisterPage() {
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200" />
+          <div className="w-full border-t border-ivory-dark" />
         </div>
         <div className="relative flex justify-center text-xs">
-          <span className="bg-ivory px-4 text-gray-400">or continue with</span>
+          <span className="bg-ivory px-4 text-charcoal-muted/60">or continue with</span>
         </div>
       </div>
 
@@ -194,9 +194,9 @@ export default function RegisterPage() {
         Google
       </Button>
 
-      <p className="mt-6 text-center text-sm text-gray-500">
+      <p className="mt-6 text-center text-sm text-charcoal-muted">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-black hover:underline">
+        <Link href="/login" className="font-medium text-charcoal hover:text-gold-dark transition-colors">
           Sign in
         </Link>
       </p>

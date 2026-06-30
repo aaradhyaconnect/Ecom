@@ -42,7 +42,7 @@ export default function AdminAnalyticsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-400">Loading analytics...</div>
+        <div className="text-charcoal-muted/60">Loading analytics...</div>
       </div>
     );
   }
@@ -93,7 +93,7 @@ export default function AdminAnalyticsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-charcoal-muted">
           Detailed insights into your store performance
         </p>
       </div>
@@ -102,22 +102,22 @@ export default function AdminAnalyticsPage() {
         {overviewCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-xl border bg-white p-5 shadow-sm"
+            className="border bg-ivory p-5 shadow-sm"
           >
             <div className="flex items-center justify-between">
-              <div className="rounded-lg bg-gray-100 p-2">
+              <div className="bg-ivory-dark p-2">
                 <card.icon className="h-5 w-5" />
               </div>
             </div>
             <p className="mt-3 text-2xl font-bold">{card.value}</p>
-            <p className="text-xs text-gray-500">{card.label}</p>
+            <p className="text-xs text-charcoal-muted">{card.label}</p>
             <p className="text-xs text-green-600 mt-1">{card.secondary}</p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border bg-white p-5 shadow-sm">
+        <div className="border bg-ivory p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">
             Revenue (Last 30 Days)
           </h2>
@@ -128,13 +128,13 @@ export default function AdminAnalyticsPage() {
                 className="flex-1 rounded-t bg-black/80 hover:bg-black transition-colors relative group min-w-[4px]"
                 style={{ height: `${(day.revenue / maxRevenue) * 100}%` }}
               >
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-charcoal text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
                   {formatDateShort(day.date)}: {formatPrice(day.revenue)}
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-2 flex justify-between text-[10px] text-gray-400">
+          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted/60">
             <span>
               {analytics.revenue_by_day[0]?.date?.slice(5)}
             </span>
@@ -144,7 +144,7 @@ export default function AdminAnalyticsPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border bg-white p-5 shadow-sm">
+        <div className="border bg-ivory p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">Orders by Status</h2>
           <div className="space-y-3">
             {analytics.orders_by_status.map((item) => (
@@ -153,7 +153,7 @@ export default function AdminAnalyticsPage() {
                   <span className="capitalize">{item.status}</span>
                   <span className="font-medium">{item.count}</span>
                 </div>
-                <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                <div className="h-2 rounded-full bg-ivory-dark overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{
@@ -165,7 +165,7 @@ export default function AdminAnalyticsPage() {
               </div>
             ))}
             {analytics.orders_by_status.length === 0 && (
-              <p className="text-sm text-gray-400">No orders yet</p>
+              <p className="text-sm text-charcoal-muted/60">No orders yet</p>
             )}
           </div>
 
@@ -184,7 +184,7 @@ export default function AdminAnalyticsPage() {
                       backgroundColor: statusColors[item.status] || "#6b7280",
                     }}
                   />
-                  <span className="text-xs capitalize text-gray-600">
+                  <span className="text-xs capitalize text-charcoal-muted">
                     {item.status} ({pct}%)
                   </span>
                 </div>
@@ -194,12 +194,12 @@ export default function AdminAnalyticsPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-white p-5 shadow-sm">
+      <div className="border bg-ivory p-5 shadow-sm">
         <h2 className="mb-4 text-sm font-semibold">Top Selling Products</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-xs font-medium text-gray-500">
+              <tr className="border-b text-left text-xs font-medium text-charcoal-muted">
                 <th className="pb-3 pr-4">#</th>
                 <th className="pb-3 pr-4">Product</th>
                 <th className="pb-3 pr-4 text-right">Units Sold</th>
@@ -209,7 +209,7 @@ export default function AdminAnalyticsPage() {
             <tbody>
               {analytics.top_products.map((product, i) => (
                 <tr key={product.name} className="border-b last:border-0">
-                  <td className="py-3 pr-4 text-gray-400">{i + 1}</td>
+                  <td className="py-3 pr-4 text-charcoal-muted/60">{i + 1}</td>
                   <td className="py-3 pr-4 font-medium">{product.name}</td>
                   <td className="py-3 pr-4 text-right">{product.sales}</td>
                   <td className="py-3 pr-4 text-right font-medium">
@@ -219,7 +219,7 @@ export default function AdminAnalyticsPage() {
               ))}
               {analytics.top_products.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-gray-400">
+                  <td colSpan={4} className="py-8 text-center text-charcoal-muted/60">
                     No sales data yet
                   </td>
                 </tr>

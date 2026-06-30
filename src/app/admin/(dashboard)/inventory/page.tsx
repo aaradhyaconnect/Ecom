@@ -105,7 +105,7 @@ export default function InventoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Inventory</h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-charcoal-muted">
             Manage stock levels for all products
           </p>
         </div>
@@ -121,8 +121,8 @@ export default function InventoryPage() {
         <button
           onClick={() => setFilter("all")}
           className={cn(
-            "rounded-xl border p-4 text-left transition-colors",
-            filter === "all" ? "border-black bg-black text-white" : "bg-white hover:bg-gray-50"
+            "border p-4 text-left transition-colors",
+            filter === "all" ? "border-charcoal bg-charcoal text-ivory" : "bg-ivory hover:bg-ivory-dark/50"
           )}
         >
           <div className="flex items-center gap-2">
@@ -134,8 +134,8 @@ export default function InventoryPage() {
         <button
           onClick={() => setFilter("low")}
           className={cn(
-            "rounded-xl border p-4 text-left transition-colors",
-            filter === "low" ? "border-amber-500 bg-amber-50 text-amber-900" : "bg-white hover:bg-gray-50"
+            "border p-4 text-left transition-colors",
+            filter === "low" ? "border-amber-500 bg-amber-50 text-amber-900" : "bg-ivory hover:bg-ivory-dark/50"
           )}
         >
           <div className="flex items-center gap-2">
@@ -147,8 +147,8 @@ export default function InventoryPage() {
         <button
           onClick={() => setFilter("out")}
           className={cn(
-            "rounded-xl border p-4 text-left transition-colors",
-            filter === "out" ? "border-red-500 bg-red-50 text-red-900" : "bg-white hover:bg-gray-50"
+            "border p-4 text-left transition-colors",
+            filter === "out" ? "border-red-500 bg-red-50 text-red-900" : "bg-ivory hover:bg-ivory-dark/50"
           )}
         >
           <div className="flex items-center gap-2">
@@ -161,7 +161,7 @@ export default function InventoryPage() {
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal-muted/60" />
           <Input
             placeholder="Search products..."
             value={search}
@@ -171,11 +171,11 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
+      <div className="border bg-ivory shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-gray-50 text-left text-xs text-gray-500">
+              <tr className="border-b bg-ivory-dark/50 text-left text-xs text-charcoal-muted">
                 <th className="px-5 py-3 font-medium">Product</th>
                 <th className="px-5 py-3 font-medium">Category</th>
                 <th className="px-5 py-3 font-medium">Price</th>
@@ -187,13 +187,13 @@ export default function InventoryPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400">
+                  <td colSpan={6} className="px-5 py-12 text-center text-charcoal-muted/60">
                     Loading inventory...
                   </td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-5 py-12 text-center text-gray-400">
+                  <td colSpan={6} className="px-5 py-12 text-center text-charcoal-muted/60">
                     No products found
                   </td>
                 </tr>
@@ -213,7 +213,7 @@ export default function InventoryPage() {
                     >
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0">
+                          <div className="h-10 w-10 bg-ivory-dark overflow-hidden flex-shrink-0">
                             {product.images?.[0] ? (
                               <img
                                 src={product.images[0]}
@@ -222,7 +222,7 @@ export default function InventoryPage() {
                               />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center">
-                                <PackageX className="h-4 w-4 text-gray-400" />
+                                <PackageX className="h-4 w-4 text-charcoal-muted/60" />
                               </div>
                             )}
                           </div>
@@ -238,7 +238,7 @@ export default function InventoryPage() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3 text-gray-500 capitalize">
+                      <td className="px-5 py-3 text-charcoal-muted capitalize">
                         {product.category.replace(/-/g, " ")}
                       </td>
                       <td className="px-5 py-3 font-medium">
@@ -248,7 +248,7 @@ export default function InventoryPage() {
                         <div className="flex items-center justify-center gap-1">
                           <button
                             onClick={() => handleStockChange(product.id, -1)}
-                            className="h-7 w-7 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                            className="h-7 w-7 border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark transition-colors"
                           >
                             <Minus className="h-3 w-3" />
                           </button>
@@ -258,15 +258,15 @@ export default function InventoryPage() {
                             value={currentStock}
                             onChange={(e) => handleStockInput(product.id, e.target.value)}
                             className={cn(
-                              "w-16 h-7 text-center text-sm font-medium border rounded transition-colors",
-                              isEdited ? "border-amber-400 bg-white" : "border-gray-200",
+                              "w-16 h-7 text-center text-sm font-medium border transition-colors",
+                              isEdited ? "border-amber-400 bg-ivory" : "border-ivory-dark",
                               currentStock === 0 && "text-red-500",
                               currentStock > 0 && currentStock <= 5 && "text-amber-600"
                             )}
                           />
                           <button
                             onClick={() => handleStockChange(product.id, 1)}
-                            className="h-7 w-7 rounded border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+                            className="h-7 w-7 border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark transition-colors"
                           >
                             <Plus className="h-3 w-3" />
                           </button>

@@ -49,7 +49,7 @@ export function Modal({
       />
       <div
         className={cn(
-          "relative z-10 bg-white rounded-2xl shadow-2xl max-h-[90vh] overflow-auto animate-in fade-in zoom-in-95 duration-200",
+          "relative z-10 bg-ivory shadow-2xl max-h-[90vh] overflow-auto animate-in fade-in zoom-in-95 duration-200",
           {
             "w-full max-w-sm": size === "sm",
             "w-full max-w-md": size === "md",
@@ -60,14 +60,14 @@ export function Modal({
         )}
       >
         {(title || showClose) && (
-          <div className="flex items-center justify-between p-4 border-b">
-            {title && <h2 className="text-lg font-semibold">{title}</h2>}
+          <div className="flex items-center justify-between p-4 border-b border-ivory-dark">
+            {title && <h2 className="text-lg font-serif font-semibold text-charcoal">{title}</h2>}
             {showClose && (
               <button
                 onClick={onClose}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-1 hover:bg-ivory-dark transition-colors"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5 text-charcoal-muted" />
               </button>
             )}
           </div>

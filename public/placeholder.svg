@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="533" viewBox="0 0 400 533">
+  <rect width="400" height="533" fill="#F5F0E0"/>
+  <text x="200" y="260" font-family="system-ui, sans-serif" font-size="14" fill="#6B6B6B" text-anchor="middle" letter-spacing="0.2em">HAINJU</text>
+  <text x="200" y="285" font-family="system-ui, sans-serif" font-size="10" fill="#C5A55A" text-anchor="middle" letter-spacing="0.3em">COMING SOON</text>
+  <rect x="170" y="300" width="60" height="1" fill="#C5A55A" opacity="0.4"/>
+</svg>
