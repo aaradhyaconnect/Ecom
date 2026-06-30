@@ -1,26 +1,27 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createPublicClient } from "@/lib/supabase/server";
+import { getRelatedProducts } from "@/lib/supabase/queries";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import type { Product } from "@/types";
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
 }
 
-async function getProduct(id: string): Promise<Product | null> {
-  const supabase = await createServerSupabase();
+async function getProduct(slug: string): Promise<Product | null> {
+  const supabase = createPublicClient();
   const { data } = await supabase
     .from("products")
     .select("*")
-    .or(`slug.eq.${id},id.eq.${id}`)
+    .or(`slug.eq.${slug},id.eq.${slug}`)
     .maybeSingle();
   return data as Product | null;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const product = await getProduct(id);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     return { title: "Product Not Found" };
@@ -38,12 +39,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
-  const { id } = await params;
-  const product = await getProduct(id);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     notFound();
   }
 
-  return <ProductDetailClient product={product} />;
+  const relatedProducts = await getRelatedProducts(
+    product.category,
+    product.id,
+    4
+  );
+
+  return (
+    <ProductDetailClient product={product} relatedProducts={relatedProducts} />
+  );
 }

@@ -1,5 +1,5 @@
 import type { Product, Banner, Coupon, Order } from "@/types";
-import { createServerSupabase } from "./server";
+import { createPublicClient, createServerSupabase } from "./server";
 
 export async function getProducts({
   category,
@@ -22,7 +22,7 @@ export async function getProducts({
   sizes?: string[];
   colors?: string[];
 }) {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicClient();
   let query = supabase.from("products").select("*", { count: "exact" });
 
   if (category && category !== "all") {
@@ -90,7 +90,7 @@ export async function getProducts({
 }
 
 export async function getProduct(slug: string) {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -102,7 +102,7 @@ export async function getProduct(slug: string) {
 }
 
 export async function getProductById(id: string) {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -114,7 +114,7 @@ export async function getProductById(id: string) {
 }
 
 export async function getFeaturedProducts() {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("products")
     .select("*")
@@ -126,8 +126,45 @@ export async function getFeaturedProducts() {
   return data as Product[];
 }
 
+export async function getProductsByFlag({
+  flag,
+  limit = 4,
+}: {
+  flag: "is_new" | "is_best_seller" | "is_sale";
+  limit?: number;
+}) {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq(flag, true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data as Product[];
+}
+
+export async function getRelatedProducts(
+  category: string,
+  excludeId: string,
+  limit = 4
+) {
+  const supabase = createPublicClient();
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq("category", category)
+    .neq("id", excludeId)
+    .order("rating", { ascending: false })
+    .limit(limit);
+
+  if (error) throw error;
+  return data as Product[];
+}
+
 export async function getBanners() {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("banners")
     .select("*")
@@ -139,7 +176,7 @@ export async function getBanners() {
 }
 
 export async function getCoupon(code: string) {
-  const supabase = await createServerSupabase();
+  const supabase = createPublicClient();
   const { data, error } = await supabase
     .from("coupons")
     .select("*")

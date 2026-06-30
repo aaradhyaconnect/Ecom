@@ -1,11 +1,16 @@
-import { getProducts } from "@/lib/supabase/queries";
+import { getProducts, getProductsByFlag } from "@/lib/supabase/queries";
 import { ProductListingClient } from "@/components/product/ProductListingClient";
-import type { ProductCategory } from "@/types";
 
 interface Props {
   params: Promise<{ category: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+
+const FLAG_MAP: Record<string, "is_new" | "is_best_seller" | "is_sale"> = {
+  "new-arrivals": "is_new",
+  "best-sellers": "is_best_seller",
+  "sale": "is_sale",
+};
 
 export default async function CategoryPage({ params, searchParams }: Props) {
   const { category } = await params;
@@ -20,19 +25,32 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const sizes = (filters.sizes as string)?.split(",").filter(Boolean);
   const colors = (filters.colors as string)?.split(",").filter(Boolean);
 
-  const categoryParam = category === "all" ? undefined : category;
+  const flag = FLAG_MAP[category];
 
-  const result = await getProducts({
-    category: categoryParam as ProductCategory | undefined,
-    search,
-    sort,
-    page,
-    limit,
-    minPrice,
-    maxPrice,
-    sizes,
-    colors,
-  });
+  let result;
+  if (flag) {
+    const products = await getProductsByFlag({ flag, limit });
+    result = {
+      products,
+      total: products.length,
+      page: 1,
+      limit,
+      totalPages: 1,
+    };
+  } else {
+    const categoryParam = category === "all" ? undefined : category;
+    result = await getProducts({
+      category: categoryParam,
+      search,
+      sort,
+      page,
+      limit,
+      minPrice,
+      maxPrice,
+      sizes,
+      colors,
+    });
+  }
 
   return (
     <ProductListingClient category={category} initialProducts={result} />

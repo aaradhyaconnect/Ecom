@@ -2,10 +2,9 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
 import { ProductGrid } from "./ProductGrid";
 import { Button } from "@/components/ui/Button";
-import { Select } from "@/components/ui/Select";
 import { cn } from "@/lib/utils/cn";
 import type { Product } from "@/types";
 
@@ -149,11 +148,27 @@ export function ProductListingClient({
 
   const categoryTitle = CATEGORY_LABELS[category] || category.replace(/-/g, " ");
 
+  const availableColors = useMemo(() => {
+    const colorMap = new Map<string, string>();
+    initialProducts.products.forEach((p) => {
+      let cols = p.colors;
+      if (typeof cols === "string") {
+        try { cols = JSON.parse(cols); } catch { cols = []; }
+      }
+      if (Array.isArray(cols)) {
+        cols.forEach((c: { name: string; hex: string }) => {
+          if (!colorMap.has(c.name)) colorMap.set(c.name, c.hex);
+        });
+      }
+    });
+    return Array.from(colorMap.entries()).map(([name, hex]) => ({ name, hex }));
+  }, [initialProducts.products]);
+
   const filterSidebarContent = (
     <div className="space-y-8">
       <div>
-        <h3 className="text-xs font-semibold text-charcoal mb-4 uppercase tracking-[0.2em]">Price Range</h3>
-        <div className="space-y-1">
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Price Range</h3>
+        <div className="space-y-0.5">
           {PRICE_RANGES.map((range) => {
             const active =
               currentMinPrice === String(range.min) &&
@@ -167,10 +182,10 @@ export function ProductListingClient({
                     : handlePriceFilter(range.min, range.max)
                 }
                 className={cn(
-                  "block w-full text-left text-sm py-2 px-4 transition-all duration-200",
+                  "block w-full text-left text-sm py-2.5 px-4 transition-all duration-200",
                   active
                     ? "bg-charcoal text-ivory font-medium"
-                    : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark"
+                    : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
                 )}
               >
                 {range.label}
@@ -181,17 +196,17 @@ export function ProductListingClient({
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold text-charcoal mb-4 uppercase tracking-[0.2em]">Size</h3>
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Size</h3>
         <div className="flex flex-wrap gap-2">
           {["XS", "S", "M", "L", "XL", "XXL"].map((size) => (
             <button
               key={size}
               onClick={() => handleSizeFilter(size)}
               className={cn(
-                "w-10 h-10 rounded-full text-sm font-medium border transition-all duration-200",
+                "w-10 h-10 rounded-full text-xs font-medium border transition-all duration-300",
                 currentSizes.includes(size)
                   ? "bg-charcoal text-ivory border-charcoal"
-                  : "border-ivory-dark text-charcoal-muted hover:border-charcoal"
+                  : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"
               )}
             >
               {size}
@@ -201,48 +216,51 @@ export function ProductListingClient({
       </div>
 
       <div>
-        <h3 className="text-xs font-semibold text-charcoal mb-4 uppercase tracking-[0.2em]">Color</h3>
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Color</h3>
         <div className="flex flex-wrap gap-2">
-          {["Black", "White", "Red", "Blue", "Green", "Pink", "Beige", "Navy"].map(
-            (color) => (
-              <button
-                key={color}
-                onClick={() => handleColorFilter(color)}
-                className={cn(
-                  "px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200",
-                  currentColors.includes(color)
-                    ? "bg-charcoal text-ivory border-charcoal"
-                    : "border-ivory-dark text-charcoal-muted hover:border-charcoal"
-                )}
-              >
-                {color}
-              </button>
-            )
-          )}
+          {availableColors.map((color) => (
+            <button
+              key={color.name}
+              onClick={() => handleColorFilter(color.name)}
+              className={cn(
+                "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-medium uppercase tracking-wider border transition-all duration-300",
+                currentColors.includes(color.name)
+                  ? "bg-charcoal text-ivory border-charcoal"
+                  : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"
+              )}
+            >
+              <span
+                className="w-3 h-3 rounded-full border border-charcoal/10 flex-shrink-0"
+                style={{ backgroundColor: color.hex }}
+              />
+              {color.name}
+            </button>
+          ))}
         </div>
       </div>
 
       {hasActiveFilters && (
-        <Button
-          variant="ghost"
-          size="sm"
+        <button
           onClick={clearFilters}
-          className="text-charcoal-muted hover:text-charcoal underline underline-offset-4"
+          className="text-[10px] text-charcoal-muted hover:text-charcoal uppercase tracking-[0.15em] underline underline-offset-4 transition-colors"
         >
           Clear All Filters
-        </Button>
+        </button>
       )}
     </div>
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex items-center justify-between mb-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="flex items-end justify-between mb-10">
         <div>
-          <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">
-            {category === "new-arrivals" ? "New In" : category === "sale" ? "Offers" : "Collection"}
-          </span>
-          <h1 className="text-2xl md:text-4xl font-serif font-bold text-charcoal mt-1 capitalize">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="h-[1px] w-6 bg-gold/50" />
+            <span className="text-[10px] uppercase tracking-[0.4em] text-gold-dark font-medium">
+              {category === "new-arrivals" ? "New In" : category === "sale" ? "Offers" : "Collection"}
+            </span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-serif font-bold text-charcoal capitalize">
             {categoryTitle}
           </h1>
           <p className="text-sm text-charcoal-muted mt-1.5">
@@ -252,19 +270,25 @@ export function ProductListingClient({
         </div>
 
         <div className="flex items-center gap-3">
-          <Select
-            options={SORT_OPTIONS}
-            value={currentSort}
-            onChange={(e) => handleSort(e.target.value)}
-            className="w-40"
-          />
+          <div className="relative">
+            <select
+              value={currentSort}
+              onChange={(e) => handleSort(e.target.value)}
+              className="appearance-none bg-transparent border border-ivory-dark text-sm text-charcoal-muted py-2.5 pl-4 pr-10 rounded-none focus:border-gold/60 focus:ring-0 outline-none cursor-pointer transition-colors duration-300"
+            >
+              {SORT_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-charcoal-muted pointer-events-none" />
+          </div>
 
           <button
             onClick={() => setMobileFilterOpen(true)}
-            className="lg:hidden p-2.5 border border-ivory-dark rounded-sm hover:bg-ivory-dark transition-colors"
+            className="lg:hidden p-2.5 border border-ivory-dark hover:border-charcoal/20 transition-colors"
             aria-label="Toggle filters"
           >
-            <SlidersHorizontal className="h-4 w-4 text-charcoal" />
+            <SlidersHorizontal className="h-4 w-4 text-charcoal-muted" />
           </button>
         </div>
       </div>
@@ -285,28 +309,31 @@ export function ProductListingClient({
           />
 
           {initialProducts.totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 mt-12">
-              <Button
-                variant="outline"
-                size="sm"
+            <div className="flex items-center justify-center gap-2 mt-14">
+              <button
                 disabled={currentPage <= 1}
                 onClick={() => handlePageChange(currentPage - 1)}
-                className="border-charcoal text-charcoal hover:bg-charcoal hover:text-ivory"
+                className={cn(
+                  "px-4 py-2 text-[11px] font-medium uppercase tracking-[0.15em] border transition-all duration-300",
+                  currentPage <= 1
+                    ? "border-ivory-dark text-charcoal-muted/30 cursor-not-allowed"
+                    : "border-ivory-dark text-charcoal-muted hover:border-charcoal hover:text-charcoal"
+                )}
               >
                 Previous
-              </Button>
+              </button>
 
               {pageNumbers.map((page, idx) =>
                 page === "..." ? (
-                  <span key={`ellipsis-${idx}`} className="px-2 text-charcoal-muted">
-                    ...
+                  <span key={`ellipsis-${idx}`} className="px-2 text-charcoal-muted/30 text-sm">
+                    &hellip;
                   </span>
                 ) : (
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
                     className={cn(
-                      "w-9 h-9 rounded-sm text-sm font-medium transition-all duration-200",
+                      "w-10 h-10 text-xs font-medium transition-all duration-300",
                       page === currentPage
                         ? "bg-charcoal text-ivory"
                         : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark"
@@ -317,15 +344,18 @@ export function ProductListingClient({
                 )
               )}
 
-              <Button
-                variant="outline"
-                size="sm"
+              <button
                 disabled={currentPage >= initialProducts.totalPages}
                 onClick={() => handlePageChange(currentPage + 1)}
-                className="border-charcoal text-charcoal hover:bg-charcoal hover:text-ivory"
+                className={cn(
+                  "px-4 py-2 text-[11px] font-medium uppercase tracking-[0.15em] border transition-all duration-300",
+                  currentPage >= initialProducts.totalPages
+                    ? "border-ivory-dark text-charcoal-muted/30 cursor-not-allowed"
+                    : "border-ivory-dark text-charcoal-muted hover:border-charcoal hover:text-charcoal"
+                )}
               >
                 Next
-              </Button>
+              </button>
             </div>
           )}
         </div>
@@ -352,9 +382,9 @@ export function ProductListingClient({
           )}
         >
           <div className="flex items-center justify-between p-5 border-b border-ivory-dark">
-            <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-charcoal">Filters</h3>
-            <button onClick={() => setMobileFilterOpen(false)} className="p-1 hover:bg-ivory-dark rounded transition-colors">
-              <X className="h-4 w-4" />
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-charcoal">Filters</h3>
+            <button onClick={() => setMobileFilterOpen(false)} className="p-2 hover:bg-ivory-dark transition-colors">
+              <X className="h-4 w-4 text-charcoal-muted" />
             </button>
           </div>
           <div className="p-5 overflow-y-auto h-[calc(100%-60px)]">

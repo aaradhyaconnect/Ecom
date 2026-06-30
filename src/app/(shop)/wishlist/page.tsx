@@ -16,7 +16,12 @@ export default function WishlistPage() {
 
   const handleAddToCart = (product: Product) => {
     const size = product.sizes[0] || "M";
-    const color = product.colors[0]?.name || "Default";
+    let colors: { name: string }[] = [];
+    if (Array.isArray(product.colors)) colors = product.colors;
+    else if (typeof product.colors === "string") {
+      try { colors = JSON.parse(product.colors); } catch { /* empty */ }
+    }
+    const color = colors[0]?.name || "Default";
     addItem(product, 1, size, color);
     toast.success(`${product.name} added to cart`);
   };

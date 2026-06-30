@@ -4,7 +4,6 @@ import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
-import { Button } from "@/components/ui/Button";
 
 const slides = [
   {
@@ -13,17 +12,15 @@ const slides = [
     description: "Unique pieces crafted for the modern trendsetter",
     cta: "Shop Now",
     href: "/products/new-arrivals",
-    bg: "from-charcoal via-charcoal-light to-charcoal",
-    pattern: "radial-gradient(circle at 20% 50%, rgba(197,165,90,0.08) 0%, transparent 50%), radial-gradient(circle at 80% 50%, rgba(255,255,240,0.03) 0%, transparent 50%)",
+    accent: "from-amber-900/20",
   },
   {
     title: "Exquisite Jewellery",
-    subtitle: "Artificial, Not Artificial",
-    description: "Handpicked resale treasures that make a statement",
+    subtitle: "Curated Resale Treasures",
+    description: "Handpicked statement pieces that define elegance",
     cta: "Explore Collection",
     href: "/products/artificial-jewellery",
-    bg: "from-gold-dark via-charcoal-light to-charcoal",
-    pattern: "radial-gradient(circle at 30% 60%, rgba(197,165,90,0.12) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(232,213,163,0.06) 0%, transparent 50%)",
+    accent: "from-rose-900/10",
   },
   {
     title: "Season's Sale",
@@ -31,8 +28,7 @@ const slides = [
     description: "Limited time offers on premium fashion & jewellery",
     cta: "Shop Sale",
     href: "/products/sale",
-    bg: "from-charcoal via-gold-dark/40 to-charcoal-light",
-    pattern: "radial-gradient(circle at 50% 80%, rgba(197,165,90,0.15) 0%, transparent 50%), radial-gradient(circle at 20% 20%, rgba(232,213,163,0.05) 0%, transparent 50%)",
+    accent: "from-emerald-900/10",
   },
 ];
 
@@ -43,80 +39,120 @@ export function HeroBanner() {
   const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), []);
 
   useEffect(() => {
-    const timer = setInterval(next, 5000);
+    const timer = setInterval(next, 6000);
     return () => clearInterval(timer);
   }, [next]);
 
   return (
-    <section className="relative h-[80vh] min-h-[550px] max-h-[900px] overflow-hidden">
+    <section className="relative h-[85vh] min-h-[600px] max-h-[950px] overflow-hidden bg-charcoal">
       {slides.map((slide, i) => (
         <div
           key={i}
           className={cn(
-            "absolute inset-0 transition-all duration-1000 ease-out",
-            i === current ? "opacity-100" : "opacity-0 pointer-events-none"
+            "absolute inset-0 transition-all duration-[1200ms] ease-out",
+            i === current ? "opacity-100 z-10" : "opacity-0 z-0"
           )}
         >
-          <div className="absolute inset-0 bg-gradient-to-br" style={{ backgroundImage: slide.pattern }} />
-          <div className={cn("absolute inset-0 bg-gradient-to-br", slide.bg)} />
-          <div className="absolute inset-0 bg-charcoal/30" />
-          <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/50 to-transparent" />
-          <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-            <div key={current} className="max-w-xl text-ivory">
+          <div className={cn("absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal-light to-charcoal", slide.accent)} />
+
+          <div className="absolute inset-0 opacity-[0.04]" style={{
+            backgroundImage: `radial-gradient(circle at 25% 25%, rgba(197,165,90,0.3) 0%, transparent 50%),
+                             radial-gradient(circle at 75% 75%, rgba(255,255,240,0.1) 0%, transparent 50%),
+                             radial-gradient(circle at 50% 50%, rgba(197,165,90,0.15) 0%, transparent 70%)`
+          }} />
+
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(1px 1px at 20% 30%, rgba(197,165,90,0.15) 0%, transparent 1px),
+                             radial-gradient(1px 1px at 60% 70%, rgba(232,213,163,0.1) 0%, transparent 1px),
+                             radial-gradient(1px 1px at 80% 20%, rgba(197,165,90,0.1) 0%, transparent 1px)`,
+            backgroundSize: '120px 120px, 80px 80px, 150px 150px'
+          }} />
+
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-charcoal/20" />
+
+          <div className="relative h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center">
+            <div className="max-w-2xl" key={current}>
               <div className="animate-in slide-up" style={{ animationDelay: "0ms" }}>
-                <div className="flex items-center gap-4 mb-6">
-                  <span className="h-[1px] w-12 bg-gold/60" />
-                  <span className="text-xs uppercase tracking-[0.3em] text-gold-light font-medium">
+                <div className="flex items-center gap-4 mb-8">
+                  <span className="h-[1px] w-16 bg-gradient-to-r from-gold to-gold/0" />
+                  <span className="text-[11px] uppercase tracking-[0.4em] text-gold-light font-medium">
                     {slide.subtitle}
                   </span>
                 </div>
               </div>
-              <h1 className="animate-in slide-up text-4xl sm:text-5xl lg:text-7xl font-serif font-bold leading-tight mb-6 text-ivory" style={{ animationDelay: "150ms" }}>
-                {slide.title}
+
+              <h1
+                className="animate-in slide-up text-5xl sm:text-6xl lg:text-[4.5rem] font-serif font-bold leading-[1.1] mb-8 text-ivory"
+                style={{ animationDelay: "100ms" }}
+              >
+                {slide.title.split(" ").map((word, wi) => (
+                  <span key={wi}>
+                    {wi === 1 ? (
+                      <span className="bg-gradient-to-r from-gold-light via-gold to-gold-light bg-clip-text text-transparent">{word} </span>
+                    ) : (
+                      <>{word} </>
+                    )}
+                  </span>
+                ))}
               </h1>
-              <p className="animate-in slide-up text-base sm:text-lg text-ivory/70 mb-10 max-w-md leading-relaxed" style={{ animationDelay: "300ms" }}>
+
+              <p
+                className="animate-in slide-up text-lg sm:text-xl text-ivory/50 mb-12 max-w-lg leading-relaxed font-light"
+                style={{ animationDelay: "250ms" }}
+              >
                 {slide.description}
               </p>
-              <div className="animate-in slide-up" style={{ animationDelay: "450ms" }}>
-                <Link href={slide.href}>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-gold/60 text-gold-light hover:bg-gold/10 hover:border-gold transition-all duration-300 tracking-wider uppercase text-xs"
-                  >
-                    {slide.cta}
-                  </Button>
+
+              <div className="animate-in slide-up flex items-center gap-6" style={{ animationDelay: "400ms" }}>
+                <Link
+                  href={slide.href}
+                  className="group relative inline-flex items-center gap-3 px-10 py-4 bg-ivory text-charcoal text-xs font-semibold uppercase tracking-[0.2em] hover:bg-gold-light transition-all duration-500 overflow-hidden"
+                >
+                  <span className="relative z-10">{slide.cta}</span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-gold to-gold-dark translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
+                  <span className="relative z-10 group-hover:translate-x-1 transition-transform duration-300">&rarr;</span>
                 </Link>
+                <span className="hidden sm:inline-flex items-center gap-2 text-ivory/30 text-xs uppercase tracking-wider">
+                  <span className="w-8 h-[1px] bg-ivory/15" />
+                  Scroll to explore
+                </span>
               </div>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-ivory to-transparent" />
+
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-ivory via-ivory/50 to-transparent" />
         </div>
       ))}
 
       <button
         onClick={prev}
-        className="absolute left-6 top-1/2 -translate-y-1/2 p-3 text-ivory/40 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block z-10"
+        className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-3 text-ivory/30 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block group"
         aria-label="Previous slide"
       >
-        <ChevronLeft className="h-6 w-6" />
+        <div className="w-12 h-12 rounded-full border border-ivory/10 flex items-center justify-center group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-300">
+          <ChevronLeft className="h-5 w-5" />
+        </div>
       </button>
       <button
         onClick={next}
-        className="absolute right-6 top-1/2 -translate-y-1/2 p-3 text-ivory/40 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block z-10"
+        className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-3 text-ivory/30 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block group"
         aria-label="Next slide"
       >
-        <ChevronRight className="h-6 w-6" />
+        <div className="w-12 h-12 rounded-full border border-ivory/10 flex items-center justify-center group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-300">
+          <ChevronRight className="h-5 w-5" />
+        </div>
       </button>
 
-      <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-3 z-10">
+      <div className="absolute bottom-16 left-1/2 -translate-x-1/2 flex gap-3 z-20">
         {slides.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrent(i)}
             className={cn(
-              "rounded-full transition-all duration-500",
-              i === current ? "w-12 h-1.5 bg-gold" : "w-3 h-1.5 bg-ivory/30 hover:bg-ivory/50"
+              "rounded-full transition-all duration-700 ease-out",
+              i === current
+                ? "w-14 h-[2px] bg-gold"
+                : "w-4 h-[2px] bg-ivory/20 hover:bg-ivory/40"
             )}
             aria-label={`Go to slide ${i + 1}`}
           />
