@@ -1,5 +1,3 @@
-const R2 = 'https://pub-5f274d699fd14be18a8456b06f1732ec.r2.dev';
-
 export const CATEGORIES = [
   { id: "women-clothing", name: "Women's Clothing", slug: "women-clothing", image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=800&fit=crop" },
   { id: "artificial-jewellery", name: "Artificial Jewellery", slug: "artificial-jewellery", image: "https://images.unsplash.com/photo-1515562141589-67f0d727b750?w=600&h=800&fit=crop" },

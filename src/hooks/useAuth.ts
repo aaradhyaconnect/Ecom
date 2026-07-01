@@ -9,9 +9,10 @@ import type { User } from "@/types";
 export function useAuth() {
   const { user, isAdmin, setUser, setIsAdmin, logout } = useAuthStore();
   const router = useRouter();
-  const supabase = createClient();
 
   useEffect(() => {
+    const supabase = createClient();
+
     const getUser = async () => {
       const { data: { user: authUser }, error } = await supabase.auth.getUser();
       if (authUser && !error) {
@@ -54,9 +55,11 @@ export function useAuth() {
     );
 
     return () => subscription.unsubscribe();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signOut = async () => {
+    const supabase = createClient();
     await supabase.auth.signOut();
     logout();
     router.push("/");

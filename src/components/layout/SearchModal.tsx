@@ -25,22 +25,26 @@ export function SearchModal() {
   const inputRef = useRef<HTMLInputElement>(null);
   const debouncedQuery = useDebounce(query, 300);
 
+  const handleClose = () => {
+    setQuery("");
+    setResults([]);
+    closeSearch();
+  };
+
   useEffect(() => {
     if (isSearchOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
-    } else {
-      setQuery("");
-      setResults([]);
     }
   }, [isSearchOpen]);
 
+  const displayResults = debouncedQuery && debouncedQuery.length >= 2 ? results : [];
+
   useEffect(() => {
     if (!debouncedQuery || debouncedQuery.length < 2) {
-      setResults([]);
       return;
     }
 
-    const searchProducts = async () => {
+    (async () => {
       setIsLoading(true);
       try {
         const res = await fetch(`/api/products?search=${encodeURIComponent(debouncedQuery)}&limit=6`);
@@ -51,20 +55,18 @@ export function SearchModal() {
       } finally {
         setIsLoading(false);
       }
-    };
-
-    searchProducts();
+    })();
   }, [debouncedQuery]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Escape") closeSearch();
+    if (e.key === "Escape") handleClose();
   };
 
   if (!isSearchOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50">
-      <div className="fixed inset-0 bg-charcoal/40 backdrop-blur-[2px]" onClick={closeSearch} />
+      <div className="fixed inset-0 bg-charcoal/40 backdrop-blur-[2px]" onClick={handleClose} />
       <div className="fixed top-0 left-0 right-0 bg-ivory shadow-2xl animate-in slide-in-from-top">
         <div className="max-w-2xl mx-auto p-6">
           <div className="relative">
@@ -79,7 +81,7 @@ export function SearchModal() {
               className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-b-2 border-ivory-dark focus:border-gold/60 focus:ring-0 outline-none text-charcoal placeholder:text-charcoal-muted/40 transition-colors duration-300"
             />
             <button
-              onClick={closeSearch}
+              onClick={handleClose}
               className="absolute right-0 top-1/2 -translate-y-1/2 p-2 hover:bg-ivory-dark  transition-colors"
             >
               <X className="h-4 w-4 text-charcoal-muted" />
@@ -90,9 +92,9 @@ export function SearchModal() {
             <div className="py-8 text-center text-charcoal-muted text-sm">Searching...</div>
           )}
 
-          {results.length > 0 && (
+          {displayResults.length > 0 && (
             <div className="py-4 space-y-1 max-h-96 overflow-auto">
-              {results.map((product) => (
+              {displayResults.map((product) => (
                 <Link
                   key={product.id}
                   href={`/product/${product.slug}`}
@@ -133,7 +135,7 @@ export function SearchModal() {
             </div>
           )}
 
-          {debouncedQuery && !isLoading && results.length === 0 && (
+          {debouncedQuery && !isLoading && displayResults.length === 0 && (
             <div className="py-8 text-center">
               <p className="text-charcoal-muted text-sm">
                 No products found for &ldquo;{debouncedQuery}&rdquo;

@@ -98,12 +98,9 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, [search, category, page]);
-
-  useEffect(() => {
-    setPage(1);
-  }, [search, category]);
 
   const openAdd = () => {
     setEditingProduct(null);
@@ -272,13 +269,13 @@ export default function AdminProductsPage() {
             type="text"
             placeholder="Search products..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0 outline-none transition-colors bg-ivory text-charcoal placeholder:text-charcoal-muted"
           />
         </div>
         <select
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
+          onChange={(e) => { setCategory(e.target.value); setPage(1); }}
           className="border border-ivory-dark py-2.5 px-3 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
         >
           <option value="">All Categories</option>

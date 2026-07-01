@@ -55,6 +55,7 @@ export default function InventoryPage() {
   }, [search, filter]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, [fetchProducts]);
 

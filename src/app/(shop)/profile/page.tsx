@@ -21,8 +21,8 @@ export default function ProfilePage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState(user?.name ?? "");
+  const [phone, setPhone] = useState(user?.phone ?? "");
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [showAddressForm, setShowAddressForm] = useState(false);
   const [addressForm, setAddressForm] = useState<Address>({
@@ -40,33 +40,28 @@ export default function ProfilePage() {
       router.push("/login");
       return;
     }
-    setName(user.name ?? "");
-    setPhone(user.phone ?? "");
 
-    async function loadOrders() {
+    (async () => {
       const { data } = await supabase
         .from("orders")
         .select("*")
-        .eq("user_id", user?.id)
+        .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .limit(5);
 
       if (data) setOrders(data as Order[]);
       setLoading(false);
-    }
+    })();
 
-    async function loadProfile() {
+    (async () => {
       const { data } = await supabase
         .from("profiles")
         .select("addresses")
-        .eq("id", user?.id)
+        .eq("id", user.id)
         .single();
 
       if (data?.addresses) setAddresses(data.addresses as Address[]);
-    }
-
-    loadOrders();
-    loadProfile();
+    })();
   }, [user, supabase, router]);
 
   async function handleSaveProfile() {

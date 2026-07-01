@@ -143,7 +143,7 @@ export function ProductListingClient({
       pages.push(totalPages);
     }
     return pages;
-  }, [initialProducts.totalPages, currentPage]);
+  }, [initialProducts, currentPage]);
 
   const categoryTitle = CATEGORY_LABELS[category] || category.replace(/-/g, " ");
 
