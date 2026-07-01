@@ -1,4 +1,10 @@
-export const metadata = { title: "Shipping & Delivery — HAINJU" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Shipping & Delivery",
+  description: "HAINJU shipping policy — free shipping on orders above ₹999. Delivery across India.",
+  alternates: { canonical: "/shipping" },
+};
 
 export default function ShippingPage() {
   return (

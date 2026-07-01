@@ -1,4 +1,10 @@
-export const metadata = { title: "Returns & Exchanges — HAINJU" };
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Returns & Exchanges",
+  description: "HAINJU return and exchange policy — easy returns within 7 days of delivery.",
+  alternates: { canonical: "/returns" },
+};
 
 export default function ReturnsPage() {
   return (

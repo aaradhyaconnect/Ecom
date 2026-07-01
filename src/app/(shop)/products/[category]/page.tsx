@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { CATEGORIES } from "@/lib/constants/categories";
 import { getProducts } from "@/lib/supabase/queries";
 import { ProductListingClient } from "@/components/product/ProductListingClient";
 import type { Product } from "@/types";
@@ -5,6 +7,25 @@ import type { Product } from "@/types";
 interface Props {
   params: Promise<{ category: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
+  const { category } = await params;
+  const cat = CATEGORIES.find((c) => c.slug === category);
+  const name = cat?.name || category.replace(/-/g, " ");
+
+  return {
+    title: `${name} - Shop Online`,
+    description: `Browse our ${name} collection at HAINJU. Premium designer clothing and artificial jewellery.`,
+    alternates: {
+      canonical: `/products/${category}`,
+    },
+    openGraph: {
+      title: `${name} | HAINJU`,
+      description: `Browse our ${name} collection at HAINJU.`,
+      url: `/products/${category}`,
+    },
+  };
 }
 
 export default async function CategoryPage({ params, searchParams }: Props) {

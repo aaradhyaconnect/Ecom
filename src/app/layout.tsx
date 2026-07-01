@@ -41,6 +41,7 @@ export const metadata: Metadata = {
   authors: [{ name: "HAINJU" }],
   creator: "HAINJU",
   manifest: "/manifest.json",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://hainju.vercel.app"),
   openGraph: {
     type: "website",
     locale: "en_IN",

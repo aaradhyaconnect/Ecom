@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { FAQClient } from "./faq-client";
 
-export const metadata: Metadata = { title: "FAQ — HAINJU" };
+export const metadata: Metadata = {
+  title: "FAQ",
+  description: "Frequently asked questions about HAINJU — shipping, returns, payments, and more.",
+  alternates: { canonical: "/faq" },
+};
 
 export default function FAQPage() {
   return (

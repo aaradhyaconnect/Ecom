@@ -1,11 +1,13 @@
 import type { MetadataRoute } from "next";
+import { SITE } from "@/lib/constants/site";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/admin", "/api/", "/offline"],
     },
-    sitemap: "https://hainju.com/sitemap.xml",
+    sitemap: `${SITE.url}/sitemap.xml`,
   };
 }

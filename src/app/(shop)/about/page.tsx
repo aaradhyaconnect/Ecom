@@ -1,6 +1,11 @@
 import { SITE } from "@/lib/constants/site";
+import type { Metadata } from "next";
 
-export const metadata = { title: "About Us — HAINJU" };
+export const metadata: Metadata = {
+  title: "About Us",
+  description: "Learn about HAINJU — premium self-designed clothing and artificial jewellery for the modern trendsetter.",
+  alternates: { canonical: "/about" },
+};
 
 export default function AboutPage() {
   return (
