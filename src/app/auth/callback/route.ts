@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createServerClient } from "@supabase/ssr";
+import { createServerClient, type CookieOptions } from "@supabase/ssr";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const isPopup = searchParams.get("popup") === "true";
 
   if (code) {
-    const response = NextResponse.next();
+    const pendingCookies: { name: string; value: string; options?: Record<string, unknown> }[] = [];
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) => {
               request.cookies.set(name, value);
-              response.cookies.set(name, value, options);
+              pendingCookies.push({ name, value, options });
             });
           },
         },
@@ -57,28 +57,48 @@ export async function GET(request: NextRequest) {
         const redirectPath = isAdmin ? "/admin" : next;
 
         if (isPopup) {
+          const redirectUrl = `${origin}${redirectPath}`;
           const html = `<!DOCTYPE html><html><head><title>Authenticating...</title></head><body>
             <script>
-              try {
-                if (window.opener) {
-                  window.opener.postMessage({ type: 'auth-callback', success: true, path: '${redirectPath}' }, '${origin}');
-                  window.close();
-                } else {
-                  window.location.href = '${origin}${redirectPath}';
+              (function() {
+                var done = false;
+                function finish() {
+                  if (done) return;
+                  done = true;
+                  try {
+                    if (window.opener) {
+                      window.opener.postMessage({ type: 'auth-callback', success: true, path: '${redirectPath}' }, '*');
+                      setTimeout(function() { window.close(); }, 200);
+                    } else {
+                      window.location.href = '${redirectUrl}';
+                    }
+                  } catch(e) {
+                    window.location.href = '${redirectUrl}';
+                  }
                 }
-              } catch(e) {
-                window.location.href = '${origin}${redirectPath}';
-              }
+                if (document.readyState === 'complete') { finish(); }
+                else { window.onload = finish; }
+                setTimeout(finish, 1000);
+              })();
             </script>
             <p>Authenticating... This window should close automatically.</p>
           </body></html>`;
-          return new NextResponse(html, {
+          const popupResponse = new NextResponse(html, {
             status: 200,
-            headers: { "Content-Type": "text/html" },
+            headers: { "Content-Type": "text/html; charset=utf-8" },
           });
+          pendingCookies.forEach(({ name, value, options }) => {
+            popupResponse.cookies.set(name, value, options as CookieOptions);
+          });
+          return popupResponse;
         }
 
-        return NextResponse.redirect(`${origin}${redirectPath}`);
+        const redirectUrl = `${origin}${redirectPath}`;
+        const redirectResponse = NextResponse.redirect(redirectUrl);
+        pendingCookies.forEach(({ name, value, options }) => {
+          redirectResponse.cookies.set(name, value, options as CookieOptions);
+        });
+        return redirectResponse;
       }
     }
 

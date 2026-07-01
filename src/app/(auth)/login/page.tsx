@@ -94,32 +94,34 @@ export default function LoginPage() {
           `width=${width},height=${height},left=${left},top=${top}`
         );
 
+        let handled = false;
         const cleanup = () => {
           window.removeEventListener("message", handleMessage);
+          clearInterval(pollTimer);
         };
 
         const handleMessage = (e: MessageEvent) => {
-          if (e.data?.type === "auth-callback" && e.data?.success) {
+          if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
+            handled = true;
             cleanup();
-            clearInterval(pollTimer);
             toast.success("Welcome back!");
-            router.push(e.data.path || redirectTo);
-            router.refresh();
+            const path = e.data.path || redirectTo;
+            window.location.href = path;
           }
         };
 
         window.addEventListener("message", handleMessage);
 
         const pollTimer = setInterval(async () => {
+          if (handled) return;
           if (!popup || popup.closed) {
             cleanup();
-            clearInterval(pollTimer);
             setIsLoading(false);
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
+              handled = true;
               toast.success("Welcome back!");
-              router.push(redirectTo);
-              router.refresh();
+              window.location.href = redirectTo;
             }
           }
         }, 500);

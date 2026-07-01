@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
@@ -9,7 +8,6 @@ import { LayoutDashboard, Eye, EyeOff, Mail, Phone, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
   const supabase = createClient();
   const [method, setMethod] = useState<"password" | "otp">("password");
   const [otpMethod, setOtpMethod] = useState<"email" | "phone">("email");
@@ -48,7 +46,7 @@ export default function AdminLoginPage() {
         return;
       }
       toast.success("Welcome back!");
-      window.location.href = "/admin";
+      window.location.replace("/admin");
     } catch {
       toast.error("Something went wrong");
     } finally {
@@ -82,12 +80,15 @@ export default function AdminLoginPage() {
           `width=${width},height=${height},left=${left},top=${top}`
         );
 
+        let handled = false;
         const pollTimer = setInterval(async () => {
+          if (handled) return;
           if (!popup || popup.closed) {
             clearInterval(pollTimer);
             setLoading(false);
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
+              handled = true;
               const { data: profile } = await supabase
                 .from("profiles")
                 .select("role")
@@ -182,8 +183,7 @@ export default function AdminLoginPage() {
       }
 
       toast.success("Welcome back!");
-      router.push("/admin");
-      router.refresh();
+      window.location.replace("/admin");
     } catch {
       toast.error("Something went wrong");
     } finally {
