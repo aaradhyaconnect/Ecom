@@ -45,9 +45,11 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (profile?.role === "admin") {
-          return NextResponse.redirect(`${origin}/admin`, {
-            headers: supabaseResponse.headers,
+          const adminRedirect = NextResponse.redirect(`${origin}/admin`);
+          supabaseResponse.cookies.getAll().forEach((cookie) => {
+            adminRedirect.cookies.set(cookie.name, cookie.value, cookie);
           });
+          return adminRedirect;
         }
       }
 
