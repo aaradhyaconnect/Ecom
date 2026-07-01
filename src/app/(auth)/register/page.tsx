@@ -24,7 +24,9 @@ export default function RegisterPage() {
     if (!name) { toast.error("Please enter your name"); return; }
     if (!usePhone && !email) { toast.error("Please enter your email"); return; }
     if (usePhone && !phone) { toast.error("Please enter your phone number"); return; }
-    if (!usePhone && password.length < 6) { toast.error("Password must be at least 6 characters"); return; }
+    if (!usePhone && password.length < 8) { toast.error("Password must be at least 8 characters"); return; }
+    if (!usePhone && !/[A-Z]/.test(password)) { toast.error("Password must contain at least one uppercase letter"); return; }
+    if (!usePhone && !/[0-9]/.test(password)) { toast.error("Password must contain at least one number"); return; }
 
     setIsLoading(true);
     try {

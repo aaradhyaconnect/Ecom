@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createServerSupabase, createAdminClient } from "@/lib/supabase/server";
 import { generateOrderId } from "@/lib/utils/format";
+import { rateLimitCheckout, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
 import type { Product } from "@/types";
 
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
@@ -93,6 +94,16 @@ function calculateDiscount(coupon: CouponRecord | null, subtotal: number): numbe
 }
 
 export async function POST(request: NextRequest) {
+  cleanupRateLimitMap();
+
+  const { allowed, resetIn } = rateLimitCheckout(request);
+  if (!allowed) {
+    return Response.json(
+      { success: false, error: `Too many requests. Try again in ${Math.ceil(resetIn / 1000)}s` },
+      { status: 429 }
+    );
+  }
+
   try {
     const supabase = await createServerSupabase();
     const {

@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { GoogleAnalytics, GoogleAnalyticsPageView } from "@/components/analytics/GoogleAnalytics";
+import { MicrosoftClarity } from "@/components/analytics/MicrosoftClarity";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -70,7 +72,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body className="font-sans antialiased bg-ivory text-charcoal">
-        <Providers>{children}</Providers>
+        <GoogleAnalytics />
+        <MicrosoftClarity />
+        <Providers>
+          <GoogleAnalyticsPageView />
+          {children}
+        </Providers>
       </body>
     </html>
   );

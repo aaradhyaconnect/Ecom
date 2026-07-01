@@ -1,7 +1,18 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { rateLimitAuth, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
 
 export async function POST(request: Request) {
+  cleanupRateLimitMap();
+
+  const { allowed, resetIn } = rateLimitAuth(request);
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, error: `Too many attempts. Try again in ${Math.ceil(resetIn / 1000)}s` },
+      { status: 429 }
+    );
+  }
+
   try {
     const { email, password } = await request.json();
 

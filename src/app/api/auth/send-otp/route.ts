@@ -1,9 +1,22 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { rateLimitOtp, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
 
 export async function POST(request: Request) {
+  cleanupRateLimitMap();
+
+  const { email, phone } = await request.json();
+  const identifier = email || phone || "unknown";
+
+  const { allowed, resetIn } = rateLimitOtp(request, identifier);
+  if (!allowed) {
+    return NextResponse.json(
+      { success: false, error: `Too many OTP requests. Try again in ${Math.ceil(resetIn / 1000)}s` },
+      { status: 429 }
+    );
+  }
+
   try {
-    const { email, phone } = await request.json();
 
     if (!email && !phone) {
       return NextResponse.json(
