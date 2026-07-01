@@ -8,6 +8,7 @@ export async function GET(request: NextRequest) {
 
   if (code) {
     const redirectUrl = new URL(`${origin}${next}`);
+    const redirectResponse = NextResponse.redirect(redirectUrl);
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,8 +28,6 @@ export async function GET(request: NextRequest) {
       }
     );
 
-    const redirectResponse = NextResponse.redirect(redirectUrl);
-
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
@@ -43,11 +42,27 @@ export async function GET(request: NextRequest) {
           .eq("id", user.id)
           .single();
 
-        if (profile?.role === "admin") {
+        if (!profile) {
+          await supabase.from("profiles").insert({
+            id: user.id,
+            email: user.email,
+            name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "User",
+            avatar_url: user.user_metadata?.avatar_url || null,
+            role: "customer",
+          });
+        }
+
+        if (profile?.role === "admin" || (!profile && user.user_metadata?.role === "admin")) {
           redirectUrl.pathname = "/admin";
           const adminRedirect = NextResponse.redirect(redirectUrl);
           redirectResponse.cookies.getAll().forEach((cookie) => {
-            adminRedirect.cookies.set(cookie.name, cookie.value, cookie);
+            adminRedirect.cookies.set(cookie.name, cookie.value, {
+              httpOnly: cookie.httpOnly,
+              path: cookie.path,
+              maxAge: cookie.maxAge,
+              sameSite: cookie.sameSite,
+              secure: cookie.secure,
+            });
           });
           return adminRedirect;
         }

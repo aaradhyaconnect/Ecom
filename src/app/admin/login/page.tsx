@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
-import { LayoutDashboard, Eye, EyeOff, Mail, Phone } from "lucide-react";
+import { LayoutDashboard, Eye, EyeOff, Mail, Phone, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function AdminLoginPage() {
@@ -33,7 +33,16 @@ export default function AdminLoginPage() {
         toast.error(error.message);
         return;
       }
-      if (user?.user_metadata?.role !== "admin") {
+      if (!user) {
+        toast.error("Login failed");
+        return;
+      }
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+      if (profile?.role !== "admin") {
         await supabase.auth.signOut();
         toast.error("Unauthorized. Admin access required.");
         return;
@@ -121,7 +130,19 @@ export default function AdminLoginPage() {
       }
 
       const { data: { user } } = await supabase.auth.getUser();
-      if (user?.user_metadata?.role !== "admin") {
+      if (!user) {
+        toast.error("Login failed");
+        await supabase.auth.signOut();
+        return;
+      }
+
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+      if (profile?.role !== "admin") {
         toast.error("Unauthorized. Admin access required.");
         await supabase.auth.signOut();
         return;
@@ -193,7 +214,7 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  icon={<Mail className="h-4 w-4" />}
+                  icon={<Lock className="h-4 w-4" />}
                   required
                 />
                 <button

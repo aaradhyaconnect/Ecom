@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
   const [authMethod, setAuthMethod] = useState<"password" | "otp">("password");
   const [otpChannel, setOtpChannel] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
@@ -32,7 +34,7 @@ export default function LoginPage() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) { toast.error(error.message); return; }
         toast.success("Welcome back!");
-        router.push("/");
+        router.push(redirectTo);
         router.refresh();
       } catch {
         toast.error("Something went wrong");
