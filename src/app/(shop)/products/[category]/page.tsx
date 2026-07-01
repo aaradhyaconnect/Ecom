@@ -40,6 +40,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const maxPrice = filters.maxPrice ? Number(filters.maxPrice) : undefined;
   const sizes = (filters.sizes as string)?.split(",").filter(Boolean);
   const colors = (filters.colors as string)?.split(",").filter(Boolean);
+  const inStock = filters.inStock === "true";
+  const onSale = filters.onSale === "true";
 
   const categoryParam = category === "all" ? undefined : category;
 
@@ -61,6 +63,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
       maxPrice,
       sizes,
       colors,
+      inStock,
+      onSale,
     });
   } catch {
     // Products may fail to load — render with empty results

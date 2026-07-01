@@ -11,6 +11,8 @@ export async function getProducts({
   maxPrice,
   sizes,
   colors,
+  inStock,
+  onSale,
 }: {
   category?: string;
   search?: string;
@@ -21,6 +23,8 @@ export async function getProducts({
   maxPrice?: number;
   sizes?: string[];
   colors?: string[];
+  inStock?: boolean;
+  onSale?: boolean;
 }) {
   const supabase = createPublicClient();
   let query = supabase.from("products").select("*", { count: "exact" });
@@ -49,6 +53,12 @@ export async function getProducts({
       (c) => `colors::text.ilike.%"name":"${c}"%`
     );
     query = query.or(colorConditions.join(","));
+  }
+  if (inStock) {
+    query = query.gt("stock", 0);
+  }
+  if (onSale) {
+    query = query.eq("is_sale", true);
   }
 
   if (sort) {

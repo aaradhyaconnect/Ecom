@@ -16,6 +16,8 @@ export default async function SearchPage({ searchParams }: Props) {
   const maxPrice = params.maxPrice ? Number(params.maxPrice) : undefined;
   const sizes = (params.sizes as string)?.split(",").filter(Boolean);
   const colors = (params.colors as string)?.split(",").filter(Boolean);
+  const inStock = params.inStock === "true";
+  const onSale = params.onSale === "true";
 
   const result = await getProducts({
     search: query || undefined,
@@ -26,6 +28,8 @@ export default async function SearchPage({ searchParams }: Props) {
     maxPrice,
     sizes,
     colors,
+    inStock,
+    onSale,
   });
 
   return (

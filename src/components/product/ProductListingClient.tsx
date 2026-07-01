@@ -55,6 +55,8 @@ export function ProductListingClient({
   const currentMaxPrice = searchParams.get("maxPrice");
   const currentSizes = searchParams.get("sizes")?.split(",").filter(Boolean) || [];
   const currentColors = searchParams.get("colors")?.split(",").filter(Boolean) || [];
+  const currentInStock = searchParams.get("inStock") === "true";
+  const currentOnSale = searchParams.get("onSale") === "true";
 
   const buildHref = useCallback(
     (updates: Record<string, string | undefined>) => {
@@ -114,6 +116,24 @@ export function ProductListingClient({
     );
   };
 
+  const handleInStockFilter = () => {
+    router.push(
+      buildHref({
+        inStock: currentInStock ? undefined : "true",
+        page: "1",
+      })
+    );
+  };
+
+  const handleOnSaleFilter = () => {
+    router.push(
+      buildHref({
+        onSale: currentOnSale ? undefined : "true",
+        page: "1",
+      })
+    );
+  };
+
   const clearFilters = () => {
     router.push(`/products/${category}`);
   };
@@ -122,7 +142,9 @@ export function ProductListingClient({
     !!currentMinPrice ||
     !!currentMaxPrice ||
     currentSizes.length > 0 ||
-    currentColors.length > 0;
+    currentColors.length > 0 ||
+    currentInStock ||
+    currentOnSale;
 
   const pageNumbers = useMemo(() => {
     const { totalPages } = initialProducts;
@@ -236,6 +258,48 @@ export function ProductListingClient({
             </button>
           ))}
         </div>
+      </div>
+
+      <div>
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Availability</h3>
+        <button
+          onClick={handleInStockFilter}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2.5 text-sm w-full transition-all duration-300",
+            currentInStock
+              ? "bg-charcoal text-ivory font-medium"
+              : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
+          )}
+        >
+          <span className={cn(
+            "w-4 h-4 border flex items-center justify-center text-[10px]",
+            currentInStock ? "bg-charcoal border-charcoal text-ivory" : "border-ivory-dark"
+          )}>
+            {currentInStock && "✓"}
+          </span>
+          In Stock Only
+        </button>
+      </div>
+
+      <div>
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Discount</h3>
+        <button
+          onClick={handleOnSaleFilter}
+          className={cn(
+            "flex items-center gap-2 px-4 py-2.5 text-sm w-full transition-all duration-300",
+            currentOnSale
+              ? "bg-charcoal text-ivory font-medium"
+              : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
+          )}
+        >
+          <span className={cn(
+            "w-4 h-4 border flex items-center justify-center text-[10px]",
+            currentOnSale ? "bg-charcoal border-charcoal text-ivory" : "border-ivory-dark"
+          )}>
+            {currentOnSale && "✓"}
+          </span>
+          On Sale
+        </button>
       </div>
 
       {hasActiveFilters && (

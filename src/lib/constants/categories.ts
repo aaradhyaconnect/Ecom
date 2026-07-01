@@ -19,6 +19,7 @@ export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"] as const;
 export const ORDER_STATUSES = [
   { value: "pending", label: "Pending", color: "text-yellow-600 bg-yellow-50" },
   { value: "confirmed", label: "Confirmed", color: "text-blue-600 bg-blue-50" },
+  { value: "packed", label: "Packed", color: "text-indigo-600 bg-indigo-50" },
   { value: "shipped", label: "Shipped", color: "text-purple-600 bg-purple-50" },
   { value: "out-for-delivery", label: "Out for Delivery", color: "text-orange-600 bg-orange-50" },
   { value: "delivered", label: "Delivered", color: "text-green-600 bg-green-50" },

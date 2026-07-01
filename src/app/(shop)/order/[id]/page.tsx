@@ -13,7 +13,7 @@ import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink } from "luci
 import toast from "react-hot-toast";
 import type { Order } from "@/types";
 
-const STATUS_FLOW = ["pending", "confirmed", "shipped", "out-for-delivery", "delivered"];
+const STATUS_FLOW = ["pending", "confirmed", "packed", "shipped", "out-for-delivery", "delivered"];
 
 function getCurrentStep(status: string): number {
   const idx = STATUS_FLOW.indexOf(status);
@@ -373,6 +373,17 @@ export default function OrderDetailPage({
           >
             Cancel Order
           </Button>
+        </div>
+      )}
+
+      {order.order_status === "delivered" && (
+        <div className="text-center py-4 border-t border-ivory-dark">
+          <a
+            href={`/order/${order.id}/invoice`}
+            className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-gold-dark transition-colors"
+          >
+            Download Invoice
+          </a>
         </div>
       )}
     </div>
