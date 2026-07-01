@@ -117,9 +117,9 @@ export default function ProfilePage() {
     }
   }
 
-  function handleLogout() {
+  async function handleLogout() {
+    await supabase.auth.signOut();
     logout();
-    supabase.auth.signOut();
     router.push("/");
   }
 

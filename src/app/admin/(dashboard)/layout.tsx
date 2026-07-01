@@ -20,7 +20,13 @@ export default async function AdminLayout({
     redirect("/admin/login");
   }
 
-  if (authUser?.user_metadata?.role !== "admin") {
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", authUser.id)
+    .single();
+
+  if (!profile || profile.role !== "admin") {
     redirect("/admin/login");
   }
 

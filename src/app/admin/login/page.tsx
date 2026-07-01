@@ -172,7 +172,7 @@ export default function AdminLoginPage() {
         </div>
 
         <form
-          onSubmit={method === "password" ? handlePasswordLogin : (e) => { e.preventDefault(); handleVerifyOTP(); }}
+          onSubmit={method === "password" ? handlePasswordLogin : (e) => { e.preventDefault(); if (otpSent) handleVerifyOTP(); }}
           className="space-y-4 bg-ivory border border-ivory-dark p-6"
         >
           <div className="flex gap-1 p-1 bg-charcoal/5 mb-2">

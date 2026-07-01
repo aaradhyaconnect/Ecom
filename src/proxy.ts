@@ -5,6 +5,7 @@ const protectedRoutes = [
   "/cart",
   "/checkout",
   "/orders",
+  "/order",
   "/profile",
   "/wishlist",
 ];

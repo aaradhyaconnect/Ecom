@@ -57,7 +57,7 @@ export default function LoginPage() {
         const data = await res.json();
         if (!data.success) { toast.error(data.error); return; }
         toast.success(data.message);
-        router.push(otpChannel === "email" ? `/verify-otp?email=${email}` : `/verify-otp?phone=${phone}`);
+        router.push(otpChannel === "email" ? `/verify-otp?email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(redirectTo)}` : `/verify-otp?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(redirectTo)}`);
       } catch {
         toast.error("Something went wrong");
       } finally {
@@ -72,7 +72,7 @@ export default function LoginPage() {
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}` },
       });
       if (error) {
         toast.error(error.message);

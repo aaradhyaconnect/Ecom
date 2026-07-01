@@ -3,17 +3,19 @@
 import { useRouter } from "next/navigation";
 import { LogOut, User, Bell } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useAuthStore } from "@/lib/store/auth";
 import { getInitials } from "@/lib/utils/format";
 import type { User as UserType } from "@/types";
 
 export function AdminHeader({ user }: { user: UserType }) {
   const router = useRouter();
   const supabase = createClient();
+  const logout = useAuthStore((s) => s.logout);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    logout();
     router.push("/admin/login");
-    router.refresh();
   };
 
   return (

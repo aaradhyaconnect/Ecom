@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, type KeyboardEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Phone, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -11,6 +11,8 @@ import toast from "react-hot-toast";
 
 export default function VerifyOTPPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = searchParams.get("redirect") || "/";
   const [method, setMethod] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -83,7 +85,7 @@ export default function VerifyOTPPage() {
       }
 
       toast.success("Verified successfully!");
-      router.push("/");
+      router.push(redirectTo);
       router.refresh();
     } catch {
       toast.error("Something went wrong");
