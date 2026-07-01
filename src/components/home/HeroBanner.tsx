@@ -23,6 +23,7 @@ const fallbackSlides: BannerSlide[] = [
     description: "Unique pieces crafted for the modern trendsetter",
     cta: "Shop Now",
     href: "/products/new-arrivals",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1400&h=800&fit=crop",
     accent: "from-amber-900/20",
   },
   {
@@ -31,6 +32,7 @@ const fallbackSlides: BannerSlide[] = [
     description: "Handpicked statement pieces that define elegance",
     cta: "Explore Collection",
     href: "/products/artificial-jewellery",
+    image: "https://images.unsplash.com/photo-1515562141589-67f0d727b750?w=1400&h=800&fit=crop",
     accent: "from-rose-900/10",
   },
   {
@@ -39,6 +41,7 @@ const fallbackSlides: BannerSlide[] = [
     description: "Limited time offers on premium fashion & jewellery",
     cta: "Shop Sale",
     href: "/products/sale",
+    image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1400&h=800&fit=crop",
     accent: "from-emerald-900/10",
   },
 ];
