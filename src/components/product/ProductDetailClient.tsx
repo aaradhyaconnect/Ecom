@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, Share2, Minus, Plus, Truck, ChevronRight } from "lucide-react";
@@ -8,6 +8,9 @@ import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Rating } from "@/components/ui/Rating";
 import { ProductCard } from "./ProductCard";
+import { ZoomImage } from "./ZoomImage";
+import { RecentlyViewed } from "./RecentlyViewed";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
 import { useCartStore } from "@/lib/store/cart";
@@ -44,6 +47,11 @@ export function ProductDetailClient({
   const addItem = useCartStore((s) => s.addItem);
   const { isInWishlist, toggleItem } = useWishlistStore();
   const inWishlist = isInWishlist(product.id);
+  const { addProduct } = useRecentlyViewed();
+
+  useEffect(() => {
+    addProduct(product);
+  }, [product, addProduct]);
 
   const discount = product.compare_price
     ? Math.round(
@@ -110,13 +118,10 @@ export function ProductDetailClient({
         <div className="space-y-4 animate-in slide-up">
           <div className="relative aspect-[4/5] overflow-hidden bg-ivory-dark group">
             {product.images?.[selectedImage] ? (
-              <Image
+              <ZoomImage
                 src={product.images[selectedImage]}
                 alt={product.name}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                preload
+                className="w-full h-full"
               />
             ) : (
               <Image
@@ -406,6 +411,8 @@ export function ProductDetailClient({
           </div>
         </div>
       )}
+
+      <RecentlyViewed />
 
       {/* Mobile Sticky Add to Cart */}
       <div className="fixed bottom-0 left-0 right-0 bg-ivory border-t border-ivory-dark p-4 flex items-center gap-4 lg:hidden z-30">

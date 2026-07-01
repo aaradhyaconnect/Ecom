@@ -3,6 +3,9 @@ import { CategoryShowcase } from "@/components/home/CategoryShowcase";
 import { Features } from "@/components/home/Features";
 import { Newsletter } from "@/components/home/Newsletter";
 import { ProductSection } from "@/components/home/ProductSection";
+import { SaleBanner } from "@/components/home/SaleBanner";
+import { InstagramGallery } from "@/components/home/InstagramGallery";
+import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { getBanners } from "@/lib/supabase/queries";
 
 export default async function HomePage() {
@@ -45,15 +48,24 @@ export default async function HomePage() {
         flag="is_best_seller"
         viewAllHref="/products/best-sellers"
       />
+      <SaleBanner />
+      <ProductSection
+        title="Designer Collection"
+        subtitle="Exclusive pieces for the modern trendsetter"
+        category="women-clothing"
+        viewAllHref="/products/women-clothing"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="h-[1px] bg-gradient-to-r from-transparent via-ivory-dark to-transparent" />
       </div>
       <ProductSection
-        title="Sale"
-        subtitle="Don't miss out on these deals"
-        flag="is_sale"
-        viewAllHref="/products/sale"
+        title="Jewellery Collection"
+        subtitle="Elevate every outfit"
+        category="artificial-jewellery"
+        viewAllHref="/products/artificial-jewellery"
       />
+      <InstagramGallery />
+      <CustomerReviews />
       <Newsletter />
     </>
   );
