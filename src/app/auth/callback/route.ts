@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const next = searchParams.get("next") ?? "/";
 
   if (code) {
-    let supabaseResponse = NextResponse.next({ request });
+    const redirectUrl = new URL(`${origin}${next}`);
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -18,17 +18,16 @@ export async function GET(request: NextRequest) {
             return request.cookies.getAll();
           },
           setAll(cookiesToSet) {
-            cookiesToSet.forEach(({ name, value }) =>
-              request.cookies.set(name, value)
-            );
-            supabaseResponse = NextResponse.next({ request });
-            cookiesToSet.forEach(({ name, value, options }) =>
-              supabaseResponse.cookies.set(name, value, options)
-            );
+            cookiesToSet.forEach(({ name, value, options }) => {
+              request.cookies.set(name, value);
+              redirectResponse.cookies.set(name, value, options);
+            });
           },
         },
       }
     );
+
+    const redirectResponse = NextResponse.redirect(redirectUrl);
 
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
@@ -45,18 +44,15 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (profile?.role === "admin") {
-          const adminRedirect = NextResponse.redirect(`${origin}/admin`);
-          supabaseResponse.cookies.getAll().forEach((cookie) => {
+          redirectUrl.pathname = "/admin";
+          const adminRedirect = NextResponse.redirect(redirectUrl);
+          redirectResponse.cookies.getAll().forEach((cookie) => {
             adminRedirect.cookies.set(cookie.name, cookie.value, cookie);
           });
           return adminRedirect;
         }
       }
 
-      const redirectResponse = NextResponse.redirect(`${origin}${next}`);
-      supabaseResponse.cookies.getAll().forEach((cookie) => {
-        redirectResponse.cookies.set(cookie.name, cookie.value, cookie);
-      });
       return redirectResponse;
     }
 
