@@ -1,5 +1,6 @@
 import { getProducts } from "@/lib/supabase/queries";
 import { ProductListingClient } from "@/components/product/ProductListingClient";
+import type { Product } from "@/types";
 
 interface Props {
   params: Promise<{ category: string }>;
@@ -20,17 +21,29 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const colors = (filters.colors as string)?.split(",").filter(Boolean);
 
   const categoryParam = category === "all" ? undefined : category;
-  const result = await getProducts({
-    category: categoryParam,
-    search,
-    sort,
+
+  let result: { products: Product[]; total: number; page: number; limit: number; totalPages: number } = {
+    products: [],
+    total: 0,
     page,
     limit,
-    minPrice,
-    maxPrice,
-    sizes,
-    colors,
-  });
+    totalPages: 0,
+  };
+  try {
+    result = await getProducts({
+      category: categoryParam,
+      search,
+      sort,
+      page,
+      limit,
+      minPrice,
+      maxPrice,
+      sizes,
+      colors,
+    });
+  } catch {
+    // Products may fail to load — render with empty results
+  }
 
   return (
     <ProductListingClient category={category} initialProducts={result} />

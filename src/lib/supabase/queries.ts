@@ -45,7 +45,10 @@ export async function getProducts({
     query = query.overlaps("sizes", sizes);
   }
   if (colors && colors.length > 0) {
-    query = query.overlaps("colors", colors);
+    const colorConditions = colors.map(
+      (c) => `colors::text.ilike.%"name":"${c}"%`
+    );
+    query = query.or(colorConditions.join(","));
   }
 
   if (sort) {
