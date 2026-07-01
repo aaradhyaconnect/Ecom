@@ -9,17 +9,16 @@ export function ToastProvider() {
       toastOptions={{
         duration: 3000,
         style: {
-          background: "#18181b",
-          color: "#fff",
-          borderRadius: "12px",
+          background: "#1A1A1A",
+          color: "#FFFFF0",
           padding: "12px 16px",
           fontSize: "14px",
         },
         success: {
-          iconTheme: { primary: "#22c55e", secondary: "#fff" },
+          iconTheme: { primary: "#16a34a", secondary: "#FFFFF0" },
         },
         error: {
-          iconTheme: { primary: "#ef4444", secondary: "#fff" },
+          iconTheme: { primary: "#e11d48", secondary: "#FFFFF0" },
         },
       }}
     />

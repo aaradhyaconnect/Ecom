@@ -102,6 +102,8 @@ export interface Order {
   tracking_id?: string;
   courier_name?: string;
   estimated_delivery?: string;
+  shiprocket_shipment_id?: number;
+  awb_code?: string;
   created_at: string;
   updated_at: string;
 }

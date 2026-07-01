@@ -1,9 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import { SITE } from "@/lib/constants/site";
 import { Mail, Phone, MapPin } from "lucide-react";
-
-export const metadata = { title: "Contact Us — HAINJU" };
+import toast from "react-hot-toast";
 
 export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+  const [sending, setSending] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!name || !email || !message) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+    setSending(true);
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, subject, message }),
+      });
+      toast.success("Message sent! We'll get back to you soon.");
+      setName("");
+      setEmail("");
+      setSubject("");
+      setMessage("");
+    } catch {
+      toast.error("Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 md:py-24">
       <div className="text-center mb-16">
@@ -42,15 +75,15 @@ export default function ContactPage() {
 
       <div className="bg-ivory-dark/50 p-8 md:p-12">
         <h2 className="text-2xl font-serif font-bold text-charcoal mb-6">Send us a Message</h2>
-        <form className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
-            <input type="text" placeholder="Your Name" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
-            <input type="email" placeholder="Your Email" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
+            <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
+            <input type="email" placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
           </div>
-          <input type="text" placeholder="Subject" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
-          <textarea rows={5} placeholder="Your Message" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none resize-none" />
-          <button type="submit" className="bg-charcoal text-ivory px-8 py-3 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-charcoal-light transition-colors duration-300">
-            Send Message
+          <input type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
+          <textarea rows={5} placeholder="Your Message" value={message} onChange={(e) => setMessage(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none resize-none" />
+          <button type="submit" disabled={sending} className="bg-charcoal text-ivory px-8 py-3 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-charcoal-light transition-colors duration-300 disabled:opacity-50">
+            {sending ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>

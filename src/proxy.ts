@@ -12,7 +12,7 @@ const protectedRoutes = [
 const adminRoutes = ["/admin"];
 
 export async function proxy(request: NextRequest) {
-  const { supabaseResponse, user } = await updateSession(request);
+  const { supabase, supabaseResponse, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
 
   const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
@@ -33,8 +33,13 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && isAdmin && !isAdminLogin) {
-    const role = user?.app_metadata?.role ?? user?.user_metadata?.role;
-    if (role !== "admin") {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== "admin") {
       const url = request.nextUrl.clone();
       url.pathname = "/";
       return NextResponse.redirect(url);

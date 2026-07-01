@@ -14,7 +14,7 @@ import type { Product } from "@/types";
 
 interface ProductCardProps {
   product: Product;
-  priority?: boolean;
+  preload?: boolean;
 }
 
 const categoryMap = Object.fromEntries(CATEGORIES.map((c) => [c.slug, c.name]));
@@ -27,7 +27,7 @@ function parseColors(colors: Product["colors"]): { name: string; hex: string }[]
   return [];
 }
 
-export function ProductCard({ product, priority }: ProductCardProps) {
+export function ProductCard({ product, preload }: ProductCardProps) {
   const { isInWishlist, toggleItem } = useWishlistStore();
   const addItem = useCartStore((s) => s.addItem);
   const inWishlist = isInWishlist(product.id);
@@ -62,7 +62,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
               alt={product.name}
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              priority={priority}
+              preload={preload}
               className="object-cover transition-transform duration-[800ms] ease-out group-hover:scale-110"
             />
           ) : (
@@ -93,7 +93,7 @@ export function ProductCard({ product, priority }: ProductCardProps) {
               toggleItem(product);
             }}
             className={cn(
-              "absolute top-3 right-3 p-2.5 rounded-full bg-ivory/90 backdrop-blur-sm shadow-sm transition-all duration-300 hover:scale-110 z-10",
+              "absolute top-3 right-3 p-2.5 bg-ivory/90 backdrop-blur-sm transition-all duration-300 hover:scale-110 z-10",
               inWishlist
                 ? "opacity-100 text-rose-400"
                 : "opacity-0 group-hover:opacity-100 text-charcoal-muted hover:text-rose-400"

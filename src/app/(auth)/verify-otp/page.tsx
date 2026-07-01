@@ -137,12 +137,12 @@ export default function VerifyOTPPage() {
 
       {step === "input" ? (
         <div className="space-y-6">
-          <div className="flex gap-2 p-1 bg-ivory-dark rounded-lg">
+          <div className="flex gap-2 p-1 bg-ivory-dark">
             <button
               onClick={() => setMethod("email")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
                 method === "email"
-                  ? "bg-white text-charcoal shadow-sm"
+                  ? "bg-ivory text-charcoal"
                   : "text-charcoal-muted hover:text-charcoal"
               }`}
             >
@@ -151,9 +151,9 @@ export default function VerifyOTPPage() {
             </button>
             <button
               onClick={() => setMethod("phone")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-md text-sm font-medium transition-colors ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
                 method === "phone"
-                  ? "bg-white text-charcoal shadow-sm"
+                  ? "bg-ivory text-charcoal"
                   : "text-charcoal-muted hover:text-charcoal"
               }`}
             >
@@ -202,7 +202,7 @@ export default function VerifyOTPPage() {
                 onChange={(e) => handleOtpChange(index, e.target.value)}
                 onKeyDown={(e) => handleOtpKeyDown(index, e)}
                 onPaste={index === 0 ? handlePaste : undefined}
-                className="w-11 h-12 text-center text-lg font-semibold border border-ivory-dark rounded-lg focus:ring-2 focus:ring-gold/50 focus:border-gold/60 transition-all duration-200 outline-none bg-white"
+                className="w-11 h-12 text-center text-lg font-semibold border border-ivory-dark focus:border-gold/60 outline-none bg-ivory"
               />
             ))}
           </div>

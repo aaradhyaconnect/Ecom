@@ -54,7 +54,7 @@ export function Newsletter() {
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
 
       <div className="max-w-2xl mx-auto px-4 sm:px-6 text-center relative z-10">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gold/5 border border-gold/15 mb-8">
+        <div className="inline-flex items-center justify-center w-16 h-16  bg-gold/5 border border-gold/15 mb-8">
           <Sparkles className="h-6 w-6 text-gold-light" />
         </div>
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-5">

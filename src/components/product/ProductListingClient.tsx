@@ -202,7 +202,7 @@ export function ProductListingClient({
               key={size}
               onClick={() => handleSizeFilter(size)}
               className={cn(
-                "w-10 h-10 rounded-full text-xs font-medium border transition-all duration-300",
+                "w-10 h-10 text-xs font-medium border transition-all duration-300",
                 currentSizes.includes(size)
                   ? "bg-charcoal text-ivory border-charcoal"
                   : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"
@@ -222,7 +222,7 @@ export function ProductListingClient({
               key={color.name}
               onClick={() => handleColorFilter(color.name)}
               className={cn(
-                "flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] font-medium uppercase tracking-wider border transition-all duration-300",
+                "flex items-center gap-2 px-3 py-1.5 text-[10px] font-medium uppercase tracking-wider border transition-all duration-300",
                 currentColors.includes(color.name)
                   ? "bg-charcoal text-ivory border-charcoal"
                   : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"

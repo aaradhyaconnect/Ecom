@@ -10,9 +10,9 @@ export async function GET(
     const { slug } = await params;
     const data = await getProduct(slug);
     return Response.json({ success: true, data: data as Product });
-  } catch (error) {
+  } catch (_error) {
     const message =
-      error instanceof Error ? error.message : "Product not found";
+      _error instanceof Error ? _error.message : "Product not found";
     return Response.json({ success: false, error: message }, { status: 404 });
   }
 }

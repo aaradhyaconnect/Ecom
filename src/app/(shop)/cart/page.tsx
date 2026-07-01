@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
@@ -9,7 +10,7 @@ import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
 import toast from "react-hot-toast";
 
-const SHIPPING_THRESHOLD = 499;
+const SHIPPING_THRESHOLD = 999;
 const SHIPPING_CHARGE = 49;
 
 export default function CartPage() {
@@ -129,10 +130,12 @@ export default function CartPage() {
             >
               <div className="w-24 h-32 overflow-hidden bg-charcoal/5 flex-shrink-0">
                 {item.product.images?.[0] && (
-                  <img
+                  <Image
                     src={item.product.images[0]}
                     alt={item.product.name}
-                    className="w-full h-full object-cover"
+                    width={96}
+                    height={128}
+                    className="h-full w-full object-cover"
                   />
                 )}
               </div>
@@ -176,7 +179,7 @@ export default function CartPage() {
                       handleSaveCart();
                       toast.success("Item removed");
                     }}
-                    className="p-2 text-charcoal-muted hover:text-red-500 transition-colors"
+                    className="p-2 text-charcoal-muted hover:text-rose-500 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -267,13 +270,13 @@ export default function CartPage() {
                     </Button>
                   </div>
                   {couponError && (
-                    <p className="text-xs text-red-500">{couponError}</p>
+                    <p className="text-xs text-rose-500">{couponError}</p>
                   )}
                 </div>
               )}
             </div>
 
-            <Link href="/checkout">
+            <Link href={appliedCoupon ? `/checkout?coupon=${encodeURIComponent(appliedCoupon.code)}` : "/checkout"}>
               <Button fullWidth size="lg">
                 Proceed to Checkout
               </Button>

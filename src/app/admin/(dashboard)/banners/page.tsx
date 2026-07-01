@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import NextImage from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
@@ -193,6 +194,7 @@ export default function AdminBannersPage() {
         </div>
       ) : banners.length === 0 ? (
         <div className="border bg-ivory p-12 text-center text-charcoal-muted/60">
+          {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image className="mx-auto mb-2 h-8 w-8" />
           No banners yet
         </div>
@@ -201,7 +203,7 @@ export default function AdminBannersPage() {
           {banners.map((banner, index) => (
             <div
               key={banner.id}
-              className="border bg-ivory shadow-sm overflow-hidden"
+              className="border bg-ivory overflow-hidden"
             >
               <div className="flex items-start gap-4 p-4">
                 <div className="flex flex-col items-center gap-1 pt-1">
@@ -224,13 +226,16 @@ export default function AdminBannersPage() {
 
                 <div className="h-20 w-36 bg-ivory-dark overflow-hidden flex-shrink-0">
                   {banner.image ? (
-                    <img
+                    <NextImage
                       src={banner.image}
                       alt={banner.title}
+                      width={144}
+                      height={80}
                       className="h-full w-full object-cover"
                     />
                   ) : (
                     <div className="flex h-full items-center justify-center">
+                      {/* eslint-disable-next-line jsx-a11y/alt-text */}
                       <Image className="h-6 w-6 text-charcoal-muted/40" />
                     </div>
                   )}
@@ -277,7 +282,7 @@ export default function AdminBannersPage() {
                   </button>
                   <button
                     onClick={() => handleDelete(banner)}
-                    className="p-2 text-charcoal-muted hover:bg-red-50 hover:text-red-600 transition-colors"
+                    className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
@@ -314,13 +319,12 @@ export default function AdminBannersPage() {
           />
           {form.image && (
             <div className="h-32 bg-ivory-dark overflow-hidden">
-              <img
+              <NextImage
                 src={form.image}
                 alt="Preview"
+                width={512}
+                height={128}
                 className="h-full w-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
               />
             </div>
           )}

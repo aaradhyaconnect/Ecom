@@ -199,7 +199,7 @@ export function ProductDetailClient({
             <span
               className={cn(
                 "w-2 h-2 rounded-full",
-                inStock ? "bg-emerald-500" : "bg-red-500"
+                inStock ? "bg-emerald-500" : "bg-rose-500"
               )}
             />
             <span className="text-sm text-charcoal-muted">

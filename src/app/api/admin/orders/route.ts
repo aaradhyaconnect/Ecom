@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/supabase/server";
-import type { Order } from "@/types";
 
 export async function GET(request: Request) {
   try {

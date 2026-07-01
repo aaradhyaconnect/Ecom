@@ -1,8 +1,3 @@
-interface Props {
-  children: React.ReactNode;
-  params: Promise<{ category: string }>;
-}
-
-export default async function CategoryLayout({ children }: Props) {
+export default function CategoryLayout({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }

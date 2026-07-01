@@ -97,7 +97,7 @@ export default function LoginPage() {
         <button
           onClick={() => setAuthMethod("password")}
           className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-            authMethod === "password" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+            authMethod === "password" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
           }`}
         >
           Email & Password
@@ -105,7 +105,7 @@ export default function LoginPage() {
         <button
           onClick={() => setAuthMethod("otp")}
           className={`flex-1 py-2.5 text-xs font-medium transition-colors ${
-            authMethod === "otp" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+            authMethod === "otp" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
           }`}
         >
           OTP
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setOtpChannel("email")}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
-                  otpChannel === "email" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+                  otpChannel === "email" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
                 }`}
               >
                 <Mail className="h-3.5 w-3.5" /> Email
@@ -157,7 +157,7 @@ export default function LoginPage() {
                 type="button"
                 onClick={() => setOtpChannel("phone")}
                 className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
-                  otpChannel === "phone" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+                  otpChannel === "phone" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
                 }`}
               >
                 <Phone className="h-3.5 w-3.5" /> Phone

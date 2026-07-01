@@ -99,12 +99,12 @@ export default function RegisterPage() {
           icon={<User className="h-4 w-4" />}
         />
 
-        <div className="flex gap-1 p-1 bg-ivory-dark rounded-lg">
+        <div className="flex gap-1 p-1 bg-ivory-dark">
           <button
             type="button"
             onClick={() => setUsePhone(false)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-              !usePhone ? "bg-white text-charcoal shadow-sm" : "text-charcoal-muted"
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+              !usePhone ? "bg-ivory text-charcoal" : "text-charcoal-muted"
             }`}
           >
             <Mail className="h-3.5 w-3.5" /> Email
@@ -112,8 +112,8 @@ export default function RegisterPage() {
           <button
             type="button"
             onClick={() => setUsePhone(true)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-              usePhone ? "bg-white text-charcoal shadow-sm" : "text-charcoal-muted"
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+              usePhone ? "bg-ivory text-charcoal" : "text-charcoal-muted"
             }`}
           >
             <Phone className="h-3.5 w-3.5" /> Phone

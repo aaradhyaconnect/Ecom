@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
@@ -338,9 +339,11 @@ export default function AdminProductsPage() {
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 bg-ivory-dark flex items-center justify-center overflow-hidden">
                           {product.images[0] ? (
-                            <img
+                            <Image
                               src={product.images[0]}
-                              alt=""
+                              alt={product.name}
+                              width={40}
+                              height={40}
                               className="h-full w-full object-cover"
                             />
                           ) : (
@@ -627,13 +630,12 @@ export default function AdminProductsPage() {
                   )}
                   {url && (
                     <div className="h-9 w-9 border border-ivory-dark overflow-hidden flex-shrink-0">
-                      <img
+                      <Image
                         src={url}
-                        alt=""
+                        alt="Product preview"
+                        width={36}
+                        height={36}
                         className="h-full w-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
                       />
                     </div>
                   )}

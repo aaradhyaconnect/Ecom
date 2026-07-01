@@ -18,7 +18,6 @@ export async function POST(request: Request) {
       .upsert({ email, subscribed_at: new Date().toISOString() }, { onConflict: "email" });
 
     if (error) {
-      console.error("Newsletter signup error:", error);
       return NextResponse.json(
         { success: false, error: "Failed to subscribe" },
         { status: 500 }

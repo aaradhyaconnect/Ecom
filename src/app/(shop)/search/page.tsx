@@ -31,10 +31,13 @@ export default async function SearchPage({ searchParams }: Props) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-semibold">
+        <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">
+          {query ? "Search" : "Collection"}
+        </span>
+        <h1 className="text-2xl md:text-3xl font-serif font-bold text-charcoal mt-1">
           {query ? (
             <>
-              Search results for &ldquo;<span className="text-charcoal-muted">{query}</span>&rdquo;
+              Results for &ldquo;<span className="text-charcoal-muted">{query}</span>&rdquo;
             </>
           ) : (
             "All Products"

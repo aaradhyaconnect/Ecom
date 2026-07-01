@@ -35,9 +35,9 @@ export async function GET(request: NextRequest) {
       success: true,
       data: result,
     });
-  } catch (error) {
+  } catch (_error) {
     const message =
-      error instanceof Error ? error.message : "Failed to fetch products";
+      _error instanceof Error ? _error.message : "Failed to fetch products";
     return Response.json({ success: false, error: message }, { status: 500 });
   }
 }

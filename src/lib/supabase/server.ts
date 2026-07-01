@@ -4,12 +4,30 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { User } from "@supabase/supabase-js";
 
+function requiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`);
+  }
+  return value;
+}
+
+function createServiceClient() {
+  return createClient(
+    requiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requiredEnv("SUPABASE_SERVICE_ROLE_KEY"),
+    {
+      auth: { persistSession: false },
+    }
+  );
+}
+
 export async function createServerSupabase() {
   const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    requiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       cookies: {
         getAll() {
@@ -27,8 +45,8 @@ export async function createServerSupabase() {
 
 export function createPublicClient() {
   return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    requiredEnv("NEXT_PUBLIC_SUPABASE_URL"),
+    requiredEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
     {
       auth: { persistSession: false },
     }
@@ -36,28 +54,11 @@ export function createPublicClient() {
 }
 
 export async function createAdminClient() {
-  const cookieStore = await cookies();
-
-  return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) =>
-            cookieStore.set(name, value, options)
-          );
-        },
-      },
-    }
-  );
+  return createServiceClient();
 }
 
 export async function requireAdmin(): Promise<
-  { supabase: Awaited<ReturnType<typeof createServerSupabase>>; user: User } | { response: NextResponse }
+  { supabase: ReturnType<typeof createServiceClient>; user: User } | { response: NextResponse }
 > {
   const supabase = await createServerSupabase();
   const {
@@ -73,7 +74,13 @@ export async function requireAdmin(): Promise<
     };
   }
 
-  if (user?.user_metadata?.role !== "admin") {
+  const { data: profile, error } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (error || profile?.role !== "admin") {
     return {
       response: NextResponse.json(
         { success: false, error: "Forbidden" },
@@ -82,5 +89,5 @@ export async function requireAdmin(): Promise<
     };
   }
 
-  return { supabase, user };
+  return { supabase: createServiceClient(), user };
 }

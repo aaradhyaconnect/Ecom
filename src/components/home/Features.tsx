@@ -34,7 +34,7 @@ export function Features() {
               className="text-center group"
               style={{ animationDelay: `${i * 100}ms` }}
             >
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gradient-to-br from-ivory to-ivory-dark shadow-sm border border-ivory-dark mb-5 group-hover:shadow-md group-hover:border-gold/20 group-hover:from-ivory group-hover:to-gold/5 transition-all duration-500">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-ivory to-ivory-dark border border-ivory-dark mb-5 group-hover:border-gold/20 group-hover:from-ivory group-hover:to-gold/5 transition-all duration-500">
                 <feature.icon className="h-6 w-6 text-charcoal-muted group-hover:text-gold-dark transition-colors duration-500" />
               </div>
               <h3 className="text-sm font-semibold text-charcoal tracking-wide">

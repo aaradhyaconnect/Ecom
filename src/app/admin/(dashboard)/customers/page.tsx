@@ -118,7 +118,7 @@ export default function AdminCustomersPage() {
         />
       </div>
 
-      <div className="border bg-ivory shadow-sm overflow-hidden">
+      <div className="border bg-ivory overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

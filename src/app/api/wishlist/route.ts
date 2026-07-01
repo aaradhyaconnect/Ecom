@@ -29,7 +29,7 @@ export async function GET() {
     }
 
     return Response.json({ success: true, data });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: "Internal server error" },
       { status: 500 }
@@ -89,7 +89,7 @@ export async function POST(request: NextRequest) {
     }
 
     return Response.json({ success: true, data }, { status: 201 });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: "Internal server error" },
       { status: 500 }
@@ -135,7 +135,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     return Response.json({ success: true, message: "Item removed" });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: "Internal server error" },
       { status: 500 }

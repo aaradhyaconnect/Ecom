@@ -121,17 +121,10 @@ export default function AdminLoginPage() {
       }
 
       const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-        if (profile?.role !== "admin") {
-          toast.error("You are not an admin");
-          await supabase.auth.signOut();
-          return;
-        }
+      if (user?.user_metadata?.role !== "admin") {
+        toast.error("Unauthorized. Admin access required.");
+        await supabase.auth.signOut();
+        return;
       }
 
       toast.success("Welcome back!");
@@ -148,8 +141,8 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-ivory px-4">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-black">
-            <LayoutDashboard className="h-6 w-6 text-white" />
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center border border-charcoal bg-ivory">
+            <LayoutDashboard className="h-6 w-6 text-charcoal" />
           </div>
           <h1 className="text-2xl font-bold">Admin Login</h1>
           <p className="mt-1 text-sm text-charcoal-muted">
@@ -159,14 +152,14 @@ export default function AdminLoginPage() {
 
         <form
           onSubmit={method === "password" ? handlePasswordLogin : (e) => { e.preventDefault(); handleVerifyOTP(); }}
-          className="space-y-4 rounded-2xl bg-white p-6 shadow-sm border"
+          className="space-y-4 bg-ivory border border-ivory-dark p-6"
         >
-          <div className="flex gap-1 p-1 bg-ivory-dark mb-2">
+          <div className="flex gap-1 p-1 bg-charcoal/5 mb-2">
             <button
               type="button"
               onClick={() => setMethod("password")}
-              className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${
-                method === "password" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+              className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                method === "password" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
               }`}
             >
               Password
@@ -174,8 +167,8 @@ export default function AdminLoginPage() {
             <button
               type="button"
               onClick={() => setMethod("otp")}
-              className={`flex-1 py-2 rounded-md text-xs font-medium transition-colors ${
-                method === "otp" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+              className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                method === "otp" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
               }`}
             >
               OTP
@@ -214,12 +207,12 @@ export default function AdminLoginPage() {
             </>
           ) : !otpSent ? (
             <>
-              <div className="flex gap-2 p-1 bg-ivory-dark">
+              <div className="flex gap-2 p-1 bg-charcoal/5">
                 <button
                   type="button"
                   onClick={() => setOtpMethod("email")}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                    otpMethod === "email" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+                    otpMethod === "email" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
                   }`}
                 >
                   <Mail className="h-3.5 w-3.5" /> Email
@@ -227,8 +220,8 @@ export default function AdminLoginPage() {
                 <button
                   type="button"
                   onClick={() => setOtpMethod("phone")}
-                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-xs font-medium transition-colors ${
-                    otpMethod === "phone" ? "bg-ivory text-charcoal shadow-sm" : "text-charcoal-muted"
+                  className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
+                    otpMethod === "phone" ? "bg-ivory text-charcoal" : "text-charcoal-muted"
                   }`}
                 >
                   <Phone className="h-3.5 w-3.5" /> Phone
@@ -280,7 +273,7 @@ export default function AdminLoginPage() {
                       }
                     }}
                     name={`otp-${index}`}
-                    className="w-11 h-12 text-center text-lg font-semibold border border-ivory-dark rounded-lg focus:border-gold/60 focus:ring-0"
+                    className="w-11 h-12 text-center text-lg font-semibold border border-ivory-dark bg-ivory"
                   />
                 ))}
               </div>

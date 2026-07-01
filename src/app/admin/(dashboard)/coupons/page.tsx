@@ -178,7 +178,7 @@ export default function AdminCouponsPage() {
         </Button>
       </div>
 
-      <div className="border bg-ivory shadow-sm overflow-hidden">
+      <div className="border bg-ivory overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -237,7 +237,7 @@ export default function AdminCouponsPage() {
                         <span
                           className={
                             isExpired(coupon.expires_at)
-                              ? "text-red-500"
+                              ? "text-rose-500"
                               : "text-charcoal-muted"
                           }
                         >
@@ -272,7 +272,7 @@ export default function AdminCouponsPage() {
                         </button>
                         <button
                           onClick={() => handleDelete(coupon)}
-                          className="p-2 text-charcoal-muted hover:bg-red-50 hover:text-red-600 transition-colors"
+                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
                         >
                           <Trash2 className="h-4 w-4" />
                         </button>

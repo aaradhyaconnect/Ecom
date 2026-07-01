@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useCartStore } from "@/lib/store/cart";
@@ -82,11 +83,21 @@ export default function WishlistPage() {
             <div key={product.id} className="group relative">
               <Link href={`/product/${product.slug}`} className="block">
                 <div className="relative aspect-[3/4] bg-charcoal/5 mb-3">
-                  {product.images?.[0] && (
-                    <img
+                  {product.images?.[0] ? (
+                    <Image
                       src={product.images[0]}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <Image
+                      src="/placeholder.svg"
+                      alt={product.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover"
                     />
                   )}
 
@@ -103,9 +114,9 @@ export default function WishlistPage() {
                       removeItem(product.id);
                       toast.success("Removed from wishlist");
                     }}
-                    className="absolute top-2 right-2 p-2 bg-ivory/80 backdrop-blur-sm shadow-sm hover:scale-110 transition-all"
+                    className="absolute top-2 right-2 p-2 bg-ivory/80 backdrop-blur-sm hover:scale-110 transition-all"
                   >
-                    <Trash2 className="h-4 w-4 text-red-500" />
+                    <Trash2 className="h-4 w-4 text-rose-500" />
                   </button>
                 </div>
               </Link>

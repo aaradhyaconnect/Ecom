@@ -58,7 +58,7 @@ export async function GET(
         max_discount: coupon.max_discount,
       },
     });
-  } catch (error) {
+  } catch {
     return Response.json(
       { success: false, error: "Internal server error" },
       { status: 500 }

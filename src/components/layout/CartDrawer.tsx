@@ -25,14 +25,14 @@ export function CartDrawer() {
                   Shopping Bag ({getItemCount()})
                 </h2>
               </div>
-              <button onClick={closeCart} className="p-2 hover:bg-ivory-dark rounded-full transition-colors">
+              <button onClick={closeCart} className="p-2 hover:bg-ivory-dark  transition-colors">
                 <X className="h-4 w-4 text-charcoal-muted" />
               </button>
             </div>
 
             {items.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-charcoal-muted gap-5 p-8">
-                <div className="w-20 h-20 rounded-full bg-ivory-dark flex items-center justify-center">
+                <div className="w-20 h-20  bg-ivory-dark flex items-center justify-center">
                   <ShoppingBag className="h-8 w-8 text-charcoal-muted/40" />
                 </div>
                 <p className="text-lg font-medium text-charcoal">Your bag is empty</p>

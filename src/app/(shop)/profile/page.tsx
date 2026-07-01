@@ -136,9 +136,9 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-        <Skeleton className="h-24 w-full rounded-xl mb-6" />
-        <Skeleton className="h-48 w-full rounded-xl mb-6" />
-        <Skeleton className="h-48 w-full rounded-xl" />
+        <Skeleton className="h-24 w-full mb-6" />
+        <Skeleton className="h-48 w-full mb-6" />
+        <Skeleton className="h-48 w-full" />
       </div>
     );
   }
@@ -279,7 +279,7 @@ export default function ProfilePage() {
               </div>
               <button
                 onClick={() => handleRemoveAddress(idx)}
-                className="text-xs text-red-500 hover:underline flex-shrink-0 ml-2"
+                className="text-xs text-rose-500 hover:underline flex-shrink-0 ml-2"
               >
                 Remove
               </button>
@@ -340,7 +340,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="text-center py-4">
-        <Button variant="ghost" onClick={handleLogout} className="text-red-500 hover:text-red-700">
+        <Button variant="ghost" onClick={handleLogout} className="text-rose-500 hover:text-rose-700">
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
         </Button>

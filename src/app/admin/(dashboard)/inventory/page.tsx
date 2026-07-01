@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Search,
   Warehouse,
@@ -148,7 +149,7 @@ export default function InventoryPage() {
           onClick={() => setFilter("out")}
           className={cn(
             "border p-4 text-left transition-colors",
-            filter === "out" ? "border-red-500 bg-red-50 text-red-900" : "bg-ivory hover:bg-ivory-dark/50"
+            filter === "out" ? "border-rose-500 bg-rose-50 text-rose-900" : "bg-ivory hover:bg-ivory-dark/50"
           )}
         >
           <div className="flex items-center gap-2">
@@ -171,7 +172,7 @@ export default function InventoryPage() {
         </div>
       </div>
 
-      <div className="border bg-ivory shadow-sm overflow-hidden">
+      <div className="border bg-ivory overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -215,9 +216,11 @@ export default function InventoryPage() {
                         <div className="flex items-center gap-3">
                           <div className="h-10 w-10 bg-ivory-dark overflow-hidden flex-shrink-0">
                             {product.images?.[0] ? (
-                              <img
+                              <Image
                                 src={product.images[0]}
                                 alt={product.name}
+                                width={40}
+                                height={40}
                                 className="h-full w-full object-cover"
                               />
                             ) : (
@@ -260,7 +263,7 @@ export default function InventoryPage() {
                             className={cn(
                               "w-16 h-7 text-center text-sm font-medium border transition-colors",
                               isEdited ? "border-amber-400 bg-ivory" : "border-ivory-dark",
-                              currentStock === 0 && "text-red-500",
+                              currentStock === 0 && "text-rose-500",
                               currentStock > 0 && currentStock <= 5 && "text-amber-600"
                             )}
                           />
@@ -274,7 +277,7 @@ export default function InventoryPage() {
                       </td>
                       <td className="px-5 py-3">
                         {currentStock === 0 ? (
-                          <span className="inline-flex items-center gap-1 text-xs font-medium text-red-600">
+                          <span className="inline-flex items-center gap-1 text-xs font-medium text-rose-600">
                             <PackageX className="h-3 w-3" /> Out of Stock
                           </span>
                         ) : currentStock <= 5 ? (

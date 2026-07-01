@@ -31,7 +31,7 @@ export default function AdminAnalyticsPage() {
         const data = await res.json();
         if (data.success) setAnalytics(data.data);
       } catch {
-        console.error("Failed to load analytics");
+        setAnalytics(null);
       } finally {
         setLoading(false);
       }
@@ -50,7 +50,7 @@ export default function AdminAnalyticsPage() {
   if (!analytics) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-red-400">Failed to load analytics</div>
+        <div className="text-rose-400">Failed to load analytics</div>
       </div>
     );
   }
@@ -102,7 +102,7 @@ export default function AdminAnalyticsPage() {
         {overviewCards.map((card) => (
           <div
             key={card.label}
-            className="border bg-ivory p-5 shadow-sm"
+            className="border bg-ivory p-5 "
           >
             <div className="flex items-center justify-between">
               <div className="bg-ivory-dark p-2">
@@ -117,7 +117,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="border bg-ivory p-5 shadow-sm">
+        <div className="border bg-ivory p-5 ">
           <h2 className="mb-4 text-sm font-semibold">
             Revenue (Last 30 Days)
           </h2>
@@ -144,7 +144,7 @@ export default function AdminAnalyticsPage() {
           </div>
         </div>
 
-        <div className="border bg-ivory p-5 shadow-sm">
+        <div className="border bg-ivory p-5 ">
           <h2 className="mb-4 text-sm font-semibold">Orders by Status</h2>
           <div className="space-y-3">
             {analytics.orders_by_status.map((item) => (
@@ -194,7 +194,7 @@ export default function AdminAnalyticsPage() {
         </div>
       </div>
 
-      <div className="border bg-ivory p-5 shadow-sm">
+      <div className="border bg-ivory p-5 ">
         <h2 className="mb-4 text-sm font-semibold">Top Selling Products</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

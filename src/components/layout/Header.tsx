@@ -106,7 +106,7 @@ export function Header() {
               <button
                 onClick={openSearch}
                 className={cn(
-                  "p-2.5 hover:scale-110 transition-all duration-200 rounded-full",
+                  "p-2.5 hover:scale-110 transition-all duration-200 ",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
                 )}
                 aria-label="Search"
@@ -117,14 +117,14 @@ export function Header() {
               <Link
                 href={user ? "/wishlist" : "/login"}
                 className={cn(
-                  "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 rounded-full relative",
+                  "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200  relative",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
                 )}
                 aria-label="Wishlist"
               >
                 <Heart className="h-[18px] w-[18px]" strokeWidth={1.5} />
                 {wishlistCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-in">
+                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4  flex items-center justify-center scale-in">
                     {wishlistCount > 9 ? "9+" : wishlistCount}
                   </span>
                 )}
@@ -133,7 +133,7 @@ export function Header() {
               <Link
                 href={user ? "/profile" : "/login"}
                 className={cn(
-                  "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 rounded-full",
+                  "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 ",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
                 )}
                 aria-label="Account"
@@ -144,14 +144,14 @@ export function Header() {
               <button
                 onClick={openCart}
                 className={cn(
-                  "p-2.5 hover:scale-110 transition-all duration-200 rounded-full relative",
+                  "p-2.5 hover:scale-110 transition-all duration-200  relative",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
                 )}
                 aria-label="Cart"
               >
                 <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.5} />
                 {cartCount > 0 && (
-                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4 rounded-full flex items-center justify-center scale-in">
+                  <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4  flex items-center justify-center scale-in">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
                 )}
@@ -210,7 +210,7 @@ export function Header() {
                   <Heart className="h-4 w-4" />
                   Wishlist
                   {wishlistCount > 0 && (
-                    <span className="bg-gold text-charcoal text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center ml-auto">
+                    <span className="bg-gold text-charcoal text-[10px] font-bold w-5 h-5  flex items-center justify-center ml-auto">
                       {wishlistCount}
                     </span>
                   )}

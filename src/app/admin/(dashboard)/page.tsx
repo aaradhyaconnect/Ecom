@@ -12,7 +12,13 @@ export default async function AdminDashboardPage() {
 
   if (!user) redirect("/admin/login");
 
-  if (user?.user_metadata?.role !== "admin") redirect("/admin/login");
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile || profile.role !== "admin") redirect("/admin/login");
 
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
@@ -45,14 +51,6 @@ export default async function AdminDashboardPage() {
   const revenueLastMonth = lastMonthOrders
     .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
     .reduce((sum, o) => sum + (o.total || 0), 0);
-
-  const revenueTrend = revenueLastMonth > 0
-    ? Math.round(((revenueMonth - revenueLastMonth) / revenueLastMonth) * 100)
-    : 0;
-
-  const ordersTrend = lastMonthOrders.length > 0
-    ? Math.round(((monthOrders.length - lastMonthOrders.length) / lastMonthOrders.length) * 100)
-    : 0;
 
   const analytics: AnalyticsSummary = {
     total_revenue: totalRevenue,

@@ -24,8 +24,8 @@ export const ORDER_STATUSES = [
   { value: "shipped", label: "Shipped", color: "text-purple-600 bg-purple-50" },
   { value: "out-for-delivery", label: "Out for Delivery", color: "text-orange-600 bg-orange-50" },
   { value: "delivered", label: "Delivered", color: "text-green-600 bg-green-50" },
-  { value: "cancelled", label: "Cancelled", color: "text-red-600 bg-red-50" },
-  { value: "returned", label: "Returned", color: "text-gray-600 bg-gray-50" },
+  { value: "cancelled", label: "Cancelled", color: "text-rose-600 bg-rose-50" },
+  { value: "returned", label: "Returned", color: "text-charcoal-muted bg-ivory-dark" },
 ] as const;
 
 export const PAYMENT_METHODS = [

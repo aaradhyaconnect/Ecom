@@ -73,7 +73,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
                 fill
                 sizes="100vw"
                 className="object-cover"
-                priority={i === 0}
+                preload={i === 0}
               />
               <div className="absolute inset-0 bg-charcoal/60" />
             </div>
@@ -155,7 +155,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
         className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 p-3 text-ivory/30 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block group"
         aria-label="Previous slide"
       >
-        <div className="w-12 h-12 rounded-full border border-ivory/10 flex items-center justify-center group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-300">
+        <div className="w-12 h-12  border border-ivory/10 flex items-center justify-center group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-300">
           <ChevronLeft className="h-5 w-5" />
         </div>
       </button>
@@ -164,7 +164,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
         className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 p-3 text-ivory/30 hover:text-ivory transition-all duration-300 hover:scale-110 hidden sm:block group"
         aria-label="Next slide"
       >
-        <div className="w-12 h-12 rounded-full border border-ivory/10 flex items-center justify-center group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-300">
+        <div className="w-12 h-12  border border-ivory/10 flex items-center justify-center group-hover:border-gold/40 group-hover:bg-gold/5 transition-all duration-300">
           <ChevronRight className="h-5 w-5" />
         </div>
       </button>
@@ -175,7 +175,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
             key={i}
             onClick={() => setCurrent(i)}
             className={cn(
-              "rounded-full transition-all duration-700 ease-out",
+              " transition-all duration-700 ease-out",
               i === current
                 ? "w-14 h-[2px] bg-gold"
                 : "w-4 h-[2px] bg-ivory/20 hover:bg-ivory/40"

@@ -91,7 +91,7 @@ export function DashboardClient({
         {cards.map((card) => (
           <div
             key={card.label}
-            className="border bg-ivory p-5 shadow-sm"
+            className="border bg-ivory p-5 "
           >
             <div className="flex items-center justify-between">
               <div className="bg-ivory-dark p-2">
@@ -100,7 +100,7 @@ export function DashboardClient({
               {card.trend && (
                 <span
                   className={`flex items-center gap-1 text-xs font-medium ${
-                    card.up ? "text-green-600" : "text-red-600"
+                    card.up ? "text-green-600" : "text-rose-600"
                   }`}
                 >
                   {card.up ? (
@@ -119,7 +119,7 @@ export function DashboardClient({
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="border bg-ivory p-5 shadow-sm lg:col-span-2">
+        <div className="border bg-ivory p-5  lg:col-span-2">
           <h2 className="mb-4 text-sm font-semibold">Revenue (Last 30 Days)</h2>
           <div className="flex items-end gap-1.5 h-40">
             {revenueDays.map((day) => (
@@ -142,7 +142,7 @@ export function DashboardClient({
           </div>
         </div>
 
-        <div className="border bg-ivory p-5 shadow-sm">
+        <div className="border bg-ivory p-5 ">
           <h2 className="mb-4 text-sm font-semibold">Top Products</h2>
           <div className="space-y-3">
             {(a.top_products || []).slice(0, 5).map((product, i) => (
@@ -170,7 +170,7 @@ export function DashboardClient({
         </div>
       </div>
 
-      <div className="border bg-ivory shadow-sm">
+      <div className="border bg-ivory ">
         <div className="flex items-center justify-between border-b px-5 py-4">
           <h2 className="text-sm font-semibold">Recent Orders</h2>
           <Link

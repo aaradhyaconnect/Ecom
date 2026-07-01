@@ -54,7 +54,7 @@ export function CategoryShowcase() {
               </div>
 
               <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="w-8 h-8 rounded-full bg-ivory/10 backdrop-blur-sm flex items-center justify-center border border-ivory/10">
+                <div className="w-8 h-8  bg-ivory/10 backdrop-blur-sm flex items-center justify-center border border-ivory/10">
                   <ArrowRight className="h-3 w-3 text-ivory -rotate-45" />
                 </div>
               </div>

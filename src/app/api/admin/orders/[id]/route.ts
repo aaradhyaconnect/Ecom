@@ -78,6 +78,7 @@ export async function PUT(
     if (body.tracking_id) updateData.tracking_id = body.tracking_id;
     if (body.courier_name) updateData.courier_name = body.courier_name;
     if (body.estimated_delivery) updateData.estimated_delivery = body.estimated_delivery;
+    if (body.shiprocket_shipment_id != null) updateData.shiprocket_shipment_id = body.shiprocket_shipment_id;
 
     const { data, error } = await supabase
       .from("orders")

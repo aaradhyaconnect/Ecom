@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import Link from "next/link";
+import Image from "next/image";
 import toast from "react-hot-toast";
 import type { Address } from "@/types";
 
@@ -45,7 +46,7 @@ interface FormErrors {
   [key: string]: string;
 }
 
-const SHIPPING_THRESHOLD = 499;
+const SHIPPING_THRESHOLD = 999;
 const SHIPPING_CHARGE = 49;
 
 const initialAddress: Address = {
@@ -59,6 +60,7 @@ const initialAddress: Address = {
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { items, getSubtotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
   useAuth();
@@ -67,10 +69,44 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay">("cod");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<{
+    code: string;
+    discount: number;
+    discount_type: "percentage" | "flat";
+    max_discount?: number;
+  } | null>(null);
+  const [couponError, setCouponError] = useState("");
 
   const subtotal = getSubtotal();
   const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
-  const total = subtotal + shipping;
+  const couponCode = searchParams.get("coupon")?.trim().toUpperCase();
+
+  const discount = useMemo(() => {
+    if (!appliedCoupon) return 0;
+    if (appliedCoupon.discount_type === "flat") return appliedCoupon.discount;
+    const calculated = (subtotal * appliedCoupon.discount) / 100;
+    return appliedCoupon.max_discount
+      ? Math.min(calculated, appliedCoupon.max_discount)
+      : calculated;
+  }, [appliedCoupon, subtotal]);
+
+  const total = Math.max(0, subtotal + shipping - discount);
+
+  useEffect(() => {
+    if (!couponCode) return;
+    fetch(`/api/coupons/${couponCode}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.success) {
+          if (subtotal < data.data.min_order) {
+            setCouponError(`Minimum order value is ${formatPrice(data.data.min_order)}`);
+            return;
+          }
+          setAppliedCoupon(data.data);
+        }
+      })
+      .catch(() => {});
+  }, [couponCode, subtotal]);
 
   const updateAddress = (field: keyof Address, value: string) => {
     setAddress((prev) => ({ ...prev, [field]: value }));
@@ -146,10 +182,7 @@ export default function CheckoutPage() {
         })),
         shipping_address: address,
         payment_method: paymentMethod,
-        subtotal,
-        shipping_charge: shipping,
-        total,
-        coupon_code: undefined as string | undefined,
+        coupon_code: couponCode,
       };
 
       const res = await fetch("/api/checkout", {
@@ -185,7 +218,7 @@ export default function CheckoutPage() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           amount: data.data.razorpay_order.amount,
           currency: "INR",
-           name: "HAINJU",
+          name: "HAINJU",
           description: `Order ${data.data.order_id}`,
           order_id: data.data.razorpay_order.id,
           prefill: {
@@ -368,10 +401,12 @@ export default function CheckoutPage() {
                 <div key={item.id} className="flex gap-3 text-sm">
                   <div className="w-14 h-16 bg-charcoal/5 flex-shrink-0">
                     {item.product.images?.[0] && (
-                      <img
+                      <Image
                         src={item.product.images[0]}
                         alt={item.product.name}
-                        className="w-full h-full object-cover"
+                        width={56}
+                        height={64}
+                        className="h-full w-full object-cover"
                       />
                     )}
                   </div>
@@ -388,7 +423,7 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="border-t border-ivory-dark pt-4 space-y-2 text-sm">
+              <div className="border-t border-ivory-dark pt-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-charcoal-muted">Subtotal</span>
                 <span className="text-charcoal">{formatPrice(subtotal)}</span>
@@ -403,6 +438,18 @@ export default function CheckoutPage() {
                   )}
                 </span>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-green-600">
+                  <span>Discount ({appliedCoupon?.code})</span>
+                  <span>-{formatPrice(discount)}</span>
+                </div>
+              )}
+              {couponCode && !appliedCoupon && !couponError && (
+                <p className="text-xs text-charcoal-muted">Validating coupon...</p>
+              )}
+              {couponError && (
+                <p className="text-xs text-rose-500">{couponError}</p>
+              )}
               <div className="border-t border-ivory-dark pt-2 flex justify-between font-semibold text-base text-charcoal">
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
@@ -410,7 +457,7 @@ export default function CheckoutPage() {
             </div>
 
             {errors._form && (
-              <p className="text-xs text-red-500">{errors._form}</p>
+              <p className="text-xs text-rose-500">{errors._form}</p>
             )}
 
             <Button

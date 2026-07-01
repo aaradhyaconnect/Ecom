@@ -29,11 +29,11 @@ export function AdminHeader({ user }: { user: UserType }) {
             aria-label="Notifications"
           >
             <Bell className="h-5 w-5" />
-            <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full bg-rose-500" />
+            <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-rose-500" />
           </button>
 
           <div className="flex items-center gap-2.5 pl-3 border-l border-ivory-dark">
-            <div className="h-8 w-8 rounded-full bg-ivory-dark flex items-center justify-center text-xs font-semibold text-charcoal-muted">
+            <div className="h-8 w-8 bg-ivory-dark flex items-center justify-center text-xs font-semibold text-charcoal-muted">
               {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
             </div>
             <div className="hidden sm:block">

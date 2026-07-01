@@ -31,6 +31,7 @@ export default function AdminOrdersPage() {
     courier_name: "",
     estimated_delivery: "",
   });
+  const [creatingShipment, setCreatingShipment] = useState(false);
 
   const limit = 20;
   const totalPages = Math.ceil(total / limit);
@@ -123,6 +124,35 @@ export default function AdminOrdersPage() {
     return s?.color || "text-charcoal-muted bg-ivory-dark/50";
   };
 
+  const handleCreateShipment = async () => {
+    if (!selectedOrder) return;
+    setCreatingShipment(true);
+    try {
+      const res = await fetch("/api/shipping/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order_id: selectedOrder.id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Shipment created successfully");
+        setSelectedOrder(data.data);
+        setTrackingForm({
+          tracking_id: data.data.tracking_id || "",
+          courier_name: data.data.courier_name || "",
+          estimated_delivery: data.data.estimated_delivery || "",
+        });
+        fetchOrders();
+      } else {
+        toast.error(data.error || "Failed to create shipment");
+      }
+    } catch {
+      toast.error("Failed to create shipment");
+    } finally {
+      setCreatingShipment(false);
+    }
+  };
+
   const exportOrders = () => {
     const headers = ["Order ID", "Customer", "Status", "Payment", "Total", "Date"];
     const rows = orders.map((o) => [
@@ -178,7 +208,7 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      <div className="border bg-ivory shadow-sm overflow-hidden">
+      <div className="border bg-ivory overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -451,7 +481,17 @@ export default function AdminOrdersPage() {
                   }
                 />
               </div>
-              <div className="mt-3 flex justify-end">
+              <div className="mt-3 flex justify-end gap-2">
+                {!selectedOrder.shiprocket_shipment_id && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    isLoading={creatingShipment}
+                    onClick={handleCreateShipment}
+                  >
+                    Create Shipment via Shiprocket
+                  </Button>
+                )}
                 <Button size="sm" onClick={handleSaveTracking}>
                   Save Tracking
                 </Button>

@@ -197,12 +197,12 @@ export default function OrderDetailPage({
       )}
 
       {cancelled && (
-        <div className="bg-red-50 border border-red-200 p-6 mb-6">
+        <div className="bg-rose-50 border border-rose-200 p-6 mb-6">
           <div className="flex items-center gap-3">
-            <X className="h-6 w-6 text-red-500" />
+            <X className="h-6 w-6 text-rose-500" />
             <div>
-              <p className="font-medium text-red-800">Order Cancelled</p>
-              <p className="text-sm text-red-600">
+              <p className="font-medium text-rose-800">Order Cancelled</p>
+              <p className="text-sm text-rose-600">
                 This order was cancelled on {formatDate(order.updated_at)}
               </p>
             </div>
@@ -235,14 +235,25 @@ export default function OrderDetailPage({
                 )}
               </div>
             </div>
-            <a
-              href={`https://shiprocket.co/tracking/${order.tracking_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.1em] font-medium text-charcoal hover:text-gold transition-colors"
-            >
-              Track <ExternalLink className="h-3 w-3" />
-            </a>
+            {order.shiprocket_shipment_id ? (
+              <a
+                href={`https://shiprocket.co/tracking/${order.shiprocket_shipment_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.1em] font-medium text-charcoal hover:text-gold transition-colors"
+              >
+                Track <ExternalLink className="h-3 w-3" />
+              </a>
+            ) : (
+              <a
+                href={`https://shiprocket.co/tracking/${order.tracking_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.1em] font-medium text-charcoal hover:text-gold transition-colors"
+              >
+                Track <ExternalLink className="h-3 w-3" />
+              </a>
+            )}
           </div>
           {order.estimated_delivery && (
             <p className="text-sm text-charcoal-muted mt-2">
@@ -321,7 +332,7 @@ export default function OrderDetailPage({
                   order.payment_status === "paid"
                     ? "text-green-600"
                     : order.payment_status === "failed"
-                      ? "text-red-600"
+                      ? "text-rose-600"
                       : "text-yellow-600"
                 }`}
               >
