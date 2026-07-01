@@ -3,6 +3,7 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
+import { PwaInstallBanner } from "@/components/layout/PwaInstallBanner";
 import { ToastProvider } from "@/components/ui/Toast";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
@@ -21,6 +22,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       </main>
       {!isAdmin && !isAuth && <Footer />}
       {!isAdmin && <WhatsAppButton />}
+      <PwaInstallBanner />
     </>
   );
 }

@@ -1,8 +1,8 @@
 const CACHE_NAME = "hainju-v1";
 const STATIC_ASSETS = [
   "/",
+  "/offline",
   "/manifest.json",
-  "/icons/icon.svg",
   "/icons/icon-192x192.png",
   "/icons/icon-512x512.png",
 ];
@@ -27,16 +27,40 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(networkFirst(request));
+  } else if (request.mode === "navigate") {
+    event.respondWith(navigationFirst(request));
   } else {
     event.respondWith(cacheFirst(request));
   }
 });
+
+async function navigationFirst(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    if (cached) return cached;
+    const offlinePage = await caches.match("/offline");
+    return offlinePage || new Response("Offline", { status: 503, headers: { "Content-Type": "text/html" } });
+  }
+}
 
 async function networkFirst(request) {
   try {
@@ -55,7 +79,12 @@ async function cacheFirst(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
   try {
-    return await fetch(request);
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_NAME);
+      cache.put(request, response.clone());
+    }
+    return response;
   } catch {
     return new Response("Offline", { status: 503 });
   }
