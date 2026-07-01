@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -61,6 +61,7 @@ const initialAddress: Address = {
 export default function CheckoutPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const { items, getSubtotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
   useAuth();
@@ -163,7 +164,7 @@ export default function CheckoutPage() {
 
     if (!user) {
       toast.error("Please log in to place an order");
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
@@ -14,6 +14,7 @@ import type { Order } from "@/types";
 
 export default function OrdersPage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user } = useAuthStore();
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -21,7 +22,7 @@ export default function OrdersPage() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -37,6 +38,7 @@ export default function OrdersPage() {
     }
 
     loadOrders();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, supabase, router]);
 
   if (!user) return null;

@@ -7,11 +7,14 @@ import { PwaInstallBanner } from "@/components/layout/PwaInstallBanner";
 import { ToastProvider } from "@/components/ui/Toast";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
   const isAuth = pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/verify-otp");
+
+  useAuth();
 
   return (
     <>

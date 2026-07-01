@@ -15,7 +15,10 @@ interface InstallState {
 
 export function useInstallPrompt(): InstallState {
   const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(null);
-  const [isInstalled, setIsInstalled] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(display-mode: standalone)").matches;
+  });
 
   useEffect(() => {
     const handleBeforeInstall = (e: Event) => {
@@ -30,11 +33,6 @@ export function useInstallPrompt(): InstallState {
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstall);
     window.addEventListener("appinstalled", handleAppInstalled);
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true);
-    }
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstall);

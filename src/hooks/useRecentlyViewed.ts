@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { Product } from "@/types";
 
@@ -8,16 +8,15 @@ const STORAGE_KEY = "hainju_recently_viewed";
 const MAX_ITEMS = 8;
 
 export function useRecentlyViewed() {
-  const [products, setProducts] = useState<Product[]>([]);
-
-  useEffect(() => {
+  const [products, setProducts] = useState<Product[]>(() => {
+    if (typeof window === "undefined") return [];
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        setProducts(JSON.parse(stored));
-      }
-    } catch {}
-  }, []);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
+    }
+  });
 
   const addProduct = useCallback((product: Product) => {
     setProducts((prev) => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
@@ -16,6 +16,7 @@ import type { Order, Address } from "@/types";
 
 export default function ProfilePage() {
   const router = useRouter();
+  const pathname = usePathname();
   const { user, logout } = useAuthStore();
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -37,7 +38,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (!user) {
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -62,6 +63,7 @@ export default function ProfilePage() {
 
       if (data?.addresses) setAddresses(data.addresses as Address[]);
     })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, supabase, router]);
 
   async function handleSaveProfile() {

@@ -22,6 +22,7 @@ export interface Product {
   price: number;
   compare_price?: number;
   images: string[];
+  video_url?: string;
   sizes: string[];
   colors: ColorOption[];
   tags: string[];

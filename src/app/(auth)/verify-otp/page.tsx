@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Phone, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { sanitizeRedirect } from "@/lib/utils/sanitize";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
@@ -12,7 +13,7 @@ import toast from "react-hot-toast";
 export default function VerifyOTPPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = sanitizeRedirect(searchParams.get("redirect"));
   const [method, setMethod] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -225,7 +226,7 @@ export default function VerifyOTPPage() {
       )}
 
       <p className="mt-6 text-center text-sm text-charcoal-muted">
-        <Link href="/login" className="font-medium text-charcoal hover:underline">
+        <Link href={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-charcoal hover:underline">
           Back to sign in
         </Link>
       </p>

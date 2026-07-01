@@ -30,6 +30,7 @@ interface ProductForm {
   sizes: string[];
   colors: ColorOption[];
   images: string[];
+  video_url: string;
   tags: string;
   stock: string;
   material: string;
@@ -50,6 +51,7 @@ const emptyForm: ProductForm = {
   sizes: [],
   colors: [],
   images: [""],
+  video_url: "",
   tags: "",
   stock: "0",
   material: "",
@@ -120,6 +122,7 @@ export default function AdminProductsPage() {
       sizes: product.sizes,
       colors: product.colors,
       images: product.images.length > 0 ? product.images : [""],
+      video_url: product.video_url || "",
       tags: product.tags.join(", "),
       stock: String(product.stock),
       material: product.material || "",
@@ -640,6 +643,13 @@ export default function AdminProductsPage() {
               ))}
             </div>
           </div>
+
+          <Input
+            label="Video URL (YouTube/Vimeo)"
+            placeholder="https://www.youtube.com/watch?v=..."
+            value={form.video_url}
+            onChange={(e) => setForm({ ...form, video_url: e.target.value })}
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <Input

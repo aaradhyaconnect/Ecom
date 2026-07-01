@@ -117,7 +117,15 @@ export function ProductDetailClient({
         {/* Images */}
         <div className="space-y-4 animate-in slide-up">
           <div className="relative aspect-[4/5] overflow-hidden bg-ivory-dark group">
-            {product.images?.[selectedImage] ? (
+            {selectedImage === -1 && product.video_url ? (
+              <iframe
+                src={product.video_url.replace("watch?v=", "embed/")}
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title={`${product.name} video`}
+              />
+            ) : product.images?.[selectedImage] ? (
               <ZoomImage
                 src={product.images[selectedImage]}
                 alt={product.name}
@@ -165,6 +173,19 @@ export function ProductDetailClient({
                   />
                 </button>
               ))}
+              {product.video_url && (
+                <button
+                  onClick={() => setSelectedImage(-1)}
+                  className={cn(
+                    "relative w-20 h-20 overflow-hidden flex-shrink-0 border-2 transition-all duration-300 bg-charcoal flex items-center justify-center",
+                    selectedImage === -1
+                      ? "border-charcoal"
+                      : "border-transparent hover:border-ivory-dark"
+                  )}
+                >
+                  <span className="text-ivory text-[10px] font-bold uppercase">Video</span>
+                </button>
+              )}
             </div>
           )}
         </div>

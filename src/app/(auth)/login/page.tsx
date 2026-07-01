@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { sanitizeRedirect } from "@/lib/utils/sanitize";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
@@ -12,7 +13,7 @@ import toast from "react-hot-toast";
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectTo = searchParams.get("redirect") || "/";
+  const redirectTo = sanitizeRedirect(searchParams.get("redirect"));
   const [authMethod, setAuthMethod] = useState<"password" | "otp">("password");
   const [otpChannel, setOtpChannel] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
@@ -72,7 +73,10 @@ export default function LoginPage() {
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}` },
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}&popup=true`,
+          skipBrowserRedirect: true,
+        },
       });
       if (error) {
         toast.error(error.message);
@@ -80,7 +84,45 @@ export default function LoginPage() {
         return;
       }
       if (data?.url) {
-        window.location.href = data.url;
+        const width = 500;
+        const height = 600;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        const popup = window.open(
+          data.url,
+          "google-auth",
+          `width=${width},height=${height},left=${left},top=${top}`
+        );
+
+        const cleanup = () => {
+          window.removeEventListener("message", handleMessage);
+        };
+
+        const handleMessage = (e: MessageEvent) => {
+          if (e.data?.type === "auth-callback" && e.data?.success) {
+            cleanup();
+            clearInterval(pollTimer);
+            toast.success("Welcome back!");
+            router.push(e.data.path || redirectTo);
+            router.refresh();
+          }
+        };
+
+        window.addEventListener("message", handleMessage);
+
+        const pollTimer = setInterval(async () => {
+          if (!popup || popup.closed) {
+            cleanup();
+            clearInterval(pollTimer);
+            setIsLoading(false);
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+              toast.success("Welcome back!");
+              router.push(redirectTo);
+              router.refresh();
+            }
+          }
+        }, 500);
       }
     } catch {
       toast.error("Failed to sign in with Google");
@@ -213,7 +255,7 @@ export default function LoginPage() {
 
       <p className="mt-6 text-center text-sm text-charcoal-muted">
         Don&apos;t have an account?{" "}
-        <Link href="/register" className="font-medium text-charcoal hover:text-gold-dark transition-colors">
+        <Link href={`/register?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-charcoal hover:text-gold-dark transition-colors">
           Create one
         </Link>
       </p>

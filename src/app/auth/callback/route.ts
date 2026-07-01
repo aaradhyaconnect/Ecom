@@ -6,10 +6,10 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const rawNext = searchParams.get("next") ?? "/";
   const next = rawNext.startsWith("/") && !rawNext.startsWith("//") && !rawNext.includes("@") ? rawNext : "/";
+  const isPopup = searchParams.get("popup") === "true";
 
   if (code) {
-    const redirectUrl = new URL(`${origin}${next}`);
-    const redirectResponse = NextResponse.redirect(redirectUrl);
+    const response = NextResponse.next();
 
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
           setAll(cookiesToSet) {
             cookiesToSet.forEach(({ name, value, options }) => {
               request.cookies.set(name, value);
-              redirectResponse.cookies.set(name, value, options);
+              response.cookies.set(name, value, options);
             });
           },
         },
@@ -53,27 +53,37 @@ export async function GET(request: NextRequest) {
           });
         }
 
-        if (profile?.role === "admin" || (!profile && user.user_metadata?.role === "admin")) {
-          redirectUrl.pathname = "/admin";
-          const adminRedirect = NextResponse.redirect(redirectUrl);
-          redirectResponse.cookies.getAll().forEach((cookie) => {
-            adminRedirect.cookies.set(cookie.name, cookie.value, {
-              httpOnly: cookie.httpOnly,
-              path: cookie.path,
-              maxAge: cookie.maxAge,
-              sameSite: cookie.sameSite,
-              secure: cookie.secure,
-            });
-          });
-          return adminRedirect;
-        }
-      }
+        const isAdmin = profile?.role === "admin";
+        const redirectPath = isAdmin ? "/admin" : next;
 
-      return redirectResponse;
+        if (isPopup) {
+          const html = `<!DOCTYPE html><html><head><title>Authenticating...</title></head><body>
+            <script>
+              try {
+                if (window.opener) {
+                  window.opener.postMessage({ type: 'auth-callback', success: true, path: '${redirectPath}' }, '${origin}');
+                  window.close();
+                } else {
+                  window.location.href = '${origin}${redirectPath}';
+                }
+              } catch(e) {
+                window.location.href = '${origin}${redirectPath}';
+              }
+            </script>
+            <p>Authenticating... This window should close automatically.</p>
+          </body></html>`;
+          return new NextResponse(html, {
+            status: 200,
+            headers: { "Content-Type": "text/html" },
+          });
+        }
+
+        return NextResponse.redirect(`${origin}${redirectPath}`);
+      }
     }
 
     return NextResponse.redirect(
-      `${origin}/login?error=exchange_failed&message=${encodeURIComponent(error.message)}`
+      `${origin}/login?error=exchange_failed&message=${encodeURIComponent(error?.message || "Unknown error")}`
     );
   }
 

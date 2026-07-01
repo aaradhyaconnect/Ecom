@@ -1,16 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { sanitizeRedirect } from "@/lib/utils/sanitize";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirectTo = sanitizeRedirect(searchParams.get("redirect"));
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -36,7 +39,7 @@ export default function RegisterPage() {
         const { error } = await supabase.auth.signInWithOtp({ phone, options: { data: { name } } });
         if (error) { toast.error(error.message); return; }
         toast.success("OTP sent! Verify to complete registration.");
-        router.push(`/verify-otp?phone=${phone}`);
+        router.push(`/verify-otp?phone=${phone}&redirect=${encodeURIComponent(redirectTo)}`);
         return;
       }
 
@@ -60,7 +63,7 @@ export default function RegisterPage() {
       }
 
       toast.success("Account created! Check your email to confirm.");
-      router.push("/login");
+      router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
     } catch {
       toast.error("Something went wrong");
     } finally {
@@ -72,14 +75,61 @@ export default function RegisterPage() {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}&popup=true`,
+          skipBrowserRedirect: true,
+        },
       });
-      if (error) toast.error(error.message);
+      if (error) {
+        toast.error(error.message);
+        setIsLoading(false);
+        return;
+      }
+      if (data?.url) {
+        const width = 500;
+        const height = 600;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        const popup = window.open(
+          data.url,
+          "google-auth",
+          `width=${width},height=${height},left=${left},top=${top}`
+        );
+
+        const cleanup = () => {
+          window.removeEventListener("message", handleMessage);
+        };
+
+        const handleMessage = (e: MessageEvent) => {
+          if (e.data?.type === "auth-callback" && e.data?.success) {
+            cleanup();
+            clearInterval(pollTimer);
+            toast.success("Welcome to HAINJU!");
+            router.push(e.data.path || "/");
+            router.refresh();
+          }
+        };
+
+        window.addEventListener("message", handleMessage);
+
+        const pollTimer = setInterval(async () => {
+          if (!popup || popup.closed) {
+            cleanup();
+            clearInterval(pollTimer);
+            setIsLoading(false);
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+              toast.success("Welcome to HAINJU!");
+              router.push("/");
+              router.refresh();
+            }
+          }
+        }, 500);
+      }
     } catch {
       toast.error("Failed to sign up with Google");
-    } finally {
       setIsLoading(false);
     }
   }
@@ -198,7 +248,7 @@ export default function RegisterPage() {
 
       <p className="mt-6 text-center text-sm text-charcoal-muted">
         Already have an account?{" "}
-        <Link href="/login" className="font-medium text-charcoal hover:text-gold-dark transition-colors">
+        <Link href={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-charcoal hover:text-gold-dark transition-colors">
           Sign in
         </Link>
       </p>

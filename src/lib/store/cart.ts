@@ -13,6 +13,7 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  savedItems: CartItem[];
   addItem: (product: Product, quantity: number, size: string, color: string) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -20,12 +21,16 @@ interface CartStore {
   getItemCount: () => number;
   getSubtotal: () => number;
   isInCart: (productId: string, size: string, color: string) => boolean;
+  saveForLater: (id: string) => void;
+  moveToCart: (id: string) => void;
+  removeSaved: (id: string) => void;
 }
 
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      savedItems: [],
 
       addItem: (product, quantity, size, color) => {
         set((state) => {
@@ -90,6 +95,37 @@ export const useCartStore = create<CartStore>()(
             item.size === size &&
             item.color === color
         );
+      },
+
+      saveForLater: (id) => {
+        set((state) => {
+          const item = state.items.find((i) => i.id === id);
+          if (!item) return state;
+          const alreadySaved = state.savedItems.some(
+            (s) => s.product_id === item.product_id && s.size === item.size && s.color === item.color
+          );
+          return {
+            items: state.items.filter((i) => i.id !== id),
+            savedItems: alreadySaved ? state.savedItems : [...state.savedItems, item],
+          };
+        });
+      },
+
+      moveToCart: (id) => {
+        set((state) => {
+          const item = state.savedItems.find((i) => i.id === id);
+          if (!item) return state;
+          return {
+            savedItems: state.savedItems.filter((i) => i.id !== id),
+            items: [...state.items, item],
+          };
+        });
+      },
+
+      removeSaved: (id) => {
+        set((state) => ({
+          savedItems: state.savedItems.filter((i) => i.id !== id),
+        }));
       },
     }),
     { name: "hainju-cart" }

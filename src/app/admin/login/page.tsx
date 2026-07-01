@@ -61,7 +61,10 @@ export default function AdminLoginPage() {
     try {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback?popup=true`,
+          skipBrowserRedirect: true,
+        },
       });
       if (error) {
         toast.error(error.message);
@@ -69,7 +72,37 @@ export default function AdminLoginPage() {
         return;
       }
       if (data?.url) {
-        window.location.href = data.url;
+        const width = 500;
+        const height = 600;
+        const left = window.screenX + (window.outerWidth - width) / 2;
+        const top = window.screenY + (window.outerHeight - height) / 2;
+        const popup = window.open(
+          data.url,
+          "google-auth",
+          `width=${width},height=${height},left=${left},top=${top}`
+        );
+
+        const pollTimer = setInterval(async () => {
+          if (!popup || popup.closed) {
+            clearInterval(pollTimer);
+            setLoading(false);
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session) {
+              const { data: profile } = await supabase
+                .from("profiles")
+                .select("role")
+                .eq("id", session.user.id)
+                .single();
+              if (profile?.role === "admin") {
+                toast.success("Welcome back!");
+                window.location.href = "/admin";
+              } else {
+                await supabase.auth.signOut();
+                toast.error("Unauthorized. Admin access required.");
+              }
+            }
+          }
+        }, 500);
       }
     } catch {
       toast.error("Failed to sign in with Google");

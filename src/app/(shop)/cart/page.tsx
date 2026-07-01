@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Bookmark } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { formatPrice } from "@/lib/utils/format";
@@ -14,7 +14,7 @@ const SHIPPING_THRESHOLD = 999;
 const SHIPPING_CHARGE = 49;
 
 export default function CartPage() {
-  const { items, removeItem, updateQuantity, getSubtotal } = useCartStore();
+  const { items, savedItems, removeItem, updateQuantity, getSubtotal, saveForLater, moveToCart, removeSaved } = useCartStore();
   const { user } = useAuthStore();
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<{
@@ -173,16 +173,28 @@ export default function CartPage() {
                     </button>
                   </div>
 
-                  <button
-                    onClick={() => {
-                      removeItem(item.id);
-                      handleSaveCart();
-                      toast.success("Item removed");
-                    }}
-                    className="p-2 text-charcoal-muted hover:text-rose-500 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        saveForLater(item.id);
+                        toast.success("Saved for later");
+                      }}
+                      className="p-2 text-charcoal-muted hover:text-gold-dark transition-colors"
+                      title="Save for later"
+                    >
+                      <Bookmark className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => {
+                        removeItem(item.id);
+                        handleSaveCart();
+                        toast.success("Item removed");
+                      }}
+                      className="p-2 text-charcoal-muted hover:text-rose-500 transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -194,6 +206,68 @@ export default function CartPage() {
             </div>
           ))}
         </div>
+
+        {savedItems.length > 0 && (
+          <div className="lg:col-span-2 space-y-4 mt-8">
+            <div className="flex items-center gap-2 mb-4">
+              <Bookmark className="h-4 w-4 text-gold-dark" />
+              <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Saved for Later</span>
+            </div>
+            {savedItems.map((item) => (
+              <div
+                key={item.id}
+                className="flex gap-4 bg-ivory border border-ivory-dark p-4"
+              >
+                <div className="w-20 h-24 overflow-hidden bg-charcoal/5 flex-shrink-0">
+                  {item.product.images?.[0] && (
+                    <Image
+                      src={item.product.images[0]}
+                      alt={item.product.name}
+                      width={80}
+                      height={96}
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <Link
+                    href={`/product/${item.product.slug}`}
+                    className="text-sm font-medium text-charcoal hover:text-gold transition-colors line-clamp-2"
+                  >
+                    {item.product.name}
+                  </Link>
+                  <p className="text-xs text-charcoal-muted mt-1">
+                    {item.color} / {item.size}
+                  </p>
+                  <p className="text-sm font-semibold text-charcoal mt-1">
+                    {formatPrice(item.product.price)}
+                  </p>
+                  <div className="flex items-center gap-2 mt-2">
+                    <button
+                      onClick={() => {
+                        moveToCart(item.id);
+                        toast.success("Moved to cart");
+                      }}
+                      className="text-xs text-gold-dark hover:text-gold transition-colors uppercase tracking-wider font-medium"
+                    >
+                      Move to Cart
+                    </button>
+                    <span className="text-charcoal-muted">·</span>
+                    <button
+                      onClick={() => {
+                        removeSaved(item.id);
+                        toast.success("Removed");
+                      }}
+                      className="text-xs text-charcoal-muted hover:text-rose-500 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="space-y-6">
           <div className="bg-ivory border border-ivory-dark p-6 space-y-4">
