@@ -48,24 +48,13 @@ export default function RegisterPage() {
         return;
       }
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { error: authError } = await supabase.auth.signUp({
         email,
         password,
         options: { data: { name } },
       });
 
       if (authError) { toast.error(authError.message); return; }
-
-      if (authData.user) {
-        const { error: profileError } = await supabase.from("profiles").upsert({
-          id: authData.user.id,
-          email,
-          name,
-          phone: phone || null,
-          role: "customer",
-        });
-        if (profileError) { toast.error(profileError.message); return; }
-      }
 
       toast.success("Account created! Check your email to confirm.");
       router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
