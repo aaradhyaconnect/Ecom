@@ -105,9 +105,7 @@ export async function getProducts({
 export async function getProduct(slug: string) {
   const supabase = createPublicClient();
   const { data, error } = await supabase
-    .from("products")
-    .select("*")
-    .eq("slug", slug)
+    .rpc("get_product_by_slug", { p_slug: slug })
     .single();
 
   if (error) throw error;

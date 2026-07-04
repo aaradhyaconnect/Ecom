@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuth } from "@/hooks/useAuth";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { fireConfetti } from "@/lib/utils/confetti";
 import type { Address } from "@/types";
 
 declare global {
@@ -59,7 +60,6 @@ const initialAddress: Address = {
 };
 
 export default function CheckoutPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { items, getSubtotal, clearCart } = useCartStore();
@@ -164,7 +164,7 @@ export default function CheckoutPage() {
 
     if (!user) {
       toast.error("Please log in to place an order");
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -202,8 +202,9 @@ export default function CheckoutPage() {
 
       if (paymentMethod === "cod") {
         toast.success("Order placed successfully!");
+        fireConfetti();
         clearCart();
-        router.push(`/orders/${data.data.id}`);
+        window.location.replace(`/order/${data.data.id}`);
         return;
       }
 
@@ -245,8 +246,9 @@ export default function CheckoutPage() {
 
               if (verifyData.success) {
                 toast.success("Payment successful! Order placed.");
+                fireConfetti();
                 clearCart();
-                router.push(`/orders/${data.data.id}`);
+                window.location.replace(`/order/${data.data.id}`);
               } else {
                 toast.error("Payment verification failed");
               }

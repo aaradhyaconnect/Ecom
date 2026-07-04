@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Printer, ArrowLeft } from "lucide-react";
@@ -17,13 +18,15 @@ export default function InvoicePage({
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuthStore();
+  const mounted = useHydrated();
   const supabase = createClient();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!mounted) return;
     if (!user) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -46,7 +49,7 @@ export default function InvoicePage({
 
     loadOrder();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, params, supabase, router]);
+  }, [user, mounted, params, supabase, router]);
 
   if (!user || loading) {
     return (

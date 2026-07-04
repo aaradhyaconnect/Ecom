@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, type KeyboardEvent } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Phone, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -11,7 +11,6 @@ import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
 
 export default function VerifyOTPPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const redirectTo = sanitizeRedirect(searchParams.get("redirect"));
   const [method, setMethod] = useState<"email" | "phone">("email");
@@ -83,11 +82,18 @@ export default function VerifyOTPPage() {
       const supabase = createClient();
       if (data.data.session) {
         await supabase.auth.setSession(data.data.session);
+        await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token: data.data.session.access_token,
+            refresh_token: data.data.session.refresh_token,
+          }),
+        }).catch(() => {});
       }
 
       toast.success("Verified successfully!");
-      router.push(redirectTo);
-      router.refresh();
+      window.location.replace(redirectTo);
     } catch {
       toast.error("Something went wrong");
     } finally {

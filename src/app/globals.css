@@ -3,17 +3,26 @@
 @theme inline {
   --font-sans: var(--font-inter);
   --font-serif: var(--font-playfair);
-  --color-background: #FFFFF0;
-  --color-foreground: #1A1A1A;
-  --color-primary: #1A1A1A;
-  --color-primary-foreground: #FFFFF0;
-  --color-ivory: #FFFFF0;
-  --color-ivory-dark: #F5F0E0;
-  --color-gold: #C5A55A;
+
+  --color-background: #FAF9F6;
+  --color-foreground: #111111;
+
+  --color-primary: #111111;
+  --color-primary-foreground: #FAF9F6;
+
+  --color-ivory: #FAF9F6;
+  --color-ivory-dark: #F5EDE3;
+
+  --color-beige: #F5EDE3;
+  --color-grey: #F8F8F8;
+
+  --color-gold: #D4AF37;
   --color-gold-light: #E8D5A3;
   --color-gold-dark: #A8883E;
-  --color-charcoal: #1A1A1A;
-  --color-charcoal-light: #2A2A2A;
+
+  --color-black: #111111;
+  --color-charcoal: #111111;
+  --color-charcoal-light: #222222;
   --color-charcoal-muted: #6B6B6B;
 }
 
@@ -43,24 +52,14 @@ body {
   to { opacity: 1; }
 }
 
-@keyframes slide-in-from-right {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
-}
-
-@keyframes slide-in-from-top {
-  from { transform: translateY(-100%); }
-  to { transform: translateY(0); }
+@keyframes slide-up {
+  from { transform: translateY(24px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes zoom-in {
   from { transform: scale(0.95); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
-}
-
-@keyframes slide-up {
-  from { transform: translateY(24px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes shimmer {
@@ -76,22 +75,6 @@ body {
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-8px); }
-}
-
-@keyframes gold-shimmer {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes reveal-line {
-  from { transform: scaleX(0); }
-  to { transform: scaleX(1); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 0.8; }
 }
 
 .animate-in {
@@ -110,22 +93,12 @@ body {
 }
 
 .fade-in { animation-name: fade-in; }
-.slide-in-from-right { animation-name: slide-in-from-right; }
-.slide-in-from-top { animation-name: slide-in-from-top; }
-.zoom-in { animation-name: zoom-in; }
 .slide-up { animation-name: slide-up; }
+.zoom-in { animation-name: zoom-in; }
 .shimmer { animation: shimmer 2s infinite linear; background-size: 200% 100%; }
-.scale-in { animation-name: scale-in; animation-duration: 0.3s; }
+.scale-in { animation-name: scale-in; }
 .float { animation: float 3s ease-in-out infinite; }
-.gold-shimmer { background: linear-gradient(90deg, #C5A55A, #E8D5A3, #C5A55A); background-size: 200% 100%; animation: gold-shimmer 3s ease infinite; }
-.reveal-line { animation: reveal-line 0.8s ease-out forwards; transform-origin: left; }
-.glow-pulse { animation: glow-pulse 3s ease-in-out infinite; }
 
-.zoom-in-95 {
-  animation-name: zoom-in;
-}
-
-/* Staggered children animations */
 .stagger-children > * {
   opacity: 0;
   animation: slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
@@ -137,18 +110,6 @@ body {
 .stagger-children > *:nth-child(4) { animation-delay: 180ms; }
 .stagger-children > *:nth-child(5) { animation-delay: 240ms; }
 .stagger-children > *:nth-child(6) { animation-delay: 300ms; }
-.stagger-children > *:nth-child(7) { animation-delay: 360ms; }
-.stagger-children > *:nth-child(8) { animation-delay: 420ms; }
-
-@keyframes scroll-reveal {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.reveal {
-  opacity: 0;
-  animation: scroll-reveal 0.6s ease forwards;
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, ::before, ::after {
@@ -181,6 +142,15 @@ img {
   transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* Hide scrollbar */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Elegant underline hover effect */
 .underline-hover {
   position: relative;
@@ -197,6 +167,43 @@ img {
 }
 .underline-hover:hover::after {
   width: 100%;
+}
+
+/* Dark mode */
+.dark {
+  --color-background: #111111;
+  --color-foreground: #FAF9F6;
+
+  --color-primary: #FAF9F6;
+  --color-primary-foreground: #111111;
+
+  --color-ivory: #1A1A1A;
+  --color-ivory-dark: #222222;
+
+  --color-beige: #222222;
+  --color-grey: #1A1A1A;
+
+  --color-charcoal: #FAF9F6;
+  --color-charcoal-light: #E5E5E5;
+  --color-charcoal-muted: #999999;
+}
+
+.dark body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.dark ::selection {
+  background-color: var(--color-gold);
+  color: var(--color-charcoal);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: var(--color-ivory-dark);
+}
+
+.dark img {
+  filter: brightness(0.9);
 }
 
 @media print {

@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
@@ -18,6 +19,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
+  const mounted = useHydrated();
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,6 +39,7 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
+    if (!mounted) return;
     if (!user) {
       router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
@@ -64,7 +67,7 @@ export default function ProfilePage() {
       if (data?.addresses) setAddresses(data.addresses as Address[]);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, supabase, router]);
+  }, [user, mounted, supabase, router]);
 
   async function handleSaveProfile() {
     setSaving(true);
@@ -117,7 +120,7 @@ export default function ProfilePage() {
   async function handleLogout() {
     await supabase.auth.signOut();
     logout();
-    router.push("/");
+    window.location.replace("/");
   }
 
   function getStatusStyle(v: string) {
@@ -128,7 +131,7 @@ export default function ProfilePage() {
     return ORDER_STATUSES.find((s) => s.value === v)?.label ?? v;
   }
 
-  if (!user) return null;
+  if (!mounted || !user) return null;
 
   if (loading) {
     return (

@@ -1,5 +1,6 @@
 import { HeroBanner } from "@/components/home/HeroBanner";
 import { CategoryShowcase } from "@/components/home/CategoryShowcase";
+import { EditorialCollection } from "@/components/home/EditorialCollection";
 import { Features } from "@/components/home/Features";
 import { Newsletter } from "@/components/home/Newsletter";
 import { ProductSection } from "@/components/home/ProductSection";
@@ -35,13 +36,8 @@ export default async function HomePage() {
         flag="is_new"
         viewAllHref="/products/new-arrivals"
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-[1px] bg-gradient-to-r from-transparent via-ivory-dark to-transparent" />
-      </div>
+      <EditorialCollection />
       <CategoryShowcase />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-[1px] bg-gradient-to-r from-transparent via-ivory-dark to-transparent" />
-      </div>
       <ProductSection
         title="Best Sellers"
         subtitle="Loved by thousands"
@@ -55,9 +51,6 @@ export default async function HomePage() {
         category="women-clothing"
         viewAllHref="/products/women-clothing"
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-[1px] bg-gradient-to-r from-transparent via-ivory-dark to-transparent" />
-      </div>
       <ProductSection
         title="Jewellery Collection"
         subtitle="Elevate every outfit"

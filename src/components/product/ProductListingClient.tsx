@@ -34,6 +34,7 @@ const PRICE_RANGES = [
 ];
 
 const CATEGORY_LABELS: Record<string, string> = {
+  all: "All Products",
   "women-clothing": "Women's Clothing",
   "artificial-jewellery": "Artificial Jewellery",
   "new-arrivals": "New Arrivals",

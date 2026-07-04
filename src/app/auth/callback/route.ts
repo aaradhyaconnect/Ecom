@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const rawNext = searchParams.get("next") ?? "/";
-  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") && !rawNext.includes("@") ? rawNext : "/";
+  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") && !rawNext.includes("@") && !rawNext.includes("://") ? rawNext : "/";
   const isPopup = searchParams.get("popup") === "true";
 
   if (code) {
@@ -58,6 +58,11 @@ export async function GET(request: NextRequest) {
 
         if (isPopup) {
           const redirectUrl = `${origin}${redirectPath}`;
+
+          const { data: { session } } = await supabase.auth.getSession();
+          const accessToken = session?.access_token ?? "";
+          const refreshToken = session?.refresh_token ?? "";
+
           const html = `<!DOCTYPE html><html><head><title>Authenticating...</title></head><body>
             <script>
               (function() {
@@ -67,7 +72,7 @@ export async function GET(request: NextRequest) {
                   done = true;
                   try {
                     if (window.opener) {
-                      window.opener.postMessage({ type: 'auth-callback', success: true, path: '${redirectPath}' }, '*');
+                      window.opener.postMessage({ type: 'auth-callback', success: true, path: '${redirectPath}', accessToken: '${accessToken}', refreshToken: '${refreshToken}' }, '*');
                       setTimeout(function() { window.close(); }, 200);
                     } else {
                       window.location.href = '${redirectUrl}';
@@ -103,9 +108,9 @@ export async function GET(request: NextRequest) {
     }
 
     return NextResponse.redirect(
-      `${origin}/login?error=exchange_failed&message=${encodeURIComponent(error?.message || "Unknown error")}`
+      `${origin}/login?error=exchange_failed&message=${encodeURIComponent(error?.message || "Unknown error")}&redirect=${encodeURIComponent(next)}`
     );
   }
 
-  return NextResponse.redirect(`${origin}/login?error=no_code`);
+  return NextResponse.redirect(`${origin}/login?error=no_code&redirect=${encodeURIComponent(next)}`);
 }

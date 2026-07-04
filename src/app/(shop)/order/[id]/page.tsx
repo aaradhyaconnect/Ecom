@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
@@ -32,14 +33,16 @@ export default function OrderDetailPage({
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuthStore();
+  const mounted = useHydrated();
   const supabase = createClient();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
 
   useEffect(() => {
+    if (!mounted) return;
     if (!user) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -62,7 +65,7 @@ export default function OrderDetailPage({
 
     loadOrder();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, params, supabase, router]);
+  }, [user, mounted, params, supabase, router]);
 
   async function handleCancel() {
     if (!order) return;
@@ -93,7 +96,7 @@ export default function OrderDetailPage({
     return s?.label ?? value;
   }
 
-  if (!user) return null;
+  if (!mounted || !user) return null;
 
   if (loading) {
     return (

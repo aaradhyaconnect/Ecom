@@ -94,11 +94,16 @@ async function ProductContent({ slug }: { slug: string }) {
     notFound();
   }
 
-  const relatedProducts = await getRelatedProducts(
-    product.category,
-    product.id,
-    4
-  );
+  let relatedProducts: Product[] = [];
+  try {
+    relatedProducts = await getRelatedProducts(
+      product.category,
+      product.id,
+      4
+    );
+  } catch {
+    // Related products are optional, don't fail the page
+  }
 
   return (
     <>

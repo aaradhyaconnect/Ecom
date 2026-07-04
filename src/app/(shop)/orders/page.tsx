@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
@@ -16,13 +17,15 @@ export default function OrdersPage() {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useAuthStore();
+  const mounted = useHydrated();
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!mounted) return;
     if (!user) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -39,9 +42,9 @@ export default function OrdersPage() {
 
     loadOrders();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, supabase, router]);
+  }, [user, mounted, supabase, router]);
 
-  if (!user) return null;
+  if (!mounted || !user) return null;
 
   function getStatusStyle(value: string) {
     const status = ORDER_STATUSES.find((s) => s.value === value);
@@ -71,7 +74,7 @@ export default function OrdersPage() {
           <Package className="mx-auto h-12 w-12 text-charcoal/10 mb-4" />
           <h2 className="text-lg font-serif font-bold text-charcoal mb-2">No orders yet</h2>
           <p className="text-charcoal-muted mb-6">Start shopping to see your orders here</p>
-          <Link href="/products">
+          <Link href="/products/all">
             <Button>Browse Products</Button>
           </Link>
         </div>

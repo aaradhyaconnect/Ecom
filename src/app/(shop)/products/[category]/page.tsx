@@ -12,7 +12,7 @@ interface Props {
 export async function generateMetadata({ params }: { params: Promise<{ category: string }> }): Promise<Metadata> {
   const { category } = await params;
   const cat = CATEGORIES.find((c) => c.slug === category);
-  const name = cat?.name || category.replace(/-/g, " ");
+  const name = category === "all" ? "All Products" : cat?.name || category.replace(/-/g, " ");
 
   return {
     title: `${name} - Shop Online`,

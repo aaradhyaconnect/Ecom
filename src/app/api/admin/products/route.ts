@@ -64,9 +64,8 @@ export async function POST(request: Request) {
     const slug = slugify(body.name);
 
     const existing = await supabase
-      .from("products")
+      .rpc("get_product_by_slug", { p_slug: slug })
       .select("id")
-      .eq("slug", slug)
       .maybeSingle();
 
     let finalSlug = slug;

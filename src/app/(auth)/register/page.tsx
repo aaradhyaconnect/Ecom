@@ -104,13 +104,26 @@ export default function RegisterPage() {
           clearInterval(pollTimer);
         };
 
-        const handleMessage = (e: MessageEvent) => {
+        const handleMessage = async (e: MessageEvent) => {
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
             handled = true;
             cleanup();
+            if (e.data.accessToken) {
+              await supabase.auth.setSession({
+                access_token: e.data.accessToken,
+                refresh_token: e.data.refreshToken,
+              });
+              await fetch("/api/auth/set-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  access_token: e.data.accessToken,
+                  refresh_token: e.data.refreshToken,
+                }),
+              }).catch(() => {});
+            }
             toast.success("Welcome to HAINJU!");
-            const path = e.data.path || "/";
-            window.location.href = path;
+            window.location.replace(e.data.path || redirectTo);
           }
         };
 
@@ -125,7 +138,7 @@ export default function RegisterPage() {
             if (session) {
               handled = true;
               toast.success("Welcome to HAINJU!");
-              window.location.href = "/";
+              window.location.replace(redirectTo);
             }
           }
         }, 500);

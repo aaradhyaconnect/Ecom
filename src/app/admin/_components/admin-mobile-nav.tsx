@@ -25,7 +25,7 @@ export function AdminMobileNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-ivory-dark bg-ivory lg:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-ivory-dark/80 bg-ivory/95 backdrop-blur-sm lg:hidden">
       <div className="flex items-center justify-around py-2">
         {navItems.map((item) => {
           const isActive =
@@ -37,11 +37,11 @@ export function AdminMobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-1 text-[10px] font-medium transition-colors",
-                isActive ? "text-charcoal" : "text-charcoal-muted"
+                "flex flex-col items-center gap-0.5 px-3 py-1.5 text-[10px] font-medium transition-all duration-300 rounded-lg",
+                isActive ? "text-gold" : "text-charcoal-muted/60 hover:text-charcoal"
               )}
             >
-              <item.icon className="h-5 w-5" />
+              <item.icon className={cn("h-5 w-5", isActive && "stroke-[2px]")} />
               {item.label}
             </Link>
           );

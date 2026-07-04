@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Share2, Minus, Plus, Truck, ChevronRight } from "lucide-react";
+import { Heart, Share2, Minus, Plus, Truck, ChevronRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Rating } from "@/components/ui/Rating";
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
+import { useAuthStore } from "@/lib/store/auth";
 import { CATEGORIES } from "@/lib/constants/categories";
 import toast from "react-hot-toast";
 import type { Product } from "@/types";
@@ -48,6 +49,7 @@ export function ProductDetailClient({
   const { isInWishlist, toggleItem } = useWishlistStore();
   const inWishlist = isInWishlist(product.id);
   const { addProduct } = useRecentlyViewed();
+  const user = useAuthStore((s) => s.user);
 
   useEffect(() => {
     addProduct(product);
@@ -62,6 +64,11 @@ export function ProductDetailClient({
   const lowStock = product.stock > 0 && product.stock <= 5;
 
   const handleAddToCart = () => {
+    if (!user) {
+      toast.error("Please log in to add items to cart");
+      window.location.replace(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
+      return;
+    }
     if (product.sizes.length > 0 && !selectedSize) {
       toast.error("Please select a size");
       return;
@@ -89,7 +96,7 @@ export function ProductDetailClient({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted mb-8 tracking-wide">
+      <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted/60 mb-8 tracking-wide">
         <Link href="/" className="hover:text-charcoal transition-colors">
           Home
         </Link>
@@ -114,13 +121,53 @@ export function ProductDetailClient({
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
-        {/* Images */}
-        <div className="space-y-4 animate-in slide-up">
-          <div className="relative aspect-[4/5] overflow-hidden bg-ivory-dark group">
+        {/* Images - Vertical Gallery */}
+        <div className="flex gap-4 animate-in slide-up">
+          {/* Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div className="hidden lg:flex flex-col gap-3 overflow-y-auto max-h-[600px] scrollbar-hide">
+              {product.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImage(idx)}
+                  className={cn(
+                    "relative w-20 h-20 overflow-hidden flex-shrink-0 rounded-lg transition-all duration-300",
+                    idx === selectedImage
+                      ? "ring-2 ring-charcoal ring-offset-2 ring-offset-ivory"
+                      : "opacity-60 hover:opacity-100"
+                  )}
+                >
+                  <Image
+                    src={img}
+                    alt={`${product.name} ${idx + 1}`}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+              {product.video_url && (
+                <button
+                  onClick={() => setSelectedImage(-1)}
+                  className={cn(
+                    "relative w-20 h-20 overflow-hidden flex-shrink-0 rounded-lg bg-charcoal flex items-center justify-center transition-all duration-300",
+                    selectedImage === -1
+                      ? "ring-2 ring-charcoal ring-offset-2 ring-offset-ivory"
+                      : "opacity-60 hover:opacity-100"
+                  )}
+                >
+                  <span className="text-ivory text-[10px] font-bold uppercase">Video</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {/* Main Image */}
+          <div className="flex-1 relative aspect-[3/4] overflow-hidden bg-beige rounded-xl group">
             {selectedImage === -1 && product.video_url ? (
               <iframe
                 src={product.video_url.replace("watch?v=", "embed/")}
-                className="absolute inset-0 w-full h-full"
+                className="absolute inset-0 w-full h-full rounded-xl"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 title={`${product.name} video`}
@@ -150,54 +197,42 @@ export function ProductDetailClient({
               )}
             </div>
           </div>
-
-          {product.images && product.images.length > 1 && (
-            <div className="flex gap-3 overflow-x-auto pb-2">
-              {product.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedImage(idx)}
-                  className={cn(
-                    "relative w-20 h-20 overflow-hidden flex-shrink-0 border-2 transition-all duration-300",
-                    idx === selectedImage
-                      ? "border-charcoal"
-                      : "border-transparent hover:border-ivory-dark"
-                  )}
-                >
-                  <Image
-                    src={img}
-                    alt={`${product.name} ${idx + 1}`}
-                    fill
-                    sizes="80px"
-                    className="object-cover"
-                  />
-                </button>
-              ))}
-              {product.video_url && (
-                <button
-                  onClick={() => setSelectedImage(-1)}
-                  className={cn(
-                    "relative w-20 h-20 overflow-hidden flex-shrink-0 border-2 transition-all duration-300 bg-charcoal flex items-center justify-center",
-                    selectedImage === -1
-                      ? "border-charcoal"
-                      : "border-transparent hover:border-ivory-dark"
-                  )}
-                >
-                  <span className="text-ivory text-[10px] font-bold uppercase">Video</span>
-                </button>
-              )}
-            </div>
-          )}
         </div>
 
+        {/* Mobile Thumbnails */}
+        {product.images && product.images.length > 1 && (
+          <div className="flex lg:hidden gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+            {product.images.map((img, idx) => (
+              <button
+                key={idx}
+                onClick={() => setSelectedImage(idx)}
+                className={cn(
+                  "relative w-16 h-16 overflow-hidden flex-shrink-0 rounded-lg transition-all duration-300",
+                  idx === selectedImage
+                    ? "ring-2 ring-charcoal ring-offset-2 ring-offset-ivory"
+                    : "opacity-60"
+                )}
+              >
+                <Image
+                  src={img}
+                  alt={`${product.name} ${idx + 1}`}
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Details */}
-        <div className="flex flex-col gap-6 stagger-children">
+        <div className="flex flex-col gap-5 stagger-children">
           <div className="animate-in slide-up">
-            <p className="text-[11px] text-charcoal-muted uppercase tracking-[0.2em] mb-2">
+            <p className="text-[10px] text-charcoal-muted/60 uppercase tracking-[0.25em] mb-2">
               {categoryName}
               {product.subcategory && ` / ${product.subcategory}`}
             </p>
-            <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal">
+            <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal leading-tight">
               {product.name}
             </h1>
             <div className="flex items-center gap-3 mt-3">
@@ -211,12 +246,17 @@ export function ProductDetailClient({
           </div>
 
           <div className="animate-in slide-up flex items-baseline gap-3">
-            <span className="text-2xl font-bold text-charcoal">
+            <span className="text-2xl font-bold text-charcoal tracking-tight">
               {formatPrice(product.price)}
             </span>
             {product.compare_price && (
-              <span className="text-lg text-charcoal-muted/40 line-through">
+              <span className="text-base text-charcoal-muted/40 line-through">
                 {formatPrice(product.compare_price)}
+              </span>
+            )}
+            {product.compare_price && (
+              <span className="text-[11px] font-semibold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-sm">
+                SAVE {discount}%
               </span>
             )}
           </div>
@@ -228,7 +268,7 @@ export function ProductDetailClient({
                 inStock ? "bg-emerald-500" : "bg-rose-500"
               )}
             />
-            <span className="text-sm text-charcoal-muted">
+            <span className="text-[13px] text-charcoal-muted">
               {lowStock
                 ? `Only ${product.stock} left in stock`
                 : inStock
@@ -237,17 +277,17 @@ export function ProductDetailClient({
             </span>
           </div>
 
-          <hr className="border-ivory-dark animate-in slide-up" />
+          <hr className="border-ivory-dark/80 animate-in slide-up" />
 
           {product.sizes.length > 0 ? (
             <div className="animate-in slide-up">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-charcoal">
+                <h3 className="text-[13px] font-semibold text-charcoal">
                   Size: <span className="font-normal text-charcoal-muted">{selectedSize}</span>
                 </h3>
                 <Link
                   href="/size-guide"
-                  className="text-[10px] text-charcoal-muted hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
+                  className="text-[10px] text-charcoal-muted/60 hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
                 >
                   Size Guide
                 </Link>
@@ -258,10 +298,10 @@ export function ProductDetailClient({
                     key={size}
                     onClick={() => setSelectedSize(size)}
                     className={cn(
-                      "px-4 py-2.5 text-sm font-medium border transition-all duration-300",
+                      "px-4 py-2.5 text-[13px] font-medium border rounded-lg transition-all duration-300",
                       selectedSize === size
                         ? "bg-charcoal text-ivory border-charcoal"
-                        : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"
+                        : "border-ivory-dark text-charcoal-muted hover:border-charcoal/20"
                     )}
                   >
                     {size}
@@ -271,14 +311,14 @@ export function ProductDetailClient({
             </div>
           ) : (
             <div className="animate-in slide-up">
-              <h3 className="text-sm font-semibold text-charcoal mb-1">Size</h3>
-              <p className="text-sm text-charcoal-muted">One Size</p>
+              <h3 className="text-[13px] font-semibold text-charcoal mb-1">Size</h3>
+              <p className="text-[13px] text-charcoal-muted">One Size</p>
             </div>
           )}
 
           {colors.length > 0 ? (
             <div className="animate-in slide-up">
-              <h3 className="text-sm font-semibold text-charcoal mb-3">
+              <h3 className="text-[13px] font-semibold text-charcoal mb-3">
                 Color:{" "}
                 <span className="font-normal text-charcoal-muted">{selectedColor}</span>
               </h3>
@@ -291,16 +331,14 @@ export function ProductDetailClient({
                       "relative w-10 h-10 rounded-full border-2 transition-all duration-300",
                       selectedColor === color.name
                         ? "border-charcoal scale-110"
-                        : "border-ivory-dark hover:border-charcoal/30"
+                        : "border-ivory-dark hover:border-charcoal/20"
                     )}
                     style={{ backgroundColor: color.hex }}
                     title={color.name}
                     aria-label={color.name}
                   >
                     {selectedColor === color.name && (
-                      <svg className="absolute inset-0 m-auto w-4 h-4" viewBox="0 0 24 24" fill="none" stroke={color.hex === "#FFFFFF" || color.hex === "#FFFFF0" ? "#1A1A1A" : "#FFFFFF"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
+                      <Check className="absolute inset-0 m-auto h-4 w-4" style={{ color: color.hex === "#FFFFFF" || color.hex === "#FFFFF0" ? "#1A1A1A" : "#FFFFFF" }} />
                     )}
                     {color.image && (
                       <Image
@@ -317,18 +355,18 @@ export function ProductDetailClient({
             </div>
           ) : (
             <div className="animate-in slide-up">
-              <h3 className="text-sm font-semibold text-charcoal mb-1">Color</h3>
-              <p className="text-sm text-charcoal-muted">Classic</p>
+              <h3 className="text-[13px] font-semibold text-charcoal mb-1">Color</h3>
+              <p className="text-[13px] text-charcoal-muted">Classic</p>
             </div>
           )}
 
           <div className="animate-in slide-up">
-            <h3 className="text-sm font-semibold text-charcoal mb-3">Quantity</h3>
+            <h3 className="text-[13px] font-semibold text-charcoal mb-3">Quantity</h3>
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                 disabled={quantity <= 1}
-                className="w-10 h-10 border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
+                className="w-10 h-10 border border-ivory-dark rounded-lg flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
               >
                 <Minus className="h-4 w-4 text-charcoal-muted" />
               </button>
@@ -336,7 +374,7 @@ export function ProductDetailClient({
               <button
                 onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                 disabled={quantity >= product.stock}
-                className="w-10 h-10 border border-ivory-dark flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
+                className="w-10 h-10 border border-ivory-dark rounded-lg flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
               >
                 <Plus className="h-4 w-4 text-charcoal-muted" />
               </button>
@@ -368,31 +406,31 @@ export function ProductDetailClient({
             </Button>
           </div>
 
-          <div className="animate-in slide-up flex items-center gap-2.5 text-sm text-charcoal-muted bg-ivory-dark/50 px-4 py-3">
+          <div className="animate-in slide-up flex items-center gap-2.5 text-[13px] text-charcoal-muted bg-ivory-dark/30 px-4 py-3 rounded-lg">
             <Truck className="h-5 w-5 flex-shrink-0 text-gold-dark" />
             <span>Free shipping on orders above ₹999</span>
           </div>
 
-          <hr className="border-ivory-dark animate-in slide-up" />
+          <hr className="border-ivory-dark/80 animate-in slide-up" />
 
           <div className="animate-in slide-up">
-            <h3 className="text-sm font-semibold text-charcoal mb-2">Description</h3>
-            <p className="text-sm text-charcoal-muted leading-relaxed">
+            <h3 className="text-[13px] font-semibold text-charcoal mb-2">Description</h3>
+            <p className="text-[13px] text-charcoal-muted leading-relaxed">
               {product.description}
             </p>
           </div>
 
           {product.material && (
             <div className="animate-in slide-up">
-              <h3 className="text-sm font-semibold text-charcoal mb-1">Material</h3>
-              <p className="text-sm text-charcoal-muted">{product.material}</p>
+              <h3 className="text-[13px] font-semibold text-charcoal mb-1">Material</h3>
+              <p className="text-[13px] text-charcoal-muted">{product.material}</p>
             </div>
           )}
 
           {product.care_instructions && (
             <div className="animate-in slide-up">
-              <h3 className="text-sm font-semibold text-charcoal mb-1">Care Instructions</h3>
-              <p className="text-sm text-charcoal-muted whitespace-pre-line">
+              <h3 className="text-[13px] font-semibold text-charcoal mb-1">Care Instructions</h3>
+              <p className="text-[13px] text-charcoal-muted whitespace-pre-line">
                 {product.care_instructions}
               </p>
             </div>
@@ -403,7 +441,7 @@ export function ProductDetailClient({
               {product.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-3 py-1 bg-ivory-dark text-charcoal-muted text-xs"
+                  className="px-3 py-1 bg-ivory-dark/50 text-charcoal-muted text-[11px] rounded-full"
                 >
                   {tag}
                 </span>
@@ -417,7 +455,7 @@ export function ProductDetailClient({
       {relatedProducts.length > 0 && (
         <div className="mt-20">
           <div className="flex items-center gap-3 mb-2">
-            <span className="h-[1px] w-6 bg-gold/50" />
+            <span className="h-[1px] w-6 bg-gold/40" />
             <span className="text-[10px] uppercase tracking-[0.4em] text-gold-dark font-medium">
               You May Also Like
             </span>
@@ -436,8 +474,8 @@ export function ProductDetailClient({
       <RecentlyViewed />
 
       {/* Mobile Sticky Add to Cart */}
-      <div className="fixed bottom-0 left-0 right-0 bg-ivory border-t border-ivory-dark p-4 flex items-center gap-4 lg:hidden z-30">
-        <div className="flex-1">
+      <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-4 lg:hidden z-30">
+        <div className="flex-1 min-w-0">
           <p className="text-lg font-bold text-charcoal">{formatPrice(product.price)}</p>
           {product.compare_price && (
             <p className="text-xs text-charcoal-muted/50 line-through">{formatPrice(product.compare_price)}</p>

@@ -32,11 +32,20 @@ export default function LoginPage() {
       setIsLoading(true);
       try {
         const supabase = createClient();
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) { toast.error(error.message); return; }
+        if (data.session) {
+          await fetch("/api/auth/set-session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              access_token: data.session.access_token,
+              refresh_token: data.session.refresh_token,
+            }),
+          }).catch(() => {});
+        }
         toast.success("Welcome back!");
-        router.push(redirectTo);
-        router.refresh();
+        window.location.replace(redirectTo);
       } catch {
         toast.error("Something went wrong");
       } finally {
@@ -100,13 +109,26 @@ export default function LoginPage() {
           clearInterval(pollTimer);
         };
 
-        const handleMessage = (e: MessageEvent) => {
+        const handleMessage = async (e: MessageEvent) => {
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
             handled = true;
             cleanup();
+            if (e.data.accessToken) {
+              await supabase.auth.setSession({
+                access_token: e.data.accessToken,
+                refresh_token: e.data.refreshToken,
+              });
+              await fetch("/api/auth/set-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  access_token: e.data.accessToken,
+                  refresh_token: e.data.refreshToken,
+                }),
+              }).catch(() => {});
+            }
             toast.success("Welcome back!");
-            const path = e.data.path || redirectTo;
-            window.location.href = path;
+            window.location.replace(e.data.path || redirectTo);
           }
         };
 
@@ -121,7 +143,7 @@ export default function LoginPage() {
             if (session) {
               handled = true;
               toast.success("Welcome back!");
-              window.location.href = redirectTo;
+              window.location.replace(redirectTo);
             }
           }
         }, 500);

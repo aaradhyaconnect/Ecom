@@ -45,6 +45,17 @@ export default function AdminLoginPage() {
         toast.error("Unauthorized. Admin access required.");
         return;
       }
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token: sessionData.session.access_token,
+            refresh_token: sessionData.session.refresh_token,
+          }),
+        }).catch(() => {});
+      }
       toast.success("Welcome back!");
       window.location.replace("/admin");
     } catch {
@@ -81,27 +92,51 @@ export default function AdminLoginPage() {
         );
 
         let handled = false;
+        const cleanup = () => {
+          window.removeEventListener("message", handleMessage);
+          clearInterval(pollTimer);
+        };
+
+        const handleMessage = async (e: MessageEvent) => {
+          if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
+            handled = true;
+            cleanup();
+            if (e.data.accessToken) {
+              await supabase.auth.setSession({
+                access_token: e.data.accessToken,
+                refresh_token: e.data.refreshToken,
+              });
+              await fetch("/api/auth/set-session", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  access_token: e.data.accessToken,
+                  refresh_token: e.data.refreshToken,
+                }),
+              }).catch(() => {});
+            }
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("role")
+              .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
+              .single();
+            if (profile?.role === "admin") {
+              toast.success("Welcome back!");
+              window.location.replace("/admin");
+            } else {
+              await supabase.auth.signOut();
+              toast.error("Unauthorized. Admin access required.");
+            }
+          }
+        };
+
+        window.addEventListener("message", handleMessage);
+
         const pollTimer = setInterval(async () => {
           if (handled) return;
           if (!popup || popup.closed) {
-            clearInterval(pollTimer);
+            cleanup();
             setLoading(false);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-              handled = true;
-              const { data: profile } = await supabase
-                .from("profiles")
-                .select("role")
-                .eq("id", session.user.id)
-                .single();
-              if (profile?.role === "admin") {
-                toast.success("Welcome back!");
-                window.location.href = "/admin";
-              } else {
-                await supabase.auth.signOut();
-                toast.error("Unauthorized. Admin access required.");
-              }
-            }
           }
         }, 500);
       }
@@ -161,6 +196,14 @@ export default function AdminLoginPage() {
 
       if (data.data.session) {
         await supabase.auth.setSession(data.data.session);
+        await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token: data.data.session.access_token,
+            refresh_token: data.data.session.refresh_token,
+          }),
+        }).catch(() => {});
       }
 
       const { data: { user } } = await supabase.auth.getUser();

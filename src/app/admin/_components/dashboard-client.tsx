@@ -81,8 +81,9 @@ export function DashboardClient({
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <p className="text-sm text-charcoal-muted">
+        <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Overview</span>
+        <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Dashboard</h1>
+        <p className="text-[13px] text-charcoal-muted/60">
           Welcome back! Here&apos;s what&apos;s happening today.
         </p>
       </div>
@@ -91,16 +92,16 @@ export function DashboardClient({
         {cards.map((card) => (
           <div
             key={card.label}
-            className="border bg-ivory p-5 "
+            className="border border-ivory-dark/80 bg-ivory p-5 rounded-xl hover:border-gold/20 transition-colors duration-500"
           >
             <div className="flex items-center justify-between">
-              <div className="bg-ivory-dark p-2">
-                <card.icon className="h-5 w-5" />
+              <div className="bg-ivory-dark/50 p-2.5 rounded-lg">
+                <card.icon className="h-5 w-5 text-charcoal-muted" />
               </div>
               {card.trend && (
                 <span
-                  className={`flex items-center gap-1 text-xs font-medium ${
-                    card.up ? "text-green-600" : "text-rose-600"
+                  className={`flex items-center gap-1 text-[11px] font-medium ${
+                    card.up ? "text-emerald-600" : "text-rose-500"
                   }`}
                 >
                   {card.up ? (
@@ -112,29 +113,29 @@ export function DashboardClient({
                 </span>
               )}
             </div>
-            <p className="mt-3 text-2xl font-bold">{card.value}</p>
-            <p className="text-xs text-charcoal-muted">{card.label}</p>
+            <p className="mt-3 text-2xl font-bold text-charcoal tracking-tight">{card.value}</p>
+            <p className="text-[11px] text-charcoal-muted/60 mt-0.5">{card.label}</p>
           </div>
         ))}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="border bg-ivory p-5  lg:col-span-2">
-          <h2 className="mb-4 text-sm font-semibold">Revenue (Last 30 Days)</h2>
+        <div className="border border-ivory-dark/80 bg-ivory p-5 rounded-xl lg:col-span-2">
+          <h2 className="mb-4 text-[13px] font-semibold text-charcoal">Revenue (Last 30 Days)</h2>
           <div className="flex items-end gap-1.5 h-40">
             {revenueDays.map((day) => (
               <div
                 key={day.date}
-                className="flex-1 bg-black/80 hover:bg-black transition-colors relative group"
+                className="flex-1 bg-charcoal/80 hover:bg-charcoal transition-colors relative group rounded-t-sm"
                 style={{ height: `${(day.revenue / maxRevenue) * 100}%` }}
               >
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-charcoal text-ivory text-xs rounded px-2 py-1 whitespace-nowrap">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-charcoal text-ivory text-[10px] rounded-lg px-2 py-1 whitespace-nowrap">
                   {formatPrice(day.revenue)}
                 </div>
               </div>
             ))}
           </div>
-          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted/60">
+          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted/40">
             <span>{revenueDays[0]?.date?.slice(5)}</span>
             <span>
               {revenueDays[revenueDays.length - 1]?.date?.slice(5)}
@@ -142,8 +143,8 @@ export function DashboardClient({
           </div>
         </div>
 
-        <div className="border bg-ivory p-5 ">
-          <h2 className="mb-4 text-sm font-semibold">Top Products</h2>
+        <div className="border border-ivory-dark/80 bg-ivory p-5 rounded-xl">
+          <h2 className="mb-4 text-[13px] font-semibold text-charcoal">Top Products</h2>
           <div className="space-y-3">
             {(a.top_products || []).slice(0, 5).map((product, i) => (
               <div
@@ -151,39 +152,39 @@ export function DashboardClient({
                 className="flex items-center justify-between"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-charcoal-muted/60 w-4">
+                  <span className="text-[11px] font-medium text-charcoal-muted/40 w-4">
                     {i + 1}.
                   </span>
-                  <span className="text-sm truncate max-w-[140px]">
+                  <span className="text-[13px] truncate max-w-[140px] text-charcoal">
                     {product.name}
                   </span>
                 </div>
-                <span className="text-sm font-medium">
+                <span className="text-[13px] font-medium text-charcoal">
                   {product.sales} sold
                 </span>
               </div>
             ))}
             {(a.top_products || []).length === 0 && (
-              <p className="text-sm text-charcoal-muted/60">No data yet</p>
+              <p className="text-[13px] text-charcoal-muted/40">No data yet</p>
             )}
           </div>
         </div>
       </div>
 
-      <div className="border bg-ivory ">
-        <div className="flex items-center justify-between border-b px-5 py-4">
-          <h2 className="text-sm font-semibold">Recent Orders</h2>
+      <div className="border border-ivory-dark/80 bg-ivory rounded-xl overflow-hidden">
+        <div className="flex items-center justify-between border-b border-ivory-dark/80 px-5 py-4">
+          <h2 className="text-[13px] font-semibold text-charcoal">Recent Orders</h2>
           <Link
             href="/admin/orders"
-            className="text-xs font-medium text-black hover:underline"
+            className="text-[11px] font-medium text-charcoal-muted/60 hover:text-charcoal uppercase tracking-wider transition-colors"
           >
             View All
           </Link>
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b text-left text-xs text-charcoal-muted">
+              <tr className="border-b border-ivory-dark/80 text-left text-[11px] text-charcoal-muted/40 uppercase tracking-wider">
                 <th className="px-5 py-3 font-medium">Order ID</th>
                 <th className="px-5 py-3 font-medium">Status</th>
                 <th className="px-5 py-3 font-medium">Total</th>
@@ -192,24 +193,24 @@ export function DashboardClient({
             </thead>
             <tbody>
               {recentOrders.slice(0, 5).map((order) => (
-                <tr key={order.id} className="border-b last:border-0">
-                  <td className="px-5 py-3 font-medium">
+                <tr key={order.id} className="border-b border-ivory-dark/50 last:border-0 hover:bg-ivory-dark/20 transition-colors">
+                  <td className="px-5 py-3 font-medium text-charcoal">
                     {order.order_id}
                   </td>
                   <td className="px-5 py-3">
                     <StatusBadge status={order.order_status} />
                   </td>
-                  <td className="px-5 py-3">
+                  <td className="px-5 py-3 text-charcoal">
                     {formatPrice(order.total)}
                   </td>
-                  <td className="px-5 py-3 text-charcoal-muted">
+                  <td className="px-5 py-3 text-charcoal-muted/60">
                     {formatDate(order.created_at)}
                   </td>
                 </tr>
               ))}
               {recentOrders.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-charcoal-muted/60">
+                  <td colSpan={4} className="px-5 py-8 text-center text-charcoal-muted/40">
                     No orders yet
                   </td>
                 </tr>
