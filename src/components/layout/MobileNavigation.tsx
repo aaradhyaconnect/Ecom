@@ -7,12 +7,14 @@ import { cn } from "@/lib/utils/cn";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 
 export function MobileNavigation() {
   const pathname = usePathname();
   const cartItemsCount = useCartStore((s) => s.items.length);
   const wishlistItemsCount = useWishlistStore((s) => s.items.length);
   const user = useAuthStore((s) => s.user);
+  const mounted = useHydrated();
 
   const navItems = [
     {
@@ -32,19 +34,19 @@ export function MobileNavigation() {
       icon: Heart,
       href: "/wishlist",
       active: pathname === "/wishlist",
-      badge: wishlistItemsCount,
+      badge: mounted ? wishlistItemsCount : 0,
     },
     {
       label: "Cart",
       icon: ShoppingBag,
       href: "/cart",
       active: pathname === "/cart",
-      badge: cartItemsCount,
+      badge: mounted ? cartItemsCount : 0,
     },
     {
       label: "Profile",
       icon: User,
-      href: user ? "/profile" : "/login",
+      href: mounted && user ? "/profile" : "/login",
       active: pathname === "/profile" || pathname === "/login" || pathname === "/register",
     },
   ];

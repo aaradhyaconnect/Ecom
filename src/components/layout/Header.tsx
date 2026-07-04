@@ -16,6 +16,7 @@ import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useUIStore } from "@/lib/store/ui";
 import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { useTheme } from "@/components/layout/ThemeProvider";
 import { NAV_LINKS, SITE } from "@/lib/constants/site";
 import { CartDrawer } from "./CartDrawer";
@@ -29,6 +30,7 @@ export function Header() {
   const wishlistCount = useWishlistStore((s) => s.items.length);
   const [isScrolled, setIsScrolled] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const mounted = useHydrated();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -129,7 +131,7 @@ export function Header() {
               </button>
 
               <Link
-                href={user ? "/wishlist" : "/login"}
+                href={mounted && user ? "/wishlist" : "/login"}
                 className={cn(
                   "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 relative rounded-lg",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
@@ -137,7 +139,7 @@ export function Header() {
                 aria-label="Wishlist"
               >
                 <Heart className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                {wishlistCount > 0 && (
+                {mounted && wishlistCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4 flex items-center justify-center scale-in">
                     {wishlistCount > 9 ? "9+" : wishlistCount}
                   </span>
@@ -145,7 +147,7 @@ export function Header() {
               </Link>
 
               <Link
-                href={user ? "/profile" : "/login"}
+                href={mounted && user ? "/profile" : "/login"}
                 className={cn(
                   "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 rounded-lg",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
@@ -164,7 +166,7 @@ export function Header() {
                 aria-label="Cart"
               >
                 <ShoppingBag className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                {cartCount > 0 && (
+                {mounted && cartCount > 0 && (
                   <span className="absolute -top-0.5 -right-0.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4 flex items-center justify-center scale-in">
                     {cartCount > 9 ? "9+" : cartCount}
                   </span>
