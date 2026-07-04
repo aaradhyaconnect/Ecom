@@ -82,14 +82,15 @@ export default function VerifyOTPPage() {
       const supabase = createClient();
       if (data.data.session) {
         await supabase.auth.setSession(data.data.session);
-        await fetch("/api/auth/set-session", {
+        const res = await fetch("/api/auth/set-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             access_token: data.data.session.access_token,
             refresh_token: data.data.session.refresh_token,
           }),
-        }).catch(() => {});
+        }).catch(() => null);
+        if (!res?.ok) toast.error("Session setup failed. Please refresh.");
       }
 
       toast.success("Verified successfully!");

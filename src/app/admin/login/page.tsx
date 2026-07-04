@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { createClient } from "@/lib/supabase/client";
@@ -18,6 +18,11 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => { cleanupRef.current?.(); };
+  }, []);
 
   const handlePasswordLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,10 +34,12 @@ export default function AdminLoginPage() {
       });
       if (error) {
         toast.error(error.message);
+        setLoading(false);
         return;
       }
       if (!user) {
         toast.error("Login failed");
+        setLoading(false);
         return;
       }
       const { data: profile } = await supabase
@@ -47,14 +54,15 @@ export default function AdminLoginPage() {
       }
       const { data: sessionData } = await supabase.auth.getSession();
       if (sessionData.session) {
-        await fetch("/api/auth/set-session", {
+        const res = await fetch("/api/auth/set-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             access_token: sessionData.session.access_token,
             refresh_token: sessionData.session.refresh_token,
           }),
-        }).catch(() => {});
+        }).catch(() => null);
+        if (!res?.ok) toast.error("Session setup failed. Please refresh.");
       }
       toast.success("Welcome back!");
       window.location.replace("/admin");
@@ -95,7 +103,9 @@ export default function AdminLoginPage() {
         const cleanup = () => {
           window.removeEventListener("message", handleMessage);
           clearTimeout(pollTimer);
+          cleanupRef.current = null;
         };
+        cleanupRef.current = cleanup;
 
         const handleMessage = async (e: MessageEvent) => {
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {

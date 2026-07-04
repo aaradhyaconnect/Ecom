@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, Eye, EyeOff, Phone } from "lucide-react";
@@ -21,6 +21,11 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => { cleanupRef.current?.(); };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -33,16 +38,17 @@ export default function LoginPage() {
       try {
         const supabase = createClient();
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) { toast.error(error.message); return; }
+        if (error) { toast.error(error.message); setIsLoading(false); return; }
         if (data.session) {
-          await fetch("/api/auth/set-session", {
+          const res = await fetch("/api/auth/set-session", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               access_token: data.session.access_token,
               refresh_token: data.session.refresh_token,
             }),
-          }).catch(() => {});
+          }).catch(() => null);
+          if (!res?.ok) toast.error("Session setup failed. Please refresh.");
         }
         toast.success("Welcome back!");
         window.location.replace(redirectTo);
@@ -107,7 +113,9 @@ export default function LoginPage() {
         const cleanup = () => {
           window.removeEventListener("message", handleMessage);
           clearTimeout(pollTimer);
+          cleanupRef.current = null;
         };
+        cleanupRef.current = cleanup;
 
         const handleMessage = async (e: MessageEvent) => {
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {

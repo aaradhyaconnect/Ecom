@@ -44,13 +44,14 @@ export async function GET(request: NextRequest) {
           .single();
 
         if (!profile) {
-          await supabase.from("profiles").insert({
+          const { error: profileError } = await supabase.from("profiles").insert({
             id: user.id,
             email: user.email,
             name: user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split("@")[0] || "User",
             avatar_url: user.user_metadata?.avatar_url || null,
             role: "customer",
           });
+          if (profileError) console.error("Profile creation failed:", profileError.message);
         }
 
         const isAdmin = profile?.role === "admin";
@@ -63,22 +64,31 @@ export async function GET(request: NextRequest) {
           const accessToken = session?.access_token ?? "";
           const refreshToken = session?.refresh_token ?? "";
 
+          const payload = JSON.stringify({
+            type: "auth-callback",
+            success: true,
+            path: redirectPath,
+            accessToken,
+            refreshToken,
+          });
+
           const html = `<!DOCTYPE html><html><head><title>Authenticating...</title></head><body>
             <script>
               (function() {
                 var done = false;
+                var payload = ${JSON.stringify(payload)};
                 function finish() {
                   if (done) return;
                   done = true;
                   try {
                     if (window.opener) {
-                      window.opener.postMessage({ type: 'auth-callback', success: true, path: '${redirectPath}', accessToken: '${accessToken}', refreshToken: '${refreshToken}' }, '*');
+                      window.opener.postMessage(JSON.parse(payload), '*');
                       setTimeout(function() { window.close(); }, 200);
                     } else {
-                      window.location.href = '${redirectUrl}';
+                      window.location.href = ${JSON.stringify(redirectUrl)};
                     }
                   } catch(e) {
-                    window.location.href = '${redirectUrl}';
+                    window.location.href = ${JSON.stringify(redirectUrl)};
                   }
                 }
                 if (document.readyState === 'complete') { finish(); }

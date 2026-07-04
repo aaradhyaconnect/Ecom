@@ -44,6 +44,9 @@ export function useAuth() {
           if (profile) {
             setUser(profile as User);
             setIsAdmin(profile.role === "admin");
+          } else {
+            setUser(null);
+            setIsAdmin(false);
           }
         } else {
           setUser(null);

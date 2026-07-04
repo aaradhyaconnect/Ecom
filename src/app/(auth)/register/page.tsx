@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Mail, Lock, User, Eye, EyeOff, Phone } from "lucide-react";
@@ -21,6 +21,11 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [usePhone, setUsePhone] = useState(false);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  useEffect(() => {
+    return () => { cleanupRef.current?.(); };
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -102,7 +107,9 @@ export default function RegisterPage() {
         const cleanup = () => {
           window.removeEventListener("message", handleMessage);
           clearTimeout(pollTimer);
+          cleanupRef.current = null;
         };
+        cleanupRef.current = cleanup;
 
         const handleMessage = async (e: MessageEvent) => {
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
