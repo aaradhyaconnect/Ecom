@@ -85,7 +85,7 @@ export default function AdminLoginPage() {
         const height = 600;
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
-        const popup = window.open(
+        window.open(
           data.url,
           "google-auth",
           `width=${width},height=${height},left=${left},top=${top}`
@@ -94,7 +94,7 @@ export default function AdminLoginPage() {
         let handled = false;
         const cleanup = () => {
           window.removeEventListener("message", handleMessage);
-          clearInterval(pollTimer);
+          clearTimeout(pollTimer);
         };
 
         const handleMessage = async (e: MessageEvent) => {
@@ -132,13 +132,11 @@ export default function AdminLoginPage() {
 
         window.addEventListener("message", handleMessage);
 
-        const pollTimer = setInterval(async () => {
+        const pollTimer = setTimeout(async () => {
           if (handled) return;
-          if (!popup || popup.closed) {
-            cleanup();
-            setLoading(false);
-          }
-        }, 500);
+          cleanup();
+          setLoading(false);
+        }, 30000);
       }
     } catch {
       toast.error("Failed to sign in with Google");

@@ -97,7 +97,7 @@ export default function LoginPage() {
         const height = 600;
         const left = window.screenX + (window.outerWidth - width) / 2;
         const top = window.screenY + (window.outerHeight - height) / 2;
-        const popup = window.open(
+        window.open(
           data.url,
           "google-auth",
           `width=${width},height=${height},left=${left},top=${top}`
@@ -106,7 +106,7 @@ export default function LoginPage() {
         let handled = false;
         const cleanup = () => {
           window.removeEventListener("message", handleMessage);
-          clearInterval(pollTimer);
+          clearTimeout(pollTimer);
         };
 
         const handleMessage = async (e: MessageEvent) => {
@@ -134,19 +134,17 @@ export default function LoginPage() {
 
         window.addEventListener("message", handleMessage);
 
-        const pollTimer = setInterval(async () => {
+        const pollTimer = setTimeout(async () => {
           if (handled) return;
-          if (!popup || popup.closed) {
-            cleanup();
-            setIsLoading(false);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-              handled = true;
-              toast.success("Welcome back!");
-              window.location.replace(redirectTo);
-            }
+          cleanup();
+          setIsLoading(false);
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session) {
+            handled = true;
+            toast.success("Welcome back!");
+            window.location.replace(redirectTo);
           }
-        }, 500);
+        }, 30000);
       }
     } catch {
       toast.error("Failed to sign in with Google");
