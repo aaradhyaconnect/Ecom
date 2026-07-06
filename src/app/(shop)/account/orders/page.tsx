@@ -18,19 +18,13 @@ export default function OrdersPage() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const mounted = useHydrated();
+  const authLoading = useAuthStore((s) => s.loading);
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!mounted) return;
-    const timer = setTimeout(() => setAuthChecked(true), 800);
-    return () => clearTimeout(timer);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted || !authChecked) return;
+    if (!mounted || authLoading) return;
     if (!user) {
       window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
@@ -49,9 +43,9 @@ export default function OrdersPage() {
 
     loadOrders();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, mounted, authChecked, supabase, router]);
+  }, [user, mounted, authLoading, supabase, router]);
 
-  if (!mounted || !authChecked || !user) return null;
+  if (!mounted || authLoading || !user) return null;
 
   function getStatusStyle(value: string) {
     const status = ORDER_STATUSES.find((s) => s.value === value);

@@ -20,6 +20,7 @@ export default function ProfilePage() {
   const pathname = usePathname();
   const { user, logout } = useAuthStore();
   const mounted = useHydrated();
+  const authLoading = useAuthStore((s) => s.loading);
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,16 +38,9 @@ export default function ProfilePage() {
     pincode: "",
     landmark: "",
   });
-  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!mounted) return;
-    const timer = setTimeout(() => setAuthChecked(true), 800);
-    return () => clearTimeout(timer);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted || !authChecked) return;
+    if (!mounted || authLoading) return;
     if (!user) {
       window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
@@ -74,7 +68,7 @@ export default function ProfilePage() {
       if (data?.addresses) setAddresses(data.addresses as Address[]);
     })();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, mounted, authChecked, supabase, router]);
+  }, [user, mounted, authLoading, supabase, router]);
 
   async function handleSaveProfile() {
     setSaving(true);
@@ -138,7 +132,7 @@ export default function ProfilePage() {
     return ORDER_STATUSES.find((s) => s.value === v)?.label ?? v;
   }
 
-  if (!mounted || !authChecked || !user) return null;
+  if (!mounted || authLoading || !user) return null;
 
   if (loading) {
     return (

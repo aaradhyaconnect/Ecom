@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,22 +20,16 @@ export default function WishlistPage() {
   const pathname = usePathname();
   const { user } = useAuthStore();
   const mounted = useHydrated();
+  const authLoading = useAuthStore((s) => s.loading);
   const { items, removeItem } = useWishlistStore();
   const { addItem, items: cartItems } = useCartStore();
-  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!mounted) return;
-    const timer = setTimeout(() => setAuthChecked(true), 800);
-    return () => clearTimeout(timer);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted || !authChecked) return;
+    if (!mounted || authLoading) return;
     if (!user) {
       window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
     }
-  }, [user, mounted, authChecked, pathname, router]);
+  }, [user, mounted, authLoading, pathname, router]);
 
   const handleAddToCart = (product: Product) => {
     const size = product.sizes[0] || "M";
@@ -53,7 +47,7 @@ export default function WishlistPage() {
     return cartItems.some((item) => item.product_id === productId);
   };
 
-  if (!mounted || !authChecked || !user) return null;
+  if (!mounted || authLoading || !user) return null;
 
   if (items.length === 0) {
     return (

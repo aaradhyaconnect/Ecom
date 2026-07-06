@@ -34,20 +34,14 @@ export default function OrderDetailPage({
   const pathname = usePathname();
   const { user } = useAuthStore();
   const mounted = useHydrated();
+  const authLoading = useAuthStore((s) => s.loading);
   const supabase = createClient();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    if (!mounted) return;
-    const timer = setTimeout(() => setAuthChecked(true), 800);
-    return () => clearTimeout(timer);
-  }, [mounted]);
-
-  useEffect(() => {
-    if (!mounted || !authChecked) return;
+    if (!mounted || authLoading) return;
     if (!user) {
       window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
@@ -72,7 +66,7 @@ export default function OrderDetailPage({
 
     loadOrder();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, mounted, authChecked, params, supabase, router]);
+  }, [user, mounted, authLoading, params, supabase, router]);
 
   async function handleCancel() {
     if (!order) return;
@@ -103,7 +97,7 @@ export default function OrderDetailPage({
     return s?.label ?? value;
   }
 
-  if (!mounted || !authChecked || !user) return null;
+  if (!mounted || authLoading || !user) return null;
 
   if (loading) {
     return (

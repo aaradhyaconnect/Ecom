@@ -66,6 +66,7 @@ export default function CheckoutPage() {
   const { items, getSubtotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
   const mounted = useHydrated();
+  const authLoading = useAuthStore((s) => s.loading);
   useAuth();
 
   const [address, setAddress] = useState<Address>(initialAddress);
@@ -276,7 +277,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!mounted) return null;
+  if (!mounted || authLoading) return null;
 
   if (items.length === 0) {
     return (
