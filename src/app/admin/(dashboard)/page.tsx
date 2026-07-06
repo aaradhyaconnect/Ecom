@@ -1,24 +1,9 @@
 import { createServerSupabase } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { DashboardClient } from "../_components/dashboard-client";
 import type { AnalyticsSummary, Order } from "@/types";
 
 export default async function AdminDashboardPage() {
   const supabase = await createServerSupabase();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/admin/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile || profile.role !== "admin") redirect("/admin/login");
 
   const now = new Date();
   const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();

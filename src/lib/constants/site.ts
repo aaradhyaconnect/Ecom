@@ -32,9 +32,9 @@ export const FOOTER_LINKS = {
     { href: "/products/sale", label: "Sale" },
   ],
   customer: [
-    { href: "/profile", label: "My Account" },
-    { href: "/orders", label: "My Orders" },
-    { href: "/wishlist", label: "Wishlist" },
+    { href: "/account", label: "My Account" },
+    { href: "/account/orders", label: "My Orders" },
+    { href: "/account/wishlist", label: "Wishlist" },
     { href: "/cart", label: "Shopping Cart" },
   ],
   help: [

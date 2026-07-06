@@ -131,7 +131,7 @@ export function Header() {
               </button>
 
               <Link
-                href={mounted && user ? "/wishlist" : "/login"}
+                href={mounted && user ? "/account/wishlist" : "/login"}
                 className={cn(
                   "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 relative rounded-lg",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"
@@ -147,7 +147,7 @@ export function Header() {
               </Link>
 
               <Link
-                href={mounted && user ? "/profile" : "/login"}
+                href={mounted && user ? "/account" : "/login"}
                 className={cn(
                   "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 rounded-lg",
                   isDark ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50" : "text-white/70 hover:text-white"

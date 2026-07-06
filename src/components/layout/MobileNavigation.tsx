@@ -32,8 +32,8 @@ export function MobileNavigation() {
     {
       label: "Wishlist",
       icon: Heart,
-      href: "/wishlist",
-      active: pathname === "/wishlist",
+      href: "/account/wishlist",
+      active: pathname === "/account/wishlist",
       badge: mounted ? wishlistItemsCount : 0,
     },
     {
@@ -46,8 +46,8 @@ export function MobileNavigation() {
     {
       label: "Profile",
       icon: User,
-      href: mounted && user ? "/profile" : "/login",
-      active: pathname === "/profile" || pathname === "/login" || pathname === "/register",
+      href: mounted && user ? "/account" : "/login",
+      active: pathname === "/account" || pathname === "/login" || pathname === "/signup",
     },
   ];
 

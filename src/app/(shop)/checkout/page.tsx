@@ -5,6 +5,7 @@ import { useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { useAuth } from "@/hooks/useAuth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -64,6 +65,7 @@ export default function CheckoutPage() {
   const pathname = usePathname();
   const { items, getSubtotal, clearCart } = useCartStore();
   const { user } = useAuthStore();
+  const mounted = useHydrated();
   useAuth();
 
   const [address, setAddress] = useState<Address>(initialAddress);
@@ -204,7 +206,7 @@ export default function CheckoutPage() {
         toast.success("Order placed successfully!");
         fireConfetti();
         clearCart();
-        window.location.replace(`/order/${data.data.id}`);
+        window.location.replace(`/account/orders/${data.data.id}`);
         return;
       }
 
@@ -248,7 +250,7 @@ export default function CheckoutPage() {
                 toast.success("Payment successful! Order placed.");
                 fireConfetti();
                 clearCart();
-                window.location.replace(`/order/${data.data.id}`);
+                window.location.replace(`/account/orders/${data.data.id}`);
               } else {
                 toast.error("Payment verification failed");
               }
@@ -273,6 +275,8 @@ export default function CheckoutPage() {
       setIsPlacingOrder(false);
     }
   };
+
+  if (!mounted) return null;
 
   if (items.length === 0) {
     return (

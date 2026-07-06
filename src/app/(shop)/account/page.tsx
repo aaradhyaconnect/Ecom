@@ -41,7 +41,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (!mounted) return;
     if (!user) {
-      router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
+      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
     }
 
@@ -297,7 +297,7 @@ export default function ProfilePage() {
             </h2>
           </div>
           <Link
-            href="/orders"
+            href="/account/orders"
             className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted hover:text-charcoal transition-colors"
           >
             View All
@@ -311,7 +311,7 @@ export default function ProfilePage() {
             {orders.map((order) => (
               <Link
                 key={order.id}
-                href={`/order/${order.id}`}
+                href={`/account/orders/${order.id}`}
                 className="flex items-center justify-between py-3 hover:bg-ivory-dark/30 -mx-6 px-6 transition-colors"
               >
                 <div className="min-w-0 flex-1">

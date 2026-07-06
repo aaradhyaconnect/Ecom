@@ -14,7 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith("/admin");
-  const isAuth = pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/verify-otp");
+  const isAuth = pathname.startsWith("/login") || pathname.startsWith("/signup") || pathname.startsWith("/verify-otp") || pathname.startsWith("/forgot-password") || pathname.startsWith("/reset-password");
 
   useAuth();
 

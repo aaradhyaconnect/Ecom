@@ -1,10 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useCartStore } from "@/lib/store/cart";
+import { useAuthStore } from "@/lib/store/auth";
+import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -12,8 +16,19 @@ import toast from "react-hot-toast";
 import type { Product } from "@/types";
 
 export default function WishlistPage() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const { user } = useAuthStore();
+  const mounted = useHydrated();
   const { items, removeItem } = useWishlistStore();
   const { addItem, items: cartItems } = useCartStore();
+
+  useEffect(() => {
+    if (!mounted) return;
+    if (!user) {
+      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
+    }
+  }, [user, mounted, pathname, router]);
 
   const handleAddToCart = (product: Product) => {
     const size = product.sizes[0] || "M";
@@ -30,6 +45,8 @@ export default function WishlistPage() {
   const isProductInCart = (productId: string) => {
     return cartItems.some((item) => item.product_id === productId);
   };
+
+  if (!mounted || !user) return null;
 
   if (items.length === 0) {
     return (

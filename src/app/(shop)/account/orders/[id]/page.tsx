@@ -56,7 +56,7 @@ export default function OrderDetailPage({
         .single();
 
       if (error || !data) {
-        router.push("/orders");
+        window.location.replace("/account/orders");
         return;
       }
       setOrder(data as Order);
@@ -117,7 +117,7 @@ export default function OrderDetailPage({
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <button
-        onClick={() => router.push("/orders")}
+        onClick={() => window.location.replace("/account/orders")}
         className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal mb-6 inline-flex items-center gap-1 transition-colors"
       >
         &larr; Back to Orders
@@ -384,7 +384,7 @@ export default function OrderDetailPage({
       {order.order_status === "delivered" && (
         <div className="text-center py-4 border-t border-ivory-dark">
           <a
-            href={`/order/${order.id}/invoice`}
+            href={`/account/orders/${order.id}/invoice`}
             className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-gold-dark transition-colors"
           >
             Download Invoice

@@ -40,7 +40,7 @@ export default function InvoicePage({
         .single();
 
       if (error || !data) {
-        router.push("/orders");
+        window.location.replace("/account/orders");
         return;
       }
       setOrder(data as Order);
@@ -77,7 +77,7 @@ export default function InvoicePage({
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="no-print mb-6 flex items-center justify-between">
         <button
-          onClick={() => router.push(`/order/${order.id}`)}
+          onClick={() => window.location.replace(`/account/orders/${order.id}`)}
           className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal inline-flex items-center gap-1 transition-colors"
         >
           <ArrowLeft className="h-3 w-3" /> Back to Order
