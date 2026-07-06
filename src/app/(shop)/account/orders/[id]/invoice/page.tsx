@@ -22,9 +22,16 @@ export default function InvoicePage({
   const supabase = createClient();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     if (!mounted) return;
+    const timer = setTimeout(() => setAuthChecked(true), 800);
+    return () => clearTimeout(timer);
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted || !authChecked) return;
     if (!user) {
       window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
@@ -49,9 +56,9 @@ export default function InvoicePage({
 
     loadOrder();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, mounted, params, supabase, router]);
+  }, [user, mounted, authChecked, params, supabase, router]);
 
-  if (!user || loading) {
+  if (!user || !authChecked || loading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Skeleton className="h-8 w-48 mb-6" />

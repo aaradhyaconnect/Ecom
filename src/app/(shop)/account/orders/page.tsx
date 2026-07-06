@@ -21,9 +21,16 @@ export default function OrdersPage() {
   const supabase = createClient();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
     if (!mounted) return;
+    const timer = setTimeout(() => setAuthChecked(true), 800);
+    return () => clearTimeout(timer);
+  }, [mounted]);
+
+  useEffect(() => {
+    if (!mounted || !authChecked) return;
     if (!user) {
       window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
       return;
@@ -42,9 +49,9 @@ export default function OrdersPage() {
 
     loadOrders();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, mounted, supabase, router]);
+  }, [user, mounted, authChecked, supabase, router]);
 
-  if (!mounted || !user) return null;
+  if (!mounted || !authChecked || !user) return null;
 
   function getStatusStyle(value: string) {
     const status = ORDER_STATUSES.find((s) => s.value === value);
