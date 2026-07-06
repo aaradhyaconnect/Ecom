@@ -72,6 +72,10 @@ export function useAuth() {
   const signOut = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
+    await fetch("/api/auth/set-session", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    }).catch(() => {});
     logout();
     window.location.replace("/");
   };

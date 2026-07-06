@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
       .from("orders")
       .update({
         payment_status: "paid",
+        order_status: "confirmed",
         razorpay_payment_id,
         updated_at: new Date().toISOString(),
       })

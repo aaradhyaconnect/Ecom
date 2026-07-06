@@ -13,10 +13,13 @@ import toast from "react-hot-toast";
 export default function VerifyOTPPage() {
   const searchParams = useSearchParams();
   const redirectTo = sanitizeRedirect(searchParams.get("redirect"));
-  const [method, setMethod] = useState<"email" | "phone">("email");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [step, setStep] = useState<"input" | "otp">("input");
+  const urlEmail = searchParams.get("email") || "";
+  const urlPhone = searchParams.get("phone") || "";
+  const urlMethod = urlPhone ? "phone" : urlEmail ? "email" : "email";
+  const [method, setMethod] = useState<"email" | "phone">(urlMethod as "email" | "phone");
+  const [email, setEmail] = useState(urlEmail);
+  const [phone, setPhone] = useState(urlPhone);
+  const [step, setStep] = useState<"input" | "otp">(urlEmail || urlPhone ? "otp" : "input");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const [isLoading, setIsLoading] = useState(false);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);

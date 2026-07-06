@@ -32,9 +32,9 @@ export async function GET(
     }
 
     const now = new Date();
-    const expiresAt = new Date(coupon.expires_at);
+    const expiresAt = coupon.expires_at ? new Date(coupon.expires_at) : null;
 
-    if (expiresAt < now) {
+    if (expiresAt && expiresAt < now) {
       return Response.json(
         { success: false, error: "This coupon has expired" },
         { status: 410 }

@@ -42,8 +42,9 @@ export const useCartStore = create<CartStore>()(
           );
 
           if (existingIndex > -1) {
-            const items = [...state.items];
-            items[existingIndex].quantity += quantity;
+            const items = state.items.map((item, i) =>
+              i === existingIndex ? { ...item, quantity: item.quantity + quantity } : item
+            );
             return { items };
           }
 
@@ -115,6 +116,17 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const item = state.savedItems.find((i) => i.id === id);
           if (!item) return state;
+          const existingIndex = state.items.findIndex(
+            (i) => i.product_id === item.product_id && i.size === item.size && i.color === item.color
+          );
+          if (existingIndex > -1) {
+            return {
+              savedItems: state.savedItems.filter((i) => i.id !== id),
+              items: state.items.map((i, idx) =>
+                idx === existingIndex ? { ...i, quantity: i.quantity + item.quantity } : i
+              ),
+            };
+          }
           return {
             savedItems: state.savedItems.filter((i) => i.id !== id),
             items: [...state.items, item],

@@ -269,10 +269,10 @@ export default function CheckoutPage() {
 
         const razorpay = new (window.Razorpay!)(options);
         razorpay.open();
+        return;
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
-    } finally {
       setIsPlacingOrder(false);
     }
   };

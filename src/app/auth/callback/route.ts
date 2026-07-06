@@ -82,7 +82,7 @@ export async function GET(request: NextRequest) {
                   done = true;
                   try {
                     if (window.opener) {
-                      window.opener.postMessage(JSON.parse(payload), '*');
+                      window.opener.postMessage(JSON.parse(payload), window.location.origin);
                       setTimeout(function() { window.close(); }, 200);
                     } else {
                       window.location.href = ${JSON.stringify(redirectUrl)};

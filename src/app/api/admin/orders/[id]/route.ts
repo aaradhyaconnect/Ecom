@@ -56,6 +56,7 @@ export async function PUT(
     const validStatuses = [
       "pending",
       "confirmed",
+      "packed",
       "shipped",
       "out-for-delivery",
       "delivered",
@@ -92,6 +93,29 @@ export async function PUT(
         { success: false, error: error.message },
         { status: 500 }
       );
+    }
+
+    if (body.order_status === "cancelled") {
+      const { data: fullOrder } = await supabase
+        .from("orders")
+        .select("items,payment_status")
+        .eq("id", id)
+        .single();
+      if (fullOrder && fullOrder.payment_status !== "paid") {
+        for (const item of fullOrder.items) {
+          const { data: product } = await supabase
+            .from("products")
+            .select("stock")
+            .eq("id", item.product_id)
+            .single();
+          if (product) {
+            await supabase
+              .from("products")
+              .update({ stock: product.stock + item.quantity })
+              .eq("id", item.product_id);
+          }
+        }
+      }
     }
 
     return NextResponse.json({

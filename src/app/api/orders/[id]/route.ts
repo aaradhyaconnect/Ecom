@@ -105,6 +105,22 @@ export async function PUT(
       );
     }
 
+    if (order.payment_status !== "paid") {
+      for (const item of order.items) {
+        const { data: product } = await supabase
+          .from("products")
+          .select("stock")
+          .eq("id", item.product_id)
+          .single();
+        if (product) {
+          await supabase
+            .from("products")
+            .update({ stock: product.stock + item.quantity })
+            .eq("id", item.product_id);
+        }
+      }
+    }
+
     return NextResponse.json({
       success: true,
       message: "Order cancelled successfully",

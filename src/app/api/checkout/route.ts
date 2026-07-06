@@ -187,6 +187,7 @@ export async function POST(request: NextRequest) {
         quantity: item.quantity,
         size: item.size,
         color: item.color,
+        _stock: product.stock,
       };
     });
 
@@ -263,6 +264,13 @@ export async function POST(request: NextRequest) {
         { success: false, error: "Failed to create order" },
         { status: 500 }
       );
+    }
+
+    for (const item of orderItems) {
+      await adminDb
+        .from("products")
+        .update({ stock: item._stock - item.quantity })
+        .eq("id", item.product_id);
     }
 
     if (coupon?.code) {

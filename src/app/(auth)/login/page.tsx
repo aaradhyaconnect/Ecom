@@ -149,6 +149,14 @@ export default function LoginPage() {
           const { data: { session } } = await supabase.auth.getSession();
           if (session) {
             handled = true;
+            await fetch("/api/auth/set-session", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                access_token: session.access_token,
+                refresh_token: session.refresh_token,
+              }),
+            }).catch(() => {});
             toast.success("Welcome back!");
             window.location.replace(redirectTo);
           }

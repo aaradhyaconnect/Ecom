@@ -69,3 +69,40 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!isAllowedOrigin(request)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  try {
+    const pendingCookies: { name: string; value: string; options?: Record<string, unknown> }[] = [];
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return request.cookies.getAll();
+          },
+          setAll(cookiesToSet) {
+            cookiesToSet.forEach(({ name, value, options }) => {
+              pendingCookies.push({ name, value, options });
+            });
+          },
+        },
+      }
+    );
+
+    await supabase.auth.signOut();
+
+    const response = NextResponse.json({ success: true });
+    pendingCookies.forEach(({ name, value, options }) => {
+      response.cookies.set(name, value, options as CookieOptions);
+    });
+    return response;
+  } catch {
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
