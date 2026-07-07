@@ -41,14 +41,17 @@ export default function ProfilePage() {
     full_name: "", phone: "", street: "", city: "", state: "", pincode: "", landmark: "",
   });
 
-  // Redirect if not logged in
+  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
     if (mounted && !authLoading && !user) {
-      window.location.replace("/login?redirect=%2Faccount");
+      redirectTimer.current = setTimeout(() => {
+        window.location.replace("/login?redirect=%2Faccount");
+      }, 100);
     }
+    return () => { if (redirectTimer.current) clearTimeout(redirectTimer.current); };
   }, [mounted, authLoading, user]);
 
-  // Load orders + addresses
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
@@ -68,7 +71,14 @@ export default function ProfilePage() {
     })();
 
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user?.id, supabase]);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name ?? "");
+      setPhone(user.phone ?? "");
+    }
+  }, [user?.id, user?.name, user?.phone]);
 
   async function handleSaveProfile() {
     if (!name.trim()) { toast.error("Name is required"); return; }
