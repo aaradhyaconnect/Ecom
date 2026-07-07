@@ -179,10 +179,9 @@ export default function AdminOrdersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Orders</h1>
-          <p className="text-sm text-charcoal-muted">
-            Manage and track customer orders
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Order Management</p>
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Orders</h1>
+          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage and track customer orders</p>
         </div>
         <Button variant="outline" size="sm" onClick={exportOrders}>
           Export CSV
@@ -192,12 +191,10 @@ export default function AdminOrdersPage() {
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted/60" />
-          <input
-            type="text"
+          <Input
             placeholder="Search by order ID or customer..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0"
           />
         </div>
         <div className="w-full sm:w-48">
@@ -209,18 +206,18 @@ export default function AdminOrdersPage() {
         </div>
       </div>
 
-      <div className="border bg-ivory overflow-hidden">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-ivory-dark/50 text-left text-xs font-medium text-charcoal-muted">
-                <th className="px-4 py-3">Order ID</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Payment</th>
-                <th className="px-4 py-3">Total</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
+                <th className="px-5 py-3">Order ID</th>
+                <th className="px-5 py-3">Customer</th>
+                <th className="px-5 py-3">Status</th>
+                <th className="px-5 py-3">Payment</th>
+                <th className="px-5 py-3">Total</th>
+                <th className="px-5 py-3">Date</th>
+                <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -241,12 +238,12 @@ export default function AdminOrdersPage() {
                 orders.map((order) => (
                   <tr
                     key={order.id}
-                    className="border-b last:border-0 hover:bg-ivory-dark/50"
+                    className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors"
                   >
-                    <td className="px-4 py-3 font-medium">
+                    <td className="px-5 py-3 font-medium">
                       {order.order_id}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       {(order as unknown as Record<string, unknown>).profiles ? (
                         <div>
                           <p className="font-medium">
@@ -260,7 +257,7 @@ export default function AdminOrdersPage() {
                         <span className="text-charcoal-muted/60">N/A</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       <select
                         value={order.order_status}
                         onChange={(e) =>
@@ -276,7 +273,7 @@ export default function AdminOrdersPage() {
                         ))}
                       </select>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       <Badge
                         variant={
                           order.payment_status === "paid"
@@ -289,13 +286,13 @@ export default function AdminOrdersPage() {
                         {order.payment_status}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 font-medium">
+                    <td className="px-5 py-3 font-medium">
                       {formatPrice(order.total)}
                     </td>
-                    <td className="px-4 py-3 text-xs text-charcoal-muted">
+                    <td className="px-5 py-3 text-xs text-charcoal-muted">
                       {formatDate(order.created_at)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-5 py-3 text-right">
                       <button
                         onClick={() => viewOrder(order)}
                         className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
@@ -396,7 +393,7 @@ export default function AdminOrdersPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-ivory-dark/50 p-3">
+              <div className="bg-ivory-dark/40 p-3 rounded-lg">
                 <p className="text-xs font-medium text-charcoal-muted mb-1">Shipping Address</p>
                 <p className="text-sm">{selectedOrder.shipping_address.full_name}</p>
                 <p className="text-sm">{selectedOrder.shipping_address.phone}</p>
@@ -407,7 +404,7 @@ export default function AdminOrdersPage() {
                   {selectedOrder.shipping_address.pincode}
                 </p>
               </div>
-              <div className="bg-ivory-dark/50 p-3">
+              <div className="bg-ivory-dark/40 p-3 rounded-lg">
                 <p className="text-xs font-medium text-charcoal-muted mb-1">Billing Address</p>
                 <p className="text-sm">{selectedOrder.billing_address.full_name}</p>
                 <p className="text-sm">{selectedOrder.billing_address.phone}</p>
@@ -426,7 +423,7 @@ export default function AdminOrdersPage() {
                 {selectedOrder.items.map((item, i) => (
                   <div
                     key={i}
-                    className="flex items-center justify-between bg-ivory-dark/50 p-3"
+                    className="flex items-center justify-between bg-ivory-dark/40 p-3 rounded-lg"
                   >
                     <div>
                       <p className="text-sm font-medium">
@@ -445,7 +442,7 @@ export default function AdminOrdersPage() {
               </div>
             </div>
 
-            <div className="border-t pt-4">
+            <div className="border-t border-ivory-dark/60 pt-4">
               <div className="flex items-center gap-2 mb-3">
                 <Truck className="h-4 w-4" />
                 <span className="text-sm font-medium">Tracking Info</span>

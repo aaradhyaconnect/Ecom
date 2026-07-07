@@ -168,10 +168,9 @@ export default function AdminCouponsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Coupons</h1>
-          <p className="text-sm text-charcoal-muted">
-            Create and manage discount coupons
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Coupon Management</p>
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Coupons</h1>
+          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Create and manage discount coupons</p>
         </div>
         <Button onClick={openAdd}>
           <Plus className="mr-2 h-4 w-4" />
@@ -179,18 +178,18 @@ export default function AdminCouponsPage() {
         </Button>
       </div>
 
-      <div className="border bg-ivory overflow-hidden">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-ivory-dark/50 text-left text-xs font-medium text-charcoal-muted">
-                <th className="px-4 py-3">Code</th>
-                <th className="px-4 py-3">Discount</th>
-                <th className="px-4 py-3">Usage</th>
-                <th className="px-4 py-3">Min Order</th>
-                <th className="px-4 py-3">Expires</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
+                <th className="px-5 py-3">Code</th>
+                <th className="px-5 py-3">Discount</th>
+                <th className="px-5 py-3">Usage</th>
+                <th className="px-5 py-3">Min Order</th>
+                <th className="px-5 py-3">Expires</th>
+                <th className="px-5 py-3">Status</th>
+                <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -209,13 +208,13 @@ export default function AdminCouponsPage() {
                 </tr>
               ) : (
                 coupons.map((coupon) => (
-                  <tr key={coupon.id} className="border-b last:border-0 hover:bg-ivory-dark/50">
-                    <td className="px-4 py-3">
+                  <tr key={coupon.id} className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors">
+                    <td className="px-5 py-3">
                       <span className="font-mono font-bold text-sm">
                         {coupon.code}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       {coupon.discount_type === "percentage"
                         ? `${coupon.discount_value}%`
                         : `₹${coupon.discount_value}`}
@@ -225,15 +224,15 @@ export default function AdminCouponsPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       {coupon.used_count}/{coupon.usage_limit || "∞"}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       {coupon.min_order > 0
                         ? `₹${coupon.min_order}`
                         : "No min"}
                     </td>
-                    <td className="px-4 py-3 text-xs">
+                    <td className="px-5 py-3 text-xs">
                       {coupon.expires_at ? (
                         <span
                           className={
@@ -249,11 +248,11 @@ export default function AdminCouponsPage() {
                         <span className="text-charcoal-muted/60">Never</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       <button
                         onClick={() => toggleActive(coupon)}
                         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          coupon.is_active ? "bg-green-500" : "bg-ivory-dark"
+                          coupon.is_active ? "bg-green-500" : "bg-ivory-dark/60"
                         }`}
                       >
                         <span
@@ -263,7 +262,7 @@ export default function AdminCouponsPage() {
                         />
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => openEdit(coupon)}
@@ -375,13 +374,13 @@ export default function AdminCouponsPage() {
               onChange={(e) =>
                 setForm({ ...form, is_active: e.target.checked })
               }
-              className="border-ivory-dark"
+              className="border-ivory-dark accent-charcoal"
             />
             <span className="text-sm font-medium">Active</span>
           </label>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 border-t pt-4">
+        <div className="mt-6 flex justify-end gap-3 border-t border-ivory-dark/60 pt-4">
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>

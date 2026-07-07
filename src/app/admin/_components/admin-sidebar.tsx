@@ -13,6 +13,10 @@ import {
   BarChart3,
   Warehouse,
   ExternalLink,
+  MessageSquare,
+  Star,
+  Mail,
+  Settings,
 } from "lucide-react";
 
 const navItems = [
@@ -23,7 +27,11 @@ const navItems = [
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
   { href: "/admin/banners", label: "Banners", icon: Image },
+  { href: "/admin/reviews", label: "Reviews", icon: Star },
+  { href: "/admin/messages", label: "Messages", icon: MessageSquare },
+  { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 
 const bottomItems = [

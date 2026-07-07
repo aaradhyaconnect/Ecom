@@ -96,7 +96,7 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
     fetchProducts();
   }, [search, category, page]);
 
@@ -247,10 +247,9 @@ export default function AdminProductsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Product Management</p>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Products</h1>
-          <p className="text-sm text-charcoal-muted">
-            Manage your product catalog
-          </p>
+          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage your product catalog</p>
         </div>
         <Button onClick={openAdd}>
           <Plus className="mr-2 h-4 w-4" />
@@ -261,61 +260,52 @@ export default function AdminProductsPage() {
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted" />
-          <input
-            type="text"
+          <Input
             placeholder="Search products..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0 outline-none transition-colors bg-ivory text-charcoal placeholder:text-charcoal-muted"
           />
         </div>
-        <select
+        <Select
           value={category}
           onChange={(e) => { setCategory(e.target.value); setPage(1); }}
-          className="border border-ivory-dark py-2.5 px-3 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
-        >
-          <option value="">All Categories</option>
-          {CATEGORIES.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+          options={[{ value: "", label: "All Categories" }, ...CATEGORIES.map((c) => ({ value: c.id, label: c.name }))]}
+        />
       </div>
 
-      <div className="border border-ivory-dark bg-ivory overflow-hidden">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark bg-ivory-dark text-left text-xs font-medium text-charcoal-muted uppercase tracking-wider">
-                <th className="px-4 py-3">Product</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Price</th>
-                <th className="px-4 py-3">Stock</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
+                <th className="px-5 py-3">Product</th>
+                <th className="px-5 py-3">Category</th>
+                <th className="px-5 py-3">Price</th>
+                <th className="px-5 py-3">Stock</th>
+                <th className="px-5 py-3">Status</th>
+                <th className="px-5 py-3">Date</th>
+                <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i} className="border-b border-ivory-dark">
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 bg-ivory-dark animate-pulse" />
+                        <div className="h-10 w-10 bg-ivory-dark rounded-lg animate-pulse" />
                         <div className="space-y-1.5">
-                          <div className="h-4 w-32 bg-ivory-dark rounded animate-pulse" />
-                          <div className="h-3 w-20 bg-ivory-dark rounded animate-pulse" />
+                           <div className="h-4 w-32 bg-ivory-dark rounded-lg animate-pulse" />
+                           <div className="h-3 w-20 bg-ivory-dark rounded-lg animate-pulse" />
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3"><div className="h-4 w-16 bg-ivory-dark rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-14 bg-ivory-dark rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-8 bg-ivory-dark rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-5 w-12 bg-ivory-dark rounded-full animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-16 bg-ivory-dark rounded animate-pulse" /></td>
-                    <td className="px-4 py-3"><div className="h-4 w-16 bg-ivory-dark rounded animate-pulse" /></td>
+                    <td className="px-5 py-3"><div className="h-4 w-16 bg-ivory-dark rounded-lg animate-pulse" /></td>
+                    <td className="px-5 py-3"><div className="h-4 w-14 bg-ivory-dark rounded-lg animate-pulse" /></td>
+                    <td className="px-5 py-3"><div className="h-4 w-8 bg-ivory-dark rounded-lg animate-pulse" /></td>
+                    <td className="px-5 py-3"><div className="h-5 w-12 bg-ivory-dark rounded-full animate-pulse" /></td>
+                    <td className="px-5 py-3"><div className="h-4 w-16 bg-ivory-dark rounded-lg animate-pulse" /></td>
+                    <td className="px-5 py-3"><div className="h-4 w-16 bg-ivory-dark rounded-lg animate-pulse" /></td>
                   </tr>
                 ))
               ) : products.length === 0 ? (
@@ -327,10 +317,10 @@ export default function AdminProductsPage() {
                 </tr>
               ) : (
                 products.map((product) => (
-                  <tr key={product.id} className="border-b border-ivory-dark last:border-0 hover:bg-ivory-dark/50 transition-colors">
-                    <td className="px-4 py-3">
+                  <tr key={product.id} className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors">
+                    <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-10 w-10 bg-ivory-dark flex items-center justify-center overflow-hidden">
+                        <div className="h-10 w-10 bg-ivory-dark rounded-lg flex items-center justify-center overflow-hidden">
                           {product.images[0] ? (
                             <Image
                               src={product.images[0]}
@@ -353,10 +343,10 @@ export default function AdminProductsPage() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-charcoal-muted capitalize">
+                    <td className="px-5 py-3 text-charcoal-muted capitalize">
                       {product.category.replace("-", " ")}
                     </td>
-                    <td className="px-4 py-3 font-medium text-charcoal">
+                    <td className="px-5 py-3 font-medium text-charcoal">
                       {formatPrice(product.price)}
                       {product.compare_price && (
                         <span className="ml-1 text-xs text-charcoal-muted line-through">
@@ -364,7 +354,7 @@ export default function AdminProductsPage() {
                         </span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       <span
                         className={
                           product.stock > 0
@@ -375,7 +365,7 @@ export default function AdminProductsPage() {
                         {product.stock}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3">
                       <div className="flex gap-1 flex-wrap">
                         {product.is_new && <Badge variant="new">New</Badge>}
                         {product.is_best_seller && (
@@ -389,10 +379,10 @@ export default function AdminProductsPage() {
                           )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-charcoal-muted text-xs">
+                    <td className="px-5 py-3 text-charcoal-muted text-xs">
                       {formatDate(product.created_at)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => openEdit(product)}
@@ -425,7 +415,7 @@ export default function AdminProductsPage() {
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1.5 text-sm font-medium border border-ivory-dark hover:bg-ivory-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 text-sm font-medium border border-ivory-dark rounded-lg hover:bg-ivory-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Previous
             </button>
@@ -444,7 +434,7 @@ export default function AdminProductsPage() {
                 <button
                   key={pageNum}
                   onClick={() => setPage(pageNum)}
-                  className={`w-9 h-9 text-sm font-medium transition-colors ${
+                  className={`w-9 h-9 text-sm font-medium rounded-lg transition-colors ${
                     page === pageNum
                       ? "bg-charcoal text-ivory"
                       : "border border-ivory-dark hover:bg-ivory-dark"
@@ -457,7 +447,7 @@ export default function AdminProductsPage() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
-              className="px-3 py-1.5 text-sm font-medium border border-ivory-dark hover:bg-ivory-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="px-3 py-1.5 text-sm font-medium border border-ivory-dark rounded-lg hover:bg-ivory-dark disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               Next
             </button>
@@ -489,7 +479,7 @@ export default function AdminProductsPage() {
                 setForm({ ...form, description: e.target.value })
               }
               rows={3}
-              className="w-full border border-ivory-dark px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
+              className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
             />
           </div>
 
@@ -669,7 +659,7 @@ export default function AdminProductsPage() {
                 setForm({ ...form, care_instructions: e.target.value })
               }
               rows={2}
-              className="w-full border border-ivory-dark px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
+              className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
             />
           </div>
 
@@ -710,7 +700,7 @@ export default function AdminProductsPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 border-t pt-4">
+        <div className="mt-6 flex justify-end gap-3 border-t border-ivory-dark/60 pt-4">
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>

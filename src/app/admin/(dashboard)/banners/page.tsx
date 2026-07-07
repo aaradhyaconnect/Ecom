@@ -182,10 +182,9 @@ export default function AdminBannersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Banners</h1>
-          <p className="text-sm text-charcoal-muted">
-            Manage homepage banners and promotions
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Banner Management</p>
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Banners</h1>
+          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage homepage banners and promotions</p>
         </div>
         <Button onClick={openAdd}>
           <Plus className="mr-2 h-4 w-4" />
@@ -194,11 +193,11 @@ export default function AdminBannersPage() {
       </div>
 
       {loading ? (
-        <div className="border bg-ivory p-12 text-center text-charcoal-muted/60">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-12 text-center text-charcoal-muted/60">
           Loading...
         </div>
       ) : banners.length === 0 ? (
-        <div className="border bg-ivory p-12 text-center text-charcoal-muted/60">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-12 text-center text-charcoal-muted/60">
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image className="mx-auto mb-2 h-8 w-8" />
           No banners yet
@@ -208,7 +207,7 @@ export default function AdminBannersPage() {
           {banners.map((banner, index) => (
             <div
               key={banner.id}
-              className="border bg-ivory overflow-hidden"
+              className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden"
             >
               <div className="flex items-start gap-4 p-4">
                 <div className="flex flex-col items-center gap-1 pt-1">
@@ -229,7 +228,7 @@ export default function AdminBannersPage() {
                   </button>
                 </div>
 
-                <div className="h-20 w-36 bg-ivory-dark overflow-hidden flex-shrink-0">
+                <div className="h-20 w-36 bg-ivory-dark rounded-lg overflow-hidden flex-shrink-0">
                   {banner.image ? (
                     <NextImage
                       src={banner.image}
@@ -250,7 +249,7 @@ export default function AdminBannersPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium truncate">{banner.title}</h3>
                     {!banner.is_active && (
-                      <span className="text-xs text-charcoal-muted/60 bg-ivory-dark px-2 py-0.5 rounded">
+                      <span className="text-xs text-charcoal-muted/60 bg-ivory-dark/60 px-2 py-0.5 rounded-lg text-[11px]">
                         Hidden
                       </span>
                     )}
@@ -323,7 +322,7 @@ export default function AdminBannersPage() {
             required
           />
           {form.image && (
-            <div className="h-32 bg-ivory-dark overflow-hidden">
+            <div className="h-32 bg-ivory-dark rounded-lg overflow-hidden">
               <NextImage
                 src={form.image}
                 alt="Preview"
@@ -352,13 +351,13 @@ export default function AdminBannersPage() {
               onChange={(e) =>
                 setForm({ ...form, is_active: e.target.checked })
               }
-              className="rounded border-ivory-dark"
+              className="rounded border-ivory-dark accent-charcoal"
             />
             <span className="text-sm font-medium">Active</span>
           </label>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 border-t pt-4">
+        <div className="mt-6 flex justify-end gap-3 border-t border-ivory-dark/60 pt-4">
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>

@@ -65,6 +65,7 @@ export function ProductDetailClient({
     finally { setLoadingReviews(false); }
   }, [product.id]);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { fetchReviews(); }, [fetchReviews]);
 
   useEffect(() => {

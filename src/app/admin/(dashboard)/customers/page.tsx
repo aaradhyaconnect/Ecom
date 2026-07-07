@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
 import { Users, Search, Mail, Phone, ShoppingBag, IndianRupee, ChevronLeft, ChevronRight, Download } from "lucide-react";
@@ -95,10 +96,9 @@ export default function AdminCustomersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Customers</h1>
-          <p className="text-sm text-charcoal-muted">
-            View and manage your customers
-          </p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Customer Management</p>
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Customers</h1>
+          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">View and manage your customers</p>
         </div>
         <Button variant="outline" size="sm" onClick={exportCustomers}>
           <Download className="h-4 w-4 mr-2" />
@@ -108,27 +108,25 @@ export default function AdminCustomersPage() {
 
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted/60" />
-        <input
-          type="text"
+        <Input
           placeholder="Search by name or email..."
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          className="w-full border border-ivory-dark py-2.5 pl-10 pr-4 text-sm focus:border-gold/60 focus:ring-0"
         />
       </div>
 
-      <div className="border bg-ivory overflow-hidden">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b bg-ivory-dark/50 text-left text-xs font-medium text-charcoal-muted">
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Email</th>
-                <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Orders</th>
-                <th className="px-4 py-3">Total Spent</th>
-                <th className="px-4 py-3">Joined</th>
-                <th className="px-4 py-3 text-right">Actions</th>
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
+                <th className="px-5 py-3">Customer</th>
+                <th className="px-5 py-3">Email</th>
+                <th className="px-5 py-3">Phone</th>
+                <th className="px-5 py-3">Orders</th>
+                <th className="px-5 py-3">Total Spent</th>
+                <th className="px-5 py-3">Joined</th>
+                <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -147,27 +145,27 @@ export default function AdminCustomersPage() {
                 </tr>
               ) : (
                 customers.map((customer) => (
-                  <tr key={customer.id} className="border-b last:border-0 hover:bg-ivory-dark/50">
-                    <td className="px-4 py-3">
+                  <tr key={customer.id} className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors">
+                    <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-ivory-dark flex items-center justify-center text-sm font-medium">
+                        <div className="h-9 w-9 rounded-full bg-ivory-dark/60 border border-ivory-dark flex items-center justify-center text-sm font-medium">
                           {getInitials(customer.name)}
                         </div>
                         <span className="font-medium">{customer.name}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-charcoal-muted">{customer.email}</td>
-                    <td className="px-4 py-3 text-charcoal-muted">
+                    <td className="px-5 py-3 text-charcoal-muted">{customer.email}</td>
+                    <td className="px-5 py-3 text-charcoal-muted">
                       {customer.phone || "-"}
                     </td>
-                    <td className="px-4 py-3 font-medium">{customer.order_count}</td>
-                    <td className="px-4 py-3 font-medium">
+                    <td className="px-5 py-3 font-medium">{customer.order_count}</td>
+                    <td className="px-5 py-3 font-medium">
                       {formatPrice(customer.total_spent)}
                     </td>
-                    <td className="px-4 py-3 text-xs text-charcoal-muted">
+                    <td className="px-5 py-3 text-xs text-charcoal-muted">
                       {formatDate(customer.created_at)}
                     </td>
-                    <td className="px-4 py-3 text-right">
+                    <td className="px-5 py-3 text-right">
                       <Button
                         size="sm"
                         variant="ghost"
@@ -219,7 +217,7 @@ export default function AdminCustomersPage() {
         {selectedCustomer && (
           <div className="space-y-4">
             <div className="flex items-center gap-4">
-              <div className="h-14 w-14 rounded-full bg-ivory-dark flex items-center justify-center text-lg font-bold">
+              <div className="h-14 w-14 rounded-full bg-ivory-dark/60 border border-ivory-dark flex items-center justify-center text-lg font-bold">
                 {getInitials(selectedCustomer.name)}
               </div>
               <div>
@@ -240,19 +238,19 @@ export default function AdminCustomersPage() {
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              <div className="bg-ivory-dark/50 p-4">
+              <div className="bg-ivory-dark/40 p-4 rounded-xl">
                 <div className="flex items-center gap-2 text-sm text-charcoal-muted mb-1">
                   <ShoppingBag className="h-4 w-4" />
                   Total Orders
                 </div>
-                <p className="text-2xl font-bold">{selectedCustomer.order_count}</p>
+                <p className="text-2xl font-bold text-charcoal">{selectedCustomer.order_count}</p>
               </div>
-              <div className="bg-ivory-dark/50 p-4">
+              <div className="bg-ivory-dark/40 p-4 rounded-xl">
                 <div className="flex items-center gap-2 text-sm text-charcoal-muted mb-1">
                   <IndianRupee className="h-4 w-4" />
                   Total Spent
                 </div>
-                <p className="text-2xl font-bold">
+                <p className="text-2xl font-bold text-charcoal">
                   {formatPrice(selectedCustomer.total_spent)}
                 </p>
               </div>
@@ -276,7 +274,7 @@ export default function AdminCustomersPage() {
                   }>).slice(0, 5).map((order) => (
                     <div
                       key={order.order_id}
-                      className="flex items-center justify-between bg-ivory-dark/50 p-3"
+                      className="flex items-center justify-between bg-ivory-dark/40 p-3 rounded-lg"
                     >
                       <div>
                         <p className="text-sm font-medium">{order.order_id}</p>

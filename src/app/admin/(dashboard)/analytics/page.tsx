@@ -92,24 +92,23 @@ export default function AdminAnalyticsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Analytics</h1>
-        <p className="text-sm text-charcoal-muted">
-          Detailed insights into your store performance
-        </p>
+        <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Analytics Overview</p>
+        <h1 className="text-2xl font-serif font-bold text-charcoal">Analytics</h1>
+        <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Detailed insights into your store performance</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {overviewCards.map((card) => (
           <div
             key={card.label}
-            className="border bg-ivory p-5 "
+            className="bg-white border border-ivory-dark/60 p-5 rounded-xl hover:shadow-sm transition-shadow"
           >
             <div className="flex items-center justify-between">
-              <div className="bg-ivory-dark p-2">
+              <div className="bg-ivory-dark/40 p-2 rounded-lg">
                 <card.icon className="h-5 w-5" />
               </div>
             </div>
-            <p className="mt-3 text-2xl font-bold">{card.value}</p>
+            <p className="mt-3 text-2xl font-bold text-charcoal">{card.value}</p>
             <p className="text-xs text-charcoal-muted">{card.label}</p>
             <p className="text-xs text-green-600 mt-1">{card.secondary}</p>
           </div>
@@ -117,7 +116,7 @@ export default function AdminAnalyticsPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="border bg-ivory p-5 ">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">
             Revenue (Last 30 Days)
           </h2>
@@ -125,7 +124,7 @@ export default function AdminAnalyticsPage() {
             {analytics.revenue_by_day.map((day) => (
               <div
                 key={day.date}
-                className="flex-1 rounded-t bg-black/80 hover:bg-black transition-colors relative group min-w-[4px]"
+                className="flex-1 rounded-t bg-gradient-to-t from-charcoal/80 to-charcoal/60 hover:from-charcoal hover:to-charcoal/80 transition-colors relative group min-w-[4px]"
                 style={{ height: `${(day.revenue / maxRevenue) * 100}%` }}
               >
                 <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-charcoal text-white text-xs rounded px-2 py-1 whitespace-nowrap z-10">
@@ -144,7 +143,7 @@ export default function AdminAnalyticsPage() {
           </div>
         </div>
 
-        <div className="border bg-ivory p-5 ">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-5 shadow-sm">
           <h2 className="mb-4 text-sm font-semibold">Orders by Status</h2>
           <div className="space-y-3">
             {analytics.orders_by_status.map((item) => (
@@ -194,21 +193,21 @@ export default function AdminAnalyticsPage() {
         </div>
       </div>
 
-      <div className="border bg-ivory p-5 ">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl p-5 shadow-sm">
         <h2 className="mb-4 text-sm font-semibold">Top Selling Products</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-xs font-medium text-charcoal-muted">
-                <th className="pb-3 pr-4">#</th>
-                <th className="pb-3 pr-4">Product</th>
-                <th className="pb-3 pr-4 text-right">Units Sold</th>
-                <th className="pb-3 pr-4 text-right">Revenue</th>
+              <tr className="border-b border-ivory-dark/60 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
+                <th className="py-3 pr-4">#</th>
+                <th className="py-3 pr-4">Product</th>
+                <th className="py-3 pr-4 text-right">Units Sold</th>
+                <th className="py-3 pr-4 text-right">Revenue</th>
               </tr>
             </thead>
             <tbody>
               {analytics.top_products.map((product, i) => (
-                <tr key={product.name} className="border-b last:border-0">
+                <tr key={product.name} className="border-b border-ivory-dark/40 last:border-0">
                   <td className="py-3 pr-4 text-charcoal-muted/60">{i + 1}</td>
                   <td className="py-3 pr-4 font-medium">{product.name}</td>
                   <td className="py-3 pr-4 text-right">{product.sales}</td>
