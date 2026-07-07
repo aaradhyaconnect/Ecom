@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, Share2, Minus, Plus, Truck, ChevronRight, Check } from "lucide-react";
+import { Heart, Share2, Minus, Plus, Truck, ChevronRight, Check, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Rating } from "@/components/ui/Rating";
 import { ProductCard } from "./ProductCard";
 import { ZoomImage } from "./ZoomImage";
 import { RecentlyViewed } from "./RecentlyViewed";
+import { ReviewForm } from "./ReviewForm";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
@@ -50,6 +51,21 @@ export function ProductDetailClient({
   const inWishlist = isInWishlist(product.id);
   const { addProduct } = useRecentlyViewed();
   const user = useAuthStore((s) => s.user);
+
+  // Reviews state
+  const [reviews, setReviews] = useState<{ id: string; user_name: string; rating: number; comment: string; created_at: string }[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
+  const fetchReviews = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/reviews?product_id=${product.id}`);
+      const data = await res.json();
+      if (data.success) setReviews(data.data);
+    } catch { /* ok */ }
+    finally { setLoadingReviews(false); }
+  }, [product.id]);
+
+  useEffect(() => { fetchReviews(); }, [fetchReviews]);
 
   useEffect(() => {
     addProduct(product);
@@ -146,33 +162,12 @@ export function ProductDetailClient({
                   />
                 </button>
               ))}
-              {product.video_url && (
-                <button
-                  onClick={() => setSelectedImage(-1)}
-                  className={cn(
-                    "relative w-20 h-20 overflow-hidden flex-shrink-0 rounded-lg bg-charcoal flex items-center justify-center transition-all duration-300",
-                    selectedImage === -1
-                      ? "ring-2 ring-charcoal ring-offset-2 ring-offset-ivory"
-                      : "opacity-60 hover:opacity-100"
-                  )}
-                >
-                  <span className="text-ivory text-[10px] font-bold uppercase">Video</span>
-                </button>
-              )}
             </div>
           )}
 
           {/* Main Image */}
           <div className="flex-1 relative aspect-[3/4] overflow-hidden bg-beige rounded-xl group">
-            {selectedImage === -1 && product.video_url ? (
-              <iframe
-                src={product.video_url.replace("watch?v=", "embed/")}
-                className="absolute inset-0 w-full h-full rounded-xl"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title={`${product.name} video`}
-              />
-            ) : product.images?.[selectedImage] ? (
+            {product.images?.[selectedImage] ? (
               <ZoomImage
                 src={product.images[selectedImage]}
                 alt={product.name}
@@ -447,6 +442,80 @@ export function ProductDetailClient({
                 </span>
               ))}
             </div>
+          )}
+        </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="mt-16">
+        <div className="flex items-center gap-3 mb-2">
+          <span className="h-[1px] w-6 bg-gold/40" />
+          <span className="text-[10px] uppercase tracking-[0.4em] text-gold-dark font-medium">
+            Reviews
+          </span>
+        </div>
+        <h2 className="text-2xl font-serif font-bold text-charcoal mb-8">
+          Customer Reviews
+        </h2>
+
+        {/* Review Summary */}
+        <div className="flex items-center gap-6 mb-8 p-6 bg-ivory border border-ivory-dark/60 shadow-sm">
+          <div className="text-center">
+            <p className="text-4xl font-bold text-charcoal">{product.rating.toFixed(1)}</p>
+            <div className="flex gap-0.5 mt-1 justify-center">
+              {[1, 2, 3, 4, 5].map((s) => (
+                <Star key={s} className={`h-4 w-4 ${s <= Math.round(product.rating) ? "fill-gold text-gold" : "text-charcoal/20"}`} />
+              ))}
+            </div>
+            <p className="text-xs text-charcoal-muted mt-1">{product.review_count} reviews</p>
+          </div>
+          <div className="flex-1">
+            {[5, 4, 3, 2, 1].map((star) => {
+              const count = reviews.filter((r) => r.rating === star).length;
+              const pct = reviews.length > 0 ? (count / reviews.length) * 100 : 0;
+              return (
+                <div key={star} className="flex items-center gap-2 mb-1">
+                  <span className="text-xs text-charcoal-muted w-3">{star}</span>
+                  <Star className="h-3 w-3 fill-gold text-gold" />
+                  <div className="flex-1 h-1.5 bg-ivory-dark/50 overflow-hidden">
+                    <div className="h-full bg-gold" style={{ width: `${pct}%` }} />
+                  </div>
+                  <span className="text-xs text-charcoal-muted w-6 text-right">{count}</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Review Form */}
+        {user && <ReviewForm productId={product.id} onReviewSubmitted={fetchReviews} />}
+
+        {/* Reviews List */}
+        <div className="mt-8 space-y-4">
+          {loadingReviews ? (
+            <p className="text-sm text-charcoal-muted text-center py-8">Loading reviews...</p>
+          ) : reviews.length === 0 ? (
+            <p className="text-sm text-charcoal-muted/50 text-center py-8">No reviews yet. Be the first to review this product!</p>
+          ) : (
+            reviews.map((review) => (
+              <div key={review.id} className="bg-ivory border border-ivory-dark/60 p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 bg-charcoal text-ivory flex items-center justify-center text-xs font-bold">
+                      {review.user_name.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-sm font-medium text-charcoal">{review.user_name}</span>
+                  </div>
+                  <span className="text-xs text-charcoal-muted">{new Date(review.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
+                </div>
+                <div className="flex gap-0.5 mb-2">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`h-3.5 w-3.5 ${s <= review.rating ? "fill-gold text-gold" : "text-charcoal/20"}`} />
+                  ))}
+                </div>
+                {review.comment && <p className="text-sm text-charcoal-muted">{review.comment}</p>}
+              </div>
+            ))
           )}
         </div>
       </div>

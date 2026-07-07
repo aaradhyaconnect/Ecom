@@ -16,7 +16,7 @@ export async function GET() {
     }
 
     const { data, error } = await supabase
-      .from("wishlist")
+      .from("wishlist_items")
       .select("*, product:products(*)")
       .eq("user_id", user.id)
       .order("created_at", { ascending: false });
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data: existing } = await supabase
-      .from("wishlist")
+      .from("wishlist_items")
       .select("id")
       .eq("user_id", user.id)
       .eq("product_id", product_id)
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     const { data, error } = await supabase
-      .from("wishlist")
+      .from("wishlist_items")
       .insert({ user_id: user.id, product_id })
       .select()
       .single();
@@ -122,7 +122,7 @@ export async function DELETE(request: NextRequest) {
     }
 
     const { error } = await supabase
-      .from("wishlist")
+      .from("wishlist_items")
       .delete()
       .eq("user_id", user.id)
       .eq("product_id", product_id);

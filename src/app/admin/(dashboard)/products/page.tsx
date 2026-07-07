@@ -30,7 +30,6 @@ interface ProductForm {
   sizes: string[];
   colors: ColorOption[];
   images: string[];
-  video_url: string;
   tags: string;
   stock: string;
   material: string;
@@ -38,7 +37,6 @@ interface ProductForm {
   is_new: boolean;
   is_best_seller: boolean;
   is_sale: boolean;
-  sale_percent: string;
 }
 
 const emptyForm: ProductForm = {
@@ -51,7 +49,6 @@ const emptyForm: ProductForm = {
   sizes: [],
   colors: [],
   images: [""],
-  video_url: "",
   tags: "",
   stock: "0",
   material: "",
@@ -59,7 +56,6 @@ const emptyForm: ProductForm = {
   is_new: false,
   is_best_seller: false,
   is_sale: false,
-  sale_percent: "",
 };
 
 const ITEMS_PER_PAGE = 12;
@@ -122,7 +118,6 @@ export default function AdminProductsPage() {
       sizes: product.sizes,
       colors: product.colors,
       images: product.images.length > 0 ? product.images : [""],
-      video_url: product.video_url || "",
       tags: product.tags.join(", "),
       stock: String(product.stock),
       material: product.material || "",
@@ -130,7 +125,6 @@ export default function AdminProductsPage() {
       is_new: product.is_new,
       is_best_seller: product.is_best_seller,
       is_sale: product.is_sale,
-      sale_percent: product.sale_percent ? String(product.sale_percent) : "",
     });
     setShowModal(true);
   };
@@ -152,7 +146,6 @@ export default function AdminProductsPage() {
         images: form.images.filter(Boolean),
         colors: form.colors,
         compare_price: form.compare_price || null,
-        sale_percent: form.sale_percent || null,
         ...(editingProduct ? { id: editingProduct.id } : {}),
       };
 
@@ -644,27 +637,12 @@ export default function AdminProductsPage() {
             </div>
           </div>
 
-          <Input
-            label="Video URL (YouTube/Vimeo)"
-            placeholder="https://www.youtube.com/watch?v=..."
-            value={form.video_url}
-            onChange={(e) => setForm({ ...form, video_url: e.target.value })}
-          />
-
           <div className="grid grid-cols-2 gap-4">
             <Input
               label="Stock"
               type="number"
               value={form.stock}
               onChange={(e) => setForm({ ...form, stock: e.target.value })}
-            />
-            <Input
-              label="Sale %"
-              type="number"
-              value={form.sale_percent}
-              onChange={(e) =>
-                setForm({ ...form, sale_percent: e.target.value })
-              }
             />
           </div>
 

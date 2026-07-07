@@ -1,9 +1,7 @@
-import type { UUID } from "crypto";
-
 export type UserRole = "customer" | "admin";
 
 export interface User {
-  id: UUID;
+  id: string;
   email: string;
   name: string;
   phone?: string;
@@ -13,7 +11,7 @@ export interface User {
 }
 
 export interface Product {
-  id: UUID;
+  id: string;
   name: string;
   slug: string;
   description: string;
@@ -22,7 +20,6 @@ export interface Product {
   price: number;
   compare_price?: number;
   images: string[];
-  video_url?: string;
   sizes: string[];
   colors: ColorOption[];
   tags: string[];
@@ -31,7 +28,6 @@ export interface Product {
   is_new: boolean;
   is_best_seller: boolean;
   is_sale: boolean;
-  sale_percent?: number;
   stock: number;
   rating: number;
   review_count: number;
@@ -53,8 +49,8 @@ export type ProductCategory =
   | "sale";
 
 export interface CartItem {
-  id: UUID;
-  product_id: UUID;
+  id: string;
+  product_id: string;
   product: Product;
   quantity: number;
   size: string;
@@ -62,17 +58,17 @@ export interface CartItem {
 }
 
 export interface WishlistItem {
-  id: UUID;
-  product_id: UUID;
+  id: string;
+  product_id: string;
   product: Product;
   created_at: string;
 }
 
 export interface OrderItem {
-  id: UUID;
-  product_id: UUID;
+  id: string;
+  product_id: string;
   product: {
-    id: UUID;
+    id: string;
     name: string;
     slug: string;
     images: string[];
@@ -84,9 +80,9 @@ export interface OrderItem {
 }
 
 export interface Order {
-  id: UUID;
+  id: string;
   order_id: string;
-  user_id: UUID;
+  user_id: string;
   items: OrderItem[];
   shipping_address: Address;
   billing_address: Address;
@@ -132,7 +128,7 @@ export interface Address {
 }
 
 export interface Coupon {
-  id: UUID;
+  id: string;
   code: string;
   description: string;
   discount_type: "percentage" | "flat";
@@ -147,7 +143,7 @@ export interface Coupon {
 }
 
 export interface Banner {
-  id: UUID;
+  id: string;
   title: string;
   subtitle?: string;
   image: string;
@@ -158,9 +154,9 @@ export interface Banner {
 }
 
 export interface Review {
-  id: UUID;
-  product_id: UUID;
-  user_id: UUID;
+  id: string;
+  product_id: string;
+  user_id: string;
   user_name: string;
   rating: number;
   comment: string;

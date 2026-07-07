@@ -23,6 +23,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const [order, setOrder] = useState<Order | null>(null);
   const [fetching, setFetching] = useState(true);
   const [cancelling, setCancelling] = useState(false);
+  const [trackingEvents, setTrackingEvents] = useState<{ status: string; location: string; timestamp: string }[]>([]);
   const orderIdRef = useRef<string | null>(null);
 
   useEffect(() => { params.then((p) => { orderIdRef.current = p.id; }); }, [params]);
@@ -57,6 +58,22 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     })();
     return () => { cancelled = true; };
   }, [user?.id, supabase]);
+
+  // Fetch live tracking events
+  useEffect(() => {
+    if (!order?.id || !order?.tracking_id) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`/api/tracking?order_id=${order.id}`);
+        const data = await res.json();
+        if (!cancelled && data.success && data.data?.events?.length > 0) {
+          setTrackingEvents(data.data.events);
+        }
+      } catch { /* ok */ }
+    })();
+    return () => { cancelled = true; };
+  }, [order?.id, order?.tracking_id]);
 
   async function handleCancel() {
     if (!order) return;
@@ -172,6 +189,22 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             </a>
           </div>
           {order.estimated_delivery && <p className="text-sm text-charcoal-muted mt-2">Estimated delivery: {formatDate(order.estimated_delivery)}</p>}
+          {trackingEvents.length > 0 && (
+            <div className="mt-4 border-t border-ivory-dark/60 pt-4">
+              <p className="text-xs uppercase tracking-[0.15em] font-medium text-charcoal-muted mb-3">Tracking Updates</p>
+              <div className="space-y-3">
+                {trackingEvents.slice(0, 5).map((event, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${idx === 0 ? "bg-green-500" : "bg-charcoal/20"}`} />
+                    <div>
+                      <p className="text-sm font-medium text-charcoal">{event.status}</p>
+                      <p className="text-xs text-charcoal-muted">{event.location} &middot; {new Date(event.timestamp).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

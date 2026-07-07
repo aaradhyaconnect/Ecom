@@ -7,15 +7,14 @@ export function createClient() {
   if (
     !supabaseUrl ||
     !supabaseAnonKey ||
-    supabaseUrl === "your_supabase_url_here"
+    supabaseUrl === "your_supabase_url_here" ||
+    supabaseAnonKey === "your_supabase_anon_key_here"
   ) {
-    if (typeof window === "undefined") {
-      return createBrowserClient(
-        "https://placeholder.supabase.co",
-        "placeholder-anon-key"
-      );
-    }
+    return createBrowserClient(
+      "https://placeholder.supabase.co",
+      "placeholder-anon-key"
+    );
   }
 
-  return createBrowserClient(supabaseUrl!, supabaseAnonKey!);
+  return createBrowserClient(supabaseUrl, supabaseAnonKey);
 }

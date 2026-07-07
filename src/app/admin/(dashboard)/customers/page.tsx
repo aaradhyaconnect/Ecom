@@ -6,10 +6,9 @@ import { Modal } from "@/components/ui/Modal";
 import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
 import { Users, Search, Mail, Phone, ShoppingBag, IndianRupee, ChevronLeft, ChevronRight, Download } from "lucide-react";
 import toast from "react-hot-toast";
-import type { UUID } from "crypto";
 
 interface Customer {
-  id: UUID;
+  id: string;
   name: string;
   email: string;
   phone?: string;

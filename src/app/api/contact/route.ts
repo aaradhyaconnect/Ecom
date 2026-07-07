@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     }
 
     const adminDb = await createAdminClient();
-    const { error } = await adminDb.from("contact_submissions").insert({
+    const { error } = await adminDb.from("contact_messages").insert({
       name,
       email,
       subject: subject || null,

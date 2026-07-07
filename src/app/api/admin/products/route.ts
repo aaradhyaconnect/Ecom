@@ -65,8 +65,9 @@ export async function POST(request: Request) {
     const slug = slugify(body.name);
 
     const existing = await supabase
-      .rpc("get_product_by_slug", { p_slug: slug })
+      .from("products")
       .select("id")
+      .eq("slug", slug)
       .maybeSingle();
 
     let finalSlug = slug;
@@ -91,7 +92,6 @@ export async function POST(request: Request) {
       is_new: body.is_new || false,
       is_best_seller: body.is_best_seller || false,
       is_sale: body.is_sale || false,
-      sale_percent: body.sale_percent ? Number(body.sale_percent) : null,
       stock: Math.max(0, Math.floor(Number(body.stock) || 0)),
       rating: 0,
       review_count: 0,
@@ -140,7 +140,7 @@ export async function PUT(request: Request) {
     const allowedFields = [
       "name", "description", "category", "subcategory", "price", "compare_price",
       "images", "sizes", "colors", "tags", "material", "care_instructions",
-      "is_new", "is_best_seller", "is_sale", "sale_percent", "stock",
+      "is_new", "is_best_seller", "is_sale", "stock",
     ] as const;
 
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };

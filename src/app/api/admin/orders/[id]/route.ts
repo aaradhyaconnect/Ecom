@@ -123,10 +123,10 @@ export async function PUT(
     if (body.order_status === "cancelled" || body.order_status === "returned") {
       const { data: fullOrder } = await supabase
         .from("orders")
-        .select("items,payment_status")
+        .select("items")
         .eq("id", id)
         .single();
-      if (fullOrder && fullOrder.payment_status !== "paid") {
+      if (fullOrder) {
         const adminDb = await (await import("@/lib/supabase/server")).createAdminClient();
         for (const item of fullOrder.items) {
           const { data: product } = await adminDb
