@@ -139,14 +139,19 @@ export default function LoginPage() {
                 access_token: e.data.accessToken,
                 refresh_token: e.data.refreshToken,
               });
-              await fetch("/api/auth/set-session", {
+              const sessionRes = await fetch("/api/auth/set-session", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   access_token: e.data.accessToken,
                   refresh_token: e.data.refreshToken,
                 }),
-              }).catch(() => {});
+              }).catch(() => null);
+              if (!sessionRes?.ok) {
+                toast.error("Session setup failed. Please try again.");
+                setIsLoading(false);
+                return;
+              }
             }
             toast.success("Welcome back!");
             window.location.replace(e.data.path || redirectTo);
@@ -158,21 +163,26 @@ export default function LoginPage() {
         const pollTimer = setTimeout(async () => {
           if (handled) return;
           cleanup();
-          setIsLoading(false);
           const { data: { session } } = await supabase.auth.getSession();
           if (session) {
             handled = true;
-            await fetch("/api/auth/set-session", {
+            const sessionRes = await fetch("/api/auth/set-session", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 access_token: session.access_token,
                 refresh_token: session.refresh_token,
               }),
-            }).catch(() => {});
+            }).catch(() => null);
+            if (!sessionRes?.ok) {
+              toast.error("Session setup failed. Please try again.");
+              setIsLoading(false);
+              return;
+            }
             toast.success("Welcome back!");
             window.location.replace(redirectTo);
           }
+          setIsLoading(false);
         }, 30000);
       }
     } catch {

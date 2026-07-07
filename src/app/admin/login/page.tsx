@@ -129,14 +129,19 @@ export default function AdminLoginPage() {
               .eq("id", (await supabase.auth.getUser()).data.user?.id ?? "")
               .single();
             if (profile?.role === "admin") {
-              await fetch("/api/auth/set-session", {
+              const sessionRes = await fetch("/api/auth/set-session", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   access_token: e.data.accessToken,
                   refresh_token: e.data.refreshToken,
                 }),
-              }).catch(() => {});
+              }).catch(() => null);
+              if (!sessionRes?.ok) {
+                toast.error("Session setup failed. Please try again.");
+                setLoading(false);
+                return;
+              }
               toast.success("Welcome back!");
               window.location.replace("/admin");
             } else {
@@ -161,14 +166,19 @@ export default function AdminLoginPage() {
               .single();
             if (profile?.role === "admin") {
               handled = true;
-              await fetch("/api/auth/set-session", {
+              const sessionRes = await fetch("/api/auth/set-session", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                   access_token: session.access_token,
                   refresh_token: session.refresh_token,
                 }),
-              }).catch(() => {});
+              }).catch(() => null);
+              if (!sessionRes?.ok) {
+                toast.error("Session setup failed. Please try again.");
+                setLoading(false);
+                return;
+              }
               toast.success("Welcome back!");
               window.location.replace("/admin");
             } else {

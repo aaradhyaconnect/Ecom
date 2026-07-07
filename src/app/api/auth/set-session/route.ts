@@ -15,7 +15,8 @@ function isAllowedOrigin(request: NextRequest): boolean {
   if (!target) return false;
   try {
     const url = new URL(target);
-    return ALLOWED_ORIGINS.some((allowed) => url.origin === allowed);
+    const host = request.headers.get("host") || request.nextUrl.host;
+    return url.hostname === host || ALLOWED_ORIGINS.some((allowed) => url.origin === allowed);
   } catch {
     return false;
   }
