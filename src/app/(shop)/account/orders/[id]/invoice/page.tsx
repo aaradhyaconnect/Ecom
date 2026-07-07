@@ -1,52 +1,55 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { useAuthStore } from "@/lib/store/auth";
-import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Printer, ArrowLeft } from "lucide-react";
-import type { Order } from "@/types";
+import type { Order, User } from "@/types";
 
 export default function InvoicePage({ params }: { params: Promise<{ id: string }> }) {
-  const pathname = usePathname();
-  const { user } = useAuthStore();
-  const mounted = useHydrated();
-  const authLoading = useAuthStore((s) => s.loading);
   const supabase = useRef(createClient()).current;
-  const [order, setOrder] = useState<Order | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [fetching, setFetching] = useState(true);
   const orderIdRef = useRef<string | null>(null);
 
   useEffect(() => { params.then((p) => { orderIdRef.current = p.id; }); }, [params]);
 
   useEffect(() => {
-    if (mounted && !authLoading && !user) {
-      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-    }
-  }, [mounted, authLoading, user, pathname]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.user) { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
+          setUser(data.user);
+        } else { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
+      } catch { if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
+      finally { if (!cancelled) setLoading(false); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!user || !orderIdRef.current) return;
     let cancelled = false;
     (async () => {
       try {
-        const { data, error } = await supabase
-          .from("orders").select("*").eq("id", orderIdRef.current!).eq("user_id", user.id).single();
+        const { data, error } = await supabase.from("orders").select("*").eq("id", orderIdRef.current!).eq("user_id", user.id).single();
         if (cancelled) return;
         if (error || !data) { window.location.replace("/account/orders"); return; }
         setOrder(data as Order);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      } finally { if (!cancelled) setFetching(false); }
     })();
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user?.id, supabase]);
 
-  if (!user || authLoading || loading) {
+  if (loading || !user || fetching) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Skeleton className="h-8 w-48 mb-6" />
@@ -62,9 +65,9 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="no-print mb-6 flex items-center justify-between">
-        <a href={`/account/orders/${order.id}`} className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal inline-flex items-center gap-1 transition-colors">
+        <Link href={`/account/orders/${order.id}`} className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal inline-flex items-center gap-1 transition-colors">
           <ArrowLeft className="h-3 w-3" /> Back to Order
-        </a>
+        </Link>
         <button onClick={() => window.print()} className="flex items-center gap-2 bg-charcoal text-ivory px-4 py-2 text-sm font-medium hover:bg-charcoal/90 transition-colors">
           <Printer className="h-4 w-4" /> Print / Save PDF
         </button>
@@ -118,7 +121,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
               <tr key={idx} className="border-b border-gray-100">
                 <td className="py-3 text-sm text-gray-500">{idx + 1}</td>
                 <td className="py-3"><p className="text-sm font-medium text-charcoal">{item.product?.name}</p></td>
-                <td className="py-3 text-xs text-gray-500">{[item.size, item.color].filter(Boolean).join(" / ") || "—"}</td>
+                <td className="py-3 text-xs text-gray-500">{[item.size, item.color].filter(Boolean).join(" / ") || "&mdash;"}</td>
                 <td className="py-3 text-sm text-right text-gray-600">{item.quantity}</td>
                 <td className="py-3 text-sm text-right text-gray-600">{formatPrice(item.product?.price || 0)}</td>
                 <td className="py-3 text-sm text-right font-medium text-charcoal">{formatPrice((item.product?.price || 0) * item.quantity)}</td>

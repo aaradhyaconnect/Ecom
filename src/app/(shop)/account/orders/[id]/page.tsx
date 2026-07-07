@@ -1,61 +1,62 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
-import { useAuthStore } from "@/lib/store/auth";
-import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink } from "lucide-react";
 import toast from "react-hot-toast";
-import type { Order } from "@/types";
+import type { Order, User } from "@/types";
 
 const STATUS_FLOW = ["pending", "confirmed", "packed", "shipped", "out-for-delivery", "delivered"];
 function getCurrentStep(status: string) { return STATUS_FLOW.indexOf(status); }
 function isCancelable(status: string) { return ["pending", "confirmed"].includes(status); }
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const pathname = usePathname();
-  const { user } = useAuthStore();
-  const mounted = useHydrated();
-  const authLoading = useAuthStore((s) => s.loading);
   const supabase = useRef(createClient()).current;
-  const [order, setOrder] = useState<Order | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [order, setOrder] = useState<Order | null>(null);
+  const [fetching, setFetching] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const orderIdRef = useRef<string | null>(null);
 
-  // Resolve params once
   useEffect(() => { params.then((p) => { orderIdRef.current = p.id; }); }, [params]);
 
   useEffect(() => {
-    if (mounted && !authLoading && !user) {
-      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-    }
-  }, [mounted, authLoading, user, pathname]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.user) { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
+          setUser(data.user);
+        } else { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
+      } catch { if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
+      finally { if (!cancelled) setLoading(false); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!user || !orderIdRef.current) return;
     let cancelled = false;
     (async () => {
       try {
-        const { data, error } = await supabase
-          .from("orders").select("*").eq("id", orderIdRef.current!).eq("user_id", user.id).single();
+        const { data, error } = await supabase.from("orders").select("*").eq("id", orderIdRef.current!).eq("user_id", user.id).single();
         if (cancelled) return;
         if (error || !data) { window.location.replace("/account/orders"); return; }
         setOrder(data as Order);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
+      } finally { if (!cancelled) setFetching(false); }
     })();
     return () => { cancelled = true; };
-  }, [user?.id]);
+  }, [user?.id, supabase]);
 
   async function handleCancel() {
     if (!order) return;
@@ -65,16 +66,14 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     if (json.success) {
       setOrder((prev) => prev ? { ...prev, order_status: "cancelled" as const } : null);
       toast.success("Order cancelled successfully");
-    } else {
-      toast.error(json.error ?? "Failed to cancel order");
-    }
+    } else { toast.error(json.error ?? "Failed to cancel order"); }
     setCancelling(false);
   }
 
   function getStatusColor(value: string) { return ORDER_STATUSES.find((s) => s.value === value)?.color ?? "text-charcoal-muted bg-ivory-dark/50"; }
   function getStatusLabel(value: string) { return ORDER_STATUSES.find((s) => s.value === value)?.label ?? value; }
 
-  if (!mounted || authLoading || !user || loading) {
+  if (loading || !user || fetching) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <Skeleton className="h-8 w-48 mb-6" />
@@ -104,7 +103,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       {!cancelled && !returned && (
-        <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+        <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
           <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-4">Order Status</h2>
           <div className="hidden sm:flex items-center justify-between">
             {STATUS_FLOW.map((step, idx) => {
@@ -134,9 +133,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       )}
 
       {cancelled && (
-        <div className="bg-rose-50 border border-rose-200 p-6 mb-6">
+        <div className="bg-rose-50/50 border border-rose-200/60 p-6 mb-6">
           <div className="flex items-center gap-3">
-            <X className="h-6 w-6 text-rose-500" />
+            <div className="w-8 h-8 bg-rose-100 flex items-center justify-center"><X className="h-4 w-4 text-rose-500" /></div>
             <div>
               <p className="font-medium text-rose-800">Order Cancelled</p>
               <p className="text-sm text-rose-600">This order was cancelled on {formatDate(order.updated_at)}</p>
@@ -146,9 +145,9 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       )}
 
       {returned && (
-        <div className="bg-charcoal/5 border border-ivory-dark p-6 mb-6">
+        <div className="bg-charcoal/[0.02] border border-ivory-dark/60 p-6 mb-6">
           <div className="flex items-center gap-3">
-            <Package className="h-6 w-6 text-charcoal-muted" />
+            <div className="w-8 h-8 bg-ivory-dark/50 flex items-center justify-center"><Package className="h-4 w-4 text-charcoal-muted" /></div>
             <div>
               <p className="font-medium text-charcoal">Order Returned</p>
               <p className="text-sm text-charcoal-muted">This order has been returned</p>
@@ -158,7 +157,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       )}
 
       {order.tracking_id && (
-        <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+        <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Truck className="h-5 w-5 text-charcoal-muted" />
@@ -176,7 +175,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
-      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
         <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-4">Items ({order.items.length})</h2>
         <div className="divide-y divide-ivory-dark">
           {order.items.map((item) => (
@@ -195,7 +194,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-ivory border border-ivory-dark p-6">
+        <div className="bg-ivory border border-ivory-dark/60 p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <MapPin className="h-4 w-4 text-charcoal-muted" />
             <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">Shipping Address</h2>
@@ -207,7 +206,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <p>Phone: {order.shipping_address.phone}</p>
           </div>
         </div>
-        <div className="bg-ivory border border-ivory-dark p-6">
+        <div className="bg-ivory border border-ivory-dark/60 p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-3">
             <CreditCard className="h-4 w-4 text-charcoal-muted" />
             <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">Payment Info</h2>
@@ -216,11 +215,11 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <p>Method: <span className="font-medium">{order.payment_method === "cod" ? "Cash on Delivery" : "Online (Razorpay)"}</span></p>
             <p className="capitalize">Status: <span className={`font-medium ${order.payment_status === "paid" ? "text-green-600" : order.payment_status === "failed" ? "text-rose-600" : "text-yellow-600"}`}>{order.payment_status}</span></p>
           </div>
-          <div className="border-t border-ivory-dark mt-4 pt-4 space-y-1 text-sm">
+          <div className="border-t border-ivory-dark/60 mt-4 pt-4 space-y-1 text-sm">
             <div className="flex justify-between text-charcoal-muted"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
             <div className="flex justify-between text-charcoal-muted"><span>Shipping</span><span>{order.shipping_charge === 0 ? "Free" : formatPrice(order.shipping_charge)}</span></div>
             {order.discount > 0 && <div className="flex justify-between text-green-600"><span>Discount{order.coupon_code ? ` (${order.coupon_code})` : ""}</span><span>&minus;{formatPrice(order.discount)}</span></div>}
-            <div className="flex justify-between font-semibold text-charcoal pt-2 border-t border-ivory-dark"><span>Total</span><span>{formatPrice(order.total)}</span></div>
+            <div className="flex justify-between font-semibold text-charcoal pt-2 border-t border-ivory-dark/60"><span>Total</span><span>{formatPrice(order.total)}</span></div>
           </div>
         </div>
       </div>
@@ -233,7 +232,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
       {order.order_status === "delivered" && (
         <div className="text-center py-4 border-t border-ivory-dark">
-          <a href={`/account/orders/${order.id}/invoice`} className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-gold-dark transition-colors">Download Invoice</a>
+          <Link href={`/account/orders/${order.id}/invoice`} className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-gold-dark transition-colors">Download Invoice</Link>
         </div>
       )}
     </div>

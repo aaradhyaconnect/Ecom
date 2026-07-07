@@ -136,8 +136,9 @@ export default function VerifyOTPPage() {
   const contactLabel = method === "email" ? email : phone;
 
   return (
-    <div className="bg-ivory border border-ivory-dark p-8 animate-in slide-up">
+    <div className="bg-ivory border border-ivory-dark/60 p-8 shadow-sm">
       <div className="text-center mb-8">
+        <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
         <h1 className="text-2xl font-serif font-bold text-charcoal">
           {step === "input" ? "Sign in with OTP" : "Enter OTP"}
         </h1>
@@ -150,27 +151,27 @@ export default function VerifyOTPPage() {
 
       {step === "input" ? (
         <div className="space-y-6">
-          <div className="flex gap-2 p-1 bg-ivory-dark">
+          <div className="flex border-b border-ivory-dark mb-4">
             <button
               onClick={() => setMethod("email")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
                 method === "email"
-                  ? "bg-ivory text-charcoal"
+                  ? "text-charcoal border-b-2 border-charcoal -mb-[1px]"
                   : "text-charcoal-muted hover:text-charcoal"
               }`}
             >
-              <Mail className="h-4 w-4" />
+              <Mail className="h-3.5 w-3.5 inline mr-1.5" />
               Email
             </button>
             <button
               onClick={() => setMethod("phone")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-medium transition-colors ${
+              className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
                 method === "phone"
-                  ? "bg-ivory text-charcoal"
+                  ? "text-charcoal border-b-2 border-charcoal -mb-[1px]"
                   : "text-charcoal-muted hover:text-charcoal"
               }`}
             >
-              <Phone className="h-4 w-4" />
+              <Phone className="h-3.5 w-3.5 inline mr-1.5" />
               Phone
             </button>
           </div>

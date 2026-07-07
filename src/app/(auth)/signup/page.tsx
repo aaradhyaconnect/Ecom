@@ -157,8 +157,9 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="bg-ivory border border-ivory-dark p-8 animate-in slide-up">
+    <div className="bg-ivory border border-ivory-dark/60 p-8 shadow-sm">
       <div className="text-center mb-8">
+        <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
         <h1 className="text-2xl font-serif font-bold text-charcoal">Create Account</h1>
         <p className="text-charcoal-muted text-sm mt-1">Join HAINJU today</p>
       </div>
@@ -173,24 +174,24 @@ export default function RegisterPage() {
           icon={<User className="h-4 w-4" />}
         />
 
-        <div className="flex gap-1 p-1 bg-ivory-dark">
+        <div className="flex border-b border-ivory-dark mb-2">
           <button
             type="button"
             onClick={() => setUsePhone(false)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
-              !usePhone ? "bg-ivory text-charcoal" : "text-charcoal-muted"
+            className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
+              !usePhone ? "text-charcoal border-b-2 border-charcoal -mb-[1px]" : "text-charcoal-muted hover:text-charcoal"
             }`}
           >
-            <Mail className="h-3.5 w-3.5" /> Email
+            <Mail className="h-3.5 w-3.5 inline mr-1.5" /> Email
           </button>
           <button
             type="button"
             onClick={() => setUsePhone(true)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2 text-xs font-medium transition-colors ${
-              usePhone ? "bg-ivory text-charcoal" : "text-charcoal-muted"
+            className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
+              usePhone ? "text-charcoal border-b-2 border-charcoal -mb-[1px]" : "text-charcoal-muted hover:text-charcoal"
             }`}
           >
-            <Phone className="h-3.5 w-3.5" /> Phone
+            <Phone className="h-3.5 w-3.5 inline mr-1.5" /> Phone
           </button>
         </div>
 
@@ -249,12 +250,12 @@ export default function RegisterPage() {
         </Button>
       </form>
 
-      <div className="relative my-6">
+      <div className="relative my-7">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-ivory-dark" />
+          <div className="w-full border-t border-ivory-dark/60" />
         </div>
-        <div className="relative flex justify-center text-xs">
-          <span className="bg-ivory px-4 text-charcoal-muted/60">or continue with</span>
+        <div className="relative flex justify-center">
+          <span className="bg-ivory px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted/50">or continue with</span>
         </div>
       </div>
 

@@ -1,34 +1,40 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { Heart, ShoppingBag, Trash2, ArrowLeft } from "lucide-react";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useCartStore } from "@/lib/store/cart";
-import { useAuthStore } from "@/lib/store/auth";
-import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/Skeleton";
 import toast from "react-hot-toast";
-import type { Product } from "@/types";
+import type { Product, User } from "@/types";
 
 export default function WishlistPage() {
-  const pathname = usePathname();
-  const { user } = useAuthStore();
-  const mounted = useHydrated();
-  const authLoading = useAuthStore((s) => s.loading);
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
   const { items, removeItem } = useWishlistStore();
   const { addItem, items: cartItems } = useCartStore();
 
   useEffect(() => {
-    if (mounted && !authLoading && !user) {
-      window.location.replace(`/login?redirect=${encodeURIComponent(pathname)}`);
-    }
-  }, [mounted, authLoading, user, pathname]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          if (!data.user) { window.location.replace("/login?redirect=%2Faccount%2Fwishlist"); return; }
+          setUser(data.user);
+        } else { window.location.replace("/login?redirect=%2Faccount%2Fwishlist"); return; }
+      } catch { if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Fwishlist"); return; }
+      finally { if (!cancelled) setLoading(false); }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleAddToCart = (product: Product) => {
     const size = product.sizes[0] || "M";
@@ -41,7 +47,7 @@ export default function WishlistPage() {
 
   const isProductInCart = (productId: string) => cartItems.some((item) => item.product_id === productId);
 
-  if (!mounted || authLoading || !user) {
+  if (loading || !user) {
     return (
       <div className="max-w-7xl mx-auto px-4 py-8">
         <Skeleton className="h-24 w-full mb-6" />

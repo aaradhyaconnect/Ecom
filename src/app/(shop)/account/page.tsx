@@ -162,24 +162,25 @@ export default function ProfilePage() {
         <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">My Profile</h1>
       </div>
 
-      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
-        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-ivory-dark">
-          <div className="h-16 w-16 bg-charcoal text-ivory flex items-center justify-center text-xl font-bold flex-shrink-0">
+      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
+        <div className="flex items-center gap-4 mb-6 pb-6 border-b border-ivory-dark/60">
+          <div className="h-16 w-16 bg-charcoal text-ivory flex items-center justify-center text-xl font-bold flex-shrink-0 relative">
             {getInitials(user.name)}
+            <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-green-500 border-2 border-ivory rounded-full" />
           </div>
           <div>
             <h2 className="text-lg font-serif font-bold text-charcoal">{user.name}</h2>
             <p className="text-sm text-charcoal-muted">{user.email}</p>
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <Input label="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
           <Input label="Phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Add phone number" />
         </div>
         <Button onClick={handleSaveProfile} isLoading={saving}>Save Changes</Button>
       </div>
 
-      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <MapPin className="h-4 w-4 text-charcoal-muted" />
@@ -191,7 +192,7 @@ export default function ProfilePage() {
         </div>
 
         {showAddressForm && (
-          <div className="bg-ivory-dark/30 p-4 mb-4 space-y-3">
+          <div className="bg-ivory-dark/20 border border-ivory-dark/40 p-4 mb-4 space-y-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Input label="Full Name" value={addressForm.full_name} onChange={(e) => setAddressForm({ ...addressForm, full_name: e.target.value })} />
               <Input label="Phone" value={addressForm.phone} onChange={(e) => setAddressForm({ ...addressForm, phone: e.target.value })} />
@@ -208,25 +209,25 @@ export default function ProfilePage() {
         )}
 
         {addresses.length === 0 && !showAddressForm && (
-          <p className="text-sm text-charcoal-muted/50 py-4 text-center">No saved addresses</p>
+          <p className="text-sm text-charcoal-muted/40 py-4 text-center italic">No saved addresses</p>
         )}
 
         <div className="space-y-3">
           {addresses.map((addr, idx) => (
-            <div key={idx} className="flex items-start justify-between border border-ivory-dark p-3">
+            <div key={idx} className="flex items-start justify-between border border-ivory-dark/60 p-3 hover:border-ivory-dark transition-colors">
               <div className="text-sm text-charcoal">
                 <p className="font-medium">{addr.full_name}</p>
                 <p>{addr.street}</p>
                 <p>{addr.city}, {addr.state} &ndash; {addr.pincode}</p>
                 <p className="text-charcoal-muted">{addr.phone}</p>
               </div>
-              <button onClick={() => handleRemoveAddress(idx)} className="text-xs text-rose-500 hover:underline flex-shrink-0 ml-2">Remove</button>
+              <button onClick={() => handleRemoveAddress(idx)} className="text-[10px] uppercase tracking-wider text-rose-500/70 hover:text-rose-600 flex-shrink-0 ml-2 transition-colors">Remove</button>
             </div>
           ))}
         </div>
       </div>
 
-      <div className="bg-ivory border border-ivory-dark p-6 mb-6">
+      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Package className="h-4 w-4 text-charcoal-muted" />
