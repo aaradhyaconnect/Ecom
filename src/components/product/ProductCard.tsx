@@ -8,9 +8,11 @@ import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useCartStore } from "@/lib/store/cart";
+import { useAuthStore } from "@/lib/store/auth";
 import { Badge } from "@/components/ui/Badge";
 import { CATEGORIES } from "@/lib/constants/categories";
 import type { Product } from "@/types";
+import toast from "react-hot-toast";
 
 interface ProductCardProps {
   product: Product;
@@ -30,6 +32,7 @@ function parseColors(colors: Product["colors"]): { name: string; hex: string }[]
 export function ProductCard({ product, preload }: ProductCardProps) {
   const { isInWishlist, toggleItem } = useWishlistStore();
   const addItem = useCartStore((s) => s.addItem);
+  const user = useAuthStore((s) => s.user);
   const inWishlist = isInWishlist(product.id);
   const [hovered, setHovered] = useState(false);
   const [quickViewOpen, setQuickViewOpen] = useState(false);
@@ -42,6 +45,10 @@ export function ProductCard({ product, preload }: ProductCardProps) {
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!user) {
+      window.location.href = "/login";
+      return;
+    }
     if (product.sizes.length > 0 && colors.length > 0) {
       addItem(product, 1, product.sizes[0], colors[0].name);
     } else if (product.sizes.length > 0) {
@@ -49,6 +56,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
     } else {
       addItem(product, 1, "default", colors[0]?.name || "default");
     }
+    toast.success("Added to cart");
   };
 
   const displayImage =

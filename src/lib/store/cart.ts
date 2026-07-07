@@ -42,17 +42,24 @@ export const useCartStore = create<CartStore>()(
           );
 
           if (existingIndex > -1) {
+            const existing = state.items[existingIndex];
+            const maxAdd = Math.max(0, product.stock - existing.quantity);
+            const addQty = Math.min(quantity, maxAdd);
+            if (addQty <= 0) return state;
             const items = state.items.map((item, i) =>
-              i === existingIndex ? { ...item, quantity: item.quantity + quantity } : item
+              i === existingIndex ? { ...item, quantity: existing.quantity + addQty } : item
             );
             return { items };
           }
+
+          const addQty = Math.min(quantity, product.stock);
+          if (addQty <= 0) return state;
 
           const newItem: CartItem = {
             id: `${product.id}-${size}-${color}-${Date.now()}`,
             product_id: product.id,
             product,
-            quantity,
+            quantity: addQty,
             size,
             color,
           };
@@ -72,9 +79,10 @@ export const useCartStore = create<CartStore>()(
           get().removeItem(id);
           return;
         }
+        const maxQuantity = 20;
         set((state) => ({
           items: state.items.map((item) =>
-            item.id === id ? { ...item, quantity } : item
+            item.id === id ? { ...item, quantity: Math.min(quantity, maxQuantity) } : item
           ),
         }));
       },

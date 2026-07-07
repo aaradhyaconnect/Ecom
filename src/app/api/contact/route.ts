@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   try {
@@ -8,7 +9,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Name, email, and message are required" }, { status: 400 });
     }
 
-    console.log("Contact form submission:", { name, email, subject, message });
+    const adminDb = await createAdminClient();
+    const { error } = await adminDb.from("contact_submissions").insert({
+      name,
+      email,
+      subject: subject || null,
+      message,
+      created_at: new Date().toISOString(),
+    });
+
+    if (error) {
+      return NextResponse.json({ error: "Failed to submit" }, { status: 500 });
+    }
 
     return NextResponse.json({ success: true });
   } catch {

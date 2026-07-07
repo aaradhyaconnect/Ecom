@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { createServerSupabase, createAdminClient } from "@/lib/supabase/server";
 
 export async function GET(
   _request: Request,
@@ -106,17 +106,19 @@ export async function PUT(
     }
 
     if (order.payment_status !== "paid") {
+      const adminDb = await createAdminClient();
       for (const item of order.items) {
-        const { data: product } = await supabase
+        const { data: product } = await adminDb
           .from("products")
           .select("stock")
           .eq("id", item.product_id)
           .single();
         if (product) {
-          await supabase
+          await adminDb
             .from("products")
             .update({ stock: product.stock + item.quantity })
-            .eq("id", item.product_id);
+            .eq("id", item.product_id)
+            .eq("stock", product.stock);
         }
       }
     }

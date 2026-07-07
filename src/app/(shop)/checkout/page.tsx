@@ -106,10 +106,15 @@ export default function CheckoutPage() {
             setCouponError(`Minimum order value is ${formatPrice(data.data.min_order)}`);
             return;
           }
+          setCouponError("");
           setAppliedCoupon(data.data);
+        } else {
+          setCouponError(data.error || "Invalid coupon");
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        setCouponError("Failed to validate coupon");
+      });
   }, [couponCode, subtotal]);
 
   const updateAddress = (field: keyof Address, value: string) => {
@@ -277,7 +282,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (!mounted || authLoading) return null;
+  if (!mounted || authLoading || !user) return null;
 
   if (items.length === 0) {
     return (

@@ -159,15 +159,19 @@ export default function AdminBannersPage() {
     setBanners(reordered);
 
     try {
-      await Promise.all(
+      const results = await Promise.all(
         reordered.map((b) =>
           fetch("/api/admin/banners", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ id: b.id, order: b.order }),
-          })
+          }).then((r) => r.json())
         )
       );
+      if (results.some((r) => !r.success)) {
+        toast.error("Failed to reorder some banners");
+        fetchBanners();
+      }
     } catch {
       toast.error("Failed to reorder");
       fetchBanners();

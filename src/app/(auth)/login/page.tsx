@@ -36,22 +36,34 @@ export default function LoginPage() {
       }
       setIsLoading(true);
       try {
-        const supabase = createClient();
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) { toast.error(error.message); setIsLoading(false); return; }
-        if (data.session) {
-          const res = await fetch("/api/auth/set-session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              access_token: data.session.access_token,
-              refresh_token: data.session.refresh_token,
-            }),
-          }).catch(() => null);
-          if (!res?.ok) toast.error("Session setup failed. Please refresh.");
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        toast.error(data.error || "Login failed");
+        setIsLoading(false);
+        return;
+      }
+      if (data.data?.session) {
+        const sessionRes = await fetch("/api/auth/set-session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            access_token: data.data.session.access_token,
+            refresh_token: data.data.session.refresh_token,
+          }),
+        }).catch(() => null);
+        if (!sessionRes?.ok) {
+          toast.error("Session setup failed. Please try again.");
+          setIsLoading(false);
+          return;
         }
-        toast.success("Welcome back!");
-        window.location.replace(redirectTo);
+      }
+      toast.success("Welcome back!");
+      window.location.replace(redirectTo);
       } catch {
         toast.error("Something went wrong");
       } finally {
@@ -71,7 +83,7 @@ export default function LoginPage() {
           body: JSON.stringify(otpChannel === "email" ? { email } : { phone }),
         });
         const data = await res.json();
-        if (!data.success) { toast.error(data.error); return; }
+        if (!data.success) { toast.error(data.error); setIsLoading(false); return; }
         toast.success(data.message);
         router.push(otpChannel === "email" ? `/verify-otp?email=${encodeURIComponent(email)}&redirect=${encodeURIComponent(redirectTo)}` : `/verify-otp?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(redirectTo)}`);
       } catch {
@@ -118,6 +130,7 @@ export default function LoginPage() {
         cleanupRef.current = cleanup;
 
         const handleMessage = async (e: MessageEvent) => {
+          if (e.origin !== window.location.origin) return;
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
             handled = true;
             cleanup();

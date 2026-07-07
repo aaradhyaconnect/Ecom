@@ -22,18 +22,18 @@ export async function GET() {
           .from("profiles")
           .select("*", { count: "exact", head: true })
           .eq("role", "customer"),
-        supabase.from("orders").select("total, order_status, created_at"),
+        supabase.from("orders").select("total, order_status, created_at, items").limit(10000),
         supabase
           .from("orders")
-          .select("total", { count: "exact", head: true })
+          .select("total, order_status")
           .gte("created_at", todayStart),
         supabase
           .from("orders")
-          .select("total", { count: "exact", head: true })
+          .select("total, order_status")
           .gte("created_at", monthStart),
         supabase
           .from("orders")
-          .select("total")
+          .select("total, order_status")
           .gte("created_at", lastMonthStart)
           .lte("created_at", lastMonthEnd),
         supabase
@@ -49,20 +49,17 @@ export async function GET() {
       .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
       .reduce((sum, o) => sum + (o.total || 0), 0);
 
-    const revenueToday = (ordersToday.data || []).reduce(
-      (sum, o) => sum + (o.total || 0),
-      0
-    );
+    const revenueToday = (ordersToday.data || [])
+      .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+      .reduce((sum, o) => sum + (o.total || 0), 0);
 
-    const revenueMonth = (ordersMonth.data || []).reduce(
-      (sum, o) => sum + (o.total || 0),
-      0
-    );
+    const revenueMonth = (ordersMonth.data || [])
+      .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+      .reduce((sum, o) => sum + (o.total || 0), 0);
 
-    const revenueLastMonth = (ordersLastMonth.data || []).reduce(
-      (sum, o) => sum + (o.total || 0),
-      0
-    );
+    const revenueLastMonth = (ordersLastMonth.data || [])
+      .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+      .reduce((sum, o) => sum + (o.total || 0), 0);
 
     const ordersByStatus = allOrders.reduce<
       Record<string, number>
@@ -86,9 +83,9 @@ export async function GET() {
     const productSales = allOrders
       .filter((o) => o.order_status === "delivered")
       .flatMap((o) => {
-        const items = (o as { items?: { product_name?: string; quantity?: number; price?: number }[] }).items || [];
+        const items = (o as { items?: { product?: { name?: string }; product_name?: string; quantity?: number; price?: number }[] }).items || [];
         return items.map((i) => ({
-          name: i.product_name || "Unknown",
+          name: i.product?.name || i.product_name || "Unknown",
           sales: i.quantity || 0,
           revenue: (i.price || 0) * (i.quantity || 0),
         }));
@@ -113,9 +110,9 @@ export async function GET() {
       total_customers: customersCount.count || 0,
       total_products: productsCount.count || 0,
       revenue_today: revenueToday,
-      orders_today: ordersToday.count || 0,
+      orders_today: ordersToday.data?.length || 0,
       revenue_month: revenueMonth,
-      orders_month: ordersMonth.count || 0,
+      orders_month: ordersMonth.data?.length || 0,
       revenue_last_month: revenueLastMonth,
       orders_last_month: ordersLastMonth.data?.length || 0,
       top_products: topProducts,

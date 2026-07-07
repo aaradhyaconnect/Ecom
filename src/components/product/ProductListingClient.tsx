@@ -84,6 +84,7 @@ export function ProductListingClient({
   };
 
   const handlePriceFilter = (min?: number, max?: number) => {
+    setMobileFilterOpen(false);
     router.push(
       buildHref({
         minPrice: min !== undefined ? String(min) : undefined,
@@ -97,6 +98,7 @@ export function ProductListingClient({
     const sizes = currentSizes.includes(size)
       ? currentSizes.filter((s) => s !== size)
       : [...currentSizes, size];
+    setMobileFilterOpen(false);
     router.push(
       buildHref({
         sizes: sizes.length > 0 ? sizes.join(",") : undefined,
@@ -109,6 +111,7 @@ export function ProductListingClient({
     const colors = currentColors.includes(color)
       ? currentColors.filter((c) => c !== color)
       : [...currentColors, color];
+    setMobileFilterOpen(false);
     router.push(
       buildHref({
         colors: colors.length > 0 ? colors.join(",") : undefined,
@@ -118,6 +121,7 @@ export function ProductListingClient({
   };
 
   const handleInStockFilter = () => {
+    setMobileFilterOpen(false);
     router.push(
       buildHref({
         inStock: currentInStock ? undefined : "true",
@@ -127,6 +131,7 @@ export function ProductListingClient({
   };
 
   const handleOnSaleFilter = () => {
+    setMobileFilterOpen(false);
     router.push(
       buildHref({
         onSale: currentOnSale ? undefined : "true",
@@ -136,6 +141,7 @@ export function ProductListingClient({
   };
 
   const clearFilters = () => {
+    setMobileFilterOpen(false);
     router.push(`/products/${category}`);
   };
 
@@ -193,8 +199,10 @@ export function ProductListingClient({
         <div className="space-y-0.5">
           {PRICE_RANGES.map((range) => {
             const active =
-              currentMinPrice === String(range.min) &&
-              currentMaxPrice === String(range.max);
+              range.max === undefined
+                ? currentMinPrice === String(range.min) && !currentMaxPrice
+                : currentMinPrice === String(range.min) &&
+                  currentMaxPrice === String(range.max);
             return (
               <button
                 key={range.label}

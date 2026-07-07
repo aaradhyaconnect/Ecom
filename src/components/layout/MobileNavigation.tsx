@@ -11,7 +11,7 @@ import { useHydrated } from "@/hooks/useHydrated";
 
 export function MobileNavigation() {
   const pathname = usePathname();
-  const cartItemsCount = useCartStore((s) => s.items.length);
+  const cartItemsCount = useCartStore((s) => s.getItemCount());
   const wishlistItemsCount = useWishlistStore((s) => s.items.length);
   const user = useAuthStore((s) => s.user);
   const mounted = useHydrated();
@@ -32,7 +32,7 @@ export function MobileNavigation() {
     {
       label: "Wishlist",
       icon: Heart,
-      href: "/account/wishlist",
+      href: mounted && user ? "/account/wishlist" : "/login",
       active: pathname === "/account/wishlist",
       badge: mounted ? wishlistItemsCount : 0,
     },
@@ -47,7 +47,7 @@ export function MobileNavigation() {
       label: "Profile",
       icon: User,
       href: mounted && user ? "/account" : "/login",
-      active: pathname === "/account" || pathname === "/login" || pathname === "/signup",
+      active: pathname === "/account",
     },
   ];
 

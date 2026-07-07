@@ -21,7 +21,8 @@ export async function GET(request: Request) {
       .order("stock", { ascending: true });
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%`);
+      const escaped = search.replace(/[%_\\]/g, "\\$&");
+      query = query.or(`name.ilike.%${escaped}%`);
     }
 
     if (filter === "low") {
@@ -66,9 +67,12 @@ export async function PUT(request: Request) {
     if (updates && Array.isArray(updates)) {
       const results = await Promise.all(
         updates.map(async (item: { id: string; stock: number }) => {
+          if (typeof item.stock !== "number" || item.stock < 0 || !Number.isFinite(item.stock)) {
+            return { id: item.id, success: false, error: "Invalid stock value" };
+          }
           const { error } = await supabase
             .from("products")
-            .update({ stock: item.stock, updated_at: new Date().toISOString() })
+            .update({ stock: Math.floor(item.stock), updated_at: new Date().toISOString() })
             .eq("id", item.id);
           return { id: item.id, success: !error, error: error?.message };
         })

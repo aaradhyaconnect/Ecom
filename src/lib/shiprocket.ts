@@ -28,7 +28,7 @@ async function getAuthToken(): Promise<string> {
   const data = await res.json();
   cachedToken = {
     token: data.token,
-    expiresAt: Date.now() + 20 * 60 * 1000,
+    expiresAt: Date.now() + (data.expires_in || 25 * 60) * 1000,
   };
   return data.token;
 }

@@ -90,13 +90,19 @@ export async function PUT(request: Request) {
     const { supabase } = auth;
 
     const body = await request.json();
-    const { id, ...updates } = body;
+    const { id, ...rawUpdates } = body;
 
     if (!id) {
       return NextResponse.json(
         { success: false, error: "Banner ID is required" },
         { status: 400 }
       );
+    }
+
+    const allowedFields = ["title", "subtitle", "image", "link", "is_active", "order"] as const;
+    const updates: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (key in rawUpdates) updates[key] = rawUpdates[key];
     }
 
     const { data, error } = await supabase

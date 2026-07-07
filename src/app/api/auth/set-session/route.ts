@@ -4,7 +4,8 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 const ALLOWED_ORIGINS = [
   process.env.NEXT_PUBLIC_SITE_URL,
   process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null,
-  "http://localhost:3000",
+  process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : null,
+  ...(process.env.NODE_ENV === "development" ? ["http://localhost:3000", "http://localhost:3001"] : []),
 ].filter(Boolean) as string[];
 
 function isAllowedOrigin(request: NextRequest): boolean {

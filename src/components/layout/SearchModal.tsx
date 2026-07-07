@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Search, X, ArrowUpRight } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useUIStore } from "@/lib/store/ui";
 import { useDebounce } from "@/hooks/useDebounce";
 import { formatPrice } from "@/lib/utils/format";
@@ -19,6 +20,7 @@ interface SearchResult {
 
 export function SearchModal() {
   const { isSearchOpen, closeSearch } = useUIStore();
+  const pathname = usePathname();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,9 +35,17 @@ export function SearchModal() {
 
   useEffect(() => {
     if (isSearchOpen) {
+      document.body.style.overflow = "hidden";
       setTimeout(() => inputRef.current?.focus(), 100);
+    } else {
+      document.body.style.overflow = "";
     }
+    return () => { document.body.style.overflow = ""; };
   }, [isSearchOpen]);
+
+  useEffect(() => {
+    closeSearch();
+  }, [pathname, closeSearch]);
 
   const displayResults = debouncedQuery && debouncedQuery.length >= 2 ? results : [];
 
@@ -44,18 +54,20 @@ export function SearchModal() {
       return;
     }
 
+    const controller = new AbortController();
     (async () => {
       setIsLoading(true);
       try {
-        const res = await fetch(`/api/products?search=${encodeURIComponent(debouncedQuery)}&limit=6`);
+        const res = await fetch(`/api/products?search=${encodeURIComponent(debouncedQuery)}&limit=6`, { signal: controller.signal });
         const data = await res.json();
         setResults(data.data?.products || []);
       } catch {
-        setResults([]);
+        if (!controller.signal.aborted) setResults([]);
       } finally {
-        setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     })();
+    return () => controller.abort();
   }, [debouncedQuery]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

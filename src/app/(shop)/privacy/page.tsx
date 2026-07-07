@@ -1,6 +1,11 @@
 import { SITE } from "@/lib/constants/site";
+import type { Metadata } from "next";
 
-export const metadata = { title: "Privacy Policy — HAINJU" };
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "HAINJU's privacy policy. Learn how we collect, use, and protect your personal information.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage() {
   return (

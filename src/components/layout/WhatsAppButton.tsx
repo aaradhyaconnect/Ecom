@@ -4,7 +4,7 @@ import { MessageCircle } from "lucide-react";
 import { SITE } from "@/lib/constants/site";
 
 export function WhatsAppButton() {
-  const whatsappUrl = `https://wa.me/${SITE.whatsapp}?text=Hi%20${SITE.name}!%20I%20have%20a%20question.`;
+  const whatsappUrl = `https://wa.me/${SITE.whatsapp.replace(/\D/g, "")}?text=Hi%20${SITE.name}!%20I%20have%20a%20question.`;
 
   return (
     <a

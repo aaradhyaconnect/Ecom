@@ -22,8 +22,9 @@ export async function GET(request: Request) {
       .order("created_at", { ascending: false });
 
     if (search) {
+      const escaped = search.replace(/[%_\\]/g, "\\$&");
       query = query.or(
-        `name.ilike.%${search}%,description.ilike.%${search}%`
+        `name.ilike.%${escaped}%,description.ilike.%${escaped}%`
       );
     }
     if (category) {
@@ -79,7 +80,7 @@ export async function POST(request: Request) {
       description: body.description || "",
       category: body.category,
       subcategory: body.subcategory || null,
-      price: Number(body.price),
+      price: Number(body.price) || 0,
       compare_price: body.compare_price ? Number(body.compare_price) : null,
       images: body.images || [],
       sizes: body.sizes || [],
@@ -91,7 +92,7 @@ export async function POST(request: Request) {
       is_best_seller: body.is_best_seller || false,
       is_sale: body.is_sale || false,
       sale_percent: body.sale_percent ? Number(body.sale_percent) : null,
-      stock: Number(body.stock) || 0,
+      stock: Math.max(0, Math.floor(Number(body.stock) || 0)),
       rating: 0,
       review_count: 0,
       created_at: new Date().toISOString(),
@@ -127,7 +128,7 @@ export async function PUT(request: Request) {
     const { supabase } = auth;
 
     const body = await request.json();
-    const { id, ...updates } = body;
+    const { id, ...rawUpdates } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -136,13 +137,23 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (updates.name) {
-      updates.slug = slugify(updates.name);
+    const allowedFields = [
+      "name", "description", "category", "subcategory", "price", "compare_price",
+      "images", "sizes", "colors", "tags", "material", "care_instructions",
+      "is_new", "is_best_seller", "is_sale", "sale_percent", "stock",
+    ] as const;
+
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    for (const key of allowedFields) {
+      if (key in rawUpdates) updates[key] = rawUpdates[key];
     }
-    if (updates.price) updates.price = Number(updates.price);
-    if (updates.compare_price) updates.compare_price = Number(updates.compare_price);
-    if (updates.stock) updates.stock = Number(updates.stock);
-    updates.updated_at = new Date().toISOString();
+
+    if (updates.name) {
+      updates.slug = slugify(updates.name as string);
+    }
+    if (updates.price !== undefined) updates.price = Number(updates.price);
+    if (updates.compare_price !== undefined) updates.compare_price = updates.compare_price ? Number(updates.compare_price) : null;
+    if (updates.stock !== undefined) updates.stock = Number(updates.stock);
 
     const { data, error } = await supabase
       .from("products")

@@ -37,13 +37,17 @@ export function slugify(str: string): string {
 
 export function generateOrderId(): string {
   const timestamp = Date.now().toString(36).toUpperCase();
-  const random = Math.random().toString(36).substring(2, 6).toUpperCase();
+  const array = new Uint8Array(4);
+  crypto.getRandomValues(array);
+  const random = Array.from(array, (b) => b.toString(36).toUpperCase()).join("").slice(0, 4);
   return `HAINJU-${timestamp}${random}`;
 }
 
 export function getInitials(name: string): string {
+  if (!name || !name.trim()) return "?";
   return name
     .split(" ")
+    .filter(Boolean)
     .map((n) => n[0])
     .join("")
     .toUpperCase()

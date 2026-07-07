@@ -112,6 +112,8 @@ export interface Order {
 export type OrderStatus =
   | "pending"
   | "confirmed"
+  | "processing"
+  | "packed"
   | "shipped"
   | "out-for-delivery"
   | "delivered"

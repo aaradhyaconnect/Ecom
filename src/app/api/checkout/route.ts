@@ -266,18 +266,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const decremented: { id: string; quantity: number; stock: number }[] = [];
     for (const item of orderItems) {
-      await adminDb
+      const { error: stockError } = await adminDb
         .from("products")
         .update({ stock: item._stock - item.quantity })
-        .eq("id", item.product_id);
+        .eq("id", item.product_id)
+        .eq("stock", item._stock);
+
+      if (stockError) {
+        for (const d of decremented) {
+          await adminDb
+            .from("products")
+            .update({ stock: d.stock })
+            .eq("id", d.id);
+        }
+        await adminDb.from("orders").delete().eq("id", order.id);
+        return Response.json(
+          { success: false, error: "Insufficient stock. Please try again." },
+          { status: 400 }
+        );
+      }
+      decremented.push({ id: item.product_id, quantity: item.quantity, stock: item._stock });
     }
 
     if (coupon?.code) {
       await adminDb
         .from("coupons")
-        .update({ used_count: Number(coupon.used_count || 0) + 1 })
-        .eq("code", coupon.code);
+        .update({ used_count: (coupon.used_count || 0) + 1 })
+        .eq("code", coupon.code)
+        .eq("used_count", coupon.used_count || 0);
     }
 
     return Response.json({

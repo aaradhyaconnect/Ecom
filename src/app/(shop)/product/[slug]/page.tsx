@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
+import { Suspense, cache } from "react";
 import { notFound } from "next/navigation";
 import { getProduct, getRelatedProducts } from "@/lib/supabase/queries";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { ProductDetailSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
+
+const cachedGetProduct = cache(getProduct);
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -14,7 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   let product: Product | null = null;
   try {
-    product = await getProduct(slug);
+    product = await cachedGetProduct(slug);
   } catch {
     return { title: "Product Not Found" };
   }
@@ -65,7 +67,7 @@ function ProductJsonLd({ product }: { product: Product }) {
         ? "https://schema.org/InStock"
         : "https://schema.org/OutOfStock",
     },
-    ...(product.rating > 0 && {
+    ...(product.rating > 0 && product.review_count > 0 && {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: product.rating,
@@ -85,7 +87,7 @@ function ProductJsonLd({ product }: { product: Product }) {
 async function ProductContent({ slug }: { slug: string }) {
   let product: Product | null = null;
   try {
-    product = await getProduct(slug);
+    product = await cachedGetProduct(slug);
   } catch {
     notFound();
   }

@@ -1,6 +1,11 @@
 import { SITE } from "@/lib/constants/site";
+import type { Metadata } from "next";
 
-export const metadata = { title: "Terms of Service — HAINJU" };
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "HAINJU's terms of service. Read our terms and conditions for using our website and services.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage() {
   return (

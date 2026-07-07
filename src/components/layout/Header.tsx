@@ -61,15 +61,15 @@ export function Header() {
               <div className="w-5 h-4 flex flex-col justify-between">
                 <span className={cn(
                   "block h-[1.5px] w-full transition-all duration-300",
-                  isMobileMenuOpen ? "rotate-45 translate-y-[7px]" : "bg-charcoal"
+                  isMobileMenuOpen ? "rotate-45 translate-y-[7px] bg-charcoal" : "bg-charcoal"
                 )} />
                 <span className={cn(
                   "block h-[1.5px] w-full transition-all duration-300",
-                  isMobileMenuOpen ? "opacity-0" : "bg-charcoal"
+                  isMobileMenuOpen ? "opacity-0 bg-charcoal" : "bg-charcoal"
                 )} />
                 <span className={cn(
                   "block h-[1.5px] w-full transition-all duration-300",
-                  isMobileMenuOpen ? "-rotate-45 -translate-y-[7px]" : "bg-charcoal"
+                  isMobileMenuOpen ? "-rotate-45 -translate-y-[7px] bg-charcoal" : "bg-charcoal"
                 )} />
               </div>
             </button>

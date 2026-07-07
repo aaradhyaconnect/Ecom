@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
 
     if (profile?.role !== "admin") {
       const url = request.nextUrl.clone();
-      url.pathname = "/";
+      url.pathname = "/login";
       return NextResponse.redirect(url);
     }
   }

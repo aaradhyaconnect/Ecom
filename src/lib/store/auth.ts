@@ -23,6 +23,11 @@ export const useAuthStore = create<AuthStore>()(
       setLoading: (loading) => set({ loading }),
       logout: () => set({ user: null, isAdmin: false, loading: false }),
     }),
-    { name: "hainju-auth" }
+    {
+      name: "hainju-auth",
+      partialize: (state) => ({
+        user: state.user,
+      }),
+    }
   )
 );

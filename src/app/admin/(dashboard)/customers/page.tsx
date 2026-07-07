@@ -61,7 +61,7 @@ export default function AdminCustomersPage() {
     setSelectedCustomer(customer);
     setOrdersLoading(true);
     try {
-      const res = await fetch(`/api/admin/orders?search=${customer.email}`);
+      const res = await fetch(`/api/admin/orders?search=${encodeURIComponent(customer.email)}`);
       const data = await res.json();
       if (data.success) setCustomerOrders(data.data || []);
     } catch {

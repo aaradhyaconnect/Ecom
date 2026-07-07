@@ -6,7 +6,7 @@ function getClientSnapshot() {
   return true;
 }
 
-let isServer = true;
+const isServer = true;
 function getServerSnapshot() {
   if (isServer) return false;
   return true;
@@ -18,6 +18,5 @@ export function useHydrated() {
     getClientSnapshot,
     getServerSnapshot,
   );
-  if (hydrated) isServer = false;
   return hydrated;
 }

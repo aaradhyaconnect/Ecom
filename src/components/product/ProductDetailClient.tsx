@@ -474,7 +474,7 @@ export function ProductDetailClient({
       <RecentlyViewed />
 
       {/* Mobile Sticky Add to Cart */}
-      <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-4 lg:hidden z-50">
+      <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-4 lg:hidden z-[60]">
         <div className="flex-1 min-w-0">
           <p className="text-lg font-bold text-charcoal">{formatPrice(product.price)}</p>
           {product.compare_price && (

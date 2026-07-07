@@ -1,4 +1,10 @@
-export const metadata = { title: "Size Guide — HAINJU" };
+import { SITE } from "@/lib/constants/site";
+
+export const metadata = {
+  title: "Size Guide",
+  description: "Find your perfect fit with HAINJU's comprehensive size guide for clothing and jewellery.",
+  alternates: { canonical: "/size-guide" },
+};
 
 const clothingSizes = [
   { size: "XS", chest: "32-34", waist: "26-28", hip: "34-36" },
@@ -72,7 +78,7 @@ export default function SizeGuidePage() {
         <div className="bg-ivory-dark/50 p-6 text-center">
           <p className="text-sm text-charcoal-muted">
             Still unsure about your size? Contact us at{" "}
-            <span className="text-gold-dark font-medium">hello@hainju.com</span> and our style team will help you find the perfect fit.
+            <span className="text-gold-dark font-medium">{SITE.email}</span> and our style team will help you find the perfect fit.
           </p>
         </div>
       </div>

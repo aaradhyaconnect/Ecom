@@ -24,8 +24,9 @@ export async function GET(request: Request) {
     }
 
     if (search) {
+      const escaped = search.replace(/[%_\\]/g, "\\$&");
       query = query.or(
-        `order_id.ilike.%${search}%,profiles.name.ilike.%${search}%`
+        `order_id.ilike.%${escaped}%,profiles.name.ilike.%${escaped}%`
       );
     }
 

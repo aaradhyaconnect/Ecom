@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       shipping_is_billing: true,
       order_items: orderItems,
       payment_method: paymentMethod,
-      sub_total: Math.round(order.total),
+      sub_total: Math.round(order.subtotal),
       length: 20,
       breadth: 15,
       height: 10,

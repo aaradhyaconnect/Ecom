@@ -14,6 +14,7 @@ export function checkRateLimit(
   identifier: string,
   config: Partial<RateLimitConfig> = {}
 ): { allowed: boolean; remaining: number; resetIn: number } {
+  cleanupRateLimitMap();
   const { windowMs, maxRequests } = { ...DEFAULT_CONFIG, ...config };
   const now = Date.now();
   const record = rateLimitMap.get(identifier);

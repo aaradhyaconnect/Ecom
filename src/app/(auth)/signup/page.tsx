@@ -38,23 +38,27 @@ export default function RegisterPage() {
 
     setIsLoading(true);
     try {
-      const supabase = createClient();
-
       if (usePhone) {
-        const { error } = await supabase.auth.signInWithOtp({ phone, options: { data: { name } } });
-        if (error) { toast.error(error.message); return; }
+        const res = await fetch("/api/auth/send-otp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone, name }),
+        });
+        const data = await res.json();
+        if (!data.success) { toast.error(data.error); setIsLoading(false); return; }
         toast.success("OTP sent! Verify to complete registration.");
-        router.push(`/verify-otp?phone=${phone}&redirect=${encodeURIComponent(redirectTo)}`);
+        router.push(`/verify-otp?phone=${encodeURIComponent(phone)}&redirect=${encodeURIComponent(redirectTo)}`);
         return;
       }
 
-      const { error: authError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { name } },
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, name }),
       });
+      const data = await res.json();
 
-      if (authError) { toast.error(authError.message); return; }
+      if (!data.success) { toast.error(data.error || "Registration failed"); setIsLoading(false); return; }
 
       toast.success("Account created! Check your email to confirm.");
       router.push(`/login?redirect=${encodeURIComponent(redirectTo)}`);
@@ -101,6 +105,7 @@ export default function RegisterPage() {
         cleanupRef.current = cleanup;
 
         const handleMessage = async (e: MessageEvent) => {
+          if (e.origin !== window.location.origin) return;
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
             handled = true;
             cleanup();

@@ -87,7 +87,7 @@ export async function PUT(request: Request) {
     const { supabase } = auth;
 
     const body = await request.json();
-    const { id, ...updates } = body;
+    const { id, ...rawUpdates } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -96,11 +96,17 @@ export async function PUT(request: Request) {
       );
     }
 
-    if (updates.code) updates.code = updates.code.toUpperCase();
-    if (updates.discount_value) updates.discount_value = Number(updates.discount_value);
-    if (updates.min_order) updates.min_order = Number(updates.min_order);
-    if (updates.max_discount) updates.max_discount = Number(updates.max_discount);
-    if (updates.usage_limit) updates.usage_limit = Number(updates.usage_limit);
+    const allowedFields = ["code", "description", "discount_type", "discount_value", "min_order", "max_discount", "usage_limit", "expires_at", "is_active"] as const;
+    const updates: Record<string, unknown> = {};
+    for (const key of allowedFields) {
+      if (key in rawUpdates) updates[key] = rawUpdates[key];
+    }
+
+    if (updates.code) updates.code = String(updates.code).toUpperCase();
+    if (updates.discount_value !== undefined) updates.discount_value = Number(updates.discount_value);
+    if (updates.min_order !== undefined) updates.min_order = Number(updates.min_order);
+    if (updates.max_discount !== undefined) updates.max_discount = updates.max_discount ? Number(updates.max_discount) : null;
+    if (updates.usage_limit !== undefined) updates.usage_limit = Number(updates.usage_limit);
 
     const { data, error } = await supabase
       .from("coupons")

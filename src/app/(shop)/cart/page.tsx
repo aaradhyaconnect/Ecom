@@ -22,6 +22,7 @@ export default function CartPage() {
     discount: number;
     discount_type: "percentage" | "flat";
     max_discount?: number;
+    min_order?: number;
   } | null>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState("");
@@ -29,14 +30,16 @@ export default function CartPage() {
   const subtotal = getSubtotal();
   const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
 
+  const isCouponExpired = appliedCoupon?.min_order != null && subtotal < appliedCoupon.min_order;
+
   const discount = useMemo(() => {
-    if (!appliedCoupon) return 0;
+    if (!appliedCoupon || isCouponExpired) return 0;
     if (appliedCoupon.discount_type === "flat") return appliedCoupon.discount;
     const calculated = (subtotal * appliedCoupon.discount) / 100;
     return appliedCoupon.max_discount
       ? Math.min(calculated, appliedCoupon.max_discount)
       : calculated;
-  }, [appliedCoupon, subtotal]);
+  }, [appliedCoupon, subtotal, isCouponExpired]);
 
   const total = Math.max(0, subtotal + shipping - discount);
 
@@ -77,11 +80,12 @@ export default function CartPage() {
 
   const handleSaveCart = async () => {
     if (!user) return;
+    const currentItems = useCartStore.getState().items;
     try {
       await fetch("/api/cart", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items }),
+        body: JSON.stringify({ items: currentItems }),
       });
     } catch {
       // silent
@@ -90,16 +94,50 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-        <ShoppingBag className="h-20 w-20 text-charcoal/10 mb-6" />
-        <h1 className="text-2xl font-serif font-bold text-charcoal mb-2">Your cart is empty</h1>
-        <p className="text-charcoal-muted mb-8">Looks like you haven&apos;t added anything yet</p>
-        <Link href="/products/new-arrivals">
-          <Button variant="outline" size="lg">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Continue Shopping
-          </Button>
-        </Link>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <div className="min-h-[40vh] flex flex-col items-center justify-center">
+          <ShoppingBag className="h-20 w-20 text-charcoal/10 mb-6" />
+          <h1 className="text-2xl font-serif font-bold text-charcoal mb-2">Your cart is empty</h1>
+          <p className="text-charcoal-muted mb-8">Looks like you haven&apos;t added anything yet</p>
+          <Link href="/products/new-arrivals">
+            <Button variant="outline" size="lg">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Continue Shopping
+            </Button>
+          </Link>
+        </div>
+        {savedItems.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-lg font-serif font-bold text-charcoal mb-4">Saved for Later</h2>
+            <div className="space-y-3">
+              {savedItems.map((item) => (
+                <div key={item.id} className="flex items-center gap-4 border border-ivory-dark p-3">
+                  <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden bg-ivory-dark">
+                    <Image
+                      src={item.product.images?.[0] || "/placeholder.svg"}
+                      alt={item.product.name}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-charcoal truncate">{item.product.name}</p>
+                    <p className="text-xs text-charcoal-muted">{item.size} / {item.color}</p>
+                    <p className="text-sm font-semibold text-charcoal mt-0.5">{formatPrice(item.product.price)}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" onClick={() => { moveToCart(item.id); toast.success("Moved to cart"); }}>
+                      <Plus className="h-3 w-3 mr-1" /> Move to Cart
+                    </Button>
+                    <button onClick={() => removeSaved(item.id)} className="p-1 text-charcoal-muted hover:text-rose-500 transition-colors">
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -158,6 +196,7 @@ export default function CartPage() {
                     <div className="flex items-center border border-ivory-dark">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        aria-label="Decrease quantity"
                         className="p-1.5 hover:bg-charcoal/5 transition-colors"
                       >
                       <Minus className="h-4 w-4" />
@@ -167,6 +206,7 @@ export default function CartPage() {
                     </span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      aria-label="Increase quantity"
                       className="p-1.5 hover:bg-charcoal/5 transition-colors"
                     >
                       <Plus className="h-4 w-4" />
@@ -178,6 +218,7 @@ export default function CartPage() {
                       onClick={() => {
                         saveForLater(item.id);
                         toast.success("Saved for later");
+                        handleSaveCart();
                       }}
                       className="p-2 text-charcoal-muted hover:text-gold-dark transition-colors"
                       title="Save for later"
@@ -187,8 +228,8 @@ export default function CartPage() {
                     <button
                       onClick={() => {
                         removeItem(item.id);
-                        handleSaveCart();
                         toast.success("Item removed");
+                        handleSaveCart();
                       }}
                       className="p-2 text-charcoal-muted hover:text-rose-500 transition-colors"
                     >

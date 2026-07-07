@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useRef } from "react";
 import { X } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -21,6 +21,7 @@ export function Modal({
   size = "md",
   showClose = true,
 }: ModalProps) {
+  const closeRef = useRef<HTMLButtonElement>(null);
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -32,6 +33,7 @@ export function Modal({
     if (isOpen) {
       document.addEventListener("keydown", handleEscape);
       document.body.style.overflow = "hidden";
+      closeRef.current?.focus();
     }
     return () => {
       document.removeEventListener("keydown", handleEscape);
@@ -64,7 +66,9 @@ export function Modal({
             {title && <h2 className="text-lg font-serif font-semibold text-charcoal">{title}</h2>}
             {showClose && (
               <button
+                ref={closeRef}
                 onClick={onClose}
+                aria-label="Close modal"
                 className="p-1 hover:bg-ivory-dark transition-colors"
               >
                 <X className="h-5 w-5 text-charcoal-muted" />

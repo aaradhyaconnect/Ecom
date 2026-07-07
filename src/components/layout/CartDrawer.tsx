@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useEffect } from "react";
 import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useUIStore } from "@/lib/store/ui";
@@ -11,6 +12,15 @@ import { Button } from "@/components/ui/Button";
 export function CartDrawer() {
   const { items, removeItem, updateQuantity, getSubtotal, getItemCount } = useCartStore();
   const { isCartOpen, closeCart } = useUIStore();
+
+  useEffect(() => {
+    if (isCartOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [isCartOpen]);
 
   return (
     <>
@@ -83,6 +93,7 @@ export function CartDrawer() {
                           <div className="flex items-center border border-ivory-dark">
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                              aria-label="Decrease quantity"
                               className="p-1.5 hover:bg-ivory-dark transition-colors"
                             >
                               <Minus className="h-3 w-3" />
@@ -90,6 +101,7 @@ export function CartDrawer() {
                             <span className="px-3 text-xs font-medium">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              aria-label="Increase quantity"
                               className="p-1.5 hover:bg-ivory-dark transition-colors"
                             >
                               <Plus className="h-3 w-3" />

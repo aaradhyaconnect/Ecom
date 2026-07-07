@@ -15,13 +15,14 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("profiles")
-      .select("*, orders!inner(id, total, order_status)", { count: "exact" })
+      .select("*, orders(id, total, order_status)", { count: "exact" })
       .eq("role", "customer")
       .order("created_at", { ascending: false });
 
     if (search) {
+      const escaped = search.replace(/[%_\\]/g, "\\$&");
       query = query.or(
-        `name.ilike.%${search}%,email.ilike.%${search}%`
+        `name.ilike.%${escaped}%,email.ilike.%${escaped}%`
       );
     }
 

@@ -1,7 +1,11 @@
 import { SITE } from "@/lib/constants/site";
 import { Mail, MapPin } from "lucide-react";
 
-export const metadata = { title: "Careers — HAINJU" };
+export const metadata = {
+  title: "Careers",
+  description: "Join the HAINJU team. Explore open positions in fashion design, marketing, and more.",
+  alternates: { canonical: "/careers" },
+};
 
 const OPENINGS = [
   {

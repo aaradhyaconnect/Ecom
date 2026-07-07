@@ -4,7 +4,8 @@ export function sanitizeRedirect(param: string | null | undefined): string {
     !param.startsWith("/") ||
     param.startsWith("//") ||
     param.includes("@") ||
-    param.includes("://")
+    param.includes("://") ||
+    param.includes("\\")
   ) {
     return "/";
   }

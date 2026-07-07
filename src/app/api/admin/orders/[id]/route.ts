@@ -71,6 +71,30 @@ export async function PUT(
       );
     }
 
+    const VALID_TRANSITIONS: Record<string, string[]> = {
+      pending: ["confirmed", "cancelled"],
+      confirmed: ["packed", "cancelled"],
+      packed: ["shipped", "cancelled"],
+      shipped: ["out-for-delivery"],
+      "out-for-delivery": ["delivered"],
+      delivered: ["returned"],
+      cancelled: [],
+      returned: [],
+    };
+
+    const { data: currentOrder } = await supabase
+      .from("orders")
+      .select("order_status")
+      .eq("id", id)
+      .single();
+
+    if (currentOrder && !VALID_TRANSITIONS[currentOrder.order_status]?.includes(body.order_status)) {
+      return NextResponse.json(
+        { success: false, error: `Cannot transition from "${currentOrder.order_status}" to "${body.order_status}"` },
+        { status: 400 }
+      );
+    }
+
     const updateData: Record<string, unknown> = {
       order_status: body.order_status,
       updated_at: new Date().toISOString(),
@@ -85,6 +109,7 @@ export async function PUT(
       .from("orders")
       .update(updateData)
       .eq("id", id)
+      .eq("order_status", currentOrder?.order_status || body.order_status)
       .select()
       .single();
 
@@ -95,24 +120,26 @@ export async function PUT(
       );
     }
 
-    if (body.order_status === "cancelled") {
+    if (body.order_status === "cancelled" || body.order_status === "returned") {
       const { data: fullOrder } = await supabase
         .from("orders")
         .select("items,payment_status")
         .eq("id", id)
         .single();
       if (fullOrder && fullOrder.payment_status !== "paid") {
+        const adminDb = await (await import("@/lib/supabase/server")).createAdminClient();
         for (const item of fullOrder.items) {
-          const { data: product } = await supabase
+          const { data: product } = await adminDb
             .from("products")
             .select("stock")
             .eq("id", item.product_id)
             .single();
           if (product) {
-            await supabase
+            await adminDb
               .from("products")
               .update({ stock: product.stock + item.quantity })
-              .eq("id", item.product_id);
+              .eq("id", item.product_id)
+              .eq("stock", product.stock);
           }
         }
       }
