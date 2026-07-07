@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
-import { useHydrated } from "@/hooks/useHydrated";
 import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
@@ -12,7 +11,7 @@ import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Package, MapPin, LogOut, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
-import type { Order, Address } from "@/types";
+import type { Order, Address, User } from "@/types";
 
 function LoadingSkeleton() {
   return (
@@ -25,13 +24,13 @@ function LoadingSkeleton() {
 }
 
 export default function ProfilePage() {
-  const { user, logout } = useAuthStore();
-  const mounted = useHydrated();
-  const authLoading = useAuthStore((s) => s.loading);
+  const { setUser } = useAuthStore();
   const supabase = useRef(createClient()).current;
 
+  const [user, setLocalUser] = useState<User | null>(null);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [dataLoading, setDataLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -41,16 +40,36 @@ export default function ProfilePage() {
     full_name: "", phone: "", street: "", city: "", state: "", pincode: "", landmark: "",
   });
 
-  const redirectTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
   useEffect(() => {
-    if (mounted && !authLoading && !user) {
-      redirectTimer.current = setTimeout(() => {
-        window.location.replace("/login?redirect=%2Faccount");
-      }, 100);
-    }
-    return () => { if (redirectTimer.current) clearTimeout(redirectTimer.current); };
-  }, [mounted, authLoading, user]);
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/auth/me");
+        if (cancelled) return;
+        if (res.ok) {
+          const data = await res.json();
+          if (data.user) {
+            setLocalUser(data.user);
+            setName(data.user.name ?? "");
+            setPhone(data.user.phone ?? "");
+            setUser(data.user);
+          } else {
+            window.location.replace("/login?redirect=%2Faccount");
+            return;
+          }
+        } else {
+          window.location.replace("/login?redirect=%2Faccount");
+          return;
+        }
+      } catch {
+        if (!cancelled) window.location.replace("/login?redirect=%2Faccount");
+        return;
+      } finally {
+        if (!cancelled) setInitialLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [setUser]);
 
   useEffect(() => {
     if (!user) return;
@@ -66,34 +85,28 @@ export default function ProfilePage() {
         if (ordersRes.data) setOrders(ordersRes.data as Order[]);
         if (!profileRes.error && profileRes.data?.addresses) setAddresses(profileRes.data.addresses as Address[]);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setDataLoading(false);
       }
     })();
 
     return () => { cancelled = true; };
   }, [user?.id, supabase]);
 
-  useEffect(() => {
-    if (user) {
-      setName(user.name ?? "");
-      setPhone(user.phone ?? "");
-    }
-  }, [user?.id, user?.name, user?.phone]);
-
-  async function handleSaveProfile() {
+  const handleSaveProfile = useCallback(async () => {
     if (!name.trim()) { toast.error("Name is required"); return; }
     setSaving(true);
     const { error } = await supabase.from("profiles").update({ name, phone }).eq("id", user!.id);
     if (error) {
       toast.error(error.message);
     } else {
-      useAuthStore.getState().setUser({ ...user!, name, phone });
+      setLocalUser({ ...user!, name, phone });
+      setUser({ ...user!, name, phone });
       toast.success("Profile updated");
     }
     setSaving(false);
-  }
+  }, [name, phone, supabase, user, setUser]);
 
-  async function handleAddAddress() {
+  const handleAddAddress = useCallback(async () => {
     if (!addressForm.full_name.trim()) { toast.error("Name is required"); return; }
     if (!addressForm.phone.trim()) { toast.error("Phone is required"); return; }
     if (!addressForm.street.trim()) { toast.error("Street is required"); return; }
@@ -111,9 +124,9 @@ export default function ProfilePage() {
       setAddressForm({ full_name: user?.name ?? "", phone: user?.phone ?? "", street: "", city: "", state: "", pincode: "", landmark: "" });
       toast.success("Address added");
     }
-  }
+  }, [addressForm, addresses, supabase, user]);
 
-  async function handleRemoveAddress(idx: number) {
+  const handleRemoveAddress = useCallback(async (idx: number) => {
     const updated = addresses.filter((_, i) => i !== idx);
     const { error } = await supabase.from("profiles").update({ addresses: updated }).eq("id", user!.id);
     if (error) {
@@ -122,14 +135,14 @@ export default function ProfilePage() {
       setAddresses(updated);
       toast.success("Address removed");
     }
-  }
+  }, [addresses, supabase, user]);
 
-  async function handleLogout() {
+  const handleLogout = useCallback(async () => {
     try { await supabase.auth.signOut(); } catch { /* ok */ }
     await fetch("/api/auth/set-session", { method: "DELETE" }).catch(() => {});
-    logout();
+    useAuthStore.getState().logout();
     window.location.replace("/");
-  }
+  }, [supabase]);
 
   function getStatusStyle(v: string) {
     return ORDER_STATUSES.find((s) => s.value === v)?.color ?? "";
@@ -139,8 +152,8 @@ export default function ProfilePage() {
     return ORDER_STATUSES.find((s) => s.value === v)?.label ?? v;
   }
 
-  if (!mounted || authLoading || !user) return <LoadingSkeleton />;
-  if (loading) return <LoadingSkeleton />;
+  if (initialLoading || !user) return <LoadingSkeleton />;
+  if (dataLoading) return <LoadingSkeleton />;
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
@@ -149,7 +162,6 @@ export default function ProfilePage() {
         <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">My Profile</h1>
       </div>
 
-      {/* Profile */}
       <div className="bg-ivory border border-ivory-dark p-6 mb-6">
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-ivory-dark">
           <div className="h-16 w-16 bg-charcoal text-ivory flex items-center justify-center text-xl font-bold flex-shrink-0">
@@ -167,7 +179,6 @@ export default function ProfilePage() {
         <Button onClick={handleSaveProfile} isLoading={saving}>Save Changes</Button>
       </div>
 
-      {/* Addresses */}
       <div className="bg-ivory border border-ivory-dark p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -215,7 +226,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Recent Orders */}
       <div className="bg-ivory border border-ivory-dark p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
