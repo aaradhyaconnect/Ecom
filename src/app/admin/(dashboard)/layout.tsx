@@ -31,7 +31,7 @@ export default async function AdminLayout({
   }
 
   const user: UserType = {
-    id: authUser.id as string as UserType["id"],
+    id: authUser.id,
     email: authUser.email ?? "",
     name: authUser.user_metadata?.name ?? authUser.email?.split("@")[0] ?? "Admin",
     phone: authUser.phone ?? "",
@@ -41,11 +41,11 @@ export default async function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-ivory">
+    <div className="min-h-screen bg-[#f8f7f4]">
       <AdminSidebar />
       <AdminHeader user={user} />
       <main className="lg:pl-64 pt-16 pb-20 lg:pb-8">
-        <div className="p-4 lg:p-8">{children}</div>
+        <div className="p-4 lg:p-6">{children}</div>
       </main>
       <AdminMobileNav />
     </div>

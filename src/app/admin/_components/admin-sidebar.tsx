@@ -12,7 +12,7 @@ import {
   Image,
   BarChart3,
   Warehouse,
-  Settings,
+  ExternalLink,
 } from "lucide-react";
 
 const navItems = [
@@ -27,21 +27,29 @@ const navItems = [
 ];
 
 const bottomItems = [
-  { href: "/", label: "View Store", icon: Settings },
+  { href: "/", label: "View Store", icon: ExternalLink },
 ];
 
 export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-ivory-dark/80 bg-ivory lg:flex flex-col">
-      <div className="flex h-16 items-center border-b border-ivory-dark/80 px-6">
-        <Link href="/admin" className="text-xl font-serif font-bold tracking-[0.15em] text-charcoal">
-          HAINJU<span className="text-charcoal-muted/40 font-sans text-[10px] tracking-[0.3em] ml-2 uppercase">Admin</span>
+    <aside className="fixed left-0 top-0 z-40 hidden h-screen w-64 border-r border-ivory-dark/60 bg-white lg:flex flex-col">
+      {/* Logo */}
+      <div className="flex h-16 items-center border-b border-ivory-dark/60 px-6">
+        <Link href="/admin" className="flex items-center gap-2">
+          <div className="h-8 w-8 bg-charcoal flex items-center justify-center">
+            <span className="text-ivory text-xs font-bold tracking-wider">H</span>
+          </div>
+          <div>
+            <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">HAINJU</span>
+            <span className="text-[9px] font-sans tracking-[0.25em] text-charcoal-muted/50 ml-1.5 uppercase">Admin</span>
+          </div>
         </Link>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
+      {/* Navigation */}
+      <nav className="flex-1 p-3 space-y-0.5">
         {navItems.map((item) => {
           const isActive =
             item.href === "/admin"
@@ -52,28 +60,36 @@ export function AdminSidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-all duration-300 rounded-lg",
+                "flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium transition-all duration-200 rounded-lg group",
                 isActive
-                  ? "bg-charcoal text-ivory"
-                  : "text-charcoal-muted hover:bg-ivory-dark/50 hover:text-charcoal"
+                  ? "bg-charcoal text-ivory shadow-sm"
+                  : "text-charcoal-muted hover:bg-ivory-dark/40 hover:text-charcoal"
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className={cn(
+                "h-4 w-4 transition-colors",
+                isActive ? "text-ivory" : "text-charcoal-muted group-hover:text-charcoal"
+              )} />
               {item.label}
+              {isActive && (
+                <div className="ml-auto h-1.5 w-1.5 rounded-full bg-gold" />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-ivory-dark/80">
+      {/* Bottom */}
+      <div className="p-3 border-t border-ivory-dark/60">
         {bottomItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-charcoal-muted/60 hover:text-charcoal transition-colors duration-300"
+            className="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-charcoal-muted/50 hover:text-charcoal hover:bg-ivory-dark/40 transition-all duration-200 rounded-lg"
           >
             <item.icon className="h-4 w-4" />
             {item.label}
+            <ExternalLink className="h-3 w-3 ml-auto opacity-40" />
           </Link>
         ))}
       </div>

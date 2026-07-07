@@ -7,6 +7,7 @@ import {
   Package,
   TrendingUp,
   TrendingDown,
+  ArrowUpRight,
 } from "lucide-react";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { Badge } from "@/components/ui/Badge";
@@ -23,7 +24,7 @@ function StatusBadge({ status }: { status: string }) {
     cancelled: "error",
     returned: "error",
   };
-  return <Badge variant={variants[status] || "default"}>{status}</Badge>;
+  return <Badge variant={variants[status] || "default"}>{status.replace(/-/g, " ")}</Badge>;
 }
 
 export function DashboardClient({
@@ -48,6 +49,7 @@ export function DashboardClient({
       icon: IndianRupee,
       trend: `${revenueTrend >= 0 ? "+" : ""}${revenueTrend}% this month`,
       up: revenueTrend >= 0,
+      color: "bg-emerald-50 text-emerald-600",
     },
     {
       label: "Total Orders",
@@ -55,6 +57,7 @@ export function DashboardClient({
       icon: ShoppingCart,
       trend: `${ordersTrend >= 0 ? "+" : ""}${ordersTrend}% this month`,
       up: ordersTrend >= 0,
+      color: "bg-blue-50 text-blue-600",
     },
     {
       label: "Total Customers",
@@ -62,6 +65,7 @@ export function DashboardClient({
       icon: Users,
       trend: "All time",
       up: true,
+      color: "bg-violet-50 text-violet-600",
     },
     {
       label: "Total Products",
@@ -69,34 +73,34 @@ export function DashboardClient({
       icon: Package,
       trend: "All time",
       up: true,
+      color: "bg-amber-50 text-amber-600",
     },
   ];
 
   const revenueDays = a.revenue_by_day || [];
-  const maxRevenue = Math.max(
-    ...revenueDays.map((d) => d.revenue),
-    1
-  );
+  const maxRevenue = Math.max(...revenueDays.map((d) => d.revenue), 1);
 
   return (
     <div className="space-y-6">
+      {/* Page Header */}
       <div>
         <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Overview</span>
         <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Dashboard</h1>
-        <p className="text-[13px] text-charcoal-muted/60">
-          Welcome back! Here&apos;s what&apos;s happening today.
+        <p className="text-[13px] text-charcoal-muted/60 mt-0.5">
+          Welcome back! Here&apos;s what&apos;s happening with your store.
         </p>
       </div>
 
+      {/* Stat Cards */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
           <div
             key={card.label}
-            className="border border-ivory-dark/80 bg-ivory p-5 rounded-xl hover:border-gold/20 transition-colors duration-500"
+            className="bg-white border border-ivory-dark/60 p-5 rounded-xl hover:shadow-sm transition-all duration-300 group"
           >
             <div className="flex items-center justify-between">
-              <div className="bg-ivory-dark/50 p-2.5 rounded-lg">
-                <card.icon className="h-5 w-5 text-charcoal-muted" />
+              <div className={`p-2.5 rounded-lg ${card.color}`}>
+                <card.icon className="h-4 w-4" />
               </div>
               {card.trend && (
                 <span
@@ -114,77 +118,81 @@ export function DashboardClient({
               )}
             </div>
             <p className="mt-3 text-2xl font-bold text-charcoal tracking-tight">{card.value}</p>
-            <p className="text-[11px] text-charcoal-muted/60 mt-0.5">{card.label}</p>
+            <p className="text-[11px] text-charcoal-muted/50 mt-0.5">{card.label}</p>
           </div>
         ))}
       </div>
 
+      {/* Charts Row */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="border border-ivory-dark/80 bg-ivory p-5 rounded-xl lg:col-span-2">
-          <h2 className="mb-4 text-[13px] font-semibold text-charcoal">Revenue (Last 30 Days)</h2>
-          <div className="flex items-end gap-1.5 h-40">
+        {/* Revenue Chart */}
+        <div className="bg-white border border-ivory-dark/60 p-5 rounded-xl lg:col-span-2">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-[13px] font-semibold text-charcoal">Revenue (Last 30 Days)</h2>
+            <span className="text-[11px] text-charcoal-muted/50">
+              {formatPrice(revenueDays.reduce((sum, d) => sum + d.revenue, 0))} total
+            </span>
+          </div>
+          <div className="flex items-end gap-[3px] h-40">
             {revenueDays.map((day) => (
               <div
                 key={day.date}
-                className="flex-1 bg-charcoal/80 hover:bg-charcoal transition-colors relative group rounded-t-sm"
+                className="flex-1 bg-gradient-to-t from-charcoal/80 to-charcoal/60 hover:from-charcoal hover:to-charcoal/80 transition-colors relative group rounded-t-sm min-w-[4px]"
                 style={{ height: `${(day.revenue / maxRevenue) * 100}%` }}
               >
-                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-charcoal text-ivory text-[10px] rounded-lg px-2 py-1 whitespace-nowrap">
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 hidden group-hover:block bg-charcoal text-ivory text-[10px] rounded-lg px-2 py-1 whitespace-nowrap z-10 shadow-lg">
                   {formatPrice(day.revenue)}
                 </div>
               </div>
             ))}
           </div>
           <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted/40">
-            <span>{revenueDays[0]?.date?.slice(5)}</span>
-            <span>
-              {revenueDays[revenueDays.length - 1]?.date?.slice(5)}
-            </span>
+            <span>{revenueDays[0]?.date?.slice(5) || "No data"}</span>
+            <span>{revenueDays[revenueDays.length - 1]?.date?.slice(5) || ""}</span>
           </div>
         </div>
 
-        <div className="border border-ivory-dark/80 bg-ivory p-5 rounded-xl">
+        {/* Top Products */}
+        <div className="bg-white border border-ivory-dark/60 p-5 rounded-xl">
           <h2 className="mb-4 text-[13px] font-semibold text-charcoal">Top Products</h2>
           <div className="space-y-3">
             {(a.top_products || []).slice(0, 5).map((product, i) => (
-              <div
-                key={product.name}
-                className="flex items-center justify-between"
-              >
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-medium text-charcoal-muted/40 w-4">
+              <div key={product.name} className="flex items-center justify-between">
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[11px] font-medium text-charcoal-muted/40 w-4 flex-shrink-0">
                     {i + 1}.
                   </span>
-                  <span className="text-[13px] truncate max-w-[140px] text-charcoal">
+                  <span className="text-[13px] truncate text-charcoal">
                     {product.name}
                   </span>
                 </div>
-                <span className="text-[13px] font-medium text-charcoal">
+                <span className="text-[12px] font-medium text-charcoal-muted flex-shrink-0 ml-2">
                   {product.sales} sold
                 </span>
               </div>
             ))}
             {(a.top_products || []).length === 0 && (
-              <p className="text-[13px] text-charcoal-muted/40">No data yet</p>
+              <p className="text-[13px] text-charcoal-muted/40 text-center py-4">No sales data yet</p>
             )}
           </div>
         </div>
       </div>
 
-      <div className="border border-ivory-dark/80 bg-ivory rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between border-b border-ivory-dark/80 px-5 py-4">
+      {/* Recent Orders */}
+      <div className="bg-white border border-ivory-dark/60 rounded-xl overflow-hidden">
+        <div className="flex items-center justify-between border-b border-ivory-dark/60 px-5 py-4">
           <h2 className="text-[13px] font-semibold text-charcoal">Recent Orders</h2>
           <Link
             href="/admin/orders"
-            className="text-[11px] font-medium text-charcoal-muted/60 hover:text-charcoal uppercase tracking-wider transition-colors"
+            className="text-[11px] font-medium text-charcoal-muted/50 hover:text-charcoal uppercase tracking-wider transition-colors flex items-center gap-1"
           >
-            View All
+            View All <ArrowUpRight className="h-3 w-3" />
           </Link>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-ivory-dark/80 text-left text-[11px] text-charcoal-muted/40 uppercase tracking-wider">
+              <tr className="border-b border-ivory-dark/60 text-left text-[11px] text-charcoal-muted/40 uppercase tracking-wider">
                 <th className="px-5 py-3 font-medium">Order ID</th>
                 <th className="px-5 py-3 font-medium">Status</th>
                 <th className="px-5 py-3 font-medium">Total</th>
@@ -193,14 +201,14 @@ export function DashboardClient({
             </thead>
             <tbody>
               {recentOrders.slice(0, 5).map((order) => (
-                <tr key={order.id} className="border-b border-ivory-dark/50 last:border-0 hover:bg-ivory-dark/20 transition-colors">
+                <tr key={order.id} className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors">
                   <td className="px-5 py-3 font-medium text-charcoal">
-                    {order.order_id}
+                    #{order.order_id}
                   </td>
                   <td className="px-5 py-3">
                     <StatusBadge status={order.order_status} />
                   </td>
-                  <td className="px-5 py-3 text-charcoal">
+                  <td className="px-5 py-3 text-charcoal font-medium">
                     {formatPrice(order.total)}
                   </td>
                   <td className="px-5 py-3 text-charcoal-muted/60">
