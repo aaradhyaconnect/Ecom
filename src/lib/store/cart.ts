@@ -124,14 +124,23 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const item = state.savedItems.find((i) => i.id === id);
           if (!item) return state;
+          if (item.product.stock <= 0) return state;
           const existingIndex = state.items.findIndex(
             (i) => i.product_id === item.product_id && i.size === item.size && i.color === item.color
           );
           if (existingIndex > -1) {
+            const existing = state.items[existingIndex];
+            const maxAdd = Math.max(0, item.product.stock - existing.quantity);
+            const addQty = Math.min(item.quantity, maxAdd);
+            if (addQty <= 0) {
+              return {
+                savedItems: state.savedItems.filter((i) => i.id !== id),
+              };
+            }
             return {
               savedItems: state.savedItems.filter((i) => i.id !== id),
               items: state.items.map((i, idx) =>
-                idx === existingIndex ? { ...i, quantity: i.quantity + item.quantity } : i
+                idx === existingIndex ? { ...i, quantity: existing.quantity + addQty } : i
               ),
             };
           }

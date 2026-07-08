@@ -187,6 +187,8 @@ export function MultiImageUpload({
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const valueRef = useRef(value);
+  valueRef.current = value;
 
   const upload = useCallback(
     async (file: File) => {
@@ -203,7 +205,7 @@ export function MultiImageUpload({
         const data = await res.json();
 
         if (data.success) {
-          onChange([...value, data.url]);
+          onChange([...valueRef.current, data.url]);
         } else {
           toast.error(data.error || "Upload failed");
         }
@@ -213,7 +215,7 @@ export function MultiImageUpload({
         setUploading(false);
       }
     },
-    [folder, onChange, value]
+    [folder, onChange]
   );
 
   const handleFile = (file: File) => {

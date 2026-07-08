@@ -1,8 +1,18 @@
 import { NextResponse } from "next/server";
 import { createPublicClient } from "@/lib/supabase/server";
+import { checkRateLimit, getClientIp } from "@/lib/utils/rate-limit";
 
 export async function POST(request: Request) {
   try {
+    const ip = getClientIp(request);
+    const { allowed, resetIn } = checkRateLimit(`newsletter:${ip}`, { windowMs: 60000, maxRequests: 3 });
+    if (!allowed) {
+      return NextResponse.json(
+        { success: false, error: `Too many attempts. Try again in ${Math.ceil(resetIn / 1000)}s` },
+        { status: 429 }
+      );
+    }
+
     const { email } = await request.json();
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {

@@ -51,6 +51,18 @@ export async function PUT(request: Request) {
 
     const body = await request.json();
 
+    const ALLOWED_FIELDS = [
+      "store_name", "store_description", "contact_email", "contact_phone", "address",
+      "currency", "tax_rate", "shipping_fee", "free_shipping_min",
+      "social_instagram", "social_facebook", "social_twitter", "social_youtube",
+      "seo_title", "seo_description", "seo_keywords",
+    ] as const;
+
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
+    for (const key of ALLOWED_FIELDS) {
+      if (key in body) updates[key] = body[key];
+    }
+
     const { data: existing } = await supabase
       .from("store_settings")
       .select("id")
@@ -60,7 +72,7 @@ export async function PUT(request: Request) {
     if (existing) {
       const { error } = await supabase
         .from("store_settings")
-        .update({ ...body, updated_at: new Date().toISOString() })
+        .update(updates)
         .eq("id", 1);
 
       if (error) {
@@ -69,7 +81,7 @@ export async function PUT(request: Request) {
     } else {
       const { error } = await supabase
         .from("store_settings")
-        .insert({ id: 1, ...body, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+        .insert({ id: 1, ...updates, created_at: new Date().toISOString() });
 
       if (error) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });

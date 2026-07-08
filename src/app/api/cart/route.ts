@@ -25,19 +25,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { error } = await supabase.from("cart_items").upsert(
-      items.map((item: { product_id: string; quantity: number; size: string; color: string }) => ({
+    const sanitized = items
+      .filter((item: { product_id?: string; quantity?: number; size?: string; color?: string }) => {
+        if (!item.product_id || typeof item.product_id !== "string") return false;
+        const qty = Number(item.quantity);
+        if (!Number.isInteger(qty) || qty < 1 || qty > 20) return false;
+        return true;
+      })
+      .map((item: { product_id: string; quantity: number; size: string; color: string }) => ({
         user_id: user.id,
         product_id: item.product_id,
         quantity: item.quantity,
-        size: item.size,
-        color: item.color,
-      })),
-      {
-        onConflict: "user_id,product_id,size,color",
-        ignoreDuplicates: false,
-      }
-    );
+        size: String(item.size || ""),
+        color: String(item.color || ""),
+      }));
+
+    if (sanitized.length === 0) {
+      return Response.json(
+        { success: false, error: "No valid items" },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase.from("cart_items").upsert(sanitized, {
+      onConflict: "user_id,product_id,size,color",
+      ignoreDuplicates: false,
+    });
 
     if (error) {
       return Response.json(

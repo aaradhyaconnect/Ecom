@@ -96,7 +96,9 @@ export function Modal({
     >
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
-        onClick={onClose}
+        onMouseDown={(e) => {
+          if (e.target === e.currentTarget) onClose();
+        }}
       />
       <div
         ref={contentRef}

@@ -149,7 +149,14 @@ export async function PUT(request: Request) {
     }
 
     if (updates.name) {
-      updates.slug = slugify(updates.name as string);
+      const newSlug = slugify(updates.name as string);
+      const { data: slugCollision } = await supabase
+        .from("products")
+        .select("id")
+        .eq("slug", newSlug)
+        .neq("id", id)
+        .maybeSingle();
+      updates.slug = slugCollision ? `${newSlug}-${Date.now()}` : newSlug;
     }
     if (updates.price !== undefined) updates.price = Number(updates.price);
     if (updates.compare_price !== undefined) updates.compare_price = updates.compare_price ? Number(updates.compare_price) : null;
@@ -191,6 +198,18 @@ export async function DELETE(request: Request) {
       return NextResponse.json(
         { success: false, error: "Product ID is required" },
         { status: 400 }
+      );
+    }
+
+    const { count: orderCount } = await supabase
+      .from("orders")
+      .select("id", { count: "exact", head: true })
+      .contains("items", [{ product_id: id }]);
+
+    if (orderCount && orderCount > 0) {
+      return NextResponse.json(
+        { success: false, error: `Cannot delete: product has ${orderCount} associated order(s). Consider deactivating instead.` },
+        { status: 409 }
       );
     }
 

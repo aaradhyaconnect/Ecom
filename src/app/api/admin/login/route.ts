@@ -56,7 +56,6 @@ export async function POST(request: Request) {
       success: true,
       data: {
         user: authData.user,
-        session: authData.session,
       },
     });
   } catch {

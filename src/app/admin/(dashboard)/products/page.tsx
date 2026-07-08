@@ -19,7 +19,6 @@ import {
   Trash2,
   Package,
   X,
-  RefreshCw,
   CheckSquare,
   Square,
   MinusSquare,
@@ -82,7 +81,6 @@ export default function AdminProductsPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [bulkDeleting, setBulkDeleting] = useState(false);
   const [editingField, setEditingField] = useState<{ id: string; field: string } | null>(null);
-  const [inlineValue, setInlineValue] = useState("");
 
   const search = useDebounce(searchInput, 300);
   const totalPages = Math.ceil(total / ITEMS_PER_PAGE);
@@ -108,7 +106,7 @@ export default function AdminProductsPage() {
   }, [search, category, page]);
 
   useEffect(() => {
-    setLoading(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, [fetchProducts]);
 
@@ -487,7 +485,6 @@ export default function AdminProductsPage() {
                         <button
                           onClick={() => {
                             setEditingField({ id: product.id, field: "price" });
-                            setInlineValue(String(product.price));
                           }}
                           className="font-medium text-charcoal hover:text-gold-dark transition-colors cursor-pointer"
                           title="Click to edit price"
@@ -518,7 +515,6 @@ export default function AdminProductsPage() {
                         <button
                           onClick={() => {
                             setEditingField({ id: product.id, field: "stock" });
-                            setInlineValue(String(product.stock));
                           }}
                           className={`font-medium cursor-pointer hover:underline transition-colors ${
                             product.stock > 0 ? "text-green-600" : "text-rose-500"

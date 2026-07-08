@@ -27,6 +27,7 @@ export const useAuthStore = create<AuthStore>()(
       name: "hainju-auth",
       partialize: (state) => ({
         user: state.user,
+        isAdmin: state.isAdmin,
       }),
     }
   )

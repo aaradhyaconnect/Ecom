@@ -56,6 +56,7 @@ export async function PUT(
     const validStatuses = [
       "pending",
       "confirmed",
+      "processing",
       "packed",
       "shipped",
       "out-for-delivery",
@@ -73,7 +74,8 @@ export async function PUT(
 
     const VALID_TRANSITIONS: Record<string, string[]> = {
       pending: ["confirmed", "cancelled"],
-      confirmed: ["packed", "cancelled"],
+      confirmed: ["processing", "packed", "cancelled"],
+      processing: ["packed", "cancelled"],
       packed: ["shipped", "cancelled"],
       shipped: ["out-for-delivery"],
       "out-for-delivery": ["delivered"],

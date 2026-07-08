@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
@@ -25,7 +25,7 @@ function LoadingSkeleton() {
 
 export default function ProfilePage() {
   const { setUser } = useAuthStore();
-  const supabase = useRef(createClient()).current;
+  const supabase = useMemo(() => createClient(), []);
 
   const [user, setLocalUser] = useState<User | null>(null);
   const [initialLoading, setInitialLoading] = useState(true);

@@ -1,21 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadImage } from "@/lib/r2";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+const SAFE_FOLDER_PATTERN = /^[a-zA-Z0-9_\-\/]+$/;
 
 export async function POST(req: NextRequest) {
   try {
-    const supabase = await createServerSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
-    const folder = (formData.get("folder") as string) || "uploads";
+    const rawFolder = (formData.get("folder") as string) || "uploads";
+    const folder = SAFE_FOLDER_PATTERN.test(rawFolder) ? rawFolder : "uploads";
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });

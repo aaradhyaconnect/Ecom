@@ -10,48 +10,48 @@ export default async function AdminDashboardPage() {
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
   const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1).toISOString();
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString();
+  const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [ordersAll, ordersToday, ordersMonth, ordersLastMonth, productsCount, customersCount] = await Promise.all([
-    supabase.from("orders").select("total, order_status, created_at, items").limit(10000),
+  const [ordersAllCount, ordersToday, ordersMonth, ordersLastMonth, orders30d, productsCount, customersCount] = await Promise.all([
+    supabase.from("orders").select("id", { count: "exact", head: true }),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", todayStart),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", monthStart),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", lastMonthStart).lte("created_at", lastMonthEnd),
+    supabase.from("orders").select("total, order_status, created_at, items").gte("created_at", thirtyDaysAgo),
     supabase.from("products").select("*", { count: "exact", head: true }),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "customer"),
   ]);
 
-  const allOrders = ordersAll.data || [];
-  const todayOrders = ordersToday.data || [];
-  const monthOrders = ordersMonth.data || [];
-  const lastMonthOrders = ordersLastMonth.data || [];
+  const cancelledReturned = new Set(["cancelled", "returned"]);
+  const recentOrders = orders30d.data || [];
 
-  const totalRevenue = allOrders
-    .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+  const revenueToday = (ordersToday.data || [])
+    .filter((o) => !cancelledReturned.has(o.order_status))
     .reduce((sum, o) => sum + (o.total || 0), 0);
 
-  const revenueMonth = monthOrders
-    .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+  const revenueMonth = (ordersMonth.data || [])
+    .filter((o) => !cancelledReturned.has(o.order_status))
     .reduce((sum, o) => sum + (o.total || 0), 0);
 
-  const revenueLastMonth = lastMonthOrders
-    .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
+  const revenueLastMonth = (ordersLastMonth.data || [])
+    .filter((o) => !cancelledReturned.has(o.order_status))
     .reduce((sum, o) => sum + (o.total || 0), 0);
+
+  const recentNonCancelled = recentOrders.filter((o) => !cancelledReturned.has(o.order_status));
 
   const analytics: AnalyticsSummary = {
-    total_revenue: totalRevenue,
-    total_orders: allOrders.length,
+    total_revenue: recentNonCancelled.reduce((sum, o) => sum + (o.total || 0), 0),
+    total_orders: ordersAllCount.count || 0,
     total_customers: customersCount.count || 0,
     total_products: productsCount.count || 0,
-    revenue_today: todayOrders
-      .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned")
-      .reduce((sum, o) => sum + (o.total || 0), 0),
-    orders_today: todayOrders.length,
+    revenue_today: revenueToday,
+    orders_today: ordersToday.data?.length || 0,
     revenue_month: revenueMonth,
-    orders_month: monthOrders.length,
+    orders_month: ordersMonth.data?.length || 0,
     revenue_last_month: revenueLastMonth,
-    orders_last_month: lastMonthOrders.length,
+    orders_last_month: ordersLastMonth.data?.length || 0,
     top_products: Object.entries(
-      allOrders
+      recentOrders
         .filter((o) => o.order_status === "delivered")
         .flatMap((o) => {
           const items = (o as { items?: { product?: { name?: string }; product_name?: string; quantity?: number; price?: number }[] }).items || [];
@@ -72,15 +72,13 @@ export default async function AdminDashboardPage() {
       .sort((a, b) => b.sales - a.sales)
       .slice(0, 10),
     orders_by_status: Object.entries(
-      allOrders.reduce<Record<string, number>>((acc, o) => {
+      recentOrders.reduce<Record<string, number>>((acc, o) => {
         acc[o.order_status] = (acc[o.order_status] || 0) + 1;
         return acc;
       }, {})
     ).map(([status, count]) => ({ status, count })),
     revenue_by_day: (() => {
-      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-      const map = allOrders
-        .filter((o) => o.order_status !== "cancelled" && o.order_status !== "returned" && new Date(o.created_at) >= thirtyDaysAgo)
+      const map = recentNonCancelled
         .reduce<Record<string, number>>((acc, o) => {
           const day = new Date(o.created_at).toISOString().split("T")[0];
           acc[day] = (acc[day] || 0) + (o.total || 0);

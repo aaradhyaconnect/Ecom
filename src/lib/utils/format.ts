@@ -2,7 +2,8 @@ export function formatPrice(price: number): string {
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
-    maximumFractionDigits: 0,
+    minimumFractionDigits: price % 1 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
   }).format(price);
 }
 
@@ -30,7 +31,9 @@ export function truncate(str: string, length: number): string {
 export function slugify(str: string): string {
   return str
     .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s\u0900-\u097F-]/g, "")
     .replace(/[\s_-]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }

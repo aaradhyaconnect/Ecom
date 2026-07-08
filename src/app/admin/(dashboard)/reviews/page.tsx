@@ -49,28 +49,39 @@ export default function ReviewsPage() {
   useEffect(() => { fetchReviews(); }, [fetchReviews]);
 
   const handleApprove = async (id: string) => {
-    const res = await fetch("/api/admin/reviews", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, is_approved: true }),
-    });
-    if (res.ok) { toast.success("Review approved"); fetchReviews(); }
+    try {
+      const res = await fetch("/api/admin/reviews", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, is_approved: true }),
+      });
+      const data = await res.json();
+      if (data.success) { toast.success("Review approved"); fetchReviews(); }
+      else { toast.error(data.error || "Failed to approve"); }
+    } catch { toast.error("Failed to approve review"); }
   };
 
   const handleReject = async (id: string) => {
-    const res = await fetch("/api/admin/reviews", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, is_approved: false }),
-    });
-    if (res.ok) { toast.success("Review hidden"); fetchReviews(); }
+    try {
+      const res = await fetch("/api/admin/reviews", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, is_approved: false }),
+      });
+      const data = await res.json();
+      if (data.success) { toast.success("Review hidden"); fetchReviews(); }
+      else { toast.error(data.error || "Failed to hide"); }
+    } catch { toast.error("Failed to hide review"); }
   };
 
   const handleDelete = async (id: string) => {
     if (!window.confirm("Delete this review permanently?")) return;
-    const res = await fetch(`/api/admin/reviews?id=${id}`, { method: "DELETE" });
-    const data = await res.json();
-    if (data.success) { toast.success("Review deleted"); fetchReviews(); }
+    try {
+      const res = await fetch(`/api/admin/reviews?id=${id}`, { method: "DELETE" });
+      const data = await res.json();
+      if (data.success) { toast.success("Review deleted"); fetchReviews(); }
+      else { toast.error(data.error || "Failed to delete"); }
+    } catch { toast.error("Failed to delete review"); }
   };
 
   const pendingCount = reviews.filter((r) => !r.is_approved).length;

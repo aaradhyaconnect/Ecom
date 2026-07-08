@@ -39,7 +39,8 @@ export default function AdminOrdersPage() {
   const limit = 20;
   const totalPages = Math.ceil(total / limit);
 
-  const fetchOrders = useCallback(async () => {
+  const fetchOrders = useCallback(async (showLoader = false) => {
+    if (showLoader) setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
@@ -60,7 +61,7 @@ export default function AdminOrdersPage() {
   }, [search, statusFilter, page]);
 
   useEffect(() => {
-    setLoading(true);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchOrders();
   }, [fetchOrders]);
 

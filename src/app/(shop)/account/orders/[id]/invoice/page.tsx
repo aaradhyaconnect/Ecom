@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { formatPrice, formatDate } from "@/lib/utils/format";
@@ -9,7 +9,7 @@ import { Printer, ArrowLeft } from "lucide-react";
 import type { Order, User } from "@/types";
 
 export default function InvoicePage({ params }: { params: Promise<{ id: string }> }) {
-  const supabase = useRef(createClient()).current;
+  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);

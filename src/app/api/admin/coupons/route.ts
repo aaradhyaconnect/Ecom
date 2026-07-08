@@ -44,12 +44,35 @@ export async function POST(request: Request) {
       );
     }
 
+    const discountValue = Number(body.discount_value);
+    const discountType = body.discount_type || "percentage";
+    if (discountType === "percentage" && (discountValue < 0 || discountValue > 100)) {
+      return NextResponse.json(
+        { success: false, error: "Percentage discount must be between 0 and 100" },
+        { status: 400 }
+      );
+    }
+    if (discountValue < 0) {
+      return NextResponse.json(
+        { success: false, error: "Discount value cannot be negative" },
+        { status: 400 }
+      );
+    }
+
+    const minOrder = Number(body.min_order) || 0;
+    if (minOrder < 0) {
+      return NextResponse.json(
+        { success: false, error: "Minimum order cannot be negative" },
+        { status: 400 }
+      );
+    }
+
     const coupon = {
       code: body.code.toUpperCase(),
       description: body.description || "",
-      discount_type: body.discount_type || "percentage",
-      discount_value: Number(body.discount_value),
-      min_order: Number(body.min_order) || 0,
+      discount_type: discountType,
+      discount_value: discountValue,
+      min_order: minOrder,
       max_discount: body.max_discount ? Number(body.max_discount) : null,
       usage_limit: Number(body.usage_limit) || 0,
       used_count: 0,

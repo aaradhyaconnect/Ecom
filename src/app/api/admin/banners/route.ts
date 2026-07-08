@@ -51,13 +51,15 @@ export async function POST(request: Request) {
       .limit(1)
       .maybeSingle();
 
+    const nextOrder = body.order || ((maxOrder.data?.order ?? 0) + 1);
+
     const banner = {
       title: body.title,
       subtitle: body.subtitle || null,
       image: body.image,
       link: body.link || null,
       is_active: body.is_active !== undefined ? body.is_active : true,
-      order: body.order || (maxOrder.data?.order ?? 0) + 1,
+      order: nextOrder,
       created_at: new Date().toISOString(),
     };
 

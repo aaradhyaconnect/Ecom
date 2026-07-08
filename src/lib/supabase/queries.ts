@@ -34,8 +34,9 @@ export async function getProducts({
   }
 
   if (search) {
+    const sanitized = search.replace(/[,()]/g, "");
     query = query.or(
-      `name.ilike.%${search}%,description.ilike.%${search}%,tags.cs.{${search}}`
+      `name.ilike.%${sanitized}%,description.ilike.%${sanitized}%`
     );
   }
 
@@ -49,7 +50,8 @@ export async function getProducts({
     query = query.overlaps("sizes", sizes);
   }
   if (colors && colors.length > 0) {
-    const colorConditions = colors.map(
+    const safeColors = colors.map((c) => c.replace(/[^a-zA-Z0-9 ]/g, ""));
+    const colorConditions = safeColors.map(
       (c) => `colors::text.ilike.%"name":"${c}"%`
     );
     query = query.or(colorConditions.join(","));

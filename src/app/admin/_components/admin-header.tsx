@@ -4,11 +4,11 @@ import { LogOut, User, Bell, ChevronDown } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useAuthStore } from "@/lib/store/auth";
 import { getInitials } from "@/lib/utils/format";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import type { User as UserType } from "@/types";
 
 export function AdminHeader({ user }: { user: UserType }) {
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const logout = useAuthStore((s) => s.logout);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -51,7 +51,6 @@ export function AdminHeader({ user }: { user: UserType }) {
             aria-label="Notifications"
           >
             <Bell className="h-[18px] w-[18px]" />
-            <span className="absolute top-2 right-2 h-2 w-2 bg-rose-500 rounded-full ring-2 ring-white" />
           </button>
 
           {/* User dropdown */}

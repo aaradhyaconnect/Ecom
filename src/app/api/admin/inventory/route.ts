@@ -81,9 +81,10 @@ export async function PUT(request: Request) {
     }
 
     if (id !== undefined && stock !== undefined) {
+      const stockNum = Math.max(0, Math.floor(Number(stock)));
       const { data, error } = await supabase
         .from("products")
-        .update({ stock: Number(stock), updated_at: new Date().toISOString() })
+        .update({ stock: stockNum, updated_at: new Date().toISOString() })
         .eq("id", id)
         .select()
         .single();

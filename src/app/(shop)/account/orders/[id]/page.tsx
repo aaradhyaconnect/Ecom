@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -17,7 +17,7 @@ function getCurrentStep(status: string) { return STATUS_FLOW.indexOf(status); }
 function isCancelable(status: string) { return ["pending", "confirmed"].includes(status); }
 
 export default function OrderDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  const supabase = useRef(createClient()).current;
+  const supabase = useMemo(() => createClient(), []);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);

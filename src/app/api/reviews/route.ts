@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
       .from("reviews")
       .select("*")
       .eq("product_id", productId)
+      .eq("is_approved", true)
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -83,19 +84,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to submit review" }, { status: 500 });
     }
 
-    // Update product rating and review count
-    const { data: reviews } = await supabase
+    // Update product rating and review count (only approved reviews)
+    const { data: approvedReviews } = await supabase
       .from("reviews")
       .select("rating")
-      .eq("product_id", product_id);
+      .eq("product_id", product_id)
+      .eq("is_approved", true);
 
-    if (reviews && reviews.length > 0) {
-      const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length;
+    if (approvedReviews && approvedReviews.length > 0) {
+      const avgRating = approvedReviews.reduce((sum, r) => sum + r.rating, 0) / approvedReviews.length;
       await supabase
         .from("products")
         .update({
           rating: Math.round(avgRating * 100) / 100,
-          review_count: reviews.length,
+          review_count: approvedReviews.length,
           updated_at: new Date().toISOString(),
         })
         .eq("id", product_id);
