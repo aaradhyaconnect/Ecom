@@ -21,7 +21,10 @@ export function Modal({
   size = "md",
   showClose = true,
 }: ModalProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
+
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -29,27 +32,74 @@ export function Modal({
     [onClose]
   );
 
+  const handleTabTrap = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !contentRef.current) return;
+
+      const focusable = contentRef.current.querySelectorAll<HTMLElement>(
+        'input, textarea, select, button, [tabindex]:not([tabindex="-1"])'
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     if (isOpen) {
+      previousFocusRef.current = document.activeElement as HTMLElement;
       document.addEventListener("keydown", handleEscape);
+      document.addEventListener("keydown", handleTabTrap);
       document.body.style.overflow = "hidden";
-      closeRef.current?.focus();
+
+      requestAnimationFrame(() => {
+        if (!contentRef.current) return;
+        const firstInput = contentRef.current.querySelector<HTMLElement>(
+          'input:not([type="hidden"]), textarea, select'
+        );
+        if (firstInput) {
+          firstInput.focus();
+        }
+      });
     }
     return () => {
       document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("keydown", handleTabTrap);
       document.body.style.overflow = "";
+      previousFocusRef.current?.focus();
     };
-  }, [isOpen, handleEscape]);
+  }, [isOpen, handleEscape, handleTabTrap]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={title ? "modal-title" : undefined}
+    >
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       />
       <div
+        ref={contentRef}
         className={cn(
           "relative z-10 bg-ivory shadow-2xl max-h-[90vh] overflow-auto animate-in fade-in zoom-in-95 duration-200",
           {
@@ -63,13 +113,16 @@ export function Modal({
       >
         {(title || showClose) && (
           <div className="flex items-center justify-between p-4 border-b border-ivory-dark">
-            {title && <h2 className="text-lg font-serif font-semibold text-charcoal">{title}</h2>}
+            {title && (
+              <h2 id="modal-title" className="text-lg font-serif font-semibold text-charcoal">
+                {title}
+              </h2>
+            )}
             {showClose && (
               <button
-                ref={closeRef}
                 onClick={onClose}
                 aria-label="Close modal"
-                className="p-1 hover:bg-ivory-dark transition-colors"
+                className="p-1 hover:bg-ivory-dark transition-colors rounded"
               >
                 <X className="h-5 w-5 text-charcoal-muted" />
               </button>

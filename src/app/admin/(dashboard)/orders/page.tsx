@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
+import { useDebounce } from "@/hooks/useDebounce";
+import { usePolling } from "@/hooks/usePolling";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight } from "lucide-react";
@@ -21,7 +23,7 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
@@ -33,11 +35,11 @@ export default function AdminOrdersPage() {
   });
   const [creatingShipment, setCreatingShipment] = useState(false);
 
+  const search = useDebounce(searchInput, 300);
   const limit = 20;
   const totalPages = Math.ceil(total / limit);
 
   const fetchOrders = useCallback(async () => {
-    setLoading(true);
     try {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
@@ -58,9 +60,11 @@ export default function AdminOrdersPage() {
   }, [search, statusFilter, page]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
     fetchOrders();
   }, [fetchOrders]);
+
+  usePolling(fetchOrders, 15000, !selectedOrder);
 
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     setUpdatingId(orderId);
@@ -193,8 +197,8 @@ export default function AdminOrdersPage() {
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted" />
           <Input
             placeholder="Search by order ID or customer..."
-            value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            value={searchInput}
+            onChange={(e) => { setSearchInput(e.target.value); setPage(1); }}
           />
         </div>
         <div className="w-full sm:w-48">
