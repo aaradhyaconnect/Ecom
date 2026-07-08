@@ -5,6 +5,7 @@ import NextImage from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 import { Image, Plus, Pencil, Trash2, EyeOff, Eye } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Banner } from "@/types";
@@ -184,7 +185,7 @@ export default function AdminBannersPage() {
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Banner Management</p>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Banners</h1>
-          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage homepage banners and promotions</p>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">Manage homepage banners and promotions</p>
         </div>
         <Button onClick={openAdd}>
           <Plus className="mr-2 h-4 w-4" />
@@ -193,11 +194,11 @@ export default function AdminBannersPage() {
       </div>
 
       {loading ? (
-        <div className="bg-white border border-ivory-dark/60 rounded-xl p-12 text-center text-charcoal-muted/60">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-12 text-center text-charcoal-muted">
           Loading...
         </div>
       ) : banners.length === 0 ? (
-        <div className="bg-white border border-ivory-dark/60 rounded-xl p-12 text-center text-charcoal-muted/60">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-12 text-center text-charcoal-muted">
           {/* eslint-disable-next-line jsx-a11y/alt-text */}
           <Image className="mx-auto mb-2 h-8 w-8" />
           No banners yet
@@ -214,15 +215,15 @@ export default function AdminBannersPage() {
                   <button
                     onClick={() => moveBanner(index, "up")}
                     disabled={index === 0}
-                    className="p-1 text-charcoal-muted/60 hover:text-charcoal disabled:opacity-30"
+                    className="p-1 text-charcoal-muted hover:text-charcoal disabled:opacity-30"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
                   </button>
-                  <span className="text-xs font-mono text-charcoal-muted/60">{banner.order}</span>
+                  <span className="text-xs font-mono text-charcoal-muted">{banner.order}</span>
                   <button
                     onClick={() => moveBanner(index, "down")}
                     disabled={index === banners.length - 1}
-                    className="p-1 text-charcoal-muted/60 hover:text-charcoal disabled:opacity-30"
+                    className="p-1 text-charcoal-muted hover:text-charcoal disabled:opacity-30"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
                   </button>
@@ -240,7 +241,7 @@ export default function AdminBannersPage() {
                   ) : (
                     <div className="flex h-full items-center justify-center">
                       {/* eslint-disable-next-line jsx-a11y/alt-text */}
-                      <Image className="h-6 w-6 text-charcoal-muted/40" />
+                      <Image className="h-6 w-6 text-charcoal-muted" />
                     </div>
                   )}
                 </div>
@@ -249,7 +250,7 @@ export default function AdminBannersPage() {
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium truncate">{banner.title}</h3>
                     {!banner.is_active && (
-                      <span className="text-xs text-charcoal-muted/60 bg-ivory-dark/60 px-2 py-0.5 rounded-lg text-[11px]">
+                      <span className="text-xs text-charcoal-muted bg-ivory-dark/60 px-2 py-0.5 rounded-lg text-[11px]">
                         Hidden
                       </span>
                     )}
@@ -315,23 +316,12 @@ export default function AdminBannersPage() {
             value={form.subtitle}
             onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
           />
-          <Input
-            label="Image URL"
+          <ImageUpload
+            label="Banner Image"
             value={form.image}
-            onChange={(e) => setForm({ ...form, image: e.target.value })}
-            required
+            onChange={(url) => setForm({ ...form, image: url })}
+            folder="banners"
           />
-          {form.image && (
-            <div className="h-32 bg-ivory-dark rounded-lg overflow-hidden">
-              <NextImage
-                src={form.image}
-                alt="Preview"
-                width={512}
-                height={128}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          )}
           <Input
             label="Link URL"
             value={form.link}

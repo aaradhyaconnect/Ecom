@@ -113,7 +113,7 @@ export function ProductDetailClient({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted/60 mb-8 tracking-wide">
+      <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted mb-8 tracking-wide">
         <Link href="/" className="hover:text-charcoal transition-colors">
           Home
         </Link>
@@ -224,7 +224,7 @@ export function ProductDetailClient({
         {/* Details */}
         <div className="flex flex-col gap-5 stagger-children">
           <div className="animate-in slide-up">
-            <p className="text-[10px] text-charcoal-muted/60 uppercase tracking-[0.25em] mb-2">
+            <p className="text-[10px] text-charcoal-muted uppercase tracking-[0.25em] mb-2">
               {categoryName}
               {product.subcategory && ` / ${product.subcategory}`}
             </p>
@@ -246,7 +246,7 @@ export function ProductDetailClient({
               {formatPrice(product.price)}
             </span>
             {product.compare_price && (
-              <span className="text-base text-charcoal-muted/40 line-through">
+              <span className="text-base text-charcoal-muted line-through">
                 {formatPrice(product.compare_price)}
               </span>
             )}
@@ -283,7 +283,7 @@ export function ProductDetailClient({
                 </h3>
                 <Link
                   href="/size-guide"
-                  className="text-[10px] text-charcoal-muted/60 hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
+                  className="text-[10px] text-charcoal-muted hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
                 >
                   Size Guide
                 </Link>
@@ -496,7 +496,7 @@ export function ProductDetailClient({
           {loadingReviews ? (
             <p className="text-sm text-charcoal-muted text-center py-8">Loading reviews...</p>
           ) : reviews.length === 0 ? (
-            <p className="text-sm text-charcoal-muted/50 text-center py-8">No reviews yet. Be the first to review this product!</p>
+            <p className="text-sm text-charcoal-muted text-center py-8">No reviews yet. Be the first to review this product!</p>
           ) : (
             reviews.map((review) => (
               <div key={review.id} className="bg-ivory border border-ivory-dark/60 p-5 shadow-sm">
@@ -548,7 +548,7 @@ export function ProductDetailClient({
         <div className="flex-1 min-w-0">
           <p className="text-lg font-bold text-charcoal">{formatPrice(product.price)}</p>
           {product.compare_price && (
-            <p className="text-xs text-charcoal-muted/50 line-through">{formatPrice(product.compare_price)}</p>
+            <p className="text-xs text-charcoal-muted line-through">{formatPrice(product.compare_price)}</p>
           )}
         </div>
         <Button

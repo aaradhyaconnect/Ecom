@@ -83,7 +83,7 @@ export default function SettingsPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20 text-charcoal-muted/50 text-sm">Loading settings...</div>;
+    return <div className="flex items-center justify-center py-20 text-charcoal-muted text-sm">Loading settings...</div>;
   }
 
   return (
@@ -92,7 +92,7 @@ export default function SettingsPage() {
         <div>
           <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Configuration</span>
           <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Store Settings</h1>
-          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Configure your store details and preferences</p>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">Configure your store details and preferences</p>
         </div>
         <Button onClick={handleSave} isLoading={saving} size="sm">
           <Save className="h-3.5 w-3.5 mr-1.5" /> Save Changes

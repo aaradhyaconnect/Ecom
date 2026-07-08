@@ -81,7 +81,7 @@ export default function ReviewsPage() {
       <div>
         <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Moderation</span>
         <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Reviews</h1>
-        <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Moderate product reviews from customers</p>
+        <p className="text-[13px] text-charcoal-muted mt-0.5">Moderate product reviews from customers</p>
       </div>
 
       {/* Filter Cards */}
@@ -103,9 +103,9 @@ export default function ReviewsPage() {
       {/* Reviews List */}
       <div className="space-y-3">
         {loading ? (
-          <div className="bg-white border border-ivory-dark/60 rounded-xl p-16 text-center"><RefreshCw className="h-5 w-5 animate-spin mx-auto text-charcoal-muted/40" /></div>
+          <div className="bg-white border border-ivory-dark/60 rounded-xl p-16 text-center"><RefreshCw className="h-5 w-5 animate-spin mx-auto text-charcoal-muted" /></div>
         ) : reviews.length === 0 ? (
-          <div className="bg-white border border-ivory-dark/60 rounded-xl p-16 text-center"><Star className="h-8 w-8 mx-auto mb-2 text-charcoal-muted/20" /><p className="text-sm text-charcoal-muted/50">No reviews found</p></div>
+          <div className="bg-white border border-ivory-dark/60 rounded-xl p-16 text-center"><Star className="h-8 w-8 mx-auto mb-2 text-charcoal-muted" /><p className="text-sm text-charcoal-muted">No reviews found</p></div>
         ) : reviews.map((review) => (
           <div key={review.id} className={`bg-white border rounded-xl p-5 shadow-sm transition-colors ${review.is_approved ? "border-ivory-dark/60" : "border-amber-300 bg-amber-50/20"}`}>
             <div className="flex items-start justify-between">
@@ -121,10 +121,10 @@ export default function ReviewsPage() {
                   <Badge variant={review.is_approved ? "success" : "warning"}>{review.is_approved ? "Approved" : "Pending"}</Badge>
                 </div>
                 {review.product && (
-                  <p className="text-[11px] text-charcoal-muted/50 mb-1">on <span className="font-medium">{review.product.name}</span></p>
+                  <p className="text-[11px] text-charcoal-muted mb-1">on <span className="font-medium">{review.product.name}</span></p>
                 )}
                 {review.comment && <p className="text-[13px] text-charcoal-muted mt-2">{review.comment}</p>}
-                <p className="text-[11px] text-charcoal-muted/40 mt-2">{formatDate(review.created_at)}</p>
+                <p className="text-[11px] text-charcoal-muted mt-2">{formatDate(review.created_at)}</p>
               </div>
               <div className="flex items-center gap-1 ml-4">
                 {!review.is_approved && (
@@ -143,7 +143,7 @@ export default function ReviewsPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-[12px] text-charcoal-muted/50">{total} reviews total</p>
+          <p className="text-[12px] text-charcoal-muted">{total} reviews total</p>
           <div className="flex items-center gap-1">
             <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-3 py-1.5 text-[12px] border border-ivory-dark/60 hover:bg-ivory-dark/40 disabled:opacity-40 rounded-lg">Previous</button>
             <span className="px-3 py-1.5 text-[12px] text-charcoal-muted">Page {page} of {totalPages}</span>

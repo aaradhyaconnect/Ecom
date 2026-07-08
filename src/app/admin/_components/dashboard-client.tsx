@@ -86,7 +86,7 @@ export function DashboardClient({
       <div>
         <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Overview</span>
         <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Dashboard</h1>
-        <p className="text-[13px] text-charcoal-muted/60 mt-0.5">
+        <p className="text-[13px] text-charcoal-muted mt-0.5">
           Welcome back! Here&apos;s what&apos;s happening with your store.
         </p>
       </div>
@@ -118,7 +118,7 @@ export function DashboardClient({
               )}
             </div>
             <p className="mt-3 text-2xl font-bold text-charcoal tracking-tight">{card.value}</p>
-            <p className="text-[11px] text-charcoal-muted/50 mt-0.5">{card.label}</p>
+            <p className="text-[11px] text-charcoal-muted mt-0.5">{card.label}</p>
           </div>
         ))}
       </div>
@@ -129,7 +129,7 @@ export function DashboardClient({
         <div className="bg-white border border-ivory-dark/60 p-5 rounded-xl lg:col-span-2">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-[13px] font-semibold text-charcoal">Revenue (Last 30 Days)</h2>
-            <span className="text-[11px] text-charcoal-muted/50">
+            <span className="text-[11px] text-charcoal-muted">
               {formatPrice(revenueDays.reduce((sum, d) => sum + d.revenue, 0))} total
             </span>
           </div>
@@ -146,7 +146,7 @@ export function DashboardClient({
               </div>
             ))}
           </div>
-          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted/40">
+          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted">
             <span>{revenueDays[0]?.date?.slice(5) || "No data"}</span>
             <span>{revenueDays[revenueDays.length - 1]?.date?.slice(5) || ""}</span>
           </div>
@@ -159,7 +159,7 @@ export function DashboardClient({
             {(a.top_products || []).slice(0, 5).map((product, i) => (
               <div key={product.name} className="flex items-center justify-between">
                 <div className="flex items-center gap-2 min-w-0">
-                  <span className="text-[11px] font-medium text-charcoal-muted/40 w-4 flex-shrink-0">
+                  <span className="text-[11px] font-medium text-charcoal-muted w-4 flex-shrink-0">
                     {i + 1}.
                   </span>
                   <span className="text-[13px] truncate text-charcoal">
@@ -172,7 +172,7 @@ export function DashboardClient({
               </div>
             ))}
             {(a.top_products || []).length === 0 && (
-              <p className="text-[13px] text-charcoal-muted/40 text-center py-4">No sales data yet</p>
+              <p className="text-[13px] text-charcoal-muted text-center py-4">No sales data yet</p>
             )}
           </div>
         </div>
@@ -184,7 +184,7 @@ export function DashboardClient({
           <h2 className="text-[13px] font-semibold text-charcoal">Recent Orders</h2>
           <Link
             href="/admin/orders"
-            className="text-[11px] font-medium text-charcoal-muted/50 hover:text-charcoal uppercase tracking-wider transition-colors flex items-center gap-1"
+            className="text-[11px] font-medium text-charcoal-muted hover:text-charcoal uppercase tracking-wider transition-colors flex items-center gap-1"
           >
             View All <ArrowUpRight className="h-3 w-3" />
           </Link>
@@ -192,7 +192,7 @@ export function DashboardClient({
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="border-b border-ivory-dark/60 text-left text-[11px] text-charcoal-muted/40 uppercase tracking-wider">
+              <tr className="border-b border-ivory-dark/60 text-left text-[11px] text-charcoal-muted uppercase tracking-wider">
                 <th className="px-5 py-3 font-medium">Order ID</th>
                 <th className="px-5 py-3 font-medium">Status</th>
                 <th className="px-5 py-3 font-medium">Total</th>
@@ -211,14 +211,14 @@ export function DashboardClient({
                   <td className="px-5 py-3 text-charcoal font-medium">
                     {formatPrice(order.total)}
                   </td>
-                  <td className="px-5 py-3 text-charcoal-muted/60">
+                  <td className="px-5 py-3 text-charcoal-muted">
                     {formatDate(order.created_at)}
                   </td>
                 </tr>
               ))}
               {recentOrders.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-charcoal-muted/40">
+                  <td colSpan={4} className="px-5 py-8 text-center text-charcoal-muted">
                     No orders yet
                   </td>
                 </tr>

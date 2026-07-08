@@ -98,7 +98,7 @@ export default function AdminCustomersPage() {
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Customer Management</p>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Customers</h1>
-          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">View and manage your customers</p>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">View and manage your customers</p>
         </div>
         <Button variant="outline" size="sm" onClick={exportCustomers}>
           <Download className="h-4 w-4 mr-2" />
@@ -107,7 +107,7 @@ export default function AdminCustomersPage() {
       </div>
 
       <div className="relative max-w-sm">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted/60" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted" />
         <Input
           placeholder="Search by name or email..."
           value={search}
@@ -132,13 +132,13 @@ export default function AdminCustomersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">
                     Loading...
                   </td>
                 </tr>
               ) : customers.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">
                     <Users className="mx-auto mb-2 h-8 w-8" />
                     No customers found
                   </td>
@@ -261,9 +261,9 @@ export default function AdminCustomersPage() {
                 Recent Orders
               </p>
               {ordersLoading ? (
-                <p className="text-sm text-charcoal-muted/60">Loading...</p>
+                <p className="text-sm text-charcoal-muted">Loading...</p>
               ) : customerOrders.length === 0 ? (
-                <p className="text-sm text-charcoal-muted/60">No orders yet</p>
+                <p className="text-sm text-charcoal-muted">No orders yet</p>
               ) : (
                 <div className="space-y-2">
                   {(customerOrders as Array<{

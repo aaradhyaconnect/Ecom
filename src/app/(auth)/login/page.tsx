@@ -306,7 +306,7 @@ export default function LoginPage() {
           <div className="w-full border-t border-ivory-dark/60" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-ivory px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted/50">or continue with</span>
+          <span className="bg-ivory px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted">or continue with</span>
         </div>
       </div>
 

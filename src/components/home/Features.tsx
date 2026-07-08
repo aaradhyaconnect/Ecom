@@ -39,7 +39,7 @@ export function Features() {
               <h3 className="text-[13px] font-semibold text-charcoal tracking-wide">
                 {feature.title}
               </h3>
-              <p className="text-[11px] text-charcoal-muted/60 mt-1">
+              <p className="text-[11px] text-charcoal-muted mt-1">
                 {feature.description}
               </p>
             </div>

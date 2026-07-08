@@ -111,7 +111,7 @@ export default function InventoryPage() {
         <div>
           <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Stock</span>
           <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Inventory</h1>
-          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">
+          <p className="text-[13px] text-charcoal-muted mt-0.5">
             Manage stock levels for all products
           </p>
         </div>
@@ -171,7 +171,7 @@ export default function InventoryPage() {
             <span className="text-sm font-medium">Low Stock</span>
           </div>
           <p className="mt-2 text-3xl font-bold tracking-tight">{lowStockCount}</p>
-          <p className="text-[11px] text-charcoal-muted/50 mt-0.5">1-5 units remaining</p>
+          <p className="text-[11px] text-charcoal-muted mt-0.5">1-5 units remaining</p>
         </button>
 
         <button
@@ -193,14 +193,14 @@ export default function InventoryPage() {
             <span className="text-sm font-medium">Out of Stock</span>
           </div>
           <p className="mt-2 text-3xl font-bold tracking-tight">{outOfStockCount}</p>
-          <p className="text-[11px] text-charcoal-muted/50 mt-0.5">0 units remaining</p>
+          <p className="text-[11px] text-charcoal-muted mt-0.5">0 units remaining</p>
         </button>
       </div>
 
       {/* Search */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal-muted/50" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal-muted" />
           <Input
             placeholder="Search products..."
             value={search}
@@ -215,7 +215,7 @@ export default function InventoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] text-charcoal-muted/60 uppercase tracking-wider">
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] text-charcoal-muted uppercase tracking-wider">
                 <th className="px-5 py-3 font-medium">Product</th>
                 <th className="px-5 py-3 font-medium">Category</th>
                 <th className="px-5 py-3 font-medium">Price</th>
@@ -229,8 +229,8 @@ export default function InventoryPage() {
                 <tr>
                   <td colSpan={6} className="px-5 py-16 text-center">
                     <div className="flex flex-col items-center gap-2">
-                      <RefreshCw className="h-5 w-5 text-charcoal-muted/40 animate-spin" />
-                      <p className="text-sm text-charcoal-muted/50">Loading inventory...</p>
+                      <RefreshCw className="h-5 w-5 text-charcoal-muted animate-spin" />
+                      <p className="text-sm text-charcoal-muted">Loading inventory...</p>
                     </div>
                   </td>
                 </tr>
@@ -238,8 +238,8 @@ export default function InventoryPage() {
                 <tr>
                   <td colSpan={6} className="px-5 py-16 text-center">
                     <div className="flex flex-col items-center gap-2">
-                      <Package className="h-8 w-8 text-charcoal-muted/20" />
-                      <p className="text-sm text-charcoal-muted/50">No products found</p>
+                      <Package className="h-8 w-8 text-charcoal-muted" />
+                      <p className="text-sm text-charcoal-muted">No products found</p>
                     </div>
                   </td>
                 </tr>
@@ -270,7 +270,7 @@ export default function InventoryPage() {
                               />
                             ) : (
                               <div className="h-full w-full flex items-center justify-center">
-                                <Package className="h-4 w-4 text-charcoal-muted/30" />
+                                <Package className="h-4 w-4 text-charcoal-muted" />
                               </div>
                             )}
                           </div>

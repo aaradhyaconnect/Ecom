@@ -166,14 +166,14 @@ export function ProductCard({ product, preload }: ProductCardProps) {
               )}
             />
           ))}
-          <span className="text-[10px] text-charcoal-muted/60 ml-1">
+          <span className="text-[10px] text-charcoal-muted ml-1">
             ({product.review_count})
           </span>
         </div>
         <h3 className="text-[13px] font-medium text-charcoal truncate group-hover:text-gold-dark transition-colors duration-500">
           {product.name}
         </h3>
-        <p className="text-[10px] text-charcoal-muted/60 mt-0.5 capitalize tracking-[0.12em] uppercase">
+        <p className="text-[10px] text-charcoal-muted mt-0.5 capitalize tracking-[0.12em] uppercase">
           {categoryMap[product.category] || product.category.replace(/-/g, " ")}
         </p>
 
@@ -188,7 +188,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
               />
             ))}
             {colors.length > 5 && (
-              <span className="text-[9px] text-charcoal-muted/50 font-medium">
+              <span className="text-[9px] text-charcoal-muted font-medium">
                 +{colors.length - 5}
               </span>
             )}
@@ -200,7 +200,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
             {formatPrice(product.price)}
           </span>
           {product.compare_price && (
-            <span className="text-[11px] text-charcoal-muted/40 line-through">
+            <span className="text-[11px] text-charcoal-muted line-through">
               {formatPrice(product.compare_price)}
             </span>
           )}

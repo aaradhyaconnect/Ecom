@@ -371,7 +371,7 @@ export default function CartPage() {
                         value={couponCode}
                         onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
                         placeholder="Coupon code"
-                        className="w-full pl-9 pr-3 py-2 border border-ivory-dark bg-ivory text-sm focus:outline-none focus:border-gold text-charcoal placeholder:text-charcoal-muted/50"
+                        className="w-full pl-9 pr-3 py-2 border border-ivory-dark bg-ivory text-sm focus:outline-none focus:border-gold text-charcoal placeholder:text-charcoal-muted"
                       />
                     </div>
                     <Button

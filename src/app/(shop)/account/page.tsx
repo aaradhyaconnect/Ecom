@@ -209,7 +209,7 @@ export default function ProfilePage() {
         )}
 
         {addresses.length === 0 && !showAddressForm && (
-          <p className="text-sm text-charcoal-muted/40 py-4 text-center italic">No saved addresses</p>
+          <p className="text-sm text-charcoal-muted py-4 text-center italic">No saved addresses</p>
         )}
 
         <div className="space-y-3">
@@ -236,7 +236,7 @@ export default function ProfilePage() {
           <Link href="/account/orders" className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted hover:text-charcoal transition-colors">View All</Link>
         </div>
         {orders.length === 0 ? (
-          <p className="text-sm text-charcoal-muted/50 py-4 text-center">No orders yet</p>
+          <p className="text-sm text-charcoal-muted py-4 text-center">No orders yet</p>
         ) : (
           <div className="divide-y divide-ivory-dark">
             {orders.map((order) => (
@@ -246,7 +246,7 @@ export default function ProfilePage() {
                     <span className="font-mono text-sm text-charcoal-muted">#{order.order_id}</span>
                     <span className={`inline-flex items-center px-2 py-0.5 text-xs font-medium ${getStatusStyle(order.order_status)}`}>{getStatusLabel(order.order_status)}</span>
                   </div>
-                  <p className="text-xs text-charcoal-muted/60 mt-0.5">
+                  <p className="text-xs text-charcoal-muted mt-0.5">
                     {formatDate(order.created_at)} &middot; {order.items.length} item{order.items.length !== 1 ? "s" : ""}
                   </p>
                 </div>

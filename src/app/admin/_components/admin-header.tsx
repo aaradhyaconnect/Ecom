@@ -39,7 +39,7 @@ export function AdminHeader({ user }: { user: UserType }) {
         {/* Mobile logo */}
         <div className="lg:hidden">
           <span className="text-lg font-serif font-bold tracking-[0.12em]">HAINJU</span>
-          <span className="text-[9px] tracking-[0.25em] text-charcoal-muted/50 ml-1 uppercase">Admin</span>
+          <span className="text-[9px] tracking-[0.25em] text-charcoal-muted ml-1 uppercase">Admin</span>
         </div>
         <div className="hidden lg:block" />
 
@@ -47,7 +47,7 @@ export function AdminHeader({ user }: { user: UserType }) {
         <div className="flex items-center gap-2">
           {/* Notifications */}
           <button
-            className="relative p-2.5 text-charcoal-muted/50 hover:bg-ivory-dark/40 hover:text-charcoal transition-colors rounded-lg"
+            className="relative p-2.5 text-charcoal-muted hover:bg-ivory-dark/40 hover:text-charcoal transition-colors rounded-lg"
             aria-label="Notifications"
           >
             <Bell className="h-[18px] w-[18px]" />
@@ -65,16 +65,16 @@ export function AdminHeader({ user }: { user: UserType }) {
               </div>
               <div className="hidden sm:block text-left">
                 <p className="text-[13px] font-medium leading-none text-charcoal">{user?.name || "Admin"}</p>
-                <p className="text-[11px] text-charcoal-muted/50 mt-0.5">{user?.email}</p>
+                <p className="text-[11px] text-charcoal-muted mt-0.5">{user?.email}</p>
               </div>
-              <ChevronDown className="h-3.5 w-3.5 text-charcoal-muted/40 hidden sm:block" />
+              <ChevronDown className="h-3.5 w-3.5 text-charcoal-muted hidden sm:block" />
             </button>
 
             {showDropdown && (
               <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-ivory-dark/60 shadow-lg py-1 rounded-lg z-50">
                 <div className="px-4 py-3 border-b border-ivory-dark/60">
                   <p className="text-sm font-medium text-charcoal">{user?.name || "Admin"}</p>
-                  <p className="text-xs text-charcoal-muted/50 mt-0.5">{user?.email}</p>
+                  <p className="text-xs text-charcoal-muted mt-0.5">{user?.email}</p>
                 </div>
                 <button
                   onClick={handleLogout}

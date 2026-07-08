@@ -15,7 +15,7 @@ export default function NotFound() {
       <p className="mt-4 text-lg text-charcoal-muted">
         The page you&apos;re looking for doesn&apos;t exist or has been moved.
       </p>
-      <p className="mt-1 text-sm text-charcoal-muted/60">
+      <p className="mt-1 text-sm text-charcoal-muted">
         Try searching our store or head back home.
       </p>
       <div className="mt-8 flex gap-4">

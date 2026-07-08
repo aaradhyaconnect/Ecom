@@ -226,7 +226,7 @@ export default function RegisterPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-[38px] text-charcoal-muted/60 hover:text-charcoal transition-colors"
+                className="absolute right-3 top-[38px] text-charcoal-muted hover:text-charcoal transition-colors"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
@@ -255,7 +255,7 @@ export default function RegisterPage() {
           <div className="w-full border-t border-ivory-dark/60" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-ivory px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted/50">or continue with</span>
+          <span className="bg-ivory px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted">or continue with</span>
         </div>
       </div>
 

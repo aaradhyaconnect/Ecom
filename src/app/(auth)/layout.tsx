@@ -20,7 +20,7 @@ export default function AuthLayout({
           {children}
         </div>
         <div className="text-center mt-8">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted/40">&copy; {new Date().getFullYear()} HAINJU</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted">&copy; {new Date().getFullYear()} HAINJU</p>
         </div>
       </div>
     </div>

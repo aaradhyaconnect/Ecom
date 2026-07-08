@@ -43,7 +43,7 @@ export function CartDrawer() {
             {items.length === 0 ? (
               <div className="flex-1 flex flex-col items-center justify-center text-charcoal-muted gap-5 p-8">
                 <div className="w-20 h-20  bg-ivory-dark flex items-center justify-center">
-                  <ShoppingBag className="h-8 w-8 text-charcoal-muted/40" />
+                  <ShoppingBag className="h-8 w-8 text-charcoal-muted" />
                 </div>
                 <p className="text-lg font-medium text-charcoal">Your bag is empty</p>
                 <p className="text-sm text-charcoal-muted">Discover something you love</p>

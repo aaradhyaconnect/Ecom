@@ -42,7 +42,7 @@ export default function AdminAnalyticsPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-charcoal-muted/60">Loading analytics...</div>
+        <div className="text-charcoal-muted">Loading analytics...</div>
       </div>
     );
   }
@@ -94,7 +94,7 @@ export default function AdminAnalyticsPage() {
       <div>
         <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Analytics Overview</p>
         <h1 className="text-2xl font-serif font-bold text-charcoal">Analytics</h1>
-        <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Detailed insights into your store performance</p>
+        <p className="text-[13px] text-charcoal-muted mt-0.5">Detailed insights into your store performance</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -133,7 +133,7 @@ export default function AdminAnalyticsPage() {
               </div>
             ))}
           </div>
-          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted/60">
+          <div className="mt-2 flex justify-between text-[10px] text-charcoal-muted">
             <span>
               {analytics.revenue_by_day[0]?.date?.slice(5)}
             </span>
@@ -164,7 +164,7 @@ export default function AdminAnalyticsPage() {
               </div>
             ))}
             {analytics.orders_by_status.length === 0 && (
-              <p className="text-sm text-charcoal-muted/60">No orders yet</p>
+              <p className="text-sm text-charcoal-muted">No orders yet</p>
             )}
           </div>
 
@@ -208,7 +208,7 @@ export default function AdminAnalyticsPage() {
             <tbody>
               {analytics.top_products.map((product, i) => (
                 <tr key={product.name} className="border-b border-ivory-dark/40 last:border-0">
-                  <td className="py-3 pr-4 text-charcoal-muted/60">{i + 1}</td>
+                  <td className="py-3 pr-4 text-charcoal-muted">{i + 1}</td>
                   <td className="py-3 pr-4 font-medium">{product.name}</td>
                   <td className="py-3 pr-4 text-right">{product.sales}</td>
                   <td className="py-3 pr-4 text-right font-medium">
@@ -218,7 +218,7 @@ export default function AdminAnalyticsPage() {
               ))}
               {analytics.top_products.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-charcoal-muted/60">
+                  <td colSpan={4} className="py-8 text-center text-charcoal-muted">
                     No sales data yet
                   </td>
                 </tr>

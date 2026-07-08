@@ -51,7 +51,7 @@ export function AdminSidebar() {
           </div>
           <div>
             <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">HAINJU</span>
-            <span className="text-[9px] font-sans tracking-[0.25em] text-charcoal-muted/50 ml-1.5 uppercase">Admin</span>
+            <span className="text-[9px] font-sans tracking-[0.25em] text-charcoal-muted ml-1.5 uppercase">Admin</span>
           </div>
         </Link>
       </div>
@@ -93,7 +93,7 @@ export function AdminSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-charcoal-muted/50 hover:text-charcoal hover:bg-ivory-dark/40 transition-all duration-200 rounded-lg"
+            className="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/40 transition-all duration-200 rounded-lg"
           >
             <item.icon className="h-4 w-4" />
             {item.label}

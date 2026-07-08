@@ -19,7 +19,7 @@ export default function SizeGuidePage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 md:py-24">
       <div className="text-center mb-16">
-        <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-medium">Reference</span>
+        <span className="text-[10px] uppercase tracking-[0.4em] text-gold-dark font-medium">Reference</span>
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mt-4">Size Guide</h1>
         <div className="h-[1px] w-12 bg-gold/40 mx-auto mt-6" />
       </div>

@@ -82,7 +82,7 @@ export function SearchModal() {
       <div className="fixed top-0 left-0 right-0 bg-ivory shadow-2xl animate-in slide-in-from-top">
         <div className="max-w-2xl mx-auto p-6">
           <div className="relative">
-            <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-charcoal-muted/50" />
+            <Search className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-5 text-charcoal-muted" />
             <input
               ref={inputRef}
               type="text"
@@ -90,7 +90,7 @@ export function SearchModal() {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search for products..."
-              className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-b-2 border-ivory-dark focus:border-gold/60 focus:ring-0 outline-none text-charcoal placeholder:text-charcoal-muted/40 transition-colors duration-300"
+              className="w-full pl-12 pr-12 py-4 text-lg bg-transparent border-b-2 border-ivory-dark focus:border-gold/60 focus:ring-0 outline-none text-charcoal placeholder:text-charcoal-muted transition-colors duration-300"
             />
             <button
               onClick={handleClose}
@@ -141,7 +141,7 @@ export function SearchModal() {
                     </p>
                     <p className="text-sm font-bold mt-1">{formatPrice(product.price)}</p>
                   </div>
-                  <ArrowUpRight className="h-4 w-4 text-charcoal-muted/30 group-hover:text-gold-dark transition-colors" />
+                  <ArrowUpRight className="h-4 w-4 text-charcoal-muted group-hover:text-gold-dark transition-colors" />
                 </Link>
               ))}
             </div>
@@ -152,7 +152,7 @@ export function SearchModal() {
               <p className="text-charcoal-muted text-sm">
                 No products found for &ldquo;{debouncedQuery}&rdquo;
               </p>
-              <p className="text-charcoal-muted/50 text-[10px] mt-1 uppercase tracking-wider">
+              <p className="text-charcoal-muted text-[10px] mt-1 uppercase tracking-wider">
                 Try a different search term
               </p>
             </div>

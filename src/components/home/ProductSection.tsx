@@ -49,11 +49,11 @@ export async function ProductSection({
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold text-charcoal">
               {title}
             </h2>
-            <p className="text-[13px] text-charcoal-muted/60 mt-2">{subtitle}</p>
+            <p className="text-[13px] text-charcoal-muted mt-2">{subtitle}</p>
           </div>
           <Link
             href={viewAllHref}
-            className="hidden sm:inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-charcoal-muted/60 hover:text-charcoal transition-colors duration-500 group"
+            className="hidden sm:inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-charcoal-muted hover:text-charcoal transition-colors duration-500 group"
           >
             View All
             <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-1 transition-transform duration-300" />

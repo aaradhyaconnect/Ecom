@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
+import { MultiImageUpload } from "@/components/ui/ImageUpload";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { CATEGORIES, SIZES } from "@/lib/constants/categories";
 import {
@@ -96,7 +97,7 @@ export default function AdminProductsPage() {
   };
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchProducts();
   }, [search, category, page]);
 
@@ -224,32 +225,13 @@ export default function AdminProductsPage() {
     }));
   };
 
-  const addImage = () => {
-    setForm((prev) => ({ ...prev, images: [...prev.images, ""] }));
-  };
-
-  const updateImage = (index: number, value: string) => {
-    setForm((prev) => {
-      const images = [...prev.images];
-      images[index] = value;
-      return { ...prev, images };
-    });
-  };
-
-  const removeImage = (index: number) => {
-    setForm((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index),
-    }));
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Product Management</p>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Products</h1>
-          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage your product catalog</p>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">Manage your product catalog</p>
         </div>
         <Button onClick={openAdd}>
           <Plus className="mr-2 h-4 w-4" />
@@ -581,51 +563,13 @@ export default function AdminProductsPage() {
             </div>
           </div>
 
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-charcoal">
-                Images (URLs)
-              </label>
-              <button
-                type="button"
-                onClick={addImage}
-                className="text-xs text-charcoal hover:text-gold-dark transition-colors"
-              >
-                + Add Image
-              </button>
-            </div>
-            <div className="space-y-2">
-              {form.images.map((url, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    value={url}
-                    onChange={(e) => updateImage(i, e.target.value)}
-                  />
-                  {form.images.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeImage(i)}
-                      className="p-1 text-charcoal-muted hover:text-rose-500"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                  {url && (
-                    <div className="h-9 w-9 border border-ivory-dark overflow-hidden flex-shrink-0">
-                      <Image
-                        src={url}
-                        alt="Product preview"
-                        width={36}
-                        height={36}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
+          <MultiImageUpload
+            label="Product Images"
+            value={form.images.filter(Boolean)}
+            onChange={(urls) => setForm({ ...form, images: urls.length > 0 ? urls : [""] })}
+            folder="products"
+            maxImages={10}
+          />
 
           <div className="grid grid-cols-2 gap-4">
             <Input

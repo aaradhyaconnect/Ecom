@@ -11,7 +11,7 @@ export default function AboutPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 md:py-24">
       <div className="text-center mb-16">
-        <span className="text-[10px] uppercase tracking-[0.4em] text-gold font-medium">Our Story</span>
+        <span className="text-[10px] uppercase tracking-[0.4em] text-gold-dark font-medium">Our Story</span>
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-charcoal mt-4">About {SITE.name}</h1>
         <div className="h-[1px] w-12 bg-gold/40 mx-auto mt-6" />
       </div>
@@ -27,21 +27,21 @@ export default function AboutPage() {
 
         <div className="grid md:grid-cols-3 gap-8">
           <div className="text-center">
-            <div className="text-3xl font-serif font-bold text-gold mb-2">100%</div>
+            <div className="text-3xl font-serif font-bold text-gold-dark mb-2">100%</div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-charcoal">Self-Designed</div>
             <p className="text-sm text-charcoal-muted mt-3">
               Every piece is thoughtfully designed by our in-house team, ensuring exclusivity and style.
             </p>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-serif font-bold text-gold mb-2">50K+</div>
+            <div className="text-3xl font-serif font-bold text-gold-dark mb-2">50K+</div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-charcoal">Happy Customers</div>
             <p className="text-sm text-charcoal-muted mt-3">
               Trusted by thousands of fashion-forward individuals across India.
             </p>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-serif font-bold text-gold mb-2">Premium</div>
+            <div className="text-3xl font-serif font-bold text-gold-dark mb-2">Premium</div>
             <div className="text-[10px] uppercase tracking-[0.3em] text-charcoal">Quality Assured</div>
             <p className="text-sm text-charcoal-muted mt-3">
               We use only the finest materials and craftsmanship in every product.

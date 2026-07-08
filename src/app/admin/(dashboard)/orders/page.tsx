@@ -181,7 +181,7 @@ export default function AdminOrdersPage() {
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Order Management</p>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Orders</h1>
-          <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage and track customer orders</p>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">Manage and track customer orders</p>
         </div>
         <Button variant="outline" size="sm" onClick={exportOrders}>
           Export CSV
@@ -190,7 +190,7 @@ export default function AdminOrdersPage() {
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted/60" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted" />
           <Input
             placeholder="Search by order ID or customer..."
             value={search}
@@ -223,13 +223,13 @@ export default function AdminOrdersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">
                     Loading...
                   </td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted/60">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">
                     <ShoppingCart className="mx-auto mb-2 h-8 w-8" />
                     No orders found
                   </td>
@@ -249,12 +249,12 @@ export default function AdminOrdersPage() {
                           <p className="font-medium">
                             {((order as unknown as Record<string, unknown>).profiles as Record<string, unknown>)?.name as string || "N/A"}
                           </p>
-                          <p className="text-xs text-charcoal-muted/60">
+                          <p className="text-xs text-charcoal-muted">
                             {((order as unknown as Record<string, unknown>).profiles as Record<string, unknown>)?.email as string || ""}
                           </p>
                         </div>
                       ) : (
-                        <span className="text-charcoal-muted/60">N/A</span>
+                        <span className="text-charcoal-muted">N/A</span>
                       )}
                     </td>
                     <td className="px-5 py-3">

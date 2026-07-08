@@ -388,7 +388,7 @@ export function ProductListingClient({
                 className={cn(
                   "px-4 py-2 text-[11px] font-medium uppercase tracking-[0.15em] border transition-all duration-300",
                   currentPage <= 1
-                    ? "border-ivory-dark text-charcoal-muted/30 cursor-not-allowed"
+                    ? "border-ivory-dark text-charcoal-muted cursor-not-allowed"
                     : "border-ivory-dark text-charcoal-muted hover:border-charcoal hover:text-charcoal"
                 )}
               >
@@ -397,7 +397,7 @@ export function ProductListingClient({
 
               {pageNumbers.map((page, idx) =>
                 page === "..." ? (
-                  <span key={`ellipsis-${idx}`} className="px-2 text-charcoal-muted/30 text-sm">
+                  <span key={`ellipsis-${idx}`} className="px-2 text-charcoal-muted text-sm">
                     &hellip;
                   </span>
                 ) : (
@@ -422,7 +422,7 @@ export function ProductListingClient({
                 className={cn(
                   "px-4 py-2 text-[11px] font-medium uppercase tracking-[0.15em] border transition-all duration-300",
                   currentPage >= initialProducts.totalPages
-                    ? "border-ivory-dark text-charcoal-muted/30 cursor-not-allowed"
+                    ? "border-ivory-dark text-charcoal-muted cursor-not-allowed"
                     : "border-ivory-dark text-charcoal-muted hover:border-charcoal hover:text-charcoal"
                 )}
               >

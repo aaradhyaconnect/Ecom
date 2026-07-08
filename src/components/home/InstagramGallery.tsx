@@ -24,7 +24,7 @@ export function InstagramGallery() {
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-charcoal">
             @hainju
           </h2>
-          <p className="text-[13px] text-charcoal-muted/60 mt-2">
+          <p className="text-[13px] text-charcoal-muted mt-2">
             Follow us for daily style inspiration
           </p>
         </div>

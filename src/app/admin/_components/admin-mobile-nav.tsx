@@ -40,7 +40,7 @@ export function AdminMobileNav() {
                 "flex flex-col items-center gap-0.5 px-2 py-1.5 text-[10px] font-medium transition-all duration-200 rounded-lg min-w-[48px]",
                 isActive
                   ? "text-charcoal"
-                  : "text-charcoal-muted/50 hover:text-charcoal"
+                  : "text-charcoal-muted hover:text-charcoal"
               )}
             >
               <div className={cn(

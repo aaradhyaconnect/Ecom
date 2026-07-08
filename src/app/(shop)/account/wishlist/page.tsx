@@ -104,7 +104,7 @@ export default function WishlistPage() {
                 <p className="text-xs text-charcoal-muted mt-0.5 capitalize">{product.category.replace("-", " ")}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-sm font-semibold text-charcoal">{formatPrice(product.price)}</span>
-                  {product.compare_price && <span className="text-xs text-charcoal-muted/60 line-through">{formatPrice(product.compare_price)}</span>}
+                  {product.compare_price && <span className="text-xs text-charcoal-muted line-through">{formatPrice(product.compare_price)}</span>}
                 </div>
               </Link>
               <Button variant={inCart ? "secondary" : "primary"} size="sm" fullWidth className="mt-3" onClick={() => handleAddToCart(product)} disabled={inCart}>

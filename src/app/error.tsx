@@ -17,7 +17,7 @@ export default function Error({
       <p className="mt-4 text-charcoal-muted">
         Something went wrong. Please try again.
       </p>
-      <p className="mt-1 text-sm text-charcoal-muted/60">
+      <p className="mt-1 text-sm text-charcoal-muted">
         {error.message || "An unexpected error occurred"}
       </p>
       <div className="mt-8 flex gap-4">

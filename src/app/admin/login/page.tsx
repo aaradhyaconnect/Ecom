@@ -346,7 +346,7 @@ export default function AdminLoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-9 text-charcoal-muted/60 hover:text-charcoal"
+                  className="absolute right-3 top-9 text-charcoal-muted hover:text-charcoal"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -449,7 +449,7 @@ export default function AdminLoginPage() {
             <div className="w-full border-t border-ivory-dark" />
           </div>
           <div className="relative flex justify-center text-xs">
-            <span className="bg-ivory px-4 text-charcoal-muted/60">or</span>
+            <span className="bg-ivory px-4 text-charcoal-muted">or</span>
           </div>
         </div>
 

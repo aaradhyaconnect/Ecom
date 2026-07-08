@@ -83,7 +83,7 @@ export default function MessagesPage() {
       <div>
         <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Inbox</span>
         <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Messages</h1>
-        <p className="text-[13px] text-charcoal-muted/60 mt-0.5">Manage contact form submissions</p>
+        <p className="text-[13px] text-charcoal-muted mt-0.5">Manage contact form submissions</p>
       </div>
 
       {/* Stats */}
@@ -107,7 +107,7 @@ export default function MessagesPage() {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] text-charcoal-muted/60 uppercase tracking-wider">
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] text-charcoal-muted uppercase tracking-wider">
                 <th className="px-5 py-3 font-medium">From</th>
                 <th className="px-5 py-3 font-medium">Subject</th>
                 <th className="px-5 py-3 font-medium">Date</th>
@@ -116,9 +116,9 @@ export default function MessagesPage() {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={4} className="px-5 py-16 text-center text-charcoal-muted/50"><RefreshCw className="h-5 w-5 animate-spin mx-auto mb-2" />Loading...</td></tr>
+                <tr><td colSpan={4} className="px-5 py-16 text-center text-charcoal-muted"><RefreshCw className="h-5 w-5 animate-spin mx-auto mb-2" />Loading...</td></tr>
               ) : messages.length === 0 ? (
-                <tr><td colSpan={4} className="px-5 py-16 text-center text-charcoal-muted/50"><Mail className="h-8 w-8 mx-auto mb-2 text-charcoal-muted/20" />No messages</td></tr>
+                <tr><td colSpan={4} className="px-5 py-16 text-center text-charcoal-muted"><Mail className="h-8 w-8 mx-auto mb-2 text-charcoal-muted" />No messages</td></tr>
               ) : messages.map((msg) => (
                 <tr key={msg.id} className={`border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors cursor-pointer ${!msg.is_read ? "bg-amber-50/20" : ""}`} onClick={() => openMessage(msg)}>
                   <td className="px-5 py-3">
@@ -126,16 +126,16 @@ export default function MessagesPage() {
                       {!msg.is_read && <div className="h-2 w-2 bg-amber-500 rounded-full flex-shrink-0" />}
                       <div>
                         <p className="font-medium text-charcoal">{msg.name}</p>
-                        <p className="text-[11px] text-charcoal-muted/50">{msg.email}</p>
+                        <p className="text-[11px] text-charcoal-muted">{msg.email}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-3 text-charcoal-muted">{msg.subject || "(no subject)"}</td>
-                  <td className="px-5 py-3 text-[12px] text-charcoal-muted/60">{formatDate(msg.created_at)}</td>
+                  <td className="px-5 py-3 text-[12px] text-charcoal-muted">{formatDate(msg.created_at)}</td>
                   <td className="px-5 py-3 text-right">
                     <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
-                      <button onClick={() => openMessage(msg)} className="p-1.5 text-charcoal-muted/50 hover:bg-ivory-dark/40 hover:text-charcoal rounded-md transition-colors"><Eye className="h-4 w-4" /></button>
-                      <button onClick={() => handleDelete(msg.id)} className="p-1.5 text-charcoal-muted/50 hover:bg-rose-50 hover:text-rose-500 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
+                      <button onClick={() => openMessage(msg)} className="p-1.5 text-charcoal-muted hover:bg-ivory-dark/40 hover:text-charcoal rounded-md transition-colors"><Eye className="h-4 w-4" /></button>
+                      <button onClick={() => handleDelete(msg.id)} className="p-1.5 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -148,7 +148,7 @@ export default function MessagesPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-[12px] text-charcoal-muted/50">{total} messages total</p>
+          <p className="text-[12px] text-charcoal-muted">{total} messages total</p>
           <div className="flex items-center gap-1">
             <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1} className="px-3 py-1.5 text-[12px] border border-ivory-dark/60 hover:bg-ivory-dark/40 disabled:opacity-40 rounded-lg">Previous</button>
             <span className="px-3 py-1.5 text-[12px] text-charcoal-muted">Page {page} of {totalPages}</span>
@@ -165,9 +165,9 @@ export default function MessagesPage() {
               <div className="h-10 w-10 bg-charcoal text-ivory rounded-full flex items-center justify-center text-sm font-bold">{selectedMessage.name.charAt(0).toUpperCase()}</div>
               <div>
                 <p className="font-medium text-charcoal">{selectedMessage.name}</p>
-                <p className="text-[12px] text-charcoal-muted/50">{selectedMessage.email}</p>
+                <p className="text-[12px] text-charcoal-muted">{selectedMessage.email}</p>
               </div>
-              <span className="ml-auto text-[11px] text-charcoal-muted/50">{formatDate(selectedMessage.created_at)}</span>
+              <span className="ml-auto text-[11px] text-charcoal-muted">{formatDate(selectedMessage.created_at)}</span>
             </div>
             {selectedMessage.subject && <p className="text-[13px] font-medium text-charcoal">{selectedMessage.subject}</p>}
             <div className="bg-ivory-dark/20 border border-ivory-dark/40 rounded-lg p-4">
