@@ -9,6 +9,8 @@ import { InstagramGallery } from "@/components/home/InstagramGallery";
 import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { getBanners } from "@/lib/supabase/queries";
 
+export const dynamic = "force-dynamic";
+
 export default async function HomePage() {
   let bannerSlides;
   try {
