@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>()(
       logout: () => set({ user: null, isAdmin: false, loading: false }),
     }),
     {
-      name: "hainju-auth",
+      name: "arconstyle-auth",
       partialize: (state) => ({
         user: state.user,
         isAdmin: state.isAdmin,

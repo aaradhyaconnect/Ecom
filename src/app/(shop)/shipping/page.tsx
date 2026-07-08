@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Shipping & Delivery",
-  description: "HAINJU shipping policy — free shipping on orders above ₹999. Delivery across India.",
+  description: "Arcon Style shipping policy — free shipping on orders above ₹999. Delivery across India.",
   alternates: { canonical: "/shipping" },
 };
 
@@ -61,7 +61,7 @@ export default function ShippingPage() {
           <h2 className="text-xl font-serif font-bold text-charcoal mb-4">Tracking Your Order</h2>
           <p className="text-sm text-charcoal-muted leading-relaxed">
             Once your order has shipped, you will receive an email with a tracking number. You can track your order
-            through the carrier&apos;s website or by logging into your HAINJU account and viewing your order history.
+            through the carrier&apos;s website or by logging into your Arcon Style account and viewing your order history.
           </p>
         </div>
 

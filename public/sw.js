@@ -1,4 +1,4 @@
-const CACHE_NAME = "hainju-v1";
+const CACHE_NAME = "arconstyle-v1";
 const STATIC_ASSETS = [
   "/",
   "/offline",
@@ -92,7 +92,7 @@ async function cacheFirst(request) {
 
 self.addEventListener("push", (event) => {
   const data = event.data?.json() ?? {
-    title: "HAINJU",
+    title: "Arcon Style",
     body: "",
   };
   event.waitUntil(

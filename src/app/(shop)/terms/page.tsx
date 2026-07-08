@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Terms of Service",
-  description: "HAINJU's terms of service. Read our terms and conditions for using our website and services.",
+  description: "Arcon Style's terms of service. Read our terms and conditions for using our website and services.",
   alternates: { canonical: "/terms" },
 };
 

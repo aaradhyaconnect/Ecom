@@ -60,7 +60,7 @@ export function Newsletter() {
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mb-5">
           Join the{" "}
           <span className="bg-gradient-to-r from-gold-light via-gold to-gold-light bg-clip-text text-transparent">
-            HAINJU
+            Arcon Style
           </span>{" "}
           Circle
         </h2>

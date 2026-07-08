@@ -20,7 +20,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (initialized.current) return;
     initialized.current = true;
-    const saved = localStorage.getItem("hainju-theme") as Theme | null;
+    const saved = localStorage.getItem("arconstyle-theme") as Theme | null;
     const preferred = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
     const initial = saved || preferred;
     setTheme(initial);
@@ -30,7 +30,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light";
-      localStorage.setItem("hainju-theme", next);
+      localStorage.setItem("arconstyle-theme", next);
       document.documentElement.classList.toggle("dark", next === "dark");
       return next;
     });

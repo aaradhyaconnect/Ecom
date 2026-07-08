@@ -2,7 +2,7 @@ import { SITE } from "@/lib/constants/site";
 
 export const metadata = {
   title: "Size Guide",
-  description: "Find your perfect fit with HAINJU's comprehensive size guide for clothing and jewellery.",
+  description: "Find your perfect fit with Arcon Style's comprehensive size guide for clothing and jewellery.",
   alternates: { canonical: "/size-guide" },
 };
 

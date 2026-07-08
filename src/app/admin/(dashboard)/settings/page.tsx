@@ -26,9 +26,9 @@ interface StoreSettings {
 }
 
 const defaults: StoreSettings = {
-  store_name: "HAINJU",
+  store_name: "Arcon Style",
   store_description: "Premium Designer Clothing & Jewellery",
-  contact_email: "hello@hainju.com",
+  contact_email: "hello@arconstyle.com",
   contact_phone: "",
   address: "",
   currency: "INR",
@@ -39,8 +39,8 @@ const defaults: StoreSettings = {
   social_facebook: "",
   social_twitter: "",
   social_youtube: "",
-  seo_title: "HAINJU - Premium Designer Clothing & Jewellery",
-  seo_description: "Shop premium designer clothing and artificial jewellery at HAINJU.",
+  seo_title: "Arcon Style - Premium Designer Clothing & Jewellery",
+  seo_description: "Shop premium designer clothing and artificial jewellery at Arcon Style.",
   seo_keywords: "fashion, clothing, jewellery, designer, women",
 };
 

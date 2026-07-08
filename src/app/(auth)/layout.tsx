@@ -11,7 +11,7 @@ export default function AuthLayout({
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-serif font-bold text-charcoal tracking-[0.15em]">HAINJU</h1>
+            <h1 className="text-3xl font-serif font-bold text-charcoal tracking-[0.15em]">Arcon Style</h1>
             <p className="text-[10px] uppercase tracking-[0.4em] text-gold-dark mt-1">Premium Collections</p>
           </Link>
         </div>
@@ -20,7 +20,7 @@ export default function AuthLayout({
           {children}
         </div>
         <div className="text-center mt-8">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted">&copy; {new Date().getFullYear()} HAINJU</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted">&copy; {new Date().getFullYear()} Arcon Style</p>
         </div>
       </div>
     </div>

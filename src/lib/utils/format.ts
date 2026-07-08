@@ -43,7 +43,7 @@ export function generateOrderId(): string {
   const array = new Uint8Array(4);
   crypto.getRandomValues(array);
   const random = Array.from(array, (b) => b.toString(36).toUpperCase()).join("").slice(0, 4);
-  return `HAINJU-${timestamp}${random}`;
+  return `ARCON-${timestamp}${random}`;
 }
 
 export function getInitials(name: string): string {

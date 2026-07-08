@@ -228,7 +228,7 @@ export default function CheckoutPage() {
           key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
           amount: data.data.razorpay_order.amount,
           currency: "INR",
-          name: "HAINJU",
+          name: "Arcon Style",
           description: `Order ${data.data.order_id}`,
           order_id: data.data.razorpay_order.id,
           prefill: {

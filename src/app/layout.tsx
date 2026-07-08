@@ -25,11 +25,11 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "HAINJU | Premium Designer Clothing & Artificial Jewellery",
-    template: "%s | HAINJU",
+    default: "Arcon Style | Premium Designer Clothing & Artificial Jewellery",
+    template: "%s | Arcon Style",
   },
   description:
-    "Discover HAINJU's premium self-designed clothing and exquisite artificial jewellery. Elevate your style with our curated collections for the modern trendsetter.",
+    "Discover Arcon Style's premium self-designed clothing and exquisite artificial jewellery. Elevate your style with our curated collections for the modern trendsetter.",
   keywords: [
     "designer clothing",
     "artificial jewellery",
@@ -38,22 +38,22 @@ export const metadata: Metadata = {
     "online shopping",
     "Indian fashion",
   ],
-  authors: [{ name: "HAINJU" }],
-  creator: "HAINJU",
+  authors: [{ name: "Arcon Style" }],
+  creator: "Arcon Style",
   manifest: "/manifest.json",
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://hainju.vercel.app"),
   openGraph: {
     type: "website",
     locale: "en_IN",
-    siteName: "HAINJU",
-    title: "HAINJU | Premium Designer Clothing & Artificial Jewellery",
+    siteName: "Arcon Style",
+    title: "Arcon Style | Premium Designer Clothing & Artificial Jewellery",
     description:
       "Discover premium self-designed clothing and exquisite artificial jewellery.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "HAINJU",
-    description: "Premium self-designed clothing and artificial jewellery by HAINJU.",
+    title: "Arcon Style",
+    description: "Premium self-designed clothing and artificial jewellery by Arcon Style.",
   },
   robots: {
     index: true,

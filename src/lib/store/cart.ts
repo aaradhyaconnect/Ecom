@@ -157,6 +157,6 @@ export const useCartStore = create<CartStore>()(
         }));
       },
     }),
-    { name: "hainju-cart" }
+    { name: "arconstyle-cart" }
   )
 );

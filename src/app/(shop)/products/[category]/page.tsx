@@ -16,13 +16,13 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
   return {
     title: `${name} - Shop Online`,
-    description: `Browse our ${name} collection at HAINJU. Premium designer clothing and artificial jewellery.`,
+    description: `Browse our ${name} collection at Arcon Style. Premium designer clothing and artificial jewellery.`,
     alternates: {
       canonical: `/products/${category}`,
     },
     openGraph: {
-      title: `${name} | HAINJU`,
-      description: `Browse our ${name} collection at HAINJU.`,
+      title: `${name} | Arcon Style`,
+      description: `Browse our ${name} collection at Arcon Style.`,
       url: `/products/${category}`,
     },
   };

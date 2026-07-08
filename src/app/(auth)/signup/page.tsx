@@ -123,7 +123,7 @@ export default function RegisterPage() {
                 }),
               }).catch(() => {});
             }
-            toast.success("Welcome to HAINJU!");
+            toast.success("Welcome to Arcon Style!");
             window.location.replace(e.data.path || redirectTo);
           }
         };
@@ -145,7 +145,7 @@ export default function RegisterPage() {
                 refresh_token: session.refresh_token,
               }),
             }).catch(() => {});
-            toast.success("Welcome to HAINJU!");
+            toast.success("Welcome to Arcon Style!");
             window.location.replace(redirectTo);
           }
         }, 30000);
@@ -161,7 +161,7 @@ export default function RegisterPage() {
       <div className="text-center mb-8">
         <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
         <h1 className="text-2xl font-serif font-bold text-charcoal">Create Account</h1>
-        <p className="text-charcoal-muted text-sm mt-1">Join HAINJU today</p>
+        <p className="text-charcoal-muted text-sm mt-1">Join Arcon Style today</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">

@@ -196,7 +196,7 @@ export default function LoginPage() {
       <div className="text-center mb-8">
         <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
         <h1 className="text-2xl font-serif font-bold text-charcoal">Welcome Back</h1>
-        <p className="text-charcoal-muted text-sm mt-1">Sign in to your HAINJU account</p>
+        <p className="text-charcoal-muted text-sm mt-1">Sign in to your Arcon Style account</p>
       </div>
 
       <div className="flex border-b border-ivory-dark mb-6">

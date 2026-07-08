@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "HAINJU",
-    short_name: "HAINJU",
+    name: "Arcon Style",
+    short_name: "Arcon Style",
     description: "Premium designer clothing & artificial jewellery",
     start_url: "/",
     display: "standalone",

@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: "Learn about HAINJU — premium self-designed clothing and artificial jewellery for the modern trendsetter.",
+  description: "Learn about Arcon Style — premium self-designed clothing and artificial jewellery for the modern trendsetter.",
   alternates: { canonical: "/about" },
 };
 
