@@ -17,6 +17,7 @@ interface BannerForm {
   link: string;
   order: string;
   is_active: boolean;
+  text_position: "left" | "right";
 }
 
 const emptyForm: BannerForm = {
@@ -26,6 +27,7 @@ const emptyForm: BannerForm = {
   link: "",
   order: "0",
   is_active: true,
+  text_position: "left",
 };
 
 export default function AdminBannersPage() {
@@ -69,6 +71,7 @@ export default function AdminBannersPage() {
       link: banner.link || "",
       order: String(banner.order),
       is_active: banner.is_active,
+      text_position: banner.text_position || "left",
     });
     setShowModal(true);
   };
@@ -334,6 +337,19 @@ export default function AdminBannersPage() {
             value={form.order}
             onChange={(e) => setForm({ ...form, order: e.target.value })}
           />
+          <div>
+            <label className="block text-sm font-medium text-charcoal mb-1.5">
+              Text Position
+            </label>
+            <select
+              value={form.text_position}
+              onChange={(e) => setForm({ ...form, text_position: e.target.value as "left" | "right" })}
+              className="w-full px-4 py-2.5 border border-ivory-dark bg-white text-charcoal text-sm focus:outline-none focus:border-charcoal/30"
+            >
+              <option value="left">Left</option>
+              <option value="right">Right</option>
+            </select>
+          </div>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"

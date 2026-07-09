@@ -60,6 +60,7 @@ export async function POST(request: Request) {
       link: body.link || null,
       is_active: body.is_active !== undefined ? body.is_active : true,
       order: nextOrder,
+      text_position: body.text_position || "left",
       created_at: new Date().toISOString(),
     };
 
@@ -101,7 +102,7 @@ export async function PUT(request: Request) {
       );
     }
 
-    const allowedFields = ["title", "subtitle", "image", "link", "is_active", "order"] as const;
+    const allowedFields = ["title", "subtitle", "image", "link", "is_active", "order", "text_position"] as const;
     const updates: Record<string, unknown> = {};
     for (const key of allowedFields) {
       if (key in rawUpdates) updates[key] = rawUpdates[key];

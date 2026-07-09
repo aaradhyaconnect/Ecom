@@ -152,6 +152,7 @@ export interface Banner {
   link?: string;
   is_active: boolean;
   order: number;
+  text_position?: "left" | "right";
   created_at: string;
 }
 

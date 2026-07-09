@@ -22,7 +22,7 @@ export default async function HomePage() {
       cta: "Shop Now",
       href: b.link || "/products/new-arrivals",
       image: b.image || undefined,
-      accent: "from-amber-900/20",
+      textPosition: (b.text_position as "left" | "right") || "left",
     }));
   } catch {
     bannerSlides = undefined;

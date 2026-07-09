@@ -13,7 +13,8 @@ interface BannerSlide {
   cta: string;
   href: string;
   image?: string;
-  accent: string;
+  accent?: string;
+  textPosition?: "left" | "right";
 }
 
 const fallbackSlides: BannerSlide[] = [
@@ -23,26 +24,26 @@ const fallbackSlides: BannerSlide[] = [
     description: "Unique pieces crafted for the modern trendsetter",
     cta: "Shop Now",
     href: "/products/new-arrivals",
-    image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1400&h=800&fit=crop",
-    accent: "from-amber-900/20",
+    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1400&h=800&fit=crop&crop=left",
+    textPosition: "left",
   },
   {
     title: "Exquisite Jewellery",
-    subtitle: "Curated Resale Treasures",
-    description: "Handpicked statement pieces that define elegance",
+    subtitle: "Curated Statement Pieces",
+    description: "Handpicked treasures that define elegance",
     cta: "Explore Collection",
     href: "/products/artificial-jewellery",
-    image: "https://images.unsplash.com/photo-1515562141589-67f0d727b750?w=1400&h=800&fit=crop",
-    accent: "from-rose-900/10",
+    image: "https://images.unsplash.com/photo-1515562141589-67f0d727b750?w=1400&h=800&fit=crop&crop=right",
+    textPosition: "right",
   },
   {
-    title: "Season's Sale",
+    title: "Season's Edit",
     subtitle: "Up to 50% Off",
     description: "Limited time offers on premium fashion & jewellery",
     cta: "Shop Sale",
     href: "/products/sale",
-    image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1400&h=800&fit=crop",
-    accent: "from-emerald-900/10",
+    image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1400&h=800&fit=crop&crop=left",
+    textPosition: "left",
   },
 ];
 
@@ -69,6 +70,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
   }, [slides.length]);
 
   const slide = slides[current];
+  const isRight = slide.textPosition === "right";
 
   return (
     <section className="relative h-[85vh] min-h-[600px] max-h-[950px] overflow-hidden bg-charcoal">
@@ -90,21 +92,32 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
                 className="object-cover"
                 preload={i === 0}
               />
-              <div className="absolute inset-0 bg-charcoal/60" />
+              <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-transparent to-charcoal/10" />
             </div>
           ) : (
-            <div className={cn("absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal-light to-charcoal", s.accent)} />
+            <div className="absolute inset-0 bg-gradient-to-br from-charcoal via-charcoal-light to-charcoal" />
           )}
-
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/60 via-transparent to-charcoal/20" />
         </div>
       ))}
 
       <div className="relative z-10 h-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center">
-        <div className="max-w-2xl" key={animKey}>
+        <div
+          key={animKey}
+          className={cn(
+            "max-w-2xl",
+            isRight ? "ml-auto text-right" : "text-left"
+          )}
+        >
           <div className="animate-in slide-up" style={{ animationDuration: "600ms" }}>
-            <div className="flex items-center gap-4 mb-8">
-              <span className="h-[1px] w-16 bg-gradient-to-r from-gold to-gold/0" />
+            <div className={cn(
+              "flex items-center gap-4 mb-8",
+              isRight ? "justify-end" : "justify-start"
+            )}>
+              <span className={cn(
+                "h-[1px] w-16 bg-gradient-to-r from-gold to-gold/0",
+                isRight && "bg-gradient-to-l rotate-180"
+              )} />
               <span className="text-[11px] uppercase tracking-[0.4em] text-gold-light font-medium">
                 {slide.subtitle}
               </span>
@@ -133,7 +146,10 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
             {slide.description}
           </p>
 
-          <div className="animate-in slide-up flex items-center gap-6" style={{ animationDelay: "400ms", animationDuration: "600ms" }}>
+          <div className={cn(
+            "animate-in slide-up flex items-center gap-6",
+            isRight ? "justify-end" : "justify-start"
+          )} style={{ animationDelay: "400ms", animationDuration: "600ms" }}>
             <Link
               href={slide.href}
               className="group relative inline-flex items-center gap-3 px-10 py-4 bg-ivory text-charcoal text-xs font-semibold uppercase tracking-[0.2em] hover:bg-gold-light transition-all duration-500 overflow-hidden"
