@@ -245,7 +245,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">Payment Info</h2>
           </div>
           <div className="text-sm text-charcoal space-y-0.5">
-            <p>Method: <span className="font-medium">{order.payment_method === "cod" ? "Cash on Delivery" : "Online (Razorpay)"}</span></p>
+            <p>Method: <span className="font-medium">{order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online (Razorpay)"}</span></p>
             <p className="capitalize">Status: <span className={`font-medium ${order.payment_status === "paid" ? "text-green-600" : order.payment_status === "failed" ? "text-rose-600" : "text-yellow-600"}`}>{order.payment_status}</span></p>
           </div>
           <div className="border-t border-ivory-dark/60 mt-4 pt-4 space-y-1 text-sm">

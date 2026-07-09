@@ -86,7 +86,7 @@ export interface Order {
   items: OrderItem[];
   shipping_address: Address;
   billing_address: Address;
-  payment_method: "cod" | "razorpay";
+  payment_method: "cod" | "razorpay" | "cashfree";
   payment_status: "pending" | "paid" | "failed" | "refunded";
   order_status: OrderStatus;
   subtotal: number;
@@ -96,6 +96,8 @@ export interface Order {
   total: number;
   razorpay_order_id?: string;
   razorpay_payment_id?: string;
+  cashfree_order_id?: string;
+  cashfree_payment_id?: string;
   tracking_id?: string;
   courier_name?: string;
   estimated_delivery?: string;

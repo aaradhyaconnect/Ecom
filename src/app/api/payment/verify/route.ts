@@ -1,8 +1,6 @@
 import { NextRequest } from "next/server";
 import { createAdminClient, createServerSupabase } from "@/lib/supabase/server";
-import crypto from "crypto";
-
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+import { getCashfreeOrder, getCashfreePayments } from "@/lib/cashfree";
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,32 +17,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, order_id } = body;
+    const { order_id } = body;
 
-    if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !order_id) {
+    if (!order_id) {
       return Response.json(
-        { success: false, error: "Missing required fields" },
-        { status: 400 }
-      );
-    }
-
-    if (!RAZORPAY_KEY_SECRET) {
-      return Response.json(
-        { success: false, error: "Payment gateway not configured" },
-        { status: 500 }
-      );
-    }
-
-    const expectedSignature = crypto
-      .createHmac("sha256", RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest("hex");
-
-    const sigBuffer = Buffer.from(razorpay_signature);
-    const expectedBuffer = Buffer.from(expectedSignature);
-    if (sigBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(sigBuffer, expectedBuffer)) {
-      return Response.json(
-        { success: false, error: "Invalid payment signature" },
+        { success: false, error: "Missing order_id" },
         { status: 400 }
       );
     }
@@ -52,16 +29,11 @@ export async function POST(request: NextRequest) {
     const adminDb = await createAdminClient();
     const { data: order, error: orderError } = await adminDb
       .from("orders")
-      .select("id,user_id,razorpay_order_id,payment_status")
+      .select("id,user_id,cashfree_order_id,payment_status")
       .eq("id", order_id)
       .single();
 
-    if (
-      orderError ||
-      !order ||
-      order.user_id !== user.id ||
-      order.razorpay_order_id !== razorpay_order_id
-    ) {
+    if (orderError || !order || order.user_id !== user.id) {
       return Response.json(
         { success: false, error: "Order could not be verified" },
         { status: 400 }
@@ -75,28 +47,56 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const { error } = await adminDb
-      .from("orders")
-      .update({
-        payment_status: "paid",
-        order_status: "confirmed",
-        razorpay_payment_id,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", order_id)
-      .eq("razorpay_order_id", razorpay_order_id);
-
-    if (error) {
+    if (!order.cashfree_order_id) {
       return Response.json(
-        { success: false, error: "Failed to update order" },
-        { status: 500 }
+        { success: false, error: "No Cashfree order found" },
+        { status: 400 }
       );
     }
 
-    return Response.json({
-      success: true,
-      message: "Payment verified successfully",
-    });
+    const cfOrder = await getCashfreeOrder(order.cashfree_order_id);
+
+    if (cfOrder.order_status === "PAID") {
+      const payments = await getCashfreePayments(order.cashfree_order_id);
+      const successfulPayment = payments.find(
+        (p) => p.payment_status === "SUCCESS"
+      );
+
+      await adminDb
+        .from("orders")
+        .update({
+          payment_status: "paid",
+          order_status: "confirmed",
+          cashfree_payment_id: successfulPayment?.cf_payment_id || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", order_id);
+
+      return Response.json({
+        success: true,
+        message: "Payment verified successfully",
+      });
+    }
+
+    if (cfOrder.order_status === "EXPIRED" || cfOrder.order_status === "TERMINATED") {
+      await adminDb
+        .from("orders")
+        .update({
+          payment_status: "failed",
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", order_id);
+
+      return Response.json(
+        { success: false, error: "Payment failed or expired" },
+        { status: 400 }
+      );
+    }
+
+    return Response.json(
+      { success: false, error: "Payment is still pending" },
+      { status: 400 }
+    );
   } catch {
     return Response.json(
       { success: false, error: "Internal server error" },

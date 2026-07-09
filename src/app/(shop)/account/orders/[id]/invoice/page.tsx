@@ -86,7 +86,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
             <h2 className="text-xl font-bold text-charcoal">INVOICE</h2>
             <p className="text-sm text-gray-500 mt-1">#{order.order_id}</p>
             <p className="text-xs text-gray-400 mt-1">Date: {formatDate(order.created_at)}</p>
-            <p className="text-xs text-gray-400">Payment: {order.payment_method === "cod" ? "Cash on Delivery" : "Online (Razorpay)"}</p>
+            <p className="text-xs text-gray-400">Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online (Razorpay)"}</p>
             <p className="text-xs text-gray-400">Status: {order.payment_status?.toUpperCase()}</p>
           </div>
         </div>

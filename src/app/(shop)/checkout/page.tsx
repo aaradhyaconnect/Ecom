@@ -17,31 +17,13 @@ import type { Address } from "@/types";
 
 declare global {
   interface Window {
-    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
+    Cashfree?: (options: { mode: string }) => {
+      checkout: (options: {
+        paymentSessionId: string;
+        redirectTarget: string;
+      }) => Promise<void>;
+    };
   }
-}
-
-interface RazorpayOptions {
-  key: string | undefined;
-  amount: number;
-  currency: string;
-  name: string;
-  description: string;
-  order_id: string;
-  prefill: { name: string; email: string | undefined; contact: string };
-  theme: { color: string };
-  handler: (response: RazorpayResponse) => void;
-  modal: { ondismiss: () => void };
-}
-
-interface RazorpayResponse {
-  razorpay_order_id: string;
-  razorpay_payment_id: string;
-  razorpay_signature: string;
-}
-
-interface RazorpayInstance {
-  open: () => void;
 }
 
 interface FormErrors {
@@ -71,7 +53,7 @@ export default function CheckoutPage() {
 
   const [address, setAddress] = useState<Address>(initialAddress);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "razorpay">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "cashfree">("cod");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
@@ -152,14 +134,14 @@ export default function CheckoutPage() {
     return Object.keys(errs).length === 0;
   };
 
-  const loadRazorpayScript = (): Promise<boolean> => {
+  const loadCashfreeScript = (): Promise<boolean> => {
     return new Promise((resolve) => {
-      if (window.Razorpay) {
+      if (window.Cashfree) {
         resolve(true);
         return;
       }
       const script = document.createElement("script");
-      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.src = "https://sdk.cashfree.com/js/ui/2.0.0/cashfree.js";
       script.async = true;
       script.onload = () => resolve(true);
       script.onerror = () => resolve(false);
@@ -216,65 +198,34 @@ export default function CheckoutPage() {
         return;
       }
 
-      if (paymentMethod === "razorpay") {
-        const loaded = await loadRazorpayScript();
+      if (paymentMethod === "cashfree") {
+        const loaded = await loadCashfreeScript();
         if (!loaded) {
           toast.error("Failed to load payment gateway");
           setIsPlacingOrder(false);
           return;
         }
 
-        const options = {
-          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-          amount: data.data.razorpay_order.amount,
-          currency: "INR",
-          name: "Arcon Style",
-          description: `Order ${data.data.order_id}`,
-          order_id: data.data.razorpay_order.id,
-          prefill: {
-            name: address.full_name,
-            email: user.email,
-            contact: address.phone,
-          },
-          theme: { color: "#000000" },
-          handler: async function (response: RazorpayResponse) {
-            try {
-              const verifyRes = await fetch("/api/payment/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                  order_id: data.data.id,
-                }),
-              });
+        const paymentSessionId =
+          data.data.cashfree_order?.payment_session_id;
 
-              const verifyData = await verifyRes.json();
+        if (!paymentSessionId) {
+          toast.error("Payment session not created");
+          setIsPlacingOrder(false);
+          return;
+        }
 
-              if (verifyData.success) {
-                toast.success("Payment successful! Order placed.");
-                fireConfetti();
-                clearCart();
-                window.location.replace(`/account/orders/${data.data.id}`);
-              } else {
-                toast.error("Payment verification failed");
-              }
-            } catch {
-              toast.error("Payment verification failed");
-            }
-          },
-          modal: {
-            ondismiss: () => {
-              setIsPlacingOrder(false);
-              toast.error("Payment cancelled");
-            },
-          },
-        };
+        const mode =
+          process.env.NEXT_PUBLIC_CASHFREE_MODE === "production"
+            ? "production"
+            : "sandbox";
 
-        const razorpay = new (window.Razorpay!)(options);
-        razorpay.open();
-        return;
+        const cashfree = window.Cashfree!({ mode });
+
+        await cashfree.checkout({
+          paymentSessionId,
+          redirectTarget: "_self",
+        });
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -387,14 +338,14 @@ export default function CheckoutPage() {
                 <input
                   type="radio"
                   name="payment"
-                  value="razorpay"
-                  checked={paymentMethod === "razorpay"}
-                  onChange={() => setPaymentMethod("razorpay")}
+                  value="cashfree"
+                  checked={paymentMethod === "cashfree"}
+                  onChange={() => setPaymentMethod("cashfree")}
                   className="accent-gold text-gold"
                 />
                 <div>
-                  <p className="font-medium text-sm text-charcoal">Razorpay</p>
-                  <p className="text-xs text-charcoal-muted">Pay via UPI, Card, Net Banking</p>
+                  <p className="font-medium text-sm text-charcoal">Cashfree</p>
+                  <p className="text-xs text-charcoal-muted">Pay via UPI, Card, Net Banking, Wallets</p>
                 </div>
               </label>
             </div>
@@ -436,7 +387,7 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-              <div className="border-t border-ivory-dark pt-4 space-y-2 text-sm">
+            <div className="border-t border-ivory-dark pt-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-charcoal-muted">Subtotal</span>
                 <span className="text-charcoal">{formatPrice(subtotal)}</span>

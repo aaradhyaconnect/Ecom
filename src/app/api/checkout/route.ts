@@ -2,10 +2,9 @@ import { NextRequest } from "next/server";
 import { createServerSupabase, createAdminClient } from "@/lib/supabase/server";
 import { generateOrderId } from "@/lib/utils/format";
 import { rateLimitCheckout, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
+import { createCashfreeOrder, isCashfreeConfigured } from "@/lib/cashfree";
 import type { Product } from "@/types";
 
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID;
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const SHIPPING_THRESHOLD = 999;
 const SHIPPING_CHARGE = 49;
 const MAX_ITEM_QUANTITY = 20;
@@ -27,28 +26,6 @@ type CouponRecord = {
   used_count: number;
   expires_at: string | null;
 };
-
-async function createRazorpayOrder(amount: number, receipt: string) {
-  const res = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Basic ${Buffer.from(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`).toString("base64")}`,
-    },
-    body: JSON.stringify({
-      amount: Math.round(amount * 100),
-      currency: "INR",
-      receipt,
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error?.description || "Failed to create Razorpay order");
-  }
-
-  return res.json();
-}
 
 function normalizeItems(items: unknown): Required<CheckoutItem>[] {
   if (!Array.isArray(items)) return [];
@@ -144,7 +121,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["cod", "razorpay"].includes(payment_method)) {
+    if (!["cod", "cashfree"].includes(payment_method)) {
       return Response.json(
         { success: false, error: "Invalid payment method" },
         { status: 400 }
@@ -226,16 +203,32 @@ export async function POST(request: NextRequest) {
     const discount = calculateDiscount(coupon, subtotal);
     const total = Math.max(subtotal + shippingCharge - discount, 0);
     const orderId = generateOrderId();
-    let razorpayOrder = null;
+    let cashfreeOrder = null;
 
-    if (payment_method === "razorpay") {
-      if (!RAZORPAY_KEY_ID || !RAZORPAY_KEY_SECRET) {
+    if (payment_method === "cashfree") {
+      if (!isCashfreeConfigured()) {
         return Response.json(
           { success: false, error: "Payment gateway not configured" },
           { status: 500 }
         );
       }
-      razorpayOrder = await createRazorpayOrder(total, orderId);
+
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+      cashfreeOrder = await createCashfreeOrder({
+        order_id: orderId,
+        order_amount: total,
+        order_currency: "INR",
+        customer_details: {
+          customer_id: user.id,
+          customer_name: shipping_address.full_name,
+          customer_email: user.email || "",
+          customer_phone: shipping_address.phone,
+        },
+        order_meta: {
+          return_url: `${siteUrl}/account/orders/{order_id}?cashfree=true`,
+        },
+      });
     }
 
     const { data: order, error } = await adminDb
@@ -254,7 +247,7 @@ export async function POST(request: NextRequest) {
         discount,
         total,
         coupon_code: coupon?.code || null,
-        razorpay_order_id: razorpayOrder?.id || null,
+        cashfree_order_id: cashfreeOrder?.cf_order_id || null,
       })
       .select()
       .single();
@@ -302,7 +295,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: {
         ...order,
-        razorpay_order: razorpayOrder,
+        cashfree_order: cashfreeOrder,
       },
     });
   } catch (error: unknown) {
