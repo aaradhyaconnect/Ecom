@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { Upload, X, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -188,7 +188,7 @@ export function MultiImageUpload({
   const [dragActive, setDragActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const valueRef = useRef(value);
-  valueRef.current = value;
+  useEffect(() => { valueRef.current = value; });
 
   const upload = useCallback(
     async (file: File) => {
