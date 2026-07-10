@@ -31,10 +31,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             className={cn(
               "w-full px-4 py-2.5 border border-ivory-dark rounded-sm text-sm text-charcoal dark:text-white",
-              "focus:border-gold/60 focus:ring-0",
-              "placeholder:text-charcoal-muted dark:placeholder:text-white/30 transition-all duration-200 bg-ivory dark:bg-white/5",
+              "focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)]",
+              "placeholder:text-charcoal-muted dark:placeholder:text-white/30 transition-all duration-300 bg-ivory dark:bg-white/5",
               icon && "pl-10",
-              error && "border-rose-400 focus:border-rose-400",
+              error && "border-rose-400 focus:border-rose-400 focus:shadow-[0_0_0_3px_rgba(244,63,94,0.1)]",
               className
             )}
             {...props}

@@ -8,7 +8,7 @@ import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink } from "lucide-react";
+import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink, ArrowLeft } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Order, User } from "@/types";
 
@@ -71,7 +71,6 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     return () => { cancelled = true; };
   }, [params, supabase]);
 
-  // Fetch live tracking events
   useEffect(() => {
     if (!order?.id || !order?.tracking_id) return;
     let cancelled = false;
@@ -89,6 +88,8 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
 
   async function handleCancel() {
     if (!order) return;
+    const confirmed = window.confirm("Are you sure you want to cancel this order? This action cannot be undone.");
+    if (!confirmed) return;
     setCancelling(true);
     const res = await fetch(`/api/orders/${order.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "cancel" }) });
     const json = await res.json();
@@ -117,33 +118,70 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const currentStep = getCurrentStep(order.order_status);
   const cancelled = order.order_status === "cancelled";
   const returned = order.order_status === "returned";
+  const canCancel = isCancelable(order.order_status);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
-      <Link href="/account/orders" className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal mb-6 inline-flex items-center gap-1 transition-colors">&larr; Back to Orders</Link>
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8 page-enter">
+      <Link href="/account/orders" className="inline-flex items-center gap-2 text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-gold-dark mb-8 transition-all duration-300 hover:-translate-x-1 group">
+        <ArrowLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
+        Back to Orders
+      </Link>
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start justify-between mb-8">
         <div>
           <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Order Details</span>
           <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">Order #{order.order_id}</h1>
-          <p className="text-sm text-charcoal-muted mt-1">Placed on {formatDate(order.created_at)}</p>
+          <p className="text-sm text-charcoal-muted mt-1.5">Placed on {formatDate(order.created_at)}</p>
         </div>
-        <span className={`inline-flex items-center px-3 py-1 text-sm font-medium ${getStatusColor(order.order_status)}`}>{getStatusLabel(order.order_status)}</span>
+        <span className={`inline-flex items-center px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider ${getStatusColor(order.order_status)}`}>{getStatusLabel(order.order_status)}</span>
       </div>
 
+      {/* Cancelled Banner */}
+      {cancelled && (
+        <div className="bg-rose-50/80 border border-rose-200/50 p-5 mb-6 rounded-lg animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-rose-100 flex items-center justify-center rounded-full flex-shrink-0">
+              <X className="h-5 w-5 text-rose-500" />
+            </div>
+            <div>
+              <p className="font-semibold text-rose-800">Order Cancelled</p>
+              <p className="text-sm text-rose-600">This order was cancelled on {formatDate(order.updated_at)}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Returned Banner */}
+      {returned && (
+        <div className="bg-ivory-dark/30 border border-ivory-dark p-5 mb-6 rounded-lg animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-ivory-dark flex items-center justify-center rounded-full flex-shrink-0">
+              <Package className="h-5 w-5 text-charcoal-muted" />
+            </div>
+            <div>
+              <p className="font-semibold text-charcoal">Order Returned</p>
+              <p className="text-sm text-charcoal-muted">This order has been returned</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Progress Stepper */}
       {!cancelled && !returned && (
-        <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
-          <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-4">Order Status</h2>
-          <div className="hidden sm:flex items-center justify-between">
+        <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm rounded-lg animate-in fade-in">
+          <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-5">Order Status</h2>
+          <div className="hidden sm:flex items-center justify-between relative">
+            <div className="absolute top-5 left-0 right-0 h-[2px] bg-ivory-dark" />
+            <div className="absolute top-5 left-0 h-[2px] bg-charcoal transition-all duration-700" style={{ width: `${(currentStep / (STATUS_FLOW.length - 1)) * 100}%` }} />
             {STATUS_FLOW.map((step, idx) => {
               const isActive = idx <= currentStep;
               const isCurrent = idx === currentStep;
               return (
                 <div key={step} className="flex flex-col items-center relative z-10">
-                  <div className={`w-10 h-10 flex items-center justify-center text-sm font-bold transition-all ${isActive ? "bg-charcoal text-ivory" : "bg-charcoal/5 text-charcoal-muted"} ${isCurrent ? "ring-4 ring-gold/30" : ""}`}>
+                  <div className={`w-10 h-10 flex items-center justify-center text-sm font-bold transition-all duration-500 ${isActive ? "bg-charcoal text-ivory" : "bg-ivory-dark text-charcoal-muted border border-ivory-dark"} ${isCurrent ? "ring-4 ring-gold/30 scale-110" : ""}`}>
                     {isActive && idx < currentStep ? <Check className="h-5 w-5" /> : idx + 1}
                   </div>
-                  <span className={`text-xs mt-2 text-center font-medium ${isActive ? "text-charcoal" : "text-charcoal-muted"}`}>{getStatusLabel(step)}</span>
+                  <span className={`text-[10px] mt-2.5 text-center font-medium uppercase tracking-wider transition-colors ${isActive ? "text-charcoal" : "text-charcoal-muted"}`}>{getStatusLabel(step)}</span>
                 </div>
               );
             })}
@@ -151,7 +189,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
           <div className="sm:hidden space-y-3">
             {STATUS_FLOW.map((step, idx) => (
               <div key={step} className="flex items-center gap-3">
-                <div className={`w-8 h-8 flex items-center justify-center text-xs font-bold flex-shrink-0 ${idx <= currentStep ? "bg-charcoal text-ivory" : "bg-charcoal/5 text-charcoal-muted"}`}>
+                <div className={`w-8 h-8 flex items-center justify-center text-xs font-bold flex-shrink-0 transition-all ${idx <= currentStep ? "bg-charcoal text-ivory" : "bg-ivory-dark text-charcoal-muted"}`}>
                   {idx <= currentStep && idx < currentStep ? <Check className="h-4 w-4" /> : idx + 1}
                 </div>
                 <span className={`text-sm ${idx <= currentStep ? "font-medium text-charcoal" : "text-charcoal-muted"}`}>{getStatusLabel(step)}</span>
@@ -161,53 +199,32 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
-      {cancelled && (
-        <div className="bg-rose-50/50 border border-rose-200/60 p-6 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-rose-100 flex items-center justify-center"><X className="h-4 w-4 text-rose-500" /></div>
-            <div>
-              <p className="font-medium text-rose-800">Order Cancelled</p>
-              <p className="text-sm text-rose-600">This order was cancelled on {formatDate(order.updated_at)}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {returned && (
-        <div className="bg-charcoal/[0.02] border border-ivory-dark/60 p-6 mb-6">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-ivory-dark/50 flex items-center justify-center"><Package className="h-4 w-4 text-charcoal-muted" /></div>
-            <div>
-              <p className="font-medium text-charcoal">Order Returned</p>
-              <p className="text-sm text-charcoal-muted">This order has been returned</p>
-            </div>
-          </div>
-        </div>
-      )}
-
+      {/* Tracking */}
       {order.tracking_id && (
-        <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
+        <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm rounded-lg animate-in fade-in">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Truck className="h-5 w-5 text-charcoal-muted" />
+              <div className="w-10 h-10 bg-gold/5 border border-gold/15 flex items-center justify-center rounded-full">
+                <Truck className="h-5 w-5 text-gold-dark" />
+              </div>
               <div>
                 <p className="font-medium text-charcoal">Tracking ID</p>
                 <p className="text-sm text-charcoal-muted font-mono">{order.tracking_id}</p>
                 {order.courier_name && <p className="text-xs text-charcoal-muted/60">{order.courier_name}</p>}
               </div>
             </div>
-            <a href={`https://shiprocket.co/tracking/${order.shiprocket_shipment_id || order.tracking_id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.1em] font-medium text-charcoal hover:text-gold transition-colors">
-              Track <ExternalLink className="h-3 w-3" />
+            <a href={`https://shiprocket.co/tracking/${order.shiprocket_shipment_id || order.tracking_id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.1em] font-semibold text-gold-dark hover:text-gold transition-colors group">
+              Track <ExternalLink className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
           </div>
-          {order.estimated_delivery && <p className="text-sm text-charcoal-muted mt-2">Estimated delivery: {formatDate(order.estimated_delivery)}</p>}
+          {order.estimated_delivery && <p className="text-sm text-charcoal-muted mt-3">Estimated delivery: {formatDate(order.estimated_delivery)}</p>}
           {trackingEvents.length > 0 && (
-            <div className="mt-4 border-t border-ivory-dark/60 pt-4">
+            <div className="mt-5 border-t border-ivory-dark/60 pt-5">
               <p className="text-xs uppercase tracking-[0.15em] font-medium text-charcoal-muted mb-3">Tracking Updates</p>
               <div className="space-y-3">
                 {trackingEvents.slice(0, 5).map((event, idx) => (
                   <div key={idx} className="flex items-start gap-3">
-                    <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${idx === 0 ? "bg-green-500" : "bg-charcoal/20"}`} />
+                    <div className={`w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0 transition-all ${idx === 0 ? "bg-green-500 ring-2 ring-green-500/20" : "bg-charcoal/15"}`} />
                     <div>
                       <p className="text-sm font-medium text-charcoal">{event.status}</p>
                       <p className="text-xs text-charcoal-muted">{event.location} &middot; {new Date(event.timestamp).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
@@ -220,16 +237,17 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
-      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
-        <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-4">Items ({order.items.length})</h2>
+      {/* Items */}
+      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm rounded-lg animate-in fade-in">
+        <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted mb-5">Items ({order.items.length})</h2>
         <div className="divide-y divide-ivory-dark">
           {order.items.map((item) => (
-            <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0">
-              <div className="relative h-20 w-20 flex-shrink-0 bg-charcoal/5">
-                <Image src={item.product.images[0] ?? "/placeholder.png"} alt={item.product.name} fill className="object-cover" sizes="80px" />
+            <div key={item.id} className="flex gap-4 py-4 first:pt-0 last:pb-0 group/item">
+              <div className="relative h-20 w-20 flex-shrink-0 bg-charcoal/5 rounded-lg overflow-hidden">
+                <Image src={item.product.images[0] ?? "/placeholder.svg"} alt={item.product.name} fill className="object-cover group-hover/item:scale-110 transition-transform duration-500" sizes="80px" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm text-charcoal">{item.product.name}</p>
+                <p className="font-medium text-sm text-charcoal group-hover/item:text-gold-dark transition-colors">{item.product.name}</p>
                 <p className="text-xs text-charcoal-muted mt-0.5">{item.color} &middot; {item.size} &middot; Qty: {item.quantity}</p>
                 <p className="text-sm font-semibold text-charcoal mt-1">{formatPrice(item.product.price * item.quantity)}</p>
               </div>
@@ -238,46 +256,58 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       </div>
 
+      {/* Address & Payment */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-        <div className="bg-ivory border border-ivory-dark/60 p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <MapPin className="h-4 w-4 text-charcoal-muted" />
+        <div className="bg-ivory border border-ivory-dark/60 p-6 shadow-sm rounded-lg animate-in fade-in">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 bg-ivory-dark flex items-center justify-center rounded-full">
+              <MapPin className="h-4 w-4 text-charcoal-muted" />
+            </div>
             <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">Shipping Address</h2>
           </div>
-          <div className="text-sm text-charcoal space-y-0.5">
-            <p className="font-medium">{order.shipping_address.full_name}</p>
-            <p>{order.shipping_address.street}</p>
-            <p>{order.shipping_address.city}, {order.shipping_address.state} &ndash; {order.shipping_address.pincode}</p>
-            <p>Phone: {order.shipping_address.phone}</p>
+          <div className="text-sm text-charcoal space-y-1">
+            <p className="font-semibold">{order.shipping_address.full_name}</p>
+            <p className="text-charcoal-muted">{order.shipping_address.street}</p>
+            <p className="text-charcoal-muted">{order.shipping_address.city}, {order.shipping_address.state} &ndash; {order.shipping_address.pincode}</p>
+            <p className="text-charcoal-muted">Phone: {order.shipping_address.phone}</p>
           </div>
         </div>
-        <div className="bg-ivory border border-ivory-dark/60 p-6 shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <CreditCard className="h-4 w-4 text-charcoal-muted" />
+        <div className="bg-ivory border border-ivory-dark/60 p-6 shadow-sm rounded-lg animate-in fade-in">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-8 h-8 bg-ivory-dark flex items-center justify-center rounded-full">
+              <CreditCard className="h-4 w-4 text-charcoal-muted" />
+            </div>
             <h2 className="text-xs uppercase tracking-[0.2em] font-medium text-charcoal-muted">Payment Info</h2>
           </div>
-          <div className="text-sm text-charcoal space-y-0.5">
-            <p>Method: <span className="font-medium">{order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online (Razorpay)"}</span></p>
-            <p className="capitalize">Status: <span className={`font-medium ${order.payment_status === "paid" ? "text-green-600" : order.payment_status === "failed" ? "text-rose-600" : "text-yellow-600"}`}>{order.payment_status}</span></p>
+          <div className="text-sm text-charcoal space-y-1">
+            <p>Method: <span className="font-medium">{order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "upi" ? "UPI Payment" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online"}</span></p>
+            <p className="capitalize">Status: <span className={`font-semibold ${order.payment_status === "paid" ? "text-green-600" : order.payment_status === "failed" ? "text-rose-600" : "text-yellow-600"}`}>{order.payment_status}</span></p>
           </div>
-          <div className="border-t border-ivory-dark/60 mt-4 pt-4 space-y-1 text-sm">
+          <div className="border-t border-ivory-dark/60 mt-4 pt-4 space-y-2 text-sm">
             <div className="flex justify-between text-charcoal-muted"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
             <div className="flex justify-between text-charcoal-muted"><span>Shipping</span><span>{order.shipping_charge === 0 ? "Free" : formatPrice(order.shipping_charge)}</span></div>
             {order.discount > 0 && <div className="flex justify-between text-green-600"><span>Discount{order.coupon_code ? ` (${order.coupon_code})` : ""}</span><span>&minus;{formatPrice(order.discount)}</span></div>}
-            <div className="flex justify-between font-semibold text-charcoal pt-2 border-t border-ivory-dark/60"><span>Total</span><span>{formatPrice(order.total)}</span></div>
+            <div className="flex justify-between font-bold text-charcoal pt-2 border-t border-ivory-dark/60 text-base"><span>Total</span><span>{formatPrice(order.total)}</span></div>
           </div>
         </div>
       </div>
 
-      {isCancelable(order.order_status) && (
-        <div className="text-center py-4 border-t border-ivory-dark">
-          <Button variant="danger" size="md" isLoading={cancelling} onClick={handleCancel}>Cancel Order</Button>
+      {/* Cancel Button — only for pending/confirmed */}
+      {canCancel && (
+        <div className="text-center py-6 border-t border-ivory-dark animate-in fade-in">
+          <Button variant="danger" size="md" isLoading={cancelling} onClick={handleCancel}>
+            Cancel Order
+          </Button>
         </div>
       )}
 
+      {/* Invoice for delivered */}
       {order.order_status === "delivered" && (
-        <div className="text-center py-4 border-t border-ivory-dark">
-          <Link href={`/account/orders/${order.id}/invoice`} className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-gold-dark transition-colors">Download Invoice</Link>
+        <div className="text-center py-6 border-t border-ivory-dark animate-in fade-in">
+          <Link href={`/account/orders/${order.id}/invoice`} className="inline-flex items-center gap-2 text-sm font-medium text-charcoal hover:text-gold-dark transition-colors group">
+            Download Invoice
+            <ExternalLink className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </Link>
         </div>
       )}
     </div>

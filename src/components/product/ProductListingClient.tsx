@@ -626,7 +626,7 @@ export function ProductListingClient({
       <div className="flex gap-10">
         <aside className="hidden lg:block w-64 flex-shrink-0">
           <div className="sticky top-28">
-            <div className="border border-ivory-dark/50 p-6">
+            <div className="border border-ivory-dark/60 p-6 rounded-lg card-hover">
               {filterSidebarContent}
             </div>
           </div>

@@ -68,7 +68,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
       onMouseLeave={() => setHovered(false)}
     >
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative aspect-[3/4] overflow-hidden bg-beige mb-4 rounded-lg shadow-sm group-hover:shadow-lg transition-shadow duration-500">
+        <div className="relative aspect-[3/4] overflow-hidden bg-beige mb-4 rounded-lg shadow-sm group-hover:shadow-xl transition-all duration-500 group-hover:-translate-y-1">
           {displayImage && !imgError ? (
             <Image
               src={displayImage}
@@ -76,7 +76,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               preload={preload}
-              className="object-cover transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-105"
+              className="object-cover transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-110"
               onError={() => setImgError(true)}
             />
           ) : (
@@ -89,7 +89,9 @@ export function ProductCard({ product, preload }: ProductCardProps) {
             />
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          {/* Shine overlay on hover */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">

@@ -8,7 +8,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse bg-ivory-dark",
+        "skeleton-shimmer rounded-sm",
         className
       )}
     />
@@ -18,8 +18,8 @@ export function Skeleton({ className }: SkeletonProps) {
 export function ProductCardSkeleton() {
   return (
     <div className="space-y-3">
-      <Skeleton className="aspect-[3/4] w-full" />
-      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="aspect-[3/4] w-full rounded-lg" />
+      <Skeleton className="h-3 w-3/4" />
       <Skeleton className="h-3 w-1/2" />
       <Skeleton className="h-4 w-1/3" />
     </div>
@@ -32,10 +32,10 @@ export function ProductDetailSkeleton() {
       <Skeleton className="h-3 w-64 mb-8" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14">
         <div className="space-y-4">
-          <Skeleton className="aspect-[4/5] w-full" />
+          <Skeleton className="aspect-[4/5] w-full rounded-lg" />
           <div className="flex gap-3">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="w-20 h-20" />
+              <Skeleton key={i} className="w-20 h-20 rounded-lg" />
             ))}
           </div>
         </div>
@@ -52,7 +52,7 @@ export function ProductDetailSkeleton() {
             <Skeleton className="h-4 w-20" />
             <div className="flex gap-2">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="w-12 h-10" />
+                <Skeleton key={i} className="w-12 h-10 rounded-lg" />
               ))}
             </div>
           </div>
@@ -64,9 +64,9 @@ export function ProductDetailSkeleton() {
               ))}
             </div>
           </div>
-          <Skeleton className="h-14 w-full" />
-          <Skeleton className="h-12 w-full" />
-          <Skeleton className="h-12 w-full" />
+          <Skeleton className="h-14 w-full rounded-lg" />
+          <Skeleton className="h-12 w-full rounded-lg" />
+          <Skeleton className="h-12 w-full rounded-lg" />
         </div>
       </div>
     </div>
