@@ -33,8 +33,8 @@ export function Features() {
               key={feature.title}
               className="text-center group"
             >
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-ivory-dark/50 border border-ivory-dark rounded-full mb-4 group-hover:border-gold/20 group-hover:bg-gold/5 transition-all duration-500">
-                <feature.icon className="h-5 w-5 text-charcoal-muted group-hover:text-gold-dark transition-colors duration-500" />
+              <div className="inline-flex items-center justify-center w-14 h-14 bg-gold/5 border border-gold/15 rounded-full mb-4 group-hover:border-gold/30 group-hover:bg-gold/10 group-hover:scale-110 transition-all duration-500">
+                <feature.icon className="h-5 w-5 text-gold-dark group-hover:text-gold transition-colors duration-500" />
               </div>
               <h3 className="text-[13px] font-semibold text-charcoal tracking-wide">
                 {feature.title}

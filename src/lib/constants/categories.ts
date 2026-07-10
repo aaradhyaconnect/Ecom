@@ -1,9 +1,9 @@
 export const CATEGORIES = [
-  { id: "women-clothing", name: "Women's Clothing", slug: "women-clothing", image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=800&fit=crop" },
-  { id: "artificial-jewellery", name: "Artificial Jewellery", slug: "artificial-jewellery", image: "https://images.unsplash.com/photo-1515562141589-67f0d727b750?w=600&h=800&fit=crop" },
-  { id: "new-arrivals", name: "New Arrivals", slug: "new-arrivals", image: "https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=600&h=800&fit=crop" },
-  { id: "best-sellers", name: "Best Sellers", slug: "best-sellers", image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop" },
-  { id: "sale", name: "Sale", slug: "sale", image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600&h=800&fit=crop" },
+  { id: "women-clothing", name: "Women's Clothing", slug: "women-clothing", image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=600&h=800&fit=crop&q=80" },
+  { id: "artificial-jewellery", name: "Artificial Jewellery", slug: "artificial-jewellery", image: "https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&h=800&fit=crop&q=80" },
+  { id: "new-arrivals", name: "New Arrivals", slug: "new-arrivals", image: "https://images.unsplash.com/photo-1558171813-4c088753af8f?w=600&h=800&fit=crop&q=80" },
+  { id: "best-sellers", name: "Best Sellers", slug: "best-sellers", image: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=600&h=800&fit=crop&q=80" },
+  { id: "sale", name: "Sale", slug: "sale", image: "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=600&h=800&fit=crop&q=80" },
 ] as const;
 
 export const SORT_OPTIONS = [

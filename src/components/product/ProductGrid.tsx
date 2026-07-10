@@ -30,7 +30,7 @@ export function ProductGrid({ products, isLoading, columns = 4 }: ProductGridPro
   }
 
   return (
-    <div className={`grid grid-cols-2 ${columns >= 3 ? "md:grid-cols-3" : ""} ${columns >= 4 ? "lg:grid-cols-4" : ""} gap-3 md:gap-5 stagger-children`}>
+    <div className={`grid grid-cols-2 ${columns >= 3 ? "md:grid-cols-3" : ""} ${columns >= 4 ? "lg:grid-cols-4" : ""} gap-x-4 gap-y-8 md:gap-x-6 md:gap-y-12 stagger-children`}>
       {products.map((product) => (
         <ProductCard key={product.id} product={product} />
       ))}

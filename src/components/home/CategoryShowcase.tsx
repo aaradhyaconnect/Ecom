@@ -38,9 +38,9 @@ export function CategoryShowcase() {
                 />
               )}
 
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent group-hover:from-black/70 transition-all duration-500" />
 
-              <div className="absolute bottom-0 left-0 right-0 p-5 z-20">
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 z-20">
                 <h3 className="text-ivory text-sm md:text-base font-semibold tracking-wide">
                   {category.name}
                 </h3>
@@ -53,7 +53,7 @@ export function CategoryShowcase() {
               </div>
 
               <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="w-8 h-8 bg-white/15 backdrop-blur-sm flex items-center justify-center rounded-full border border-white/10">
+                <div className="w-8 h-8 bg-white/20 backdrop-blur-sm flex items-center justify-center rounded-full border border-white/20">
                   <ArrowRight className="h-3 w-3 text-ivory -rotate-45" />
                 </div>
               </div>

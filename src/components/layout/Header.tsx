@@ -69,8 +69,8 @@ export function Header() {
         className={cn(
           "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
           isDark
-            ? "bg-white/90 dark:bg-charcoal/90 backdrop-blur-md shadow-sm py-2"
-            : "bg-black/20 backdrop-blur-sm py-4"
+            ? "bg-white/95 dark:bg-charcoal-light/95 backdrop-blur-lg shadow-sm py-2"
+            : "bg-gradient-to-b from-black/40 via-black/20 to-transparent backdrop-blur-sm py-4"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

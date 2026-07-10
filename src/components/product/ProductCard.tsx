@@ -9,7 +9,6 @@ import { formatPrice } from "@/lib/utils/format";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
-import { Badge } from "@/components/ui/Badge";
 import { CATEGORIES } from "@/lib/constants/categories";
 import type { Product } from "@/types";
 import toast from "react-hot-toast";
@@ -35,7 +34,6 @@ export function ProductCard({ product, preload }: ProductCardProps) {
   const user = useAuthStore((s) => s.user);
   const inWishlist = isInWishlist(product.id);
   const [hovered, setHovered] = useState(false);
-  const [quickViewOpen, setQuickViewOpen] = useState(false);
   const colors = parseColors(product.colors);
 
   const discount = product.compare_price
@@ -66,10 +64,10 @@ export function ProductCard({ product, preload }: ProductCardProps) {
     <div
       className="group relative animate-in slide-up"
       onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { setHovered(false); setQuickViewOpen(false); }}
+      onMouseLeave={() => setHovered(false)}
     >
       <Link href={`/product/${product.slug}`} className="block">
-        <div className="relative aspect-[3/4] overflow-hidden bg-beige mb-4">
+        <div className="relative aspect-[3/4] overflow-hidden bg-beige mb-4 rounded-lg shadow-sm group-hover:shadow-lg transition-shadow duration-500">
           {displayImage ? (
             <Image
               src={displayImage}
@@ -89,18 +87,28 @@ export function ProductCard({ product, preload }: ProductCardProps) {
             />
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/15 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
+          {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-            {product.is_new && <Badge variant="new">New</Badge>}
+            {product.is_new && (
+              <span className="inline-flex items-center px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] bg-charcoal text-ivory rounded-sm shadow-md">
+                New
+              </span>
+            )}
             {product.is_sale && discount > 0 && (
-              <Badge variant="sale">-{discount}%</Badge>
+              <span className="inline-flex items-center px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] bg-rose-500 text-white rounded-sm shadow-md">
+                -{discount}%
+              </span>
             )}
             {product.is_best_seller && !product.is_sale && (
-              <Badge variant="best">Best Seller</Badge>
+              <span className="inline-flex items-center px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] bg-gold text-charcoal rounded-sm shadow-md">
+                Best Seller
+              </span>
             )}
           </div>
 
+          {/* Wishlist button */}
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -108,10 +116,10 @@ export function ProductCard({ product, preload }: ProductCardProps) {
               toggleItem(product);
             }}
             className={cn(
-              "absolute top-3 right-3 p-2.5 backdrop-blur-sm transition-all duration-500 z-10",
+              "absolute top-3 right-3 p-2.5 backdrop-blur-sm rounded-full transition-all duration-300 z-10 shadow-sm",
               inWishlist
-                ? "opacity-100 text-rose-400 bg-white/90 scale-100"
-                : "opacity-0 group-hover:opacity-100 text-charcoal-muted bg-white/90 hover:text-rose-400 scale-90 group-hover:scale-100"
+                ? "opacity-100 text-rose-400 bg-white/95 scale-100"
+                : "opacity-0 group-hover:opacity-100 text-charcoal-muted bg-white/95 hover:text-rose-400 scale-90 group-hover:scale-100"
             )}
             aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
           >
@@ -121,31 +129,33 @@ export function ProductCard({ product, preload }: ProductCardProps) {
             />
           </button>
 
+          {/* Quick Add button */}
           <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.25,0.1,0.25,1)] z-10">
             <button
               onClick={handleQuickAdd}
-              className="w-full bg-charcoal/95 backdrop-blur-sm text-ivory text-[11px] font-semibold uppercase tracking-[0.18em] py-3.5 flex items-center justify-center gap-2.5 hover:bg-charcoal transition-colors duration-300"
+              className="w-full bg-charcoal/95 backdrop-blur-sm text-ivory text-[11px] font-semibold uppercase tracking-[0.18em] py-3.5 flex items-center justify-center gap-2.5 hover:bg-gold hover:text-charcoal transition-colors duration-300 rounded-sm shadow-lg"
             >
               <ShoppingBag className="h-3.5 w-3.5" />
               Quick Add
             </button>
           </div>
 
+          {/* Quick View */}
           <button
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setQuickViewOpen(!quickViewOpen);
             }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-500 z-10 hover:bg-white"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white/95 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-500 z-10 hover:bg-white rounded-full shadow-lg"
             aria-label="Quick view"
           >
             <Eye className="h-4 w-4 text-charcoal" />
           </button>
 
+          {/* Sold Out overlay */}
           {product.stock <= 0 && (
-            <div className="absolute inset-0 bg-charcoal/50 backdrop-blur-[2px] flex items-center justify-center z-20">
-              <span className="text-ivory text-[10px] font-semibold uppercase tracking-[0.3em] bg-charcoal/40 px-6 py-2.5 border border-ivory/10">
+            <div className="absolute inset-0 bg-charcoal/50 backdrop-blur-[2px] flex items-center justify-center z-20 rounded-lg">
+              <span className="text-ivory text-[10px] font-semibold uppercase tracking-[0.3em] bg-charcoal/50 px-6 py-2.5 border border-ivory/10 rounded-sm">
                 Sold Out
               </span>
             </div>
@@ -178,11 +188,11 @@ export function ProductCard({ product, preload }: ProductCardProps) {
         </p>
 
         {colors.length > 0 && (
-          <div className="flex items-center gap-1.5 mt-2.5">
+          <div className="flex items-center gap-2 mt-2.5">
             {colors.slice(0, 5).map((color) => (
               <span
                 key={color.name}
-                className="w-3 h-3 rounded-full border border-charcoal/8 flex-shrink-0 ring-1 ring-charcoal/5"
+                className="w-3.5 h-3.5 rounded-full border border-charcoal/10 flex-shrink-0 ring-1 ring-charcoal/5 hover:ring-gold/50 hover:scale-125 transition-all duration-200 cursor-pointer"
                 style={{ backgroundColor: color.hex }}
                 title={color.name}
               />
@@ -205,7 +215,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
             </span>
           )}
           {product.compare_price && (
-            <span className="text-[9px] font-semibold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded-sm ml-auto">
+            <span className="text-[9px] font-bold text-rose-500 bg-rose-50 px-1.5 py-0.5 rounded-sm ml-auto">
               SAVE {discount}%
             </span>
           )}
