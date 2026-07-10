@@ -10,7 +10,7 @@ export function Badge({ children, variant = "default", className }: BadgeProps) 
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2.5 py-1 rounded-sm text-[9px] font-bold uppercase tracking-[0.15em] shadow-sm",
+        "inline-flex items-center px-2.5 py-1 rounded-sm text-[10px] font-bold uppercase tracking-[0.12em] shadow-sm",
         {
           "bg-charcoal/80 text-ivory backdrop-blur-sm": variant === "default",
           "bg-rose-500 text-white backdrop-blur-sm": variant === "sale",

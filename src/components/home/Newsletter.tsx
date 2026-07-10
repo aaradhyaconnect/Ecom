@@ -88,7 +88,7 @@ export function Newsletter() {
             Subscribe
           </Button>
         </form>
-        <p className="text-ivory/15 text-[10px] mt-4 tracking-wider">
+        <p className="text-ivory/40 text-[11px] mt-4 tracking-wider">
           No spam. Unsubscribe anytime.
         </p>
       </div>

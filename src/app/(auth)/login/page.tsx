@@ -233,7 +233,7 @@ export default function LoginPage() {
 
           <div className="mb-6">
             <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white">Sign In</h1>
-            <p className="text-charcoal-muted dark:text-white/50 text-sm mt-1">
+            <p className="text-charcoal-muted dark:text-white/70 text-sm mt-1">
               {authMethod === "password" ? "Enter your credentials" : "Enter your phone or email to get OTP"}
             </p>
           </div>
@@ -244,7 +244,7 @@ export default function LoginPage() {
               className={`flex-1 pb-3 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
                 authMethod === "password"
                   ? "text-gold border-b-2 border-gold -mb-[1px]"
-                  : "text-charcoal-muted dark:text-white/40 hover:text-charcoal dark:hover:text-white/70"
+                  : "text-charcoal-muted dark:text-white/70 hover:text-charcoal dark:hover:text-white/90"
               }`}
             >
               Password
@@ -254,7 +254,7 @@ export default function LoginPage() {
               className={`flex-1 pb-3 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
                 authMethod === "otp"
                   ? "text-gold border-b-2 border-gold -mb-[1px]"
-                  : "text-charcoal-muted dark:text-white/40 hover:text-charcoal dark:hover:text-white/70"
+                  : "text-charcoal-muted dark:text-white/70 hover:text-charcoal dark:hover:text-white/90"
               }`}
             >
               OTP
@@ -349,7 +349,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-ivory-dark dark:border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white dark:bg-charcoal-light px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted dark:text-white/40">or continue with</span>
+              <span className="bg-white dark:bg-charcoal-light px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted dark:text-white/60">or continue with</span>
             </div>
           </div>
 
@@ -363,7 +363,7 @@ export default function LoginPage() {
             Google
           </Button>
 
-          <p className="mt-6 text-center text-sm text-charcoal-muted dark:text-white/40">
+          <p className="mt-6 text-center text-sm text-charcoal-muted dark:text-white/60">
             Don&apos;t have an account?{" "}
             <Link href={`/signup?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
               Create one

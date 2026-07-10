@@ -83,7 +83,7 @@ export function CartDrawer() {
                         >
                           {item.product.name}
                         </Link>
-                        <p className="text-[10px] text-charcoal-muted mt-1 uppercase tracking-wider">
+                        <p className="text-[10px] text-charcoal-muted dark:text-white/60 mt-1 uppercase tracking-wider">
                           {item.color} / {item.size}
                         </p>
                         <p className="text-sm font-bold mt-auto">
@@ -109,7 +109,7 @@ export function CartDrawer() {
                           </div>
                           <button
                             onClick={() => removeItem(item.id)}
-                            className="text-[10px] text-charcoal-muted hover:text-rose-500 uppercase tracking-wider transition-colors"
+                            className="text-[10px] text-charcoal-muted dark:text-white/60 hover:text-rose-500 uppercase tracking-wider transition-colors"
                           >
                             Remove
                           </button>
@@ -121,10 +121,10 @@ export function CartDrawer() {
 
                 <div className="border-t border-ivory-dark p-6 space-y-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-charcoal-muted uppercase tracking-wider text-[11px]">Subtotal</span>
+                    <span className="text-charcoal-muted dark:text-white/70 uppercase tracking-wider text-[11px]">Subtotal</span>
                     <span className="font-bold text-charcoal">{formatPrice(getSubtotal())}</span>
                   </div>
-                  <p className="text-[10px] text-charcoal-muted">
+                  <p className="text-[11px] text-charcoal-muted dark:text-white/60">
                     Shipping & taxes calculated at checkout
                   </p>
                   <Link href="/checkout" onClick={closeCart}>
@@ -134,7 +134,7 @@ export function CartDrawer() {
                   </Link>
                   <button
                     onClick={closeCart}
-                    className="w-full text-center text-[11px] text-charcoal-muted hover:text-charcoal uppercase tracking-[0.15em] transition-colors"
+                    className="w-full text-center text-[11px] text-charcoal-muted dark:text-white/60 hover:text-charcoal uppercase tracking-[0.15em] transition-colors"
                   >
                     Continue Shopping
                   </button>

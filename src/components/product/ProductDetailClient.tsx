@@ -113,21 +113,21 @@ export function ProductDetailClient({
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-24 lg:pb-8">
       {/* Breadcrumbs */}
-      <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted mb-8 tracking-wide">
-        <Link href="/" className="hover:text-charcoal transition-colors">
+      <nav className="flex items-center gap-2 text-[11px] text-charcoal-muted dark:text-white/60 mb-8 tracking-wide">
+        <Link href="/" className="hover:text-charcoal dark:hover:text-white transition-colors">
           Home
         </Link>
         <ChevronRight className="h-3 w-3" />
         <Link
           href="/products/all"
-          className="hover:text-charcoal transition-colors"
+          className="hover:text-charcoal dark:hover:text-white transition-colors"
         >
           Shop
         </Link>
         <ChevronRight className="h-3 w-3" />
         <Link
           href={`/products/${product.category}`}
-          className="hover:text-charcoal transition-colors capitalize"
+          className="hover:text-charcoal dark:hover:text-white transition-colors capitalize"
         >
           {categoryName}
         </Link>
@@ -224,7 +224,7 @@ export function ProductDetailClient({
         {/* Details */}
         <div className="flex flex-col gap-5 stagger-children">
           <div className="animate-in slide-up">
-            <p className="text-[10px] text-charcoal-muted uppercase tracking-[0.25em] mb-2">
+            <p className="text-[10px] text-charcoal-muted dark:text-white/60 uppercase tracking-[0.25em] mb-2">
               {categoryName}
               {product.subcategory && ` / ${product.subcategory}`}
             </p>
@@ -283,7 +283,7 @@ export function ProductDetailClient({
                 </h3>
                 <Link
                   href="/size-guide"
-                  className="text-[10px] text-charcoal-muted hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
+                  className="text-[10px] text-charcoal-muted dark:text-white/60 hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
                 >
                   Size Guide
                 </Link>

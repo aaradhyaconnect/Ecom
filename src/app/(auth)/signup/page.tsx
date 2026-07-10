@@ -198,7 +198,7 @@ export default function RegisterPage() {
 
           <div className="mb-6">
             <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white">Create Account</h1>
-            <p className="text-charcoal-muted dark:text-white/50 text-sm mt-1">Join Arcon Style today</p>
+            <p className="text-charcoal-muted dark:text-white/70 text-sm mt-1">Join Arcon Style today</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -216,7 +216,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setUsePhone(false)}
                 className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
-                  !usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/40"
+                  !usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/70"
                 }`}
               >
                 <Mail className="h-3.5 w-3.5 inline mr-1.5" /> Email
@@ -225,7 +225,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setUsePhone(true)}
                 className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
-                  usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/40"
+                  usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/70"
                 }`}
               >
                 <Phone className="h-3.5 w-3.5 inline mr-1.5" /> Phone
@@ -292,7 +292,7 @@ export default function RegisterPage() {
               <div className="w-full border-t border-ivory-dark dark:border-white/10" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white dark:bg-charcoal-light px-4 text-[10px] uppercase tracking-[0.2em] text-charcoal-muted dark:text-white/40">or continue with</span>
+              <span className="bg-white dark:bg-charcoal-light px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted dark:text-white/60">or continue with</span>
             </div>
           </div>
 
@@ -306,7 +306,7 @@ export default function RegisterPage() {
             Google
           </Button>
 
-          <p className="mt-6 text-center text-sm text-charcoal-muted dark:text-white/40">
+          <p className="mt-6 text-center text-sm text-charcoal-muted dark:text-white/60">
             Already have an account?{" "}
             <Link href={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
               Sign in

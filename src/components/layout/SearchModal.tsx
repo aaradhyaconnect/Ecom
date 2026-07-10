@@ -136,7 +136,7 @@ export function SearchModal() {
                     <p className="text-sm font-medium text-charcoal truncate">
                       {product.name}
                     </p>
-                    <p className="text-[10px] text-charcoal-muted uppercase tracking-wider capitalize mt-0.5">
+                    <p className="text-[10px] text-charcoal-muted dark:text-white/60 uppercase tracking-wider capitalize mt-0.5">
                       {product.category.replace("-", " ")}
                     </p>
                     <p className="text-sm font-bold mt-1">{formatPrice(product.price)}</p>
@@ -149,10 +149,10 @@ export function SearchModal() {
 
           {debouncedQuery && !isLoading && displayResults.length === 0 && (
             <div className="py-8 text-center">
-              <p className="text-charcoal-muted text-sm">
+              <p className="text-charcoal-muted dark:text-white/70 text-sm">
                 No products found for &ldquo;{debouncedQuery}&rdquo;
               </p>
-              <p className="text-charcoal-muted text-[10px] mt-1 uppercase tracking-wider">
+              <p className="text-charcoal-muted dark:text-white/60 text-[11px] mt-1 uppercase tracking-wider">
                 Try a different search term
               </p>
             </div>

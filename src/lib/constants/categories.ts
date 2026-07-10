@@ -17,15 +17,15 @@ export const SORT_OPTIONS = [
 export const SIZES = ["XS", "S", "M", "L", "XL", "XXL", "3XL"] as const;
 
 export const ORDER_STATUSES = [
-  { value: "pending", label: "Pending", color: "text-yellow-600 bg-yellow-50" },
-  { value: "confirmed", label: "Confirmed", color: "text-blue-600 bg-blue-50" },
-  { value: "processing", label: "Processing", color: "text-cyan-600 bg-cyan-50" },
-  { value: "packed", label: "Packed", color: "text-indigo-600 bg-indigo-50" },
-  { value: "shipped", label: "Shipped", color: "text-purple-600 bg-purple-50" },
-  { value: "out-for-delivery", label: "Out for Delivery", color: "text-orange-600 bg-orange-50" },
-  { value: "delivered", label: "Delivered", color: "text-green-600 bg-green-50" },
-  { value: "cancelled", label: "Cancelled", color: "text-rose-600 bg-rose-50" },
-  { value: "returned", label: "Returned", color: "text-charcoal-muted bg-ivory-dark" },
+  { value: "pending", label: "Pending", color: "text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-500/15" },
+  { value: "confirmed", label: "Confirmed", color: "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-500/15" },
+  { value: "processing", label: "Processing", color: "text-cyan-600 bg-cyan-50 dark:text-cyan-400 dark:bg-cyan-500/15" },
+  { value: "packed", label: "Packed", color: "text-indigo-600 bg-indigo-50 dark:text-indigo-400 dark:bg-indigo-500/15" },
+  { value: "shipped", label: "Shipped", color: "text-purple-600 bg-purple-50 dark:text-purple-400 dark:bg-purple-500/15" },
+  { value: "out-for-delivery", label: "Out for Delivery", color: "text-orange-600 bg-orange-50 dark:text-orange-400 dark:bg-orange-500/15" },
+  { value: "delivered", label: "Delivered", color: "text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-500/15" },
+  { value: "cancelled", label: "Cancelled", color: "text-rose-600 bg-rose-50 dark:text-rose-400 dark:bg-rose-500/15" },
+  { value: "returned", label: "Returned", color: "text-charcoal-muted bg-ivory-dark dark:text-white/60 dark:bg-white/10" },
 ] as const;
 
 export const PAYMENT_METHODS = [

@@ -210,7 +210,7 @@ export function Header() {
                     onMouseLeave={() => setShowUserMenu(false)}
                   >
                     <div className="px-4 py-2 border-b border-ivory-dark dark:border-white/10">
-                      <p className="text-xs text-charcoal-muted dark:text-white/50 uppercase tracking-wider">Signed in as</p>
+                      <p className="text-xs text-charcoal-muted dark:text-white/70 uppercase tracking-wider">Signed in as</p>
                       <p className="text-sm font-medium text-charcoal dark:text-white truncate mt-0.5">{user.email || user.phone || "User"}</p>
                     </div>
                     <Link

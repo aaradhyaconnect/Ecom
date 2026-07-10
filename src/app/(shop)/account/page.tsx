@@ -221,7 +221,7 @@ export default function ProfilePage() {
                 <p>{addr.city}, {addr.state} &ndash; {addr.pincode}</p>
                 <p className="text-charcoal-muted">{addr.phone}</p>
               </div>
-              <button onClick={() => handleRemoveAddress(idx)} className="text-[10px] uppercase tracking-wider text-rose-500/70 hover:text-rose-600 flex-shrink-0 ml-2 transition-colors">Remove</button>
+              <button onClick={() => handleRemoveAddress(idx)} className="text-[11px] uppercase tracking-wider text-rose-500 hover:text-rose-600 flex-shrink-0 ml-2 transition-colors">Remove</button>
             </div>
           ))}
         </div>
