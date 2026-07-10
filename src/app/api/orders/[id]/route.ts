@@ -88,7 +88,7 @@ export async function PUT(
 
     if (!["pending", "confirmed"].includes(order.order_status)) {
       return NextResponse.json(
-        { success: false, error: "Order cannot be cancelled in its current state" },
+        { success: false, error: `Cannot cancel order with status "${order.order_status}"` },
         { status: 400 }
       );
     }
@@ -105,20 +105,19 @@ export async function PUT(
       );
     }
 
-    if (order.payment_status !== "paid") {
-      const adminDb = await createAdminClient();
-      for (const item of order.items) {
-        const { data: product } = await adminDb
+    // Always restore stock on cancellation
+    const adminDb = await createAdminClient();
+    for (const item of order.items) {
+      const { data: product } = await adminDb
+        .from("products")
+        .select("stock")
+        .eq("id", item.product_id)
+        .single();
+      if (product) {
+        await adminDb
           .from("products")
-          .select("stock")
-          .eq("id", item.product_id)
-          .single();
-        if (product) {
-          await adminDb
-            .from("products")
-            .update({ stock: product.stock + item.quantity })
-            .eq("id", item.product_id);
-        }
+          .update({ stock: product.stock + item.quantity })
+          .eq("id", item.product_id);
       }
     }
 
