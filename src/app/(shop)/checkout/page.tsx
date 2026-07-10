@@ -53,7 +53,7 @@ export default function CheckoutPage() {
 
   const [address, setAddress] = useState<Address>(initialAddress);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "cashfree">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "cashfree" | "upi">("cod");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
@@ -198,7 +198,7 @@ export default function CheckoutPage() {
         return;
       }
 
-      if (paymentMethod === "cashfree") {
+      if (paymentMethod === "cashfree" || paymentMethod === "upi") {
         const loaded = await loadCashfreeScript();
         if (!loaded) {
           toast.error("Failed to load payment gateway");
@@ -338,14 +338,28 @@ export default function CheckoutPage() {
                 <input
                   type="radio"
                   name="payment"
+                  value="upi"
+                  checked={paymentMethod === "upi"}
+                  onChange={() => setPaymentMethod("upi")}
+                  className="accent-gold text-gold"
+                />
+                <div>
+                  <p className="font-medium text-sm text-charcoal">UPI Payment</p>
+                  <p className="text-xs text-charcoal-muted">Google Pay, PhonePe, Paytm, BHIM</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 p-4 border border-ivory-dark cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+                <input
+                  type="radio"
+                  name="payment"
                   value="cashfree"
                   checked={paymentMethod === "cashfree"}
                   onChange={() => setPaymentMethod("cashfree")}
                   className="accent-gold text-gold"
                 />
                 <div>
-                  <p className="font-medium text-sm text-charcoal">Cashfree</p>
-                  <p className="text-xs text-charcoal-muted">Pay via UPI, Card, Net Banking, Wallets</p>
+                  <p className="font-medium text-sm text-charcoal">Card / Net Banking / Wallets</p>
+                  <p className="text-xs text-charcoal-muted">Visa, Mastercard, RuPay, Net Banking</p>
                 </div>
               </label>
             </div>

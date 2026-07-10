@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SlidersHorizontal, X, ChevronDown } from "lucide-react";
+import { SlidersHorizontal, X, ChevronDown, Star, Search } from "lucide-react";
 import { ProductGrid } from "./ProductGrid";
 import { cn } from "@/lib/utils/cn";
 import type { Product } from "@/types";
@@ -33,6 +33,12 @@ const PRICE_RANGES = [
   { label: "Above ₹5,000", min: 5000, max: undefined },
 ];
 
+const DISCOUNT_RANGES = [
+  { label: "10% or more", min: 10 },
+  { label: "25% or more", min: 25 },
+  { label: "50% or more", min: 50 },
+];
+
 const CATEGORY_LABELS: Record<string, string> = {
   all: "All Products",
   "women-clothing": "Women's Clothing",
@@ -49,6 +55,7 @@ export function ProductListingClient({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
+  const [brandSearch, setBrandSearch] = useState("");
 
   const currentSort = searchParams.get("sort") || "newest";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -58,6 +65,10 @@ export function ProductListingClient({
   const currentColors = searchParams.get("colors")?.split(",").filter(Boolean) || [];
   const currentInStock = searchParams.get("inStock") === "true";
   const currentOnSale = searchParams.get("onSale") === "true";
+  const currentMinRating = searchParams.get("minRating");
+  const currentMinDiscount = searchParams.get("minDiscount");
+  const currentMaterials = searchParams.get("materials")?.split(",").filter(Boolean) || [];
+  const currentTags = searchParams.get("tags")?.split(",").filter(Boolean) || [];
 
   const buildHref = useCallback(
     (updates: Record<string, string | undefined>) => {
@@ -140,6 +151,52 @@ export function ProductListingClient({
     );
   };
 
+  const handleRatingFilter = (rating: number) => {
+    setMobileFilterOpen(false);
+    router.push(
+      buildHref({
+        minRating: currentMinRating === String(rating) ? undefined : String(rating),
+        page: "1",
+      })
+    );
+  };
+
+  const handleDiscountFilter = (minDiscount: number) => {
+    setMobileFilterOpen(false);
+    router.push(
+      buildHref({
+        minDiscount: currentMinDiscount === String(minDiscount) ? undefined : String(minDiscount),
+        page: "1",
+      })
+    );
+  };
+
+  const handleMaterialFilter = (material: string) => {
+    const materials = currentMaterials.includes(material)
+      ? currentMaterials.filter((m) => m !== material)
+      : [...currentMaterials, material];
+    setMobileFilterOpen(false);
+    router.push(
+      buildHref({
+        materials: materials.length > 0 ? materials.join(",") : undefined,
+        page: "1",
+      })
+    );
+  };
+
+  const handleTagFilter = (tag: string) => {
+    const tags = currentTags.includes(tag)
+      ? currentTags.filter((t) => t !== tag)
+      : [...currentTags, tag];
+    setMobileFilterOpen(false);
+    router.push(
+      buildHref({
+        tags: tags.length > 0 ? tags.join(",") : undefined,
+        page: "1",
+      })
+    );
+  };
+
   const clearFilters = () => {
     setMobileFilterOpen(false);
     router.push(`/products/${category}`);
@@ -151,7 +208,23 @@ export function ProductListingClient({
     currentSizes.length > 0 ||
     currentColors.length > 0 ||
     currentInStock ||
-    currentOnSale;
+    currentOnSale ||
+    !!currentMinRating ||
+    !!currentMinDiscount ||
+    currentMaterials.length > 0 ||
+    currentTags.length > 0;
+
+  const activeFilterCount = [
+    !!currentMinPrice || !!currentMaxPrice,
+    currentSizes.length > 0,
+    currentColors.length > 0,
+    currentInStock,
+    currentOnSale,
+    !!currentMinRating,
+    !!currentMinDiscount,
+    currentMaterials.length > 0,
+    currentTags.length > 0,
+  ].filter(Boolean).length;
 
   const pageNumbers = useMemo(() => {
     const { totalPages } = initialProducts;
@@ -192,8 +265,73 @@ export function ProductListingClient({
     return Array.from(colorMap.entries()).map(([name, hex]) => ({ name, hex }));
   }, [initialProducts.products]);
 
+  const availableMaterials = useMemo(() => {
+    const matSet = new Set<string>();
+    initialProducts.products.forEach((p) => {
+      if (p.material) matSet.add(p.material);
+    });
+    return Array.from(matSet).sort();
+  }, [initialProducts.products]);
+
+  const availableTags = useMemo(() => {
+    const tagSet = new Set<string>();
+    initialProducts.products.forEach((p) => {
+      if (Array.isArray(p.tags)) {
+        p.tags.forEach((t) => tagSet.add(t));
+      }
+    });
+    return Array.from(tagSet).sort();
+  }, [initialProducts.products]);
+
+  const availableBrands = useMemo(() => {
+    const brandSet = new Set<string>();
+    initialProducts.products.forEach((p) => {
+      const brandTag = p.tags?.find((t) => t.toLowerCase().startsWith("brand:"));
+      if (brandTag) brandSet.add(brandTag.replace("brand:", "").trim());
+    });
+    return Array.from(brandSet).sort();
+  }, [initialProducts.products]);
+
+  const filteredBrands = useMemo(() => {
+    if (!brandSearch) return availableBrands;
+    return availableBrands.filter((b) => b.toLowerCase().includes(brandSearch.toLowerCase()));
+  }, [availableBrands, brandSearch]);
+
   const filterSidebarContent = (
     <div className="space-y-8">
+      {/* Rating */}
+      <div>
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Rating</h3>
+        <div className="space-y-1">
+          {[4, 3, 2, 1].map((rating) => (
+            <button
+              key={rating}
+              onClick={() => handleRatingFilter(rating)}
+              className={cn(
+                "flex items-center gap-2 px-3 py-2 text-sm w-full transition-all duration-300",
+                currentMinRating === String(rating)
+                  ? "bg-charcoal text-ivory font-medium"
+                  : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
+              )}
+            >
+              <div className="flex items-center gap-0.5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Star
+                    key={i}
+                    className={cn(
+                      "h-3.5 w-3.5",
+                      i < rating ? "fill-gold text-gold" : "fill-ivory-dark text-ivory-dark"
+                    )}
+                  />
+                ))}
+              </div>
+              <span className="text-xs">& up</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Price Range */}
       <div>
         <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Price Range</h3>
         <div className="space-y-0.5">
@@ -225,6 +363,33 @@ export function ProductListingClient({
         </div>
       </div>
 
+      {/* Discount */}
+      <div>
+        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Discount</h3>
+        <div className="space-y-0.5">
+          {DISCOUNT_RANGES.map((range) => {
+            const active = currentMinDiscount === String(range.min);
+            return (
+              <button
+                key={range.label}
+                onClick={() =>
+                  active ? clearFilters() : handleDiscountFilter(range.min)
+                }
+                className={cn(
+                  "block w-full text-left text-sm py-2.5 px-4 transition-all duration-200",
+                  active
+                    ? "bg-charcoal text-ivory font-medium"
+                    : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
+                )}
+              >
+                {range.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Size */}
       <div>
         <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Size</h3>
         <div className="flex flex-wrap gap-2">
@@ -245,6 +410,7 @@ export function ProductListingClient({
         </div>
       </div>
 
+      {/* Color */}
       <div>
         <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Color</h3>
         <div className="flex flex-wrap gap-2">
@@ -269,6 +435,92 @@ export function ProductListingClient({
         </div>
       </div>
 
+      {/* Brand (via tags) */}
+      {availableBrands.length > 0 && (
+        <div>
+          <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Brand</h3>
+          <div className="relative mb-3">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-charcoal-muted" />
+            <input
+              type="text"
+              value={brandSearch}
+              onChange={(e) => setBrandSearch(e.target.value)}
+              placeholder="Search brands..."
+              className="w-full pl-9 pr-3 py-2 text-sm border border-ivory-dark bg-transparent text-charcoal placeholder:text-charcoal-muted/50 focus:border-gold/60 focus:ring-0 outline-none transition-colors"
+            />
+          </div>
+          <div className="space-y-0.5 max-h-40 overflow-y-auto">
+            {filteredBrands.map((brand) => {
+              const tag = `brand:${brand}`;
+              const active = currentTags.includes(tag);
+              return (
+                <button
+                  key={brand}
+                  onClick={() => handleTagFilter(tag)}
+                  className={cn(
+                    "block w-full text-left text-sm py-2 px-4 transition-all duration-200 truncate",
+                    active
+                      ? "bg-charcoal text-ivory font-medium"
+                      : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
+                  )}
+                >
+                  {brand}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Material */}
+      {availableMaterials.length > 0 && (
+        <div>
+          <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Material</h3>
+          <div className="space-y-0.5">
+            {availableMaterials.map((material) => (
+              <button
+                key={material}
+                onClick={() => handleMaterialFilter(material)}
+                className={cn(
+                  "block w-full text-left text-sm py-2.5 px-4 transition-all duration-200",
+                  currentMaterials.includes(material)
+                    ? "bg-charcoal text-ivory font-medium"
+                    : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50"
+                )}
+              >
+                {material}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Tags / Occasion */}
+      {availableTags.filter((t) => !t.toLowerCase().startsWith("brand:")).length > 0 && (
+        <div>
+          <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Tags</h3>
+          <div className="flex flex-wrap gap-2">
+            {availableTags
+              .filter((t) => !t.toLowerCase().startsWith("brand:"))
+              .map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => handleTagFilter(tag)}
+                  className={cn(
+                    "px-3 py-1.5 text-[10px] font-medium uppercase tracking-wider border transition-all duration-300",
+                    currentTags.includes(tag)
+                      ? "bg-charcoal text-ivory border-charcoal"
+                      : "border-ivory-dark text-charcoal-muted hover:border-charcoal/30"
+                  )}
+                >
+                  {tag}
+                </button>
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Availability */}
       <div>
         <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Availability</h3>
         <button
@@ -288,10 +540,6 @@ export function ProductListingClient({
           </span>
           In Stock Only
         </button>
-      </div>
-
-      <div>
-        <h3 className="text-[10px] font-semibold text-charcoal mb-4 uppercase tracking-[0.25em]">Discount</h3>
         <button
           onClick={handleOnSaleFilter}
           className={cn(
@@ -338,6 +586,11 @@ export function ProductListingClient({
           <p className="text-sm text-charcoal-muted mt-1.5">
             {initialProducts.total}{" "}
             {initialProducts.total === 1 ? "product" : "products"}
+            {activeFilterCount > 0 && (
+              <span className="text-gold ml-2">
+                ({activeFilterCount} filter{activeFilterCount > 1 ? "s" : ""} active)
+              </span>
+            )}
           </p>
         </div>
 
@@ -357,10 +610,15 @@ export function ProductListingClient({
 
           <button
             onClick={() => setMobileFilterOpen(true)}
-            className="lg:hidden p-2.5 border border-ivory-dark hover:border-charcoal/20 transition-colors"
+            className="lg:hidden p-2.5 border border-ivory-dark hover:border-charcoal/20 transition-colors relative"
             aria-label="Toggle filters"
           >
             <SlidersHorizontal className="h-4 w-4 text-charcoal-muted" />
+            {activeFilterCount > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-gold text-charcoal text-[9px] font-bold w-4 h-4 flex items-center justify-center">
+                {activeFilterCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -454,7 +712,12 @@ export function ProductListingClient({
           )}
         >
           <div className="flex items-center justify-between p-5 border-b border-ivory-dark">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-charcoal">Filters</h3>
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-charcoal">
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="ml-2 text-gold">({activeFilterCount})</span>
+              )}
+            </h3>
             <button onClick={() => setMobileFilterOpen(false)} className="p-2 hover:bg-ivory-dark transition-colors">
               <X className="h-4 w-4 text-charcoal-muted" />
             </button>

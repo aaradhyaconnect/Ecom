@@ -121,7 +121,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["cod", "cashfree"].includes(payment_method)) {
+    if (!["cod", "cashfree", "upi"].includes(payment_method)) {
       return Response.json(
         { success: false, error: "Invalid payment method" },
         { status: 400 }
@@ -205,7 +205,7 @@ export async function POST(request: NextRequest) {
     const orderId = generateOrderId();
     let cashfreeOrder = null;
 
-    if (payment_method === "cashfree") {
+    if (payment_method === "cashfree" || payment_method === "upi") {
       if (!isCashfreeConfigured()) {
         return Response.json(
           { success: false, error: "Payment gateway not configured" },

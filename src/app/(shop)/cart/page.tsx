@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Bookmark } from "lucide-react";
+import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, Tag, Bookmark, User, LogIn } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { formatPrice } from "@/lib/utils/format";
@@ -158,6 +158,25 @@ export default function CartPage() {
           Continue Shopping
         </Link>
       </div>
+
+      {/* Login prompt for unauthenticated users */}
+      {!user && (
+        <div className="bg-charcoal/5 border border-charcoal/10 p-4 mb-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <User className="h-5 w-5 text-charcoal-muted" />
+            <div>
+              <p className="text-sm font-medium text-charcoal">Missing your cart items?</p>
+              <p className="text-xs text-charcoal-muted">Login to save your cart and check out faster</p>
+            </div>
+          </div>
+          <Link href="/login?redirect=/cart">
+            <Button size="sm" variant="outline">
+              <LogIn className="h-3.5 w-3.5 mr-1.5" />
+              Login
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-4">

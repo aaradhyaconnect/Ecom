@@ -171,21 +171,21 @@ body {
 
 /* Dark mode */
 .dark {
-  --color-background: #111111;
+  --color-background: #0F0F0F;
   --color-foreground: #FAF9F6;
 
   --color-primary: #FAF9F6;
-  --color-primary-foreground: #111111;
+  --color-primary-foreground: #0F0F0F;
 
   --color-ivory: #1A1A1A;
-  --color-ivory-dark: #222222;
+  --color-ivory-dark: #252525;
 
   --color-beige: #222222;
   --color-grey: #1A1A1A;
 
   --color-charcoal: #FAF9F6;
   --color-charcoal-light: #E5E5E5;
-  --color-charcoal-muted: #999999;
+  --color-charcoal-muted: #AAAAAA;
 }
 
 .dark body {
@@ -204,6 +204,17 @@ body {
 
 .dark img {
   filter: brightness(0.9);
+}
+
+.dark input,
+.dark textarea,
+.dark select {
+  color: #FAF9F6;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(255, 255, 255, 0.35);
 }
 
 @media print {

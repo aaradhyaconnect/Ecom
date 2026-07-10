@@ -30,5 +30,6 @@ export const ORDER_STATUSES = [
 
 export const PAYMENT_METHODS = [
   { id: "cod", name: "Cash on Delivery", icon: "Banknote" },
-  { id: "cashfree", name: "Pay Online (Card/UPI/Net Banking/Wallets)", icon: "CreditCard" },
+  { id: "upi", name: "UPI (Google Pay, PhonePe, BHIM)", icon: "Smartphone" },
+  { id: "cashfree", name: "Card / Net Banking / Wallets", icon: "CreditCard" },
 ] as const;

@@ -32,13 +32,14 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex items-center justify-center font-medium transition-all duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold disabled:opacity-40 disabled:cursor-not-allowed",
           {
-            "bg-charcoal text-ivory hover:bg-charcoal-light active:bg-charcoal":
+            "bg-charcoal text-ivory hover:bg-charcoal-light active:bg-charcoal dark:bg-white dark:text-charcoal dark:hover:bg-white/90":
               variant === "primary",
-            "bg-gold/10 text-gold-dark hover:bg-gold/20 border border-gold/20 hover:border-gold/30":
+            "bg-gold/10 text-gold-dark hover:bg-gold/20 border border-gold/20 hover:border-gold/30 dark:bg-gold/10 dark:text-gold-light dark:hover:bg-gold/20":
               variant === "secondary",
-            "border border-charcoal/20 text-charcoal hover:bg-charcoal hover:text-ivory hover:border-charcoal":
+            "border border-charcoal/20 text-charcoal hover:bg-charcoal hover:text-ivory hover:border-charcoal dark:border-white/20 dark:text-white dark:hover:bg-white dark:hover:text-charcoal":
               variant === "outline",
-            "text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal": variant === "ghost",
+            "text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal dark:text-white/60 dark:hover:bg-white/10 dark:hover:text-white":
+              variant === "ghost",
             "bg-rose-500/10 text-rose-600 hover:bg-rose-500/20 border border-rose-500/10":
               variant === "danger",
           },
