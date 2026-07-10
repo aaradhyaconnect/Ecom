@@ -34,6 +34,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
   const user = useAuthStore((s) => s.user);
   const inWishlist = isInWishlist(product.id);
   const [hovered, setHovered] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const colors = parseColors(product.colors);
 
   const discount = product.compare_price
@@ -68,7 +69,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
     >
       <Link href={`/product/${product.slug}`} className="block">
         <div className="relative aspect-[3/4] overflow-hidden bg-beige mb-4 rounded-lg shadow-sm group-hover:shadow-lg transition-shadow duration-500">
-          {displayImage ? (
+          {displayImage && !imgError ? (
             <Image
               src={displayImage}
               alt={product.name}
@@ -76,6 +77,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               preload={preload}
               className="object-cover transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)] group-hover:scale-105"
+              onError={() => setImgError(true)}
             />
           ) : (
             <Image

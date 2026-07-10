@@ -51,6 +51,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
   const slides = initialSlides && initialSlides.length > 0 ? initialSlides : fallbackSlides;
   const [current, setCurrent] = useState(0);
   const [animKey, setAnimKey] = useState(0);
+  const [imgErrors, setImgErrors] = useState<Record<number, boolean>>({});
 
   const goTo = useCallback((idx: number) => {
     setCurrent(idx);
@@ -82,7 +83,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
             i === current ? "opacity-100 z-10" : "opacity-0 z-0 pointer-events-none"
           )}
         >
-          {s.image ? (
+          {s.image && !imgErrors[i] ? (
             <div className="absolute inset-0">
               <Image
                 src={s.image}
@@ -91,6 +92,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
                 sizes="100vw"
                 className="object-cover"
                 preload={i === 0}
+                onError={() => setImgErrors((prev) => ({ ...prev, [i]: true }))}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-charcoal/70 via-charcoal/20 to-transparent" />
               <div className="absolute inset-0 bg-gradient-to-t from-charcoal/50 via-transparent to-charcoal/10" />

@@ -12,6 +12,7 @@ interface ZoomImageProps {
 export function ZoomImage({ src, alt, className = "" }: ZoomImageProps) {
   const [isZoomed, setIsZoomed] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [imgError, setImgError] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -21,6 +22,20 @@ export function ZoomImage({ src, alt, className = "" }: ZoomImageProps) {
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     setPosition({ x, y });
   }, []);
+
+  if (imgError) {
+    return (
+      <div className={`relative overflow-hidden ${className}`}>
+        <Image
+          src="/placeholder.svg"
+          alt={alt}
+          fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          className="object-cover"
+        />
+      </div>
+    );
+  }
 
   return (
     <div
@@ -36,6 +51,7 @@ export function ZoomImage({ src, alt, className = "" }: ZoomImageProps) {
         fill
         sizes="(max-width: 768px) 100vw, 50vw"
         className="object-cover"
+        onError={() => setImgError(true)}
       />
       {isZoomed && (
         <div

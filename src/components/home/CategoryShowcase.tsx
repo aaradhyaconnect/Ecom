@@ -1,7 +1,57 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { CATEGORIES } from "@/lib/constants/categories";
+
+function CategoryCard({ category, index }: { category: typeof CATEGORIES[number]; index: number }) {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <Link
+      href={`/products/${category.slug}`}
+      className="group relative aspect-[3/4] overflow-hidden bg-beige rounded-xl"
+      style={{ animationDelay: `${index * 80}ms` }}
+    >
+      {category.image && !imgError ? (
+        <Image
+          src={category.image}
+          alt={category.name}
+          fill
+          sizes="(max-width: 768px) 50vw, 20vw"
+          className="object-cover group-hover:scale-110 transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
+          onError={() => setImgError(true)}
+        />
+      ) : (
+        <div className="absolute inset-0 bg-gradient-to-br from-ivory-dark to-beige flex items-center justify-center">
+          <span className="text-charcoal-muted text-[10px] uppercase tracking-[0.3em] font-medium">{category.name}</span>
+        </div>
+      )}
+
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent group-hover:from-black/70 transition-all duration-500" />
+
+      <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 z-20">
+        <h3 className="text-ivory text-sm md:text-base font-semibold tracking-wide">
+          {category.name}
+        </h3>
+        <div className="flex items-center gap-1.5 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
+          <span className="text-gold-light text-[10px] uppercase tracking-[0.2em] font-medium">
+            Shop Now
+          </span>
+          <ArrowRight className="h-3 w-3 text-gold-light group-hover:translate-x-1 transition-transform duration-300" />
+        </div>
+      </div>
+
+      <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+        <div className="w-8 h-8 bg-white/20 backdrop-blur-sm flex items-center justify-center rounded-full border border-white/20">
+          <ArrowRight className="h-3 w-3 text-ivory -rotate-45" />
+        </div>
+      </div>
+    </Link>
+  );
+}
 
 export function CategoryShowcase() {
   return (
@@ -22,42 +72,7 @@ export function CategoryShowcase() {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 md:gap-4">
           {CATEGORIES.map((category, i) => (
-            <Link
-              key={category.id}
-              href={`/products/${category.slug}`}
-              className="group relative aspect-[3/4] overflow-hidden bg-beige rounded-xl"
-              style={{ animationDelay: `${i * 80}ms` }}
-            >
-              {category.image && (
-                <Image
-                  src={category.image}
-                  alt={category.name}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 20vw"
-                  className="object-cover group-hover:scale-110 transition-transform duration-[1000ms] ease-[cubic-bezier(0.25,0.1,0.25,1)]"
-                />
-              )}
-
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent group-hover:from-black/70 transition-all duration-500" />
-
-              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 z-20">
-                <h3 className="text-ivory text-sm md:text-base font-semibold tracking-wide">
-                  {category.name}
-                </h3>
-                <div className="flex items-center gap-1.5 mt-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-2 group-hover:translate-y-0">
-                  <span className="text-gold-light text-[10px] uppercase tracking-[0.2em] font-medium">
-                    Shop Now
-                  </span>
-                  <ArrowRight className="h-3 w-3 text-gold-light group-hover:translate-x-1 transition-transform duration-300" />
-                </div>
-              </div>
-
-              <div className="absolute top-3 right-3 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                <div className="w-8 h-8 bg-white/20 backdrop-blur-sm flex items-center justify-center rounded-full border border-white/20">
-                  <ArrowRight className="h-3 w-3 text-ivory -rotate-45" />
-                </div>
-              </div>
-            </Link>
+            <CategoryCard key={category.id} category={category} index={i} />
           ))}
         </div>
       </div>
