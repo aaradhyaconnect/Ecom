@@ -47,16 +47,19 @@ export default function OrdersPage() {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    (async () => {
+    async function fetchOrders() {
       try {
         const { data, error } = await supabase
-          .from("orders").select("*").eq("user_id", user.id).order("created_at", { ascending: false });
+          .from("orders").select("*").eq("user_id", user!.id).order("created_at", { ascending: false });
         if (!cancelled && !error && data) setOrders(data as Order[]);
       } finally {
         if (!cancelled) setFetching(false);
       }
-    })();
-    return () => { cancelled = true; };
+    }
+    fetchOrders();
+    function onVisible() { if (document.visibilityState === "visible") fetchOrders(); }
+    document.addEventListener("visibilitychange", onVisible);
+    return () => { cancelled = true; document.removeEventListener("visibilitychange", onVisible); };
   }, [user?.id, supabase]);
 
   function getStatusStyle(value: string) {

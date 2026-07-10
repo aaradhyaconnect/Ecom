@@ -91,12 +91,26 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     const confirmed = window.confirm("Are you sure you want to cancel this order? This action cannot be undone.");
     if (!confirmed) return;
     setCancelling(true);
-    const res = await fetch(`/api/orders/${order.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "cancel" }) });
-    const json = await res.json();
-    if (json.success) {
-      setOrder((prev) => prev ? { ...prev, order_status: "cancelled" as const } : null);
-      toast.success("Order cancelled successfully");
-    } else { toast.error(json.error ?? "Failed to cancel order"); }
+    try {
+      const res = await fetch(`/api/orders/${order.id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "cancel" }) });
+      const json = await res.json();
+      if (json.success) {
+        // Re-fetch from DB to confirm the update persisted
+        const { data: refreshed } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("id", order.id)
+          .single();
+        if (refreshed) {
+          setOrder(refreshed as Order);
+        } else {
+          setOrder((prev) => prev ? { ...prev, order_status: "cancelled" as const, updated_at: new Date().toISOString() } : null);
+        }
+        toast.success("Order cancelled successfully");
+      } else { toast.error(json.error ?? "Failed to cancel order"); }
+    } catch {
+      toast.error("Something went wrong");
+    }
     setCancelling(false);
   }
 
