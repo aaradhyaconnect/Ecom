@@ -17,6 +17,10 @@ import {
   Star,
   Mail,
   Settings,
+  FileText,
+  HelpCircle,
+  Layout,
+  Navigation,
 } from "lucide-react";
 
 const navItems = [
@@ -27,6 +31,10 @@ const navItems = [
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/coupons", label: "Coupons", icon: Tag },
   { href: "/admin/banners", label: "Banners", icon: Image },
+  { href: "/admin/pages", label: "Pages", icon: FileText },
+  { href: "/admin/faq", label: "FAQ", icon: HelpCircle },
+  { href: "/admin/homepage", label: "Homepage", icon: Layout },
+  { href: "/admin/navigation", label: "Navigation", icon: Navigation },
   { href: "/admin/reviews", label: "Reviews", icon: Star },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/subscribers", label: "Subscribers", icon: Mail },
