@@ -34,7 +34,7 @@ export async function getProducts({
   }
 
   if (search) {
-    const sanitized = search.replace(/[,()]/g, "");
+    const sanitized = search.replace(/[,()%_\\]/g, "\\$&");
     query = query.or(
       `name.ilike.%${sanitized}%,description.ilike.%${sanitized}%`
     );

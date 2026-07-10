@@ -213,36 +213,35 @@ export default function CartPage() {
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <button
-                      onClick={() => {
-                        saveForLater(item.id);
-                        toast.success("Saved for later");
-                        handleSaveCart();
-                      }}
-                      className="p-2 text-charcoal-muted hover:text-gold-dark transition-colors"
-                      title="Save for later"
-                    >
-                      <Bookmark className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => {
-                        removeItem(item.id);
-                        toast.success("Item removed");
-                        handleSaveCart();
-                      }}
-                      className="p-2 text-charcoal-muted hover:text-rose-500 transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => {
+                          saveForLater(item.id);
+                          toast.success("Saved for later");
+                          handleSaveCart();
+                        }}
+                        className="p-2 text-charcoal-muted hover:text-gold-dark transition-colors"
+                        title="Save for later"
+                      >
+                        <Bookmark className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          removeItem(item.id);
+                          toast.success("Item removed");
+                          handleSaveCart();
+                        }}
+                        className="p-2 text-charcoal-muted hover:text-rose-500 transition-colors"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <p className="font-semibold text-sm">
+                      {formatPrice(item.product.price * item.quantity)}
+                    </p>
                   </div>
                 </div>
-              </div>
-
-              <div className="text-right flex-shrink-0">
-                <p className="font-semibold">
-                  {formatPrice(item.product.price * item.quantity)}
-                </p>
               </div>
             </div>
           ))}

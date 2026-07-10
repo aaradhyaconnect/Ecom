@@ -1,4 +1,5 @@
 export function formatPrice(price: number): string {
+  if (!isFinite(price) || isNaN(price)) return "₹0";
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",

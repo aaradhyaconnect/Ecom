@@ -71,8 +71,8 @@ export function usePushSubscription(): PushState {
       await supabase.from("push_subscriptions").upsert({
         user_id: user.id,
         endpoint: subscription.endpoint,
-        p256dh: JSON.stringify(subscription.toJSON().keys?.p256dh),
-        auth: JSON.stringify(subscription.toJSON().keys?.auth),
+        p256dh: subscription.toJSON().keys?.p256dh || "",
+        auth: subscription.toJSON().keys?.auth || "",
       }, { onConflict: "endpoint" });
     }
 

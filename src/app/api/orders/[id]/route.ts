@@ -117,8 +117,7 @@ export async function PUT(
           await adminDb
             .from("products")
             .update({ stock: product.stock + item.quantity })
-            .eq("id", item.product_id)
-            .eq("stock", product.stock);
+            .eq("id", item.product_id);
         }
       }
     }

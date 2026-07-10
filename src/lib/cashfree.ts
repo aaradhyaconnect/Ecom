@@ -1,9 +1,3 @@
-const CASHFREE_APP_ID = process.env.CASHFREE_APP_ID;
-const CASHFREE_SECRET_KEY = process.env.CASHFREE_SECRET_KEY;
-const CASHFREE_API_URL =
-  process.env.CASHFREE_API_URL || "https://api.cashfree.com/pg";
-const CASHFREE_API_VERSION = "2023-08-01";
-
 export interface CashfreeOrderRequest {
   order_id: string;
   order_amount: number;
@@ -46,17 +40,21 @@ async function cashfreeRequest<T>(
   endpoint: string,
   options: RequestInit = {}
 ): Promise<T> {
-  if (!CASHFREE_APP_ID || !CASHFREE_SECRET_KEY) {
+  const appId = process.env.CASHFREE_APP_ID;
+  const secretKey = process.env.CASHFREE_SECRET_KEY;
+  const apiUrl = process.env.CASHFREE_API_URL || "https://api.cashfree.com/pg";
+
+  if (!appId || !secretKey) {
     throw new Error("Cashfree credentials not configured");
   }
 
-  const res = await fetch(`${CASHFREE_API_URL}${endpoint}`, {
+  const res = await fetch(`${apiUrl}${endpoint}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      "x-client-id": CASHFREE_APP_ID,
-      "x-client-secret": CASHFREE_SECRET_KEY,
-      "x-api-version": CASHFREE_API_VERSION,
+      "x-client-id": appId,
+      "x-client-secret": secretKey,
+      "x-api-version": "2023-08-01",
       ...options.headers,
     },
   });
@@ -97,5 +95,5 @@ export async function getCashfreePayments(
 }
 
 export function isCashfreeConfigured(): boolean {
-  return Boolean(CASHFREE_APP_ID && CASHFREE_SECRET_KEY);
+  return Boolean(process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY);
 }

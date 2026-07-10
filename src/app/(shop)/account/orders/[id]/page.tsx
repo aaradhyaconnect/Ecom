@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
@@ -24,40 +24,52 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const [fetching, setFetching] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const [trackingEvents, setTrackingEvents] = useState<{ status: string; location: string; timestamp: string }[]>([]);
-  const orderIdRef = useRef<string | null>(null);
-
-  useEffect(() => { params.then((p) => { orderIdRef.current = p.id; }); }, [params]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/auth/me");
+        const [resolvedParams, authRes] = await Promise.all([
+          params,
+          fetch("/api/auth/me"),
+        ]);
         if (cancelled) return;
-        if (res.ok) {
-          const data = await res.json();
-          if (!data.user) { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
-          setUser(data.user);
-        } else { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
-      } catch { if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
-      finally { if (!cancelled) setLoading(false); }
-    })();
-    return () => { cancelled = true; };
-  }, []);
 
-  useEffect(() => {
-    if (!user || !orderIdRef.current) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data, error } = await supabase.from("orders").select("*").eq("id", orderIdRef.current!).eq("user_id", user.id).single();
+        if (!authRes.ok) {
+          window.location.replace("/login?redirect=%2Faccount%2Forders");
+          return;
+        }
+        const authData = await authRes.json();
+        if (!authData.user) {
+          window.location.replace("/login?redirect=%2Faccount%2Forders");
+          return;
+        }
+        setUser(authData.user);
+
+        const { data, error } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("id", resolvedParams.id)
+          .eq("user_id", authData.user.id)
+          .single();
         if (cancelled) return;
-        if (error || !data) { window.location.replace("/account/orders"); return; }
+
+        if (error || !data) {
+          window.location.replace("/account/orders");
+          return;
+        }
         setOrder(data as Order);
-      } finally { if (!cancelled) setFetching(false); }
+      } catch {
+        if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Forders");
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+          setFetching(false);
+        }
+      }
     })();
     return () => { cancelled = true; };
-  }, [user?.id, supabase]);
+  }, [params, supabase]);
 
   // Fetch live tracking events
   useEffect(() => {

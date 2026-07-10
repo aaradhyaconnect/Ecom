@@ -129,19 +129,17 @@ export async function PUT(
         .eq("id", id)
         .single();
       if (fullOrder) {
-        const adminDb = await (await import("@/lib/supabase/server")).createAdminClient();
         for (const item of fullOrder.items) {
-          const { data: product } = await adminDb
+          const { data: product } = await supabase
             .from("products")
             .select("stock")
             .eq("id", item.product_id)
             .single();
           if (product) {
-            await adminDb
+            await supabase
               .from("products")
               .update({ stock: product.stock + item.quantity })
-              .eq("id", item.product_id)
-              .eq("stock", product.stock);
+              .eq("id", item.product_id);
           }
         }
       }

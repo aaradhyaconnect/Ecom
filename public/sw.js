@@ -47,6 +47,10 @@ self.addEventListener("fetch", (event) => {
 });
 
 async function navigationFirst(request) {
+  const hasAuthCookie = request.headers.get("cookie")?.includes("sb-");
+  if (hasAuthCookie) {
+    return fetch(request);
+  }
   try {
     const response = await fetch(request);
     if (response.ok) {
@@ -91,32 +95,40 @@ async function cacheFirst(request) {
 }
 
 self.addEventListener("push", (event) => {
-  const data = event.data?.json() ?? {
-    title: "Arcon Style",
-    body: "",
-  };
+  let data;
+  try {
+    data = event.data?.json();
+  } catch {
+    data = null;
+  }
+  if (!data) {
+    data = { title: "Arcon Style", body: "" };
+  }
   event.waitUntil(
     self.registration.showNotification(data.title, {
       body: data.body,
       icon: "/icons/icon-192x192.png",
       badge: "/icons/icon-192x192.png",
+      data: { url: data.url || "/" },
     })
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
+  const url = event.notification.data?.url || "/";
   event.waitUntil(
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clientList) => {
-        if (clientList.length > 0) {
-          const client = clientList[0];
-          client.focus();
-          if (client.url !== "/") client.navigate("/");
-          return;
+        for (const client of clientList) {
+          if (client.url.includes(self.location.origin)) {
+            client.focus();
+            client.navigate(url);
+            return;
+          }
         }
-        self.clients.openWindow("/");
+        self.clients.openWindow(url);
       })
   );
 });

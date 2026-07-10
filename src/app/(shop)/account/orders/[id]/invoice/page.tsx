@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { formatPrice, formatDate } from "@/lib/utils/format";
@@ -14,40 +14,52 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
   const [loading, setLoading] = useState(true);
   const [order, setOrder] = useState<Order | null>(null);
   const [fetching, setFetching] = useState(true);
-  const orderIdRef = useRef<string | null>(null);
-
-  useEffect(() => { params.then((p) => { orderIdRef.current = p.id; }); }, [params]);
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch("/api/auth/me");
+        const [resolvedParams, authRes] = await Promise.all([
+          params,
+          fetch("/api/auth/me"),
+        ]);
         if (cancelled) return;
-        if (res.ok) {
-          const data = await res.json();
-          if (!data.user) { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
-          setUser(data.user);
-        } else { window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
-      } catch { if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Forders"); return; }
-      finally { if (!cancelled) setLoading(false); }
-    })();
-    return () => { cancelled = true; };
-  }, []);
 
-  useEffect(() => {
-    if (!user || !orderIdRef.current) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const { data, error } = await supabase.from("orders").select("*").eq("id", orderIdRef.current!).eq("user_id", user.id).single();
+        if (!authRes.ok) {
+          window.location.replace("/login?redirect=%2Faccount%2Forders");
+          return;
+        }
+        const authData = await authRes.json();
+        if (!authData.user) {
+          window.location.replace("/login?redirect=%2Faccount%2Forders");
+          return;
+        }
+        setUser(authData.user);
+
+        const { data, error } = await supabase
+          .from("orders")
+          .select("*")
+          .eq("id", resolvedParams.id)
+          .eq("user_id", authData.user.id)
+          .single();
         if (cancelled) return;
-        if (error || !data) { window.location.replace("/account/orders"); return; }
+
+        if (error || !data) {
+          window.location.replace("/account/orders");
+          return;
+        }
         setOrder(data as Order);
-      } finally { if (!cancelled) setFetching(false); }
+      } catch {
+        if (!cancelled) window.location.replace("/login?redirect=%2Faccount%2Forders");
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+          setFetching(false);
+        }
+      }
     })();
     return () => { cancelled = true; };
-  }, [user?.id, supabase]);
+  }, [params, supabase]);
 
   if (loading || !user || fetching) {
     return (
@@ -121,7 +133,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
               <tr key={idx} className="border-b border-gray-100">
                 <td className="py-3 text-sm text-gray-500">{idx + 1}</td>
                 <td className="py-3"><p className="text-sm font-medium text-charcoal">{item.product?.name}</p></td>
-                <td className="py-3 text-xs text-gray-500">{[item.size, item.color].filter(Boolean).join(" / ") || "&mdash;"}</td>
+                <td className="py-3 text-xs text-gray-500">{[item.size, item.color].filter(Boolean).join(" / ") || "\u2014"}</td>
                 <td className="py-3 text-sm text-right text-gray-600">{item.quantity}</td>
                 <td className="py-3 text-sm text-right text-gray-600">{formatPrice(item.product?.price || 0)}</td>
                 <td className="py-3 text-sm text-right font-medium text-charcoal">{formatPrice((item.product?.price || 0) * item.quantity)}</td>

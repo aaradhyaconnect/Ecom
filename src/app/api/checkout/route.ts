@@ -259,20 +259,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const decremented: { id: string; quantity: number; stock: number }[] = [];
+    const decremented: { id: string; quantity: number }[] = [];
     for (const item of orderItems) {
-      const { error: stockError } = await adminDb
+      const { data: currentProduct } = await adminDb
         .from("products")
-        .update({ stock: item._stock - item.quantity })
+        .select("stock")
         .eq("id", item.product_id)
-        .eq("stock", item._stock);
+        .single();
 
-      if (stockError) {
+      if (!currentProduct || currentProduct.stock < item.quantity) {
         for (const d of decremented) {
-          await adminDb
-            .from("products")
-            .update({ stock: d.stock })
-            .eq("id", d.id);
+          const { data: p } = await adminDb.from("products").select("stock").eq("id", d.id).single();
+          if (p) await adminDb.from("products").update({ stock: p.stock + d.quantity }).eq("id", d.id);
         }
         await adminDb.from("orders").delete().eq("id", order.id);
         return Response.json(
@@ -280,7 +278,25 @@ export async function POST(request: NextRequest) {
           { status: 400 }
         );
       }
-      decremented.push({ id: item.product_id, quantity: item.quantity, stock: item._stock });
+
+      const { error: decError } = await adminDb
+        .from("products")
+        .update({ stock: currentProduct.stock - item.quantity })
+        .eq("id", item.product_id)
+        .eq("stock", currentProduct.stock);
+
+      if (decError) {
+        for (const d of decremented) {
+          const { data: p } = await adminDb.from("products").select("stock").eq("id", d.id).single();
+          if (p) await adminDb.from("products").update({ stock: p.stock + d.quantity }).eq("id", d.id);
+        }
+        await adminDb.from("orders").delete().eq("id", order.id);
+        return Response.json(
+          { success: false, error: "Insufficient stock. Please try again." },
+          { status: 400 }
+        );
+      }
+      decremented.push({ id: item.product_id, quantity: item.quantity });
     }
 
     if (coupon?.code) {

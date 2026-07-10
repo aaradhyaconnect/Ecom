@@ -34,6 +34,8 @@ export function useServiceWorker(): ServiceWorkerState {
           }
         });
       });
+    }).catch(() => {
+      // SW registration failed silently
     });
 
     const handleOnline = () => setIsOffline(false);
