@@ -61,7 +61,7 @@ export default function CustomersReportPage() {
 
   if (!data) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-white/40">
+      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
         <Users className="h-10 w-10 mb-3 opacity-40" />
         <p className="text-sm">Failed to load customer data.</p>
       </div>
@@ -97,31 +97,31 @@ export default function CustomersReportPage() {
         {summaryCards.map((card) => (
           <div
             key={card.label}
-            className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 p-5 rounded-xl"
+            className="bg-white border border-ivory-dark/60 p-5 rounded-xl"
           >
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-gold/10 p-2 rounded-lg">
                 <card.icon className="h-4 w-4 text-gold-dark" />
               </div>
-              <span className="text-xs font-medium text-gray-900 dark:text-white">
+              <span className="text-xs font-medium text-gray-900">
                 {card.label}
               </span>
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-bold text-gray-900">
               {card.value}
             </p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">
           Top Customers
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 dark:border-white/10 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500 dark:text-white/40">
+              <tr className="border-b border-ivory-dark/60 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500">
                 <th className="py-3 pr-4">Name</th>
                 <th className="py-3 pr-4">Email</th>
                 <th className="py-3 pr-4 text-right">Orders</th>
@@ -133,28 +133,28 @@ export default function CustomersReportPage() {
               {data.topCustomers.map((c) => (
                 <tr
                   key={c.id}
-                  className="border-b border-ivory-dark/40 dark:border-white/5 last:border-0"
+                  className="border-b border-ivory-dark/40 last:border-0"
                 >
-                  <td className="py-3 pr-4 font-medium text-gray-900 dark:text-white">
+                  <td className="py-3 pr-4 font-medium text-gray-900">
                     {c.name}
                   </td>
-                  <td className="py-3 pr-4 text-gray-500 dark:text-white/40 text-xs">
+                  <td className="py-3 pr-4 text-gray-500 text-xs">
                     {c.email}
                   </td>
-                  <td className="py-3 pr-4 text-right text-gray-900 dark:text-white">
+                  <td className="py-3 pr-4 text-right text-gray-900">
                     {c.totalOrders}
                   </td>
-                  <td className="py-3 pr-4 text-right font-medium text-gray-900 dark:text-white">
+                  <td className="py-3 pr-4 text-right font-medium text-gray-900">
                     {formatPrice(c.totalSpent)}
                   </td>
-                  <td className="py-3 text-right text-gray-500 dark:text-white/40 text-xs">
+                  <td className="py-3 text-right text-gray-500 text-xs">
                     {c.lastOrder ? formatDate(c.lastOrder) : "-"}
                   </td>
                 </tr>
               ))}
               {data.topCustomers.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="py-8 text-center text-gray-500 dark:text-white/40">
+                  <td colSpan={5} className="py-8 text-center text-gray-500">
                     No customer data yet.
                   </td>
                 </tr>
@@ -164,12 +164,12 @@ export default function CustomersReportPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">
           New Customers by Day
         </h2>
         {data.newByDay.length === 0 ? (
-          <p className="text-sm text-gray-500 dark:text-white/40 py-4">
+          <p className="text-sm text-gray-500 py-4">
             No new customer signups in this period.
           </p>
         ) : (
@@ -177,9 +177,9 @@ export default function CustomersReportPage() {
             {data.newByDay.map((day) => (
               <div
                 key={day.date}
-                className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 dark:bg-white/5"
+                className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50"
               >
-                <span className="text-sm text-gray-900 dark:text-white">
+                <span className="text-sm text-gray-900">
                   {formatDate(day.date)}
                 </span>
                 <Badge variant="new">

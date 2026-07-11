@@ -347,23 +347,23 @@ export default function AdminCustomersPage() {
           <Input label="Email" type="email" value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} />
           <Input label="Phone" value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} />
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Role</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1.5">Role</label>
             <select
               value={editForm.role}
               onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
-              className="w-full px-4 py-2.5 border border-ivory-dark rounded-sm text-sm text-gray-900 dark:text-white bg-ivory dark:bg-white/5 focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
+              className="w-full px-4 py-2.5 border border-ivory-dark rounded-sm text-sm text-gray-900 bg-ivory focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
             >
               <option value="customer">Customer</option>
               <option value="admin">Admin</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Admin Notes</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1.5">Admin Notes</label>
             <textarea
               value={editForm.notes}
               onChange={(e) => setEditForm({ ...editForm, notes: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2.5 border border-ivory-dark rounded-sm text-sm text-gray-900 dark:text-white bg-ivory dark:bg-white/5 focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300 resize-none"
+              className="w-full px-4 py-2.5 border border-ivory-dark rounded-sm text-sm text-gray-900 bg-ivory focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300 resize-none"
               placeholder="Internal notes about this customer..."
             />
           </div>

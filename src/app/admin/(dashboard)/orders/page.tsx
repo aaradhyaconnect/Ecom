@@ -341,7 +341,7 @@ export default function AdminOrdersPage() {
             type="date"
             value={dateFrom}
             onChange={(e) => setDateFrom(e.target.value)}
-            className="px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white dark:bg-white/5 dark:text-white"
+            className="px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white"
           />
         </div>
         <div className="flex flex-col">
@@ -350,7 +350,7 @@ export default function AdminOrdersPage() {
             type="date"
             value={dateTo}
             onChange={(e) => setDateTo(e.target.value)}
-            className="px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white dark:bg-white/5 dark:text-white"
+            className="px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white"
           />
         </div>
         <Button
@@ -701,8 +701,8 @@ export default function AdminOrdersPage() {
                       key={note.id}
                       className={`p-3 rounded-lg text-sm border ${
                         note.is_internal
-                          ? "bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800"
-                          : "bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800"
+                          ? "bg-amber-50 border-amber-200"
+                          : "bg-green-50 border-green-200"
                       }`}
                     >
                       <div className="flex items-center justify-between mb-1">
@@ -727,10 +727,10 @@ export default function AdminOrdersPage() {
                   onChange={(e) => setNewNote(e.target.value)}
                   placeholder="Add a note..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white dark:bg-white/5 dark:text-white resize-none focus:border-gold/60 focus:ring-0"
+                  className="w-full px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white resize-none focus:border-gold/60 focus:ring-0"
                 />
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-xs text-gray-900 dark:text-white cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-gray-900 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={noteIsInternal}

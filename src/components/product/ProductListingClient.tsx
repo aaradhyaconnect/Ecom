@@ -562,7 +562,7 @@ export function ProductListingClient({
       {hasActiveFilters && (
         <button
           onClick={clearFilters}
-          className="text-[10px] text-charcoal-muted dark:text-white/60 hover:text-charcoal dark:hover:text-white uppercase tracking-[0.15em] underline underline-offset-4 transition-colors"
+          className="text-[10px] text-charcoal-muted hover:text-charcoal uppercase tracking-[0.15em] underline underline-offset-4 transition-colors"
         >
           Clear All Filters
         </button>

@@ -239,7 +239,7 @@ export default function CheckoutPage() {
   if (items.length === 0) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
-        <p className="text-charcoal-muted dark:text-white/60 mb-4">Your cart is empty</p>
+        <p className="text-charcoal-muted mb-4">Your cart is empty</p>
         <Link href="/products/new-arrivals">
           <Button variant="outline">Continue Shopping</Button>
         </Link>
@@ -256,10 +256,10 @@ export default function CheckoutPage() {
 
       <div className="grid lg:grid-cols-5 gap-8">
         <div className="lg:col-span-3 space-y-8">
-          <div className="bg-ivory dark:bg-charcoal-light border border-ivory-dark dark:border-white/10 p-6">
+          <div className="bg-ivory border border-ivory-dark p-6">
             <div className="mb-4">
               <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Details</span>
-              <h2 className="font-serif font-bold text-lg text-charcoal dark:text-white mt-1">Shipping Address</h2>
+              <h2 className="font-serif font-bold text-lg text-charcoal mt-1">Shipping Address</h2>
               <div className="w-6 h-[1px] bg-gold/40 mt-1.5" />
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
@@ -314,14 +314,14 @@ export default function CheckoutPage() {
             </div>
           </div>
 
-          <div className="bg-ivory dark:bg-charcoal-light border border-ivory-dark dark:border-white/10 p-6">
+          <div className="bg-ivory border border-ivory-dark p-6">
             <div className="mb-4">
               <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Payment</span>
-              <h2 className="font-serif font-bold text-lg text-charcoal dark:text-white mt-1">Payment Method</h2>
+              <h2 className="font-serif font-bold text-lg text-charcoal mt-1">Payment Method</h2>
               <div className="w-6 h-[1px] bg-gold/40 mt-1.5" />
             </div>
             <div className="space-y-3">
-              <label className="flex items-center gap-3 p-4 border border-ivory-dark dark:border-white/10 cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+              <label className="flex items-center gap-3 p-4 border border-ivory-dark cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
                 <input
                   type="radio"
                   name="payment"
@@ -331,11 +331,11 @@ export default function CheckoutPage() {
                   className="accent-gold text-gold"
                 />
                 <div>
-                  <p className="font-medium text-sm text-charcoal dark:text-white">Cash on Delivery</p>
-                  <p className="text-xs text-charcoal-muted dark:text-white/60">Pay when you receive</p>
+                  <p className="font-medium text-sm text-charcoal">Cash on Delivery</p>
+                  <p className="text-xs text-charcoal-muted">Pay when you receive</p>
                 </div>
               </label>
-              <label className="flex items-center gap-3 p-4 border border-ivory-dark dark:border-white/10 cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+              <label className="flex items-center gap-3 p-4 border border-ivory-dark cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
                 <input
                   type="radio"
                   name="payment"
@@ -345,11 +345,11 @@ export default function CheckoutPage() {
                   className="accent-gold text-gold"
                 />
                 <div>
-                  <p className="font-medium text-sm text-charcoal dark:text-white">UPI Payment</p>
-                  <p className="text-xs text-charcoal-muted dark:text-white/60">Google Pay, PhonePe, Paytm, BHIM</p>
+                  <p className="font-medium text-sm text-charcoal">UPI Payment</p>
+                  <p className="text-xs text-charcoal-muted">Google Pay, PhonePe, Paytm, BHIM</p>
                 </div>
               </label>
-              <label className="flex items-center gap-3 p-4 border border-ivory-dark dark:border-white/10 cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+              <label className="flex items-center gap-3 p-4 border border-ivory-dark cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
                 <input
                   type="radio"
                   name="payment"
@@ -359,8 +359,8 @@ export default function CheckoutPage() {
                   className="accent-gold text-gold"
                 />
                 <div>
-                  <p className="font-medium text-sm text-charcoal dark:text-white">Card / Net Banking / Wallets</p>
-                  <p className="text-xs text-charcoal-muted dark:text-white/60">Visa, Mastercard, RuPay, Net Banking</p>
+                  <p className="font-medium text-sm text-charcoal">Card / Net Banking / Wallets</p>
+                  <p className="text-xs text-charcoal-muted">Visa, Mastercard, RuPay, Net Banking</p>
                 </div>
               </label>
             </div>
@@ -368,17 +368,17 @@ export default function CheckoutPage() {
         </div>
 
         <div className="lg:col-span-2">
-          <div className="bg-ivory dark:bg-charcoal-light border border-ivory-dark dark:border-white/10 p-6 space-y-4 sticky top-24">
+          <div className="bg-ivory border border-ivory-dark p-6 space-y-4 sticky top-24">
             <div>
               <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Summary</span>
-              <h2 className="font-serif font-bold text-xl text-charcoal dark:text-white mt-1">Order Summary</h2>
+              <h2 className="font-serif font-bold text-xl text-charcoal mt-1">Order Summary</h2>
               <div className="w-8 h-[1px] bg-gold/40 mt-2" />
             </div>
 
             <div className="space-y-3 max-h-64 overflow-auto">
               {items.map((item) => (
                 <div key={item.id} className="flex gap-3 text-sm">
-                  <div className="w-14 h-16 bg-charcoal/5 dark:bg-white/5 flex-shrink-0">
+                  <div className="w-14 h-16 bg-charcoal/5 flex-shrink-0">
                     {item.product.images?.[0] && (
                       <Image
                         src={item.product.images[0]}
@@ -390,11 +390,11 @@ export default function CheckoutPage() {
                     )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-charcoal dark:text-white truncate">{item.product.name}</p>
-                    <p className="text-charcoal-muted dark:text-white/60 text-xs">
+                    <p className="font-medium text-charcoal truncate">{item.product.name}</p>
+                    <p className="text-charcoal-muted text-xs">
                       {item.color} / {item.size} x {item.quantity}
                     </p>
-                    <p className="font-semibold text-charcoal dark:text-white mt-0.5">
+                    <p className="font-semibold text-charcoal mt-0.5">
                       {formatPrice(item.product.price * item.quantity)}
                     </p>
                   </div>
@@ -402,41 +402,41 @@ export default function CheckoutPage() {
               ))}
             </div>
 
-            <div className="border-t border-ivory-dark dark:border-white/10 pt-4 space-y-2 text-sm">
+            <div className="border-t border-ivory-dark pt-4 space-y-2 text-sm">
               <div className="flex justify-between">
-                <span className="text-charcoal-muted dark:text-white/60">Subtotal</span>
-                <span className="text-charcoal dark:text-white">{formatPrice(subtotal)}</span>
+                <span className="text-charcoal-muted">Subtotal</span>
+                <span className="text-charcoal">{formatPrice(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-charcoal-muted dark:text-white/60">Shipping</span>
+                <span className="text-charcoal-muted">Shipping</span>
                 <span>
                   {shipping === 0 ? (
-                    <span className="text-green-600 dark:text-green-400 font-medium">Free</span>
+                    <span className="text-green-600 font-medium">Free</span>
                   ) : (
-                    <span className="text-charcoal dark:text-white">{formatPrice(shipping)}</span>
+                    <span className="text-charcoal">{formatPrice(shipping)}</span>
                   )}
                 </span>
               </div>
               {discount > 0 && (
-                <div className="flex justify-between text-green-600 dark:text-green-400">
+                <div className="flex justify-between text-green-600">
                   <span>Discount ({appliedCoupon?.code})</span>
                   <span>-{formatPrice(discount)}</span>
                 </div>
               )}
               {couponCode && !appliedCoupon && !couponError && (
-                <p className="text-xs text-charcoal-muted dark:text-white/60">Validating coupon...</p>
+                <p className="text-xs text-charcoal-muted">Validating coupon...</p>
               )}
               {couponError && (
-                <p className="text-xs text-rose-500 dark:text-rose-400">{couponError}</p>
+                <p className="text-xs text-rose-500">{couponError}</p>
               )}
-              <div className="border-t border-ivory-dark dark:border-white/10 pt-2 flex justify-between font-semibold text-base text-charcoal dark:text-white">
+              <div className="border-t border-ivory-dark pt-2 flex justify-between font-semibold text-base text-charcoal">
                 <span>Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
             </div>
 
             {errors._form && (
-              <p className="text-xs text-rose-500 dark:text-rose-400">{errors._form}</p>
+              <p className="text-xs text-rose-500">{errors._form}</p>
             )}
 
             <Button
@@ -450,13 +450,13 @@ export default function CheckoutPage() {
                 : `Pay ${formatPrice(total)}`}
             </Button>
 
-            <p className="text-xs text-charcoal-muted dark:text-white/60 text-center">
+            <p className="text-xs text-charcoal-muted text-center">
               By placing this order, you agree to our{" "}
-              <Link href="/terms" className="underline hover:text-charcoal dark:hover:text-white">
+              <Link href="/terms" className="underline hover:text-charcoal">
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link href="/privacy" className="underline hover:text-charcoal dark:hover:text-white">
+              <Link href="/privacy" className="underline hover:text-charcoal">
                 Privacy Policy
               </Link>
             </p>

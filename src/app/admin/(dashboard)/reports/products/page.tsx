@@ -62,25 +62,25 @@ export default function ProductsReportPage() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end gap-4">
         <div>
-          <label className="block text-xs font-medium text-gray-900 dark:text-white mb-1">
+          <label className="block text-xs font-medium text-gray-900 mb-1">
             From
           </label>
           <input
             type="date"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
-            className="block w-full rounded-lg border border-ivory-dark/60 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold/50"
+            className="block w-full rounded-lg border border-ivory-dark/60 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold/50"
           />
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-900 dark:text-white mb-1">
+          <label className="block text-xs font-medium text-gray-900 mb-1">
             To
           </label>
           <input
             type="date"
             value={to}
             onChange={(e) => setTo(e.target.value)}
-            className="block w-full rounded-lg border border-ivory-dark/60 dark:border-white/10 bg-white dark:bg-white/5 px-3 py-2 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-gold/50"
+            className="block w-full rounded-lg border border-ivory-dark/60 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-gold/50"
           />
         </div>
         <Button onClick={fetchProducts} isLoading={loading} variant="secondary" size="sm">
@@ -95,21 +95,21 @@ export default function ProductsReportPage() {
       )}
 
       {!loading && products.length === 0 && (
-        <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-white/40">
+        <div className="flex flex-col items-center justify-center h-64 text-gray-500">
           <Package className="h-10 w-10 mb-3 opacity-40" />
           <p className="text-sm">No product sales data for this period.</p>
         </div>
       )}
 
       {!loading && products.length > 0 && (
-        <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-5">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4">
             Product Sales ({products.length})
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ivory-dark/60 dark:border-white/10 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500 dark:text-white/40">
+                <tr className="border-b border-ivory-dark/60 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500">
                   <th className="py-3 pr-4">Product</th>
                   <th className="py-3 pr-4">SKU</th>
                   <th className="py-3 pr-4 text-right">Sold</th>
@@ -122,13 +122,13 @@ export default function ProductsReportPage() {
                 {products.map((p) => (
                   <tr
                     key={p.id}
-                    className="border-b border-ivory-dark/40 dark:border-white/5 last:border-0"
+                    className="border-b border-ivory-dark/40 last:border-0"
                   >
-                    <td className="py-3 pr-4 font-medium text-gray-900 dark:text-white">{p.name}</td>
-                    <td className="py-3 pr-4 text-gray-500 dark:text-white/40 font-mono text-xs">{p.sku}</td>
-                    <td className="py-3 pr-4 text-right text-gray-900 dark:text-white">{p.totalSold}</td>
-                    <td className="py-3 pr-4 text-right font-medium text-gray-900 dark:text-white">{formatPrice(p.revenue)}</td>
-                    <td className="py-3 pr-4 text-right text-gray-900 dark:text-white">{p.orders}</td>
+                    <td className="py-3 pr-4 font-medium text-gray-900">{p.name}</td>
+                    <td className="py-3 pr-4 text-gray-500 font-mono text-xs">{p.sku}</td>
+                    <td className="py-3 pr-4 text-right text-gray-900">{p.totalSold}</td>
+                    <td className="py-3 pr-4 text-right font-medium text-gray-900">{formatPrice(p.revenue)}</td>
+                    <td className="py-3 pr-4 text-right text-gray-900">{p.orders}</td>
                     <td className="py-3 text-right">
                       <span
                         className={cn(
@@ -137,7 +137,7 @@ export default function ProductsReportPage() {
                             ? "text-red-500"
                             : p.currentStock <= 10
                             ? "text-yellow-500"
-                            : "text-gray-900 dark:text-white"
+                            : "text-gray-900"
                         )}
                       >
                         {p.currentStock}

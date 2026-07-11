@@ -193,7 +193,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-4xl bg-white dark:bg-charcoal-light border border-ivory-dark dark:border-white/10 shadow-xl flex overflow-hidden min-h-[520px]">
+      <div className="w-full max-w-4xl bg-white border border-ivory-dark shadow-xl flex overflow-hidden min-h-[520px]">
         {/* Left Panel - Branding */}
         <div className="hidden md:flex md:w-5/12 bg-charcoal relative flex-col justify-between p-10 text-white overflow-hidden">
           <div className="absolute inset-0 opacity-10">
@@ -228,23 +228,23 @@ export default function LoginPage() {
         {/* Right Panel - Form */}
         <div className="w-full md:w-7/10 p-8 md:p-10 flex flex-col justify-center">
           <div className="flex items-center justify-between mb-6 md:hidden">
-            <Link href="/" className="text-lg font-serif font-bold tracking-[0.2em] text-charcoal dark:text-white">ARCON STYLE</Link>
+            <Link href="/" className="text-lg font-serif font-bold tracking-[0.2em] text-charcoal">ARCON STYLE</Link>
           </div>
 
           <div className="mb-6">
-            <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white">Sign In</h1>
-            <p className="text-charcoal-muted dark:text-white/70 text-sm mt-1">
+            <h1 className="text-2xl font-serif font-bold text-charcoal">Sign In</h1>
+            <p className="text-charcoal-muted text-sm mt-1">
               {authMethod === "password" ? "Enter your credentials" : "Enter your phone or email to get OTP"}
             </p>
           </div>
 
-          <div className="flex border-b border-ivory-dark dark:border-white/10 mb-6">
+          <div className="flex border-b border-ivory-dark mb-6">
             <button
               onClick={() => setAuthMethod("password")}
               className={`flex-1 pb-3 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
                 authMethod === "password"
                   ? "text-gold border-b-2 border-gold -mb-[1px]"
-                  : "text-charcoal-muted dark:text-white/70 hover:text-charcoal dark:hover:text-white/90"
+                  : "text-charcoal-muted hover:text-charcoal"
               }`}
             >
               Password
@@ -254,7 +254,7 @@ export default function LoginPage() {
               className={`flex-1 pb-3 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
                 authMethod === "otp"
                   ? "text-gold border-b-2 border-gold -mb-[1px]"
-                  : "text-charcoal-muted dark:text-white/70 hover:text-charcoal dark:hover:text-white/90"
+                  : "text-charcoal-muted hover:text-charcoal"
               }`}
             >
               OTP
@@ -297,12 +297,12 @@ export default function LoginPage() {
               </>
             ) : (
               <>
-                <div className="flex border-b border-ivory-dark dark:border-white/10 mb-4">
+                <div className="flex border-b border-ivory-dark mb-4">
                   <button
                     type="button"
                     onClick={() => setOtpChannel("email")}
                     className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
-                      otpChannel === "email" ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/40"
+                      otpChannel === "email" ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted"
                     }`}
                   >
                     <Mail className="h-3.5 w-3.5 inline mr-1.5" /> Email
@@ -311,7 +311,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setOtpChannel("phone")}
                     className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
-                      otpChannel === "phone" ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/40"
+                      otpChannel === "phone" ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted"
                     }`}
                   >
                     <Phone className="h-3.5 w-3.5 inline mr-1.5" /> Phone
@@ -346,10 +346,10 @@ export default function LoginPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-ivory-dark dark:border-white/10" />
+              <div className="w-full border-t border-ivory-dark" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white dark:bg-charcoal-light px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted dark:text-white/60">or continue with</span>
+              <span className="bg-white px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted">or continue with</span>
             </div>
           </div>
 
@@ -363,7 +363,7 @@ export default function LoginPage() {
             Google
           </Button>
 
-          <p className="mt-6 text-center text-sm text-charcoal-muted dark:text-white/60">
+          <p className="mt-6 text-center text-sm text-charcoal-muted">
             Don&apos;t have an account?{" "}
             <Link href={`/signup?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
               Create one

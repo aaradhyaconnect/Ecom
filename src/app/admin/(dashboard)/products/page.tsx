@@ -686,14 +686,14 @@ export default function AdminProductsPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               Description
             </label>
             <textarea
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               rows={3}
-              className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-gray-900 dark:text-white"
+              className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-gray-900"
             />
           </div>
 
@@ -728,7 +728,7 @@ export default function AdminProductsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Sizes</label>
+            <label className="block text-sm font-medium text-gray-900 mb-2">Sizes</label>
             <div className="flex flex-wrap gap-2">
               {SIZES.map((size) => (
                 <button
@@ -749,7 +749,7 @@ export default function AdminProductsPage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-900 dark:text-white">Colors</label>
+              <label className="block text-sm font-medium text-gray-900">Colors</label>
               <button
                 type="button"
                 onClick={addColor}
@@ -847,7 +847,7 @@ export default function AdminProductsPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+            <label className="block text-sm font-medium text-gray-900 mb-1">
               Care Instructions
             </label>
             <textarea
@@ -919,7 +919,7 @@ export default function AdminProductsPage() {
                 placeholder="Optimized title for search engines"
               />
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   SEO Description
                 </label>
                 <textarea
@@ -927,7 +927,7 @@ export default function AdminProductsPage() {
                   onChange={(e) => setForm((prev) => ({ ...prev, seo_description: e.target.value }))}
                   rows={3}
                   placeholder="Meta description for search results (150-160 chars recommended)"
-                  className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-gray-900 dark:text-white"
+                  className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-gray-900"
                 />
               </div>
             </div>

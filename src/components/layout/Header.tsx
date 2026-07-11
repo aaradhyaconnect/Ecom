@@ -8,8 +8,6 @@ import {
   ShoppingBag,
   Heart,
   User,
-  Sun,
-  Moon,
   Package,
   LogOut,
   ChevronDown,
@@ -20,7 +18,6 @@ import { useWishlistStore } from "@/lib/store/wishlist";
 import { useUIStore } from "@/lib/store/ui";
 import { useAuthStore } from "@/lib/store/auth";
 import { useHydrated } from "@/hooks/useHydrated";
-import { useTheme } from "@/components/layout/ThemeProvider";
 import { NAV_LINKS, SITE } from "@/lib/constants/site";
 import { CartDrawer } from "./CartDrawer";
 import { SearchModal } from "./SearchModal";
@@ -34,7 +31,6 @@ export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
-  const { theme, toggleTheme } = useTheme();
   const mounted = useHydrated();
 
   useEffect(() => {
@@ -56,20 +52,24 @@ export function Header() {
   }, [showUserMenu]);
 
   const isHome = pathname === "/";
-  const isDark = isScrolled || !isHome;
+  const isSolid = isScrolled || !isHome;
 
   async function handleLogout() {
     await fetch("/api/auth/set-session", { method: "DELETE", headers: { "Content-Type": "application/json" } }).catch(() => {});
     window.location.href = "/";
   }
 
+  const textColor = isSolid ? "text-charcoal" : "text-white";
+  const textMuted = isSolid ? "text-charcoal-muted" : "text-white/70";
+  const hamburgerColor = isSolid ? "bg-charcoal" : "bg-white";
+
   return (
     <>
       <header
         className={cn(
           "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
-          isDark
-            ? "bg-white/95 dark:bg-charcoal-light/95 backdrop-blur-lg shadow-sm py-2"
+          isSolid
+            ? "bg-white/95 backdrop-blur-lg shadow-sm py-2"
             : "bg-gradient-to-b from-black/40 via-black/20 to-transparent backdrop-blur-sm py-4"
         )}
       >
@@ -84,17 +84,17 @@ export function Header() {
                 <span className={cn(
                   "block h-[1.5px] w-full transition-all duration-300",
                   isMobileMenuOpen ? "rotate-45 translate-y-[7px]" : "",
-                  isDark ? "bg-charcoal" : "bg-white"
+                  hamburgerColor
                 )} />
                 <span className={cn(
                   "block h-[1.5px] w-full transition-all duration-300",
                   isMobileMenuOpen ? "opacity-0" : "",
-                  isDark ? "bg-charcoal" : "bg-white"
+                  hamburgerColor
                 )} />
                 <span className={cn(
                   "block h-[1.5px] w-full transition-all duration-300",
                   isMobileMenuOpen ? "-rotate-45 -translate-y-[7px]" : "",
-                  isDark ? "bg-charcoal" : "bg-white"
+                  hamburgerColor
                 )} />
               </div>
             </button>
@@ -103,7 +103,7 @@ export function Header() {
               href="/"
               className={cn(
                 "text-xl lg:text-2xl font-bold tracking-[0.35em] transition-colors font-serif",
-                isDark ? "text-charcoal dark:text-white" : "text-white"
+                textColor
               )}
             >
               {SITE.name}
@@ -116,9 +116,7 @@ export function Header() {
                   href={link.href}
                   className={cn(
                     "relative text-[11px] font-medium uppercase tracking-[0.15em] transition-colors duration-300 group py-1",
-                    isDark
-                      ? "text-charcoal-muted hover:text-charcoal dark:text-white/70 dark:hover:text-white"
-                      : "text-white/70 hover:text-white"
+                    textMuted
                   )}
                 >
                   {link.label}
@@ -132,29 +130,10 @@ export function Header() {
 
             <div className="flex items-center space-x-0.5 sm:space-x-1">
               <button
-                onClick={toggleTheme}
-                className={cn(
-                  "p-2.5 hover:scale-110 transition-all duration-200 rounded-lg",
-                  isDark
-                    ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10"
-                    : "text-white/70 hover:text-white"
-                )}
-                aria-label="Toggle theme"
-              >
-                {theme === "dark" ? (
-                  <Sun className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                ) : (
-                  <Moon className="h-[18px] w-[18px]" strokeWidth={1.5} />
-                )}
-              </button>
-
-              <button
                 onClick={openSearch}
                 className={cn(
                   "p-2.5 hover:scale-110 transition-all duration-200 rounded-lg",
-                  isDark
-                    ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10"
-                    : "text-white/70 hover:text-white"
+                  textMuted
                 )}
                 aria-label="Search"
               >
@@ -165,9 +144,7 @@ export function Header() {
                 href={mounted && user ? "/account/wishlist" : "/login"}
                 className={cn(
                   "hidden sm:block p-2.5 hover:scale-110 transition-all duration-200 relative rounded-lg",
-                  isDark
-                    ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10"
-                    : "text-white/70 hover:text-white"
+                  textMuted
                 )}
                 aria-label="Wishlist"
               >
@@ -192,9 +169,7 @@ export function Header() {
                   onMouseEnter={() => mounted && user && setShowUserMenu(true)}
                   className={cn(
                     "p-2.5 hover:scale-110 transition-all duration-200 rounded-lg flex items-center gap-0.5",
-                    isDark
-                      ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10"
-                      : "text-white/70 hover:text-white"
+                    textMuted
                   )}
                   aria-label="Account"
                 >
@@ -206,38 +181,38 @@ export function Header() {
 
                 {mounted && user && showUserMenu && (
                   <div
-                    className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-charcoal-light border border-ivory-dark dark:border-white/10 shadow-lg py-2 z-50"
+                    className="absolute right-0 top-full mt-1 w-56 bg-white border border-ivory-dark shadow-lg py-2 z-50"
                     onMouseLeave={() => setShowUserMenu(false)}
                   >
-                    <div className="px-4 py-2 border-b border-ivory-dark dark:border-white/10">
-                      <p className="text-xs text-charcoal-muted dark:text-white/70 uppercase tracking-wider">Signed in as</p>
-                      <p className="text-sm font-medium text-charcoal dark:text-white truncate mt-0.5">{user.email || user.phone || "User"}</p>
+                    <div className="px-4 py-2 border-b border-ivory-dark">
+                      <p className="text-xs text-charcoal-muted uppercase tracking-wider">Signed in as</p>
+                      <p className="text-sm font-medium text-charcoal truncate mt-0.5">{user.email || user.phone || "User"}</p>
                     </div>
                     <Link
                       href="/account"
                       onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal dark:text-white/80 hover:bg-ivory-dark dark:hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal hover:bg-ivory-dark transition-colors"
                     >
                       <User className="h-4 w-4" /> My Profile
                     </Link>
                     <Link
                       href="/account/orders"
                       onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal dark:text-white/80 hover:bg-ivory-dark dark:hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal hover:bg-ivory-dark transition-colors"
                     >
                       <Package className="h-4 w-4" /> My Orders
                     </Link>
                     <Link
                       href="/account/wishlist"
                       onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal dark:text-white/80 hover:bg-ivory-dark dark:hover:bg-white/5 transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal hover:bg-ivory-dark transition-colors"
                     >
                       <Heart className="h-4 w-4" /> Wishlist
                     </Link>
-                    <div className="border-t border-ivory-dark dark:border-white/10 mt-1 pt-1">
+                    <div className="border-t border-ivory-dark mt-1 pt-1">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10 w-full transition-colors"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-rose-600 hover:bg-rose-50 w-full transition-colors"
                       >
                         <LogOut className="h-4 w-4" /> Sign Out
                       </button>
@@ -251,9 +226,7 @@ export function Header() {
                 href={mounted && user ? "/account" : "/login"}
                 className={cn(
                   "sm:hidden p-2.5 hover:scale-110 transition-all duration-200 rounded-lg",
-                  isDark
-                    ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10"
-                    : "text-white/70 hover:text-white"
+                  textMuted
                 )}
                 aria-label="Account"
               >
@@ -264,9 +237,7 @@ export function Header() {
                 onClick={openCart}
                 className={cn(
                   "p-2.5 hover:scale-110 transition-all duration-200 relative rounded-lg",
-                  isDark
-                    ? "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark/50 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/10"
-                    : "text-white/70 hover:text-white"
+                  textMuted
                 )}
                 aria-label="Cart"
               >

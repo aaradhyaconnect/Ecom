@@ -98,17 +98,17 @@ function PermissionsGrid({ permissions, onToggle }: { permissions: Permissions; 
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-ivory-dark/60 dark:border-white/10">
-            <th className="text-left py-2 pr-4 text-xs font-semibold text-gray-900 dark:text-white">Module</th>
+          <tr className="border-b border-ivory-dark/60">
+            <th className="text-left py-2 pr-4 text-xs font-semibold text-gray-900">Module</th>
             {ACTIONS.map((a) => (
-              <th key={a} className="text-center py-2 px-3 text-xs font-semibold text-gray-900 dark:text-white">{ACTION_LABELS[a]}</th>
+              <th key={a} className="text-center py-2 px-3 text-xs font-semibold text-gray-900">{ACTION_LABELS[a]}</th>
             ))}
           </tr>
         </thead>
         <tbody>
           {MODULES.map((mod) => (
-            <tr key={mod} className="border-b border-ivory-dark/30 dark:border-white/5 last:border-0">
-              <td className="py-2.5 pr-4 text-sm font-medium text-charcoal dark:text-white">{MODULE_LABELS[mod]}</td>
+            <tr key={mod} className="border-b border-ivory-dark/30 last:border-0">
+              <td className="py-2.5 pr-4 text-sm font-medium text-charcoal">{MODULE_LABELS[mod]}</td>
               {ACTIONS.map((action) => (
                 <td key={action} className="text-center py-2.5 px-3">
                   <input
@@ -340,8 +340,8 @@ export default function UsersPage() {
       <div className="flex items-center justify-between">
         <div>
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">Staff Management</p>
-          <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white">Users</h1>
-          <p className="text-[13px] text-charcoal-muted dark:text-white/60 mt-0.5">Manage staff users, roles, and permissions</p>
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Users</h1>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">Manage staff users, roles, and permissions</p>
         </div>
         <Button onClick={openAdd}>
           <Plus className="h-4 w-4 mr-2" />
@@ -351,7 +351,7 @@ export default function UsersPage() {
 
       <div className="flex items-center gap-3">
         <div className="relative flex-1 max-w-sm">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted dark:text-white/40" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-charcoal-muted" />
           <Input
             placeholder="Search by name or email..."
             value={search}
@@ -361,7 +361,7 @@ export default function UsersPage() {
         <select
           value={roleFilter}
           onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
-          className="px-4 py-2.5 border border-ivory-dark/60 dark:border-white/10 rounded-sm text-sm text-charcoal dark:text-white bg-white dark:bg-white/5 focus:border-gold focus:ring-0 transition-all duration-300"
+          className="px-4 py-2.5 border border-ivory-dark/60 rounded-sm text-sm text-charcoal bg-white focus:border-gold focus:ring-0 transition-all duration-300"
         >
           <option value="">All Roles</option>
           <option value="super_admin">Super Admin</option>
@@ -370,11 +370,11 @@ export default function UsersPage() {
         </select>
       </div>
 
-      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 dark:border-white/10 bg-ivory-dark/20 dark:bg-white/5 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted dark:text-white/60">
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
                 <th className="px-5 py-3">User</th>
                 <th className="px-5 py-3">Username</th>
                 <th className="px-5 py-3">Email</th>
@@ -387,55 +387,55 @@ export default function UsersPage() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted dark:text-white/60">Loading...</td>
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">Loading...</td>
                 </tr>
               ) : users.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted dark:text-white/60">
+                  <td colSpan={7} className="px-4 py-12 text-center text-charcoal-muted">
                     <Users className="mx-auto mb-2 h-8 w-8" />
                     No users found
                   </td>
                 </tr>
               ) : (
                 users.map((user) => (
-                  <tr key={user.id} className="border-b border-ivory-dark/40 dark:border-white/5 last:border-0 hover:bg-ivory-dark/20 dark:hover:bg-white/5 transition-colors">
+                  <tr key={user.id} className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors">
                     <td className="px-5 py-3">
                       <div className="flex items-center gap-3">
-                        <div className="h-9 w-9 rounded-full bg-ivory-dark/60 dark:bg-white/10 border border-ivory-dark dark:border-white/10 flex items-center justify-center text-sm font-medium text-charcoal dark:text-white">
+                        <div className="h-9 w-9 rounded-full bg-ivory-dark/60 border border-ivory-dark flex items-center justify-center text-sm font-medium text-charcoal">
                           {getInitials(user.display_name)}
                         </div>
-                        <span className="font-medium text-charcoal dark:text-white">{user.display_name}</span>
+                        <span className="font-medium text-charcoal">{user.display_name}</span>
                       </div>
                     </td>
-                    <td className="px-5 py-3 text-charcoal-muted dark:text-white/60">@{user.username}</td>
-                    <td className="px-5 py-3 text-charcoal-muted dark:text-white/60">{user.email || "-"}</td>
+                    <td className="px-5 py-3 text-charcoal-muted">@{user.username}</td>
+                    <td className="px-5 py-3 text-charcoal-muted">{user.email || "-"}</td>
                     <td className="px-5 py-3">
                       <Badge variant={ROLE_BADGE_VARIANT[user.role]}>{ROLE_LABELS[user.role]}</Badge>
                     </td>
                     <td className="px-5 py-3">
                       <span className={cn(
                         "inline-flex items-center gap-1.5 text-xs font-medium",
-                        user.is_active ? "text-green-600 dark:text-green-400" : "text-gray-400 dark:text-white/40"
+                        user.is_active ? "text-green-600" : "text-gray-400"
                       )}>
-                        <span className={cn("h-1.5 w-1.5 rounded-full", user.is_active ? "bg-green-500" : "bg-gray-400 dark:bg-white/30")} />
+                        <span className={cn("h-1.5 w-1.5 rounded-full", user.is_active ? "bg-green-500" : "bg-gray-400")} />
                         {user.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-xs text-charcoal-muted dark:text-white/60">
+                    <td className="px-5 py-3 text-xs text-charcoal-muted">
                       {user.last_login ? formatDate(user.last_login) : "Never"}
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <button
                           onClick={() => openEdit(user)}
-                          className="p-1.5 rounded-lg hover:bg-ivory-dark/40 dark:hover:bg-white/10 text-charcoal-muted dark:text-white/60 hover:text-charcoal dark:hover:text-white transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors"
                           title="Edit"
                         >
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => openResetPassword(user.id)}
-                          className="p-1.5 rounded-lg hover:bg-ivory-dark/40 dark:hover:bg-white/10 text-charcoal-muted dark:text-white/60 hover:text-charcoal dark:hover:text-white transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors"
                           title="Reset Password"
                         >
                           <Key className="h-4 w-4" />
@@ -443,9 +443,9 @@ export default function UsersPage() {
                         <button
                           onClick={() => handleDelete(user)}
                           className={cn(
-                            "p-1.5 rounded-lg hover:bg-ivory-dark/40 dark:hover:bg-white/10 transition-colors",
+                            "p-1.5 rounded-lg hover:bg-ivory-dark/40 transition-colors",
                             currentUserId && user.user_id === currentUserId
-                              ? "text-gray-300 dark:text-white/20 cursor-not-allowed"
+                              ? "text-gray-300 cursor-not-allowed"
                               : "text-rose-500 hover:text-rose-600"
                           )}
                           title={currentUserId && user.user_id === currentUserId ? "Cannot delete yourself" : "Delete"}
@@ -465,7 +465,7 @@ export default function UsersPage() {
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-charcoal-muted dark:text-white/60">Page {page} of {totalPages} ({total} users)</p>
+          <p className="text-sm text-charcoal-muted">Page {page} of {totalPages} ({total} users)</p>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage(page - 1)}>Prev</Button>
             <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage(page + 1)}>Next</Button>
@@ -506,11 +506,11 @@ export default function UsersPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Role</label>
+            <label className="block text-sm font-medium text-gray-900 mb-1.5">Role</label>
             <select
               value={addForm.role}
               onChange={(e) => setAddForm({ ...addForm, role: e.target.value as StaffRole })}
-              className="w-full px-4 py-2.5 border border-ivory-dark/60 dark:border-white/10 rounded-sm text-sm text-gray-900 dark:text-white bg-white dark:bg-white/5 focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
+              className="w-full px-4 py-2.5 border border-ivory-dark/60 rounded-sm text-sm text-gray-900 bg-white focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
             >
               <option value="staff">Staff</option>
               <option value="admin">Admin</option>
@@ -520,9 +520,9 @@ export default function UsersPage() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Shield className="h-4 w-4 text-gold-dark" />
-              <label className="text-sm font-medium text-gray-900 dark:text-white">Permissions</label>
+              <label className="text-sm font-medium text-gray-900">Permissions</label>
             </div>
-            <div className="border border-ivory-dark/60 dark:border-white/10 rounded-lg p-4 bg-ivory-dark/20 dark:bg-white/5">
+            <div className="border border-ivory-dark/60 rounded-lg p-4 bg-ivory-dark/20">
               <PermissionsGrid permissions={addForm.permissions} onToggle={(mod, action) => togglePermission(mod, action, "add")} />
             </div>
           </div>
@@ -537,12 +537,12 @@ export default function UsersPage() {
         {editUser && (
           <div className="space-y-5">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-ivory-dark/60 dark:bg-white/10 border border-ivory-dark dark:border-white/10 flex items-center justify-center text-lg font-bold text-charcoal dark:text-white">
+              <div className="h-12 w-12 rounded-full bg-ivory-dark/60 border border-ivory-dark flex items-center justify-center text-lg font-bold text-charcoal">
                 {getInitials(editUser.display_name)}
               </div>
               <div>
-                <p className="font-medium text-charcoal dark:text-white">{editUser.display_name}</p>
-                <p className="text-xs text-charcoal-muted dark:text-white/60">{editUser.email || `@${editUser.username}`}</p>
+                <p className="font-medium text-charcoal">{editUser.display_name}</p>
+                <p className="text-xs text-charcoal-muted">{editUser.email || `@${editUser.username}`}</p>
               </div>
             </div>
             <Input
@@ -552,11 +552,11 @@ export default function UsersPage() {
             />
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Role</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">Role</label>
                 <select
                   value={editForm.role}
                   onChange={(e) => setEditForm({ ...editForm, role: e.target.value as StaffRole })}
-                  className="w-full px-4 py-2.5 border border-ivory-dark/60 dark:border-white/10 rounded-sm text-sm text-gray-900 dark:text-white bg-white dark:bg-white/5 focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
+                  className="w-full px-4 py-2.5 border border-ivory-dark/60 rounded-sm text-sm text-gray-900 bg-white focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
                 >
                   <option value="staff">Staff</option>
                   <option value="admin">Admin</option>
@@ -564,11 +564,11 @@ export default function UsersPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Status</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">Status</label>
                 <select
                   value={editForm.is_active ? "active" : "inactive"}
                   onChange={(e) => setEditForm({ ...editForm, is_active: e.target.value === "active" })}
-                  className="w-full px-4 py-2.5 border border-ivory-dark/60 dark:border-white/10 rounded-sm text-sm text-gray-900 dark:text-white bg-white dark:bg-white/5 focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
+                  className="w-full px-4 py-2.5 border border-ivory-dark/60 rounded-sm text-sm text-gray-900 bg-white focus:border-gold focus:ring-0 focus:shadow-[0_0_0_3px_rgba(212,175,55,0.1)] transition-all duration-300"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
@@ -578,9 +578,9 @@ export default function UsersPage() {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Shield className="h-4 w-4 text-gold-dark" />
-                <label className="text-sm font-medium text-gray-900 dark:text-white">Permissions</label>
+                <label className="text-sm font-medium text-gray-900">Permissions</label>
               </div>
-              <div className="border border-ivory-dark/60 dark:border-white/10 rounded-lg p-4 bg-ivory-dark/20 dark:bg-white/5">
+              <div className="border border-ivory-dark/60 rounded-lg p-4 bg-ivory-dark/20">
                 <PermissionsGrid permissions={editForm.permissions} onToggle={(mod, action) => togglePermission(mod, action, "edit")} />
               </div>
             </div>

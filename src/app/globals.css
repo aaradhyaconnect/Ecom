@@ -187,14 +187,6 @@ a, button, [role="button"], select, label[for] {
   background: var(--color-gold-light);
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #333;
-}
-
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-gold);
-}
-
 /* Hide scrollbar */
 .scrollbar-hide {
   -ms-overflow-style: none;
@@ -264,11 +256,6 @@ a, button, [role="button"], select, label[for] {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-.dark .card-hover:hover {
-  border-color: rgba(212, 175, 55, 0.2);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
-
 /* ===== UNDERLINE HOVER ===== */
 .underline-hover {
   position: relative;
@@ -311,16 +298,6 @@ a, button, [role="button"], select, label[for] {
     rgba(212, 175, 55, 0.02) 10px,
     rgba(212, 175, 55, 0.02) 11px
   );
-}
-
-.dark .pattern-dots {
-  background-image: radial-gradient(circle, rgba(212, 175, 55, 0.08) 1px, transparent 1px);
-}
-
-.dark .pattern-grid {
-  background-image:
-    linear-gradient(rgba(212, 175, 55, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(212, 175, 55, 0.04) 1px, transparent 1px);
 }
 
 /* ===== TEXT EFFECTS ===== */
@@ -402,63 +379,6 @@ button:focus-visible, a:focus-visible {
   outline-offset: 2px;
 }
 
-/* ===== DARK MODE ===== */
-.dark {
-  --color-background: #0F0F0F;
-  --color-foreground: #FAF9F6;
-
-  --color-primary: #FAF9F6;
-  --color-primary-foreground: #0F0F0F;
-
-  --color-ivory: #1A1A1A;
-  --color-ivory-dark: #252525;
-
-  --color-beige: #222222;
-  --color-grey: #1A1A1A;
-
-  --color-charcoal: #FAF9F6;
-  --color-charcoal-light: #E5E5E5;
-  --color-charcoal-muted: #AAAAAA;
-}
-
-.dark body {
-  background: var(--color-background);
-  color: var(--color-foreground);
-}
-
-.dark ::selection {
-  background-color: var(--color-gold);
-  color: var(--color-charcoal);
-}
-
-.dark img {
-  filter: brightness(0.92);
-}
-
-.dark input,
-.dark textarea,
-.dark select {
-  color: #FAF9F6;
-}
-
-.dark input::placeholder,
-.dark textarea::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-}
-
-.dark a {
-  color: inherit;
-}
-
-/* Dark mode card improvements */
-.dark .bg-ivory {
-  background-color: #1A1A1A;
-}
-
-.dark .border-ivory-dark {
-  border-color: #2A2A2A;
-}
-
 /* ===== SMOOTH TRANSITIONS ON ALL INTERACTIVE ELEMENTS ===== */
 a, button, input, select, textarea {
   transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
@@ -489,16 +409,6 @@ a, button, input, select, textarea {
   );
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
-}
-
-.dark .skeleton-shimmer {
-  background: linear-gradient(
-    90deg,
-    #252525 25%,
-    #2A2A2A 37%,
-    #252525 63%
-  );
-  background-size: 200% 100%;
 }
 
 /* ===== PRINT STYLES ===== */

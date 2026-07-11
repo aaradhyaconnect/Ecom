@@ -77,7 +77,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="no-print mb-6 flex items-center justify-between">
-        <Link href={`/account/orders/${order.id}`} className="text-xs tracking-[0.1em] uppercase text-charcoal-muted dark:text-white/60 hover:text-charcoal dark:hover:text-white inline-flex items-center gap-1 transition-colors">
+        <Link href={`/account/orders/${order.id}`} className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal:text-white inline-flex items-center gap-1 transition-colors">
           <ArrowLeft className="h-3 w-3" /> Back to Order
         </Link>
         <button onClick={() => window.print()} className="flex items-center gap-2 bg-charcoal text-ivory px-4 py-2 text-sm font-medium hover:bg-charcoal/90 transition-colors">
@@ -85,58 +85,58 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
         </button>
       </div>
 
-      <div className="bg-white dark:bg-charcoal-light border border-gray-200 dark:border-white/10 p-8 print:p-6 print:border-0 print:shadow-none">
+      <div className="bg-white border border-gray-200 p-8 print:p-6 print:border-0 print:shadow-none">
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-serif font-bold text-charcoal dark:text-white">Arcon Style</h1>
-            <p className="text-sm text-gray-500 dark:text-white/60 mt-1">Premium Designer Clothing & Jewellery</p>
-            <p className="text-xs text-gray-400 dark:text-white/50 mt-2">123 Fashion Street, Boutique Lane</p>
-            <p className="text-xs text-gray-400 dark:text-white/50">Mumbai - 400001, India</p>
-            <p className="text-xs text-gray-400 dark:text-white/50">hello@arconstyle.com</p>
+            <h1 className="text-3xl font-serif font-bold text-charcoal">Arcon Style</h1>
+            <p className="text-sm text-gray-500 mt-1">Premium Designer Clothing & Jewellery</p>
+            <p className="text-xs text-gray-400 mt-2">123 Fashion Street, Boutique Lane</p>
+            <p className="text-xs text-gray-400">Mumbai - 400001, India</p>
+            <p className="text-xs text-gray-400">hello@arconstyle.com</p>
           </div>
           <div className="text-right">
-            <h2 className="text-xl font-bold text-charcoal dark:text-white">INVOICE</h2>
-            <p className="text-sm text-gray-500 dark:text-white/60 mt-1">#{order.order_id}</p>
-            <p className="text-xs text-gray-400 dark:text-white/50 mt-1">Date: {formatDate(order.created_at)}</p>
-            <p className="text-xs text-gray-400 dark:text-white/50">Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online (Razorpay)"}</p>
-            <p className="text-xs text-gray-400 dark:text-white/50">Status: {order.payment_status?.toUpperCase()}</p>
+            <h2 className="text-xl font-bold text-charcoal">INVOICE</h2>
+            <p className="text-sm text-gray-500 mt-1">#{order.order_id}</p>
+            <p className="text-xs text-gray-400 mt-1">Date: {formatDate(order.created_at)}</p>
+            <p className="text-xs text-gray-400">Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online (Razorpay)"}</p>
+            <p className="text-xs text-gray-400">Status: {order.payment_status?.toUpperCase()}</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 mb-2">Bill To</h3>
-            <p className="text-sm font-medium text-charcoal dark:text-white">{order.shipping_address?.full_name}</p>
-            <p className="text-xs text-gray-500 dark:text-white/60">{order.shipping_address?.street}</p>
-            <p className="text-xs text-gray-500 dark:text-white/60">{order.shipping_address?.city}, {order.shipping_address?.state} - {order.shipping_address?.pincode}</p>
-            <p className="text-xs text-gray-500 dark:text-white/60">Phone: {order.shipping_address?.phone}</p>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Bill To</h3>
+            <p className="text-sm font-medium text-charcoal">{order.shipping_address?.full_name}</p>
+            <p className="text-xs text-gray-500">{order.shipping_address?.street}</p>
+            <p className="text-xs text-gray-500">{order.shipping_address?.city}, {order.shipping_address?.state} - {order.shipping_address?.pincode}</p>
+            <p className="text-xs text-gray-500">Phone: {order.shipping_address?.phone}</p>
           </div>
           <div>
-            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 mb-2">Ship To</h3>
-            <p className="text-sm text-gray-600 dark:text-white/60">Same as billing address</p>
+            <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-2">Ship To</h3>
+            <p className="text-sm text-gray-600">Same as billing address</p>
           </div>
         </div>
 
         <table className="w-full mb-8">
           <thead>
-            <tr className="border-b-2 border-gray-200 dark:border-white/10">
-              <th className="text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 py-2">#</th>
-              <th className="text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 py-2">Item</th>
-              <th className="text-left text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 py-2">Size/Color</th>
-              <th className="text-right text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 py-2">Qty</th>
-              <th className="text-right text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 py-2">Price</th>
-              <th className="text-right text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-white/70 py-2">Total</th>
+            <tr className="border-b-2 border-gray-200">
+              <th className="text-left text-xs font-bold uppercase tracking-wider text-gray-500 py-2">#</th>
+              <th className="text-left text-xs font-bold uppercase tracking-wider text-gray-500 py-2">Item</th>
+              <th className="text-left text-xs font-bold uppercase tracking-wider text-gray-500 py-2">Size/Color</th>
+              <th className="text-right text-xs font-bold uppercase tracking-wider text-gray-500 py-2">Qty</th>
+              <th className="text-right text-xs font-bold uppercase tracking-wider text-gray-500 py-2">Price</th>
+              <th className="text-right text-xs font-bold uppercase tracking-wider text-gray-500 py-2">Total</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item, idx) => (
-              <tr key={idx} className="border-b border-gray-100 dark:border-white/5">
-                <td className="py-3 text-sm text-gray-500 dark:text-white/60">{idx + 1}</td>
-                <td className="py-3"><p className="text-sm font-medium text-charcoal dark:text-white">{item.product?.name}</p></td>
-                <td className="py-3 text-xs text-gray-500 dark:text-white/60">{[item.size, item.color].filter(Boolean).join(" / ") || "\u2014"}</td>
-                <td className="py-3 text-sm text-right text-gray-600 dark:text-white/70">{item.quantity}</td>
-                <td className="py-3 text-sm text-right text-gray-600 dark:text-white/70">{formatPrice(item.product?.price || 0)}</td>
-                <td className="py-3 text-sm text-right font-medium text-charcoal dark:text-white">{formatPrice((item.product?.price || 0) * item.quantity)}</td>
+              <tr key={idx} className="border-b border-gray-100">
+                <td className="py-3 text-sm text-gray-500">{idx + 1}</td>
+                <td className="py-3"><p className="text-sm font-medium text-charcoal">{item.product?.name}</p></td>
+                <td className="py-3 text-xs text-gray-500">{[item.size, item.color].filter(Boolean).join(" / ") || "\u2014"}</td>
+                <td className="py-3 text-sm text-right text-gray-600">{item.quantity}</td>
+                <td className="py-3 text-sm text-right text-gray-600">{formatPrice(item.product?.price || 0)}</td>
+                <td className="py-3 text-sm text-right font-medium text-charcoal">{formatPrice((item.product?.price || 0) * item.quantity)}</td>
               </tr>
             ))}
           </tbody>
@@ -144,16 +144,16 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
 
         <div className="flex justify-end">
           <div className="w-64 space-y-2">
-            <div className="flex justify-between text-sm"><span className="text-gray-500 dark:text-white/60">Subtotal</span><span className="text-charcoal dark:text-white">{formatPrice(order.subtotal)}</span></div>
-            <div className="flex justify-between text-sm"><span className="text-gray-500 dark:text-white/60">Shipping</span><span className="text-charcoal dark:text-white">{order.shipping_charge === 0 ? "FREE" : formatPrice(order.shipping_charge)}</span></div>
-            {(order.discount ?? 0) > 0 && <div className="flex justify-between text-sm"><span className="text-gray-500 dark:text-white/60">Discount</span><span className="text-green-600 dark:text-green-400">-{formatPrice(order.discount!)}</span></div>}
-            {order.coupon_code && <div className="flex justify-between text-xs"><span className="text-gray-400 dark:text-white/50">Coupon ({order.coupon_code})</span><span className="text-green-600 dark:text-green-400">Applied</span></div>}
-            <div className="flex justify-between text-base font-bold border-t border-gray-200 dark:border-white/10 pt-2"><span className="text-charcoal dark:text-white">Total</span><span className="text-charcoal dark:text-white">{formatPrice(order.total)}</span></div>
+            <div className="flex justify-between text-sm"><span className="text-gray-500">Subtotal</span><span className="text-charcoal">{formatPrice(order.subtotal)}</span></div>
+            <div className="flex justify-between text-sm"><span className="text-gray-500">Shipping</span><span className="text-charcoal">{order.shipping_charge === 0 ? "FREE" : formatPrice(order.shipping_charge)}</span></div>
+            {(order.discount ?? 0) > 0 && <div className="flex justify-between text-sm"><span className="text-gray-500">Discount</span><span className="text-green-600">-{formatPrice(order.discount!)}</span></div>}
+            {order.coupon_code && <div className="flex justify-between text-xs"><span className="text-gray-400">Coupon ({order.coupon_code})</span><span className="text-green-600">Applied</span></div>}
+            <div className="flex justify-between text-base font-bold border-t border-gray-200 pt-2"><span className="text-charcoal">Total</span><span className="text-charcoal">{formatPrice(order.total)}</span></div>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-white/10">
-          <p className="text-xs text-gray-400 dark:text-white/50 text-center">Thank you for shopping with Arcon Style. For any queries, contact us at hello@arconstyle.com</p>
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-xs text-gray-400 text-center">Thank you for shopping with Arcon Style. For any queries, contact us at hello@arconstyle.com</p>
         </div>
       </div>
     </div>

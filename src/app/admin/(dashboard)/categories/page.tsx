@@ -215,8 +215,8 @@ export default function AdminCategoriesPage() {
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">
             Category Management
           </p>
-          <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white">Categories</h1>
-          <p className="text-[13px] text-charcoal-muted dark:text-white/60 mt-0.5">
+          <h1 className="text-2xl font-serif font-bold text-charcoal">Categories</h1>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">
             {categories.length} categor{categories.length !== 1 ? "ies" : "y"}
           </p>
         </div>
@@ -235,11 +235,11 @@ export default function AdminCategoriesPage() {
         />
       </div>
 
-      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 dark:border-white/10 bg-ivory-dark/20 dark:bg-white/5 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted dark:text-white/60">
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] uppercase tracking-wider font-medium text-charcoal-muted">
                 <th className="px-4 py-3 w-20">Image</th>
                 <th className="px-5 py-3">Name</th>
                 <th className="px-5 py-3">Slug</th>
@@ -276,8 +276,8 @@ export default function AdminCategoriesPage() {
                 <tr>
                   <td colSpan={6} className="px-5 py-16 text-center">
                     <FolderOpen className="mx-auto mb-3 h-10 w-10 text-charcoal-muted/30" />
-                    <p className="text-sm font-medium text-charcoal-muted dark:text-white/60">No categories found</p>
-                    <p className="text-xs text-charcoal-muted dark:text-white/60 mt-1">
+                    <p className="text-sm font-medium text-charcoal-muted">No categories found</p>
+                    <p className="text-xs text-charcoal-muted mt-1">
                       {searchInput ? "Try a different search term" : "Add your first category to get started"}
                     </p>
                   </td>
@@ -286,10 +286,10 @@ export default function AdminCategoriesPage() {
                 filtered.map((category, index) => (
                   <tr
                     key={category.id}
-                    className="border-b border-ivory-dark/40 dark:border-white/10 last:border-0 hover:bg-ivory-dark/40 dark:hover:bg-white/10 transition-colors"
+                    className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/40 transition-colors"
                   >
                     <td className="px-4 py-3">
-                      <div className="h-12 w-12 bg-ivory-dark dark:bg-white/10 rounded-lg overflow-hidden flex-shrink-0">
+                      <div className="h-12 w-12 bg-ivory-dark rounded-lg overflow-hidden flex-shrink-0">
                         {category.image ? (
                           <Image
                             src={category.image}
@@ -304,16 +304,16 @@ export default function AdminCategoriesPage() {
                       </div>
                     </td>
                     <td className="px-5 py-3">
-                      <p className="font-medium text-charcoal dark:text-white truncate max-w-[200px]">
+                      <p className="font-medium text-charcoal truncate max-w-[200px]">
                         {category.name}
                       </p>
                       {category.description && (
-                        <p className="text-xs text-charcoal-muted dark:text-white/60 truncate max-w-[200px]">
+                        <p className="text-xs text-charcoal-muted truncate max-w-[200px]">
                           {category.description}
                         </p>
                       )}
                     </td>
-                    <td className="px-5 py-3 text-charcoal-muted dark:text-white/60 text-xs font-mono">
+                    <td className="px-5 py-3 text-charcoal-muted text-xs font-mono">
                       {category.slug}
                     </td>
                     <td className="px-5 py-3">
@@ -325,13 +325,13 @@ export default function AdminCategoriesPage() {
                             "p-1 rounded transition-colors",
                             index === 0
                               ? "text-charcoal-muted/30 cursor-not-allowed"
-                              : "text-charcoal-muted hover:text-charcoal dark:hover:text-white hover:bg-ivory-dark dark:hover:bg-white/10"
+                              : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark"
                           )}
                           title="Move up"
                         >
                           <ChevronUp className="h-3.5 w-3.5" />
                         </button>
-                        <span className="text-xs font-mono text-charcoal-muted dark:text-white/60 w-6 text-center">
+                        <span className="text-xs font-mono text-charcoal-muted w-6 text-center">
                           {category.sort_order}
                         </span>
                         <button
@@ -341,7 +341,7 @@ export default function AdminCategoriesPage() {
                             "p-1 rounded transition-colors",
                             index === filtered.length - 1
                               ? "text-charcoal-muted/30 cursor-not-allowed"
-                              : "text-charcoal-muted hover:text-charcoal dark:hover:text-white hover:bg-ivory-dark dark:hover:bg-white/10"
+                              : "text-charcoal-muted hover:text-charcoal hover:bg-ivory-dark"
                           )}
                           title="Move down"
                         >
@@ -361,28 +361,28 @@ export default function AdminCategoriesPage() {
                       <div className="flex justify-end gap-1">
                         <button
                           onClick={() => toggleActive(category)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark dark:hover:bg-white/10 hover:text-charcoal dark:hover:text-white transition-colors rounded"
+                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
                           title={category.is_active ? "Deactivate" : "Activate"}
                         >
                           <span className={cn(
                             "text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded",
                             category.is_active
-                              ? "text-green-700 bg-green-50 dark:bg-green-500/10 dark:text-green-400"
-                              : "text-charcoal-muted bg-ivory-dark dark:bg-white/10 dark:text-white/60"
+                              ? "text-green-700 bg-green-50"
+                              : "text-charcoal-muted bg-ivory-dark"
                           )}>
                             {category.is_active ? "ON" : "OFF"}
                           </span>
                         </button>
                         <button
                           onClick={() => openEdit(category)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark dark:hover:bg-white/10 hover:text-charcoal dark:hover:text-white transition-colors rounded"
+                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
                           title="Edit category"
                         >
                           <Pencil className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleDelete(category)}
-                          className="p-2 text-charcoal-muted hover:bg-rose-50 dark:hover:bg-rose-500/10 hover:text-rose-500 transition-colors rounded"
+                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 transition-colors rounded"
                           title="Delete category"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -428,7 +428,7 @@ export default function AdminCategoriesPage() {
             placeholder="auto-generated-from-name"
           />
           <div>
-            <label className="block text-sm font-medium text-charcoal dark:text-white mb-1">
+            <label className="block text-sm font-medium text-charcoal mb-1">
               Description
             </label>
             <textarea
@@ -437,7 +437,7 @@ export default function AdminCategoriesPage() {
                 setForm((prev) => ({ ...prev, description: e.target.value }))
               }
               rows={3}
-              className="w-full border border-ivory-dark/60 dark:border-white/10 rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-charcoal dark:text-white"
+              className="w-full border border-ivory-dark/60 rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
             />
           </div>
           <MultiImageUpload
@@ -466,13 +466,13 @@ export default function AdminCategoriesPage() {
               }
               className="rounded border-ivory-dark accent-charcoal"
             />
-            <span className="text-sm font-medium text-charcoal dark:text-white">
+            <span className="text-sm font-medium text-charcoal">
               Active
             </span>
           </label>
         </div>
 
-        <div className="mt-6 flex justify-end gap-3 border-t border-ivory-dark/60 dark:border-white/10 pt-4">
+        <div className="mt-6 flex justify-end gap-3 border-t border-ivory-dark/60 pt-4">
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>

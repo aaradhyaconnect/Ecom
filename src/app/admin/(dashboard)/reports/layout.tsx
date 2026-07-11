@@ -30,12 +30,12 @@ export default function ReportsLayout({
         <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-1">
           Reports
         </p>
-        <h1 className="text-2xl font-serif font-bold text-gray-900 dark:text-white">
+        <h1 className="text-2xl font-serif font-bold text-gray-900">
           Reports
         </h1>
       </div>
 
-      <div className="border-b border-ivory-dark/60 dark:border-white/10">
+      <div className="border-b border-ivory-dark/60">
         <nav className="flex gap-1 overflow-x-auto">
           {tabs.map((tab) => {
             const isActive = pathname.startsWith(tab.href);
@@ -47,7 +47,7 @@ export default function ReportsLayout({
                   "flex items-center gap-2 px-4 py-3 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px",
                   isActive
                     ? "border-gold text-gold-dark"
-                    : "border-transparent text-gray-500 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:border-gray-300 dark:hover:border-white/20"
+                    : "border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300"
                 )}
               >
                 <tab.icon className="h-4 w-4" />

@@ -131,7 +131,7 @@ export function Modal({
             )}
           </div>
         )}
-        <div className="p-4 text-charcoal dark:text-white">{children}</div>
+        <div className="p-4 text-charcoal">{children}</div>
       </div>
     </div>
   );

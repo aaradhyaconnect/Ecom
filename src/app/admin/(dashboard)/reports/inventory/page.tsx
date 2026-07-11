@@ -71,7 +71,7 @@ export default function InventoryReportPage() {
 
   if (!data) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-gray-500 dark:text-white/40">
+      <div className="flex flex-col items-center justify-center h-64 text-gray-500">
         <Boxes className="h-10 w-10 mb-3 opacity-40" />
         <p className="text-sm">Failed to load inventory data.</p>
       </div>
@@ -115,19 +115,19 @@ export default function InventoryReportPage() {
           <div
             key={card.label}
             className={cn(
-              "bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 p-5 rounded-xl",
-              card.highlight && "border-yellow-400/50 dark:border-yellow-400/30"
+              "bg-white border border-ivory-dark/60 p-5 rounded-xl",
+              card.highlight && "border-yellow-400/50"
             )}
           >
             <div className="flex items-center gap-2 mb-2">
               <div className="bg-gold/10 p-2 rounded-lg">
                 <card.icon className="h-4 w-4 text-gold-dark" />
               </div>
-              <span className="text-xs font-medium text-gray-900 dark:text-white">
+              <span className="text-xs font-medium text-gray-900">
                 {card.label}
               </span>
             </div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-bold text-gray-900">
               {card.value}
             </p>
           </div>
@@ -135,15 +135,15 @@ export default function InventoryReportPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-5">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-yellow-500" />
             Low Stock ({data.lowStock.length})
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ivory-dark/60 dark:border-white/10 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500 dark:text-white/40">
+                <tr className="border-b border-ivory-dark/60 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500">
                   <th className="py-3 pr-4">Product</th>
                   <th className="py-3 pr-4">SKU</th>
                   <th className="py-3 pr-4 text-right">Stock</th>
@@ -154,25 +154,25 @@ export default function InventoryReportPage() {
                 {data.lowStock.map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-ivory-dark/40 dark:border-white/5 last:border-0"
+                    className="border-b border-ivory-dark/40 last:border-0"
                   >
-                    <td className="py-3 pr-4 font-medium text-gray-900 dark:text-white">
+                    <td className="py-3 pr-4 font-medium text-gray-900">
                       {item.name}
                     </td>
-                    <td className="py-3 pr-4 text-gray-500 dark:text-white/40 font-mono text-xs">
+                    <td className="py-3 pr-4 text-gray-500 font-mono text-xs">
                       {item.sku}
                     </td>
                     <td className="py-3 pr-4 text-right">
                       <Badge variant="warning">{item.currentStock}</Badge>
                     </td>
-                    <td className="py-3 text-right text-gray-900 dark:text-white">
+                    <td className="py-3 text-right text-gray-900">
                       {formatPrice(item.costPrice)}
                     </td>
                   </tr>
                 ))}
                 {data.lowStock.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-8 text-center text-gray-500 dark:text-white/40">
+                    <td colSpan={4} className="py-8 text-center text-gray-500">
                       All products are well stocked.
                     </td>
                   </tr>
@@ -182,15 +182,15 @@ export default function InventoryReportPage() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-5">
-          <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+        <div className="bg-white border border-ivory-dark/60 rounded-xl p-5">
+          <h2 className="text-sm font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <XCircle className="h-4 w-4 text-red-500" />
             Out of Stock ({data.outOfStock.length})
           </h2>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-ivory-dark/60 dark:border-white/10 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500 dark:text-white/40">
+                <tr className="border-b border-ivory-dark/60 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500">
                   <th className="py-3 pr-4">Product</th>
                   <th className="py-3 pr-4">SKU</th>
                   <th className="py-3 text-right">Cost</th>
@@ -200,22 +200,22 @@ export default function InventoryReportPage() {
                 {data.outOfStock.map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-ivory-dark/40 dark:border-white/5 last:border-0"
+                    className="border-b border-ivory-dark/40 last:border-0"
                   >
-                    <td className="py-3 pr-4 font-medium text-gray-900 dark:text-white">
+                    <td className="py-3 pr-4 font-medium text-gray-900">
                       {item.name}
                     </td>
-                    <td className="py-3 pr-4 text-gray-500 dark:text-white/40 font-mono text-xs">
+                    <td className="py-3 pr-4 text-gray-500 font-mono text-xs">
                       {item.sku}
                     </td>
-                    <td className="py-3 text-right text-gray-900 dark:text-white">
+                    <td className="py-3 text-right text-gray-900">
                       {formatPrice(item.costPrice)}
                     </td>
                   </tr>
                 ))}
                 {data.outOfStock.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="py-8 text-center text-gray-500 dark:text-white/40">
+                    <td colSpan={3} className="py-8 text-center text-gray-500">
                       No out of stock products.
                     </td>
                   </tr>
@@ -226,14 +226,14 @@ export default function InventoryReportPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-5">
-        <h2 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl p-5">
+        <h2 className="text-sm font-semibold text-gray-900 mb-4">
           Category Breakdown
         </h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 dark:border-white/10 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500 dark:text-white/40">
+              <tr className="border-b border-ivory-dark/60 text-left text-[11px] uppercase tracking-wider font-medium text-gray-500">
                 <th className="py-3 pr-4">Category</th>
                 <th className="py-3 pr-4 text-right">Products</th>
                 <th className="py-3 text-right">Total Stock</th>
@@ -243,22 +243,22 @@ export default function InventoryReportPage() {
               {data.categoryBreakdown.map((cat) => (
                 <tr
                   key={cat.category}
-                  className="border-b border-ivory-dark/40 dark:border-white/5 last:border-0"
+                  className="border-b border-ivory-dark/40 last:border-0"
                 >
-                  <td className="py-3 pr-4 font-medium text-gray-900 dark:text-white capitalize">
+                  <td className="py-3 pr-4 font-medium text-gray-900 capitalize">
                     {cat.category}
                   </td>
-                  <td className="py-3 pr-4 text-right text-gray-900 dark:text-white">
+                  <td className="py-3 pr-4 text-right text-gray-900">
                     {cat.productCount}
                   </td>
-                  <td className="py-3 text-right text-gray-900 dark:text-white">
+                  <td className="py-3 text-right text-gray-900">
                     {cat.totalStock}
                   </td>
                 </tr>
               ))}
               {data.categoryBreakdown.length === 0 && (
                 <tr>
-                  <td colSpan={3} className="py-8 text-center text-gray-500 dark:text-white/40">
+                  <td colSpan={3} className="py-8 text-center text-gray-500">
                     No category data.
                   </td>
                 </tr>

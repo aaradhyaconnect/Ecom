@@ -34,12 +34,12 @@ export function AdminHeader({ user }: { user: UserType }) {
   };
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-30 border-b border-ivory-dark/60 dark:border-white/10 bg-white/95 dark:bg-charcoal-light/95 backdrop-blur-sm lg:left-64">
+    <header className="fixed left-0 right-0 top-0 z-30 border-b border-ivory-dark/60 bg-white/95 backdrop-blur-sm lg:left-64">
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         {/* Mobile logo */}
         <div className="lg:hidden">
-          <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal dark:text-white">Arcon Style</span>
-          <span className="text-[10px] tracking-[0.25em] text-charcoal-muted dark:text-white/60 ml-1 uppercase">Admin</span>
+          <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">Arcon Style</span>
+          <span className="text-[10px] tracking-[0.25em] text-charcoal-muted ml-1 uppercase">Admin</span>
         </div>
         <div className="hidden lg:block" />
 
@@ -47,7 +47,7 @@ export function AdminHeader({ user }: { user: UserType }) {
         <div className="flex items-center gap-2">
           {/* Notifications */}
           <button
-            className="relative p-2.5 text-charcoal-muted dark:text-white/60 hover:bg-ivory-dark/40 dark:hover:bg-white/5 hover:text-charcoal dark:hover:text-white transition-colors rounded-lg"
+            className="relative p-2.5 text-charcoal-muted hover:bg-ivory-dark/40 hover:text-charcoal transition-colors rounded-lg"
             aria-label="Notifications"
           >
             <Bell className="h-[18px] w-[18px]" />
@@ -63,21 +63,21 @@ export function AdminHeader({ user }: { user: UserType }) {
                 {user?.name ? getInitials(user.name) : <User className="h-4 w-4" />}
               </div>
               <div className="hidden sm:block text-left">
-                <p className="text-[13px] font-medium leading-none text-charcoal dark:text-white">{user?.name || "Admin"}</p>
-                <p className="text-[11px] text-charcoal-muted dark:text-white/60 mt-0.5">{user?.email}</p>
+                <p className="text-[13px] font-medium leading-none text-charcoal">{user?.name || "Admin"}</p>
+                <p className="text-[11px] text-charcoal-muted mt-0.5">{user?.email}</p>
               </div>
-              <ChevronDown className="h-3.5 w-3.5 text-charcoal-muted dark:text-white/60 hidden sm:block" />
+              <ChevronDown className="h-3.5 w-3.5 text-charcoal-muted hidden sm:block" />
             </button>
 
             {showDropdown && (
-              <div className="absolute right-0 top-full mt-1 w-56 bg-white dark:bg-charcoal-light border border-ivory-dark/60 dark:border-white/10 shadow-lg py-1 rounded-lg z-50">
-                <div className="px-4 py-3 border-b border-ivory-dark/60 dark:border-white/10">
-                  <p className="text-sm font-medium text-charcoal dark:text-white">{user?.name || "Admin"}</p>
-                  <p className="text-xs text-charcoal-muted dark:text-white/60 mt-0.5">{user?.email}</p>
+              <div className="absolute right-0 top-full mt-1 w-56 bg-white border border-ivory-dark/60 shadow-lg py-1 rounded-lg z-50">
+                <div className="px-4 py-3 border-b border-ivory-dark/60">
+                  <p className="text-sm font-medium text-charcoal">{user?.name || "Admin"}</p>
+                  <p className="text-xs text-charcoal-muted mt-0.5">{user?.email}</p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-charcoal-muted dark:text-white/60 hover:bg-ivory-dark/40 dark:hover:bg-white/5 hover:text-rose-600 transition-colors"
+                  className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-charcoal-muted hover:bg-ivory-dark/40 hover:text-rose-600 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
                   Sign Out

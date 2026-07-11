@@ -158,7 +158,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-4xl bg-white dark:bg-charcoal-light border border-ivory-dark dark:border-white/10 shadow-xl flex overflow-hidden min-h-[560px]">
+      <div className="w-full max-w-4xl bg-white border border-ivory-dark shadow-xl flex overflow-hidden min-h-[560px]">
         {/* Left Panel - Branding */}
         <div className="hidden md:flex md:w-5/12 bg-charcoal relative flex-col justify-between p-10 text-white overflow-hidden">
           <div className="absolute inset-0 opacity-10">
@@ -193,12 +193,12 @@ export default function RegisterPage() {
         {/* Right Panel - Form */}
         <div className="w-full md:w-7/10 p-8 md:p-10 flex flex-col justify-center">
           <div className="flex items-center justify-between mb-6 md:hidden">
-            <Link href="/" className="text-lg font-serif font-bold tracking-[0.2em] text-charcoal dark:text-white">ARCON STYLE</Link>
+            <Link href="/" className="text-lg font-serif font-bold tracking-[0.2em] text-charcoal">ARCON STYLE</Link>
           </div>
 
           <div className="mb-6">
-            <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white">Create Account</h1>
-            <p className="text-charcoal-muted dark:text-white/70 text-sm mt-1">Join Arcon Style today</p>
+            <h1 className="text-2xl font-serif font-bold text-charcoal">Create Account</h1>
+            <p className="text-charcoal-muted text-sm mt-1">Join Arcon Style today</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -211,12 +211,12 @@ export default function RegisterPage() {
               icon={<User className="h-4 w-4" />}
             />
 
-            <div className="flex border-b border-ivory-dark dark:border-white/10 mb-2">
+            <div className="flex border-b border-ivory-dark mb-2">
               <button
                 type="button"
                 onClick={() => setUsePhone(false)}
                 className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
-                  !usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/70"
+                  !usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted"
                 }`}
               >
                 <Mail className="h-3.5 w-3.5 inline mr-1.5" /> Email
@@ -225,7 +225,7 @@ export default function RegisterPage() {
                 type="button"
                 onClick={() => setUsePhone(true)}
                 className={`flex-1 pb-2.5 text-xs font-medium tracking-[0.15em] uppercase transition-all ${
-                  usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted dark:text-white/70"
+                  usePhone ? "text-gold border-b-2 border-gold -mb-[1px]" : "text-charcoal-muted"
                 }`}
               >
                 <Phone className="h-3.5 w-3.5 inline mr-1.5" /> Phone
@@ -289,10 +289,10 @@ export default function RegisterPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-ivory-dark dark:border-white/10" />
+              <div className="w-full border-t border-ivory-dark" />
             </div>
             <div className="relative flex justify-center">
-              <span className="bg-white dark:bg-charcoal-light px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted dark:text-white/60">or continue with</span>
+              <span className="bg-white px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted">or continue with</span>
             </div>
           </div>
 
@@ -306,7 +306,7 @@ export default function RegisterPage() {
             Google
           </Button>
 
-          <p className="mt-6 text-center text-sm text-charcoal-muted dark:text-white/60">
+          <p className="mt-6 text-center text-sm text-charcoal-muted">
             Already have an account?{" "}
             <Link href={`/login?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
               Sign in

@@ -83,10 +83,10 @@ const defaults: StoreSettings = {
 
 function Section({ icon: Icon, title, children }: { icon: React.ComponentType<{ className?: string }>; title: string; children: React.ReactNode }) {
   return (
-    <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-6 shadow-sm">
+    <div className="bg-white border border-ivory-dark/60 rounded-xl p-6 shadow-sm">
       <div className="flex items-center gap-2 mb-4">
-        <Icon className="h-4 w-4 text-charcoal-muted dark:text-white/50" />
-        <h2 className="text-[13px] font-semibold text-charcoal dark:text-white">{title}</h2>
+        <Icon className="h-4 w-4 text-charcoal-muted" />
+        <h2 className="text-[13px] font-semibold text-charcoal">{title}</h2>
       </div>
       {children}
     </div>
@@ -133,7 +133,7 @@ export default function SettingsPage() {
   };
 
   if (loading) {
-    return <div className="flex items-center justify-center py-20 text-charcoal-muted dark:text-white/50 text-sm">Loading settings...</div>;
+    return <div className="flex items-center justify-center py-20 text-charcoal-muted text-sm">Loading settings...</div>;
   }
 
   const tabs = [
@@ -150,8 +150,8 @@ export default function SettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Configuration</span>
-          <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white mt-1">Store Settings</h1>
-          <p className="text-[13px] text-charcoal-muted dark:text-white/60 mt-0.5">Configure your store details and preferences</p>
+          <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Store Settings</h1>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">Configure your store details and preferences</p>
         </div>
         <Button onClick={handleSave} isLoading={saving} size="sm">
           <Save className="h-3.5 w-3.5 mr-1.5" /> Save Changes
@@ -159,15 +159,15 @@ export default function SettingsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl p-1">
+      <div className="flex gap-1 bg-white border border-ivory-dark/60 rounded-xl p-1">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-2 px-4 py-2 text-[13px] font-medium rounded-lg transition-colors ${
               activeTab === tab.id
-                ? "bg-charcoal text-ivory dark:bg-gold/20 dark:text-gold-light"
-                : "text-charcoal-muted dark:text-white/60 hover:bg-ivory-dark/40 dark:hover:bg-white/5"
+                ? "bg-charcoal text-ivory"
+                : "text-charcoal-muted hover:bg-ivory-dark/40"
             }`}
           >
             <tab.icon className="h-3.5 w-3.5" />
@@ -183,8 +183,8 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <Input label="Store Name" value={settings.store_name} onChange={(e) => update("store_name", e.target.value)} />
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Description</label>
-                <textarea value={settings.store_description} onChange={(e) => update("store_description", e.target.value)} rows={2} className="w-full border border-ivory-dark/60 dark:border-white/10 px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-gray-900 dark:text-white rounded-lg" />
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">Description</label>
+                <textarea value={settings.store_description} onChange={(e) => update("store_description", e.target.value)} rows={2} className="w-full border border-ivory-dark/60 px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-gray-900 rounded-lg" />
               </div>
             </div>
           </Section>
@@ -266,9 +266,9 @@ export default function SettingsPage() {
                   type="checkbox"
                   checked={settings.promo_popup_enabled}
                   onChange={(e) => update("promo_popup_enabled", e.target.checked)}
-                  className="rounded border-ivory-dark dark:border-white/20 accent-gold"
+                  className="rounded border-ivory-dark accent-gold"
                 />
-                <span className="text-sm font-medium text-gray-900 dark:text-white">Enable promotional popup</span>
+                <span className="text-sm font-medium text-gray-900">Enable promotional popup</span>
               </label>
               {settings.promo_popup_enabled && (
                 <div className="space-y-4 pl-6 border-l-2 border-gold/30">
@@ -276,7 +276,7 @@ export default function SettingsPage() {
                   <Input label="Subtitle" value={settings.promo_popup_subtitle} onChange={(e) => update("promo_popup_subtitle", e.target.value)} />
                   <Input label="Button Link" value={settings.promo_popup_link} onChange={(e) => update("promo_popup_link", e.target.value)} placeholder="https://..." />
                   <div>
-                    <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Popup Image</label>
+                    <label className="block text-sm font-medium text-gray-900 mb-1.5">Popup Image</label>
                     <MultiImageUpload
                       value={settings.promo_popup_image ? [settings.promo_popup_image] : []}
                       onChange={(urls) => update("promo_popup_image", urls[0] || "")}
@@ -305,7 +305,7 @@ export default function SettingsPage() {
           <Section icon={ImageIcon} title="Logo & Branding">
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Store Logo</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">Store Logo</label>
                 <MultiImageUpload
                   value={settings.logo_url ? [settings.logo_url] : []}
                   onChange={(urls) => update("logo_url", urls[0] || "")}
@@ -314,7 +314,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Favicon</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">Favicon</label>
                 <MultiImageUpload
                   value={settings.favicon_url ? [settings.favicon_url] : []}
                   onChange={(urls) => update("favicon_url", urls[0] || "")}
@@ -328,8 +328,8 @@ export default function SettingsPage() {
             <div className="space-y-4">
               <Input label="Default Meta Title" value={settings.seo_title} onChange={(e) => update("seo_title", e.target.value)} />
               <div>
-                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1.5">Default Meta Description</label>
-                <textarea value={settings.seo_description} onChange={(e) => update("seo_description", e.target.value)} rows={2} className="w-full border border-ivory-dark/60 dark:border-white/10 px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-gray-900 dark:text-white rounded-lg" />
+                <label className="block text-sm font-medium text-gray-900 mb-1.5">Default Meta Description</label>
+                <textarea value={settings.seo_description} onChange={(e) => update("seo_description", e.target.value)} rows={2} className="w-full border border-ivory-dark/60 px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-gray-900 rounded-lg" />
               </div>
               <Input label="Keywords (comma separated)" value={settings.seo_keywords} onChange={(e) => update("seo_keywords", e.target.value)} />
             </div>

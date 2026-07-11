@@ -203,8 +203,8 @@ export default function InventoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Stock</span>
-          <h1 className="text-2xl font-serif font-bold text-charcoal dark:text-white mt-1">Inventory</h1>
-          <p className="text-[13px] text-charcoal-muted dark:text-white/60 mt-0.5">
+          <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Inventory</h1>
+          <p className="text-[13px] text-charcoal-muted mt-0.5">
             Manage stock levels for all products
           </p>
         </div>
@@ -233,14 +233,14 @@ export default function InventoryPage() {
           className={cn(
             "border p-5 text-left transition-all duration-200 rounded-xl",
             filter === "all"
-              ? "border-charcoal bg-charcoal text-ivory shadow-sm dark:border-gold/40 dark:bg-gold/10 dark:text-gold-light"
-              : "bg-white dark:bg-white/5 border-ivory-dark/60 dark:border-white/10 hover:border-ivory-dark hover:shadow-sm"
+              ? "border-charcoal bg-charcoal text-ivory shadow-sm"
+              : "bg-white border-ivory-dark/60 hover:border-ivory-dark hover:shadow-sm"
           )}
         >
           <div className="flex items-center gap-2.5">
             <div className={cn(
               "p-2 rounded-lg",
-              filter === "all" ? "bg-ivory/20 dark:bg-white/10" : "bg-ivory-dark/50 dark:bg-white/5"
+              filter === "all" ? "bg-ivory/20" : "bg-ivory-dark/50"
             )}>
               <Warehouse className="h-4 w-4" />
             </div>
@@ -254,21 +254,21 @@ export default function InventoryPage() {
           className={cn(
             "border p-5 text-left transition-all duration-200 rounded-xl",
             filter === "low"
-              ? "border-amber-400 bg-amber-50 text-amber-900 shadow-sm dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/30"
-              : "bg-white dark:bg-white/5 border-ivory-dark/60 dark:border-white/10 hover:border-amber-300 hover:shadow-sm"
+              ? "border-amber-400 bg-amber-50 text-amber-900 shadow-sm"
+              : "bg-white border-ivory-dark/60 hover:border-amber-300 hover:shadow-sm"
           )}
         >
           <div className="flex items-center gap-2.5">
             <div className={cn(
               "p-2 rounded-lg",
-              filter === "low" ? "bg-amber-100 dark:bg-amber-500/20" : "bg-amber-50 dark:bg-amber-500/10"
+              filter === "low" ? "bg-amber-100" : "bg-amber-50"
             )}>
-              <AlertTriangle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
             </div>
             <span className="text-sm font-medium">Low Stock</span>
           </div>
           <p className="mt-2 text-3xl font-bold tracking-tight">{lowStockCount}</p>
-          <p className="text-[11px] text-charcoal-muted dark:text-white/50 mt-0.5">1-5 units remaining</p>
+          <p className="text-[11px] text-charcoal-muted mt-0.5">1-5 units remaining</p>
         </button>
 
         <button
@@ -276,21 +276,21 @@ export default function InventoryPage() {
           className={cn(
             "border p-5 text-left transition-all duration-200 rounded-xl",
             filter === "out"
-              ? "border-rose-400 bg-rose-50 text-rose-900 shadow-sm dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/30"
-              : "bg-white dark:bg-white/5 border-ivory-dark/60 dark:border-white/10 hover:border-rose-300 hover:shadow-sm"
+              ? "border-rose-400 bg-rose-50 text-rose-900 shadow-sm"
+              : "bg-white border-ivory-dark/60 hover:border-rose-300 hover:shadow-sm"
           )}
         >
           <div className="flex items-center gap-2.5">
             <div className={cn(
               "p-2 rounded-lg",
-              filter === "out" ? "bg-rose-100 dark:bg-rose-500/20" : "bg-rose-50 dark:bg-rose-500/10"
+              filter === "out" ? "bg-rose-100" : "bg-rose-50"
             )}>
-              <PackageX className="h-4 w-4 text-rose-600 dark:text-rose-400" />
+              <PackageX className="h-4 w-4 text-rose-600" />
             </div>
             <span className="text-sm font-medium">Out of Stock</span>
           </div>
           <p className="mt-2 text-3xl font-bold tracking-tight">{outOfStockCount}</p>
-          <p className="text-[11px] text-charcoal-muted dark:text-white/50 mt-0.5">0 units remaining</p>
+          <p className="text-[11px] text-charcoal-muted mt-0.5">0 units remaining</p>
         </button>
       </div>
 
@@ -308,11 +308,11 @@ export default function InventoryPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-ivory-dark/60 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-ivory-dark/60 dark:border-white/10 bg-ivory-dark/20 dark:bg-white/5 text-left text-[11px] text-charcoal-muted dark:text-white/50 uppercase tracking-wider">
+              <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[11px] text-charcoal-muted uppercase tracking-wider">
                 <th className="px-5 py-3 font-medium w-8"></th>
                 <th className="px-5 py-3 font-medium">Product</th>
                 <th className="px-5 py-3 font-medium">Category</th>
@@ -353,22 +353,22 @@ export default function InventoryPage() {
                     <Fragment key={product.id}>
                       <tr
                         className={cn(
-                          "border-b border-ivory-dark/40 dark:border-white/5 last:border-0 transition-colors",
-                          isEdited && "bg-amber-50/30 dark:bg-amber-500/5",
-                          hasVariants && "cursor-pointer hover:bg-ivory-dark/20 dark:hover:bg-white/5"
+                          "border-b border-ivory-dark/40 last:border-0 transition-colors",
+                          isEdited && "bg-amber-50/30",
+                          hasVariants && "cursor-pointer hover:bg-ivory-dark/20"
                         )}
                         onClick={() => hasVariants && toggleExpanded(product.id)}
                       >
                         <td className="px-5 py-3">
                           {hasVariants && (
-                            <div className="text-charcoal-muted dark:text-white/40">
+                            <div className="text-charcoal-muted">
                               {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                             </div>
                           )}
                         </td>
                         <td className="px-5 py-3">
                           <div className="flex items-center gap-3">
-                            <div className="h-10 w-10 bg-ivory-dark/50 dark:bg-white/5 overflow-hidden flex-shrink-0 rounded-lg">
+                            <div className="h-10 w-10 bg-ivory-dark/50 overflow-hidden flex-shrink-0 rounded-lg">
                               {product.images?.[0] ? (
                                 <Image
                                   src={product.images[0]}
@@ -384,7 +384,7 @@ export default function InventoryPage() {
                               )}
                             </div>
                             <div>
-                              <p className="font-medium truncate max-w-[200px] text-charcoal dark:text-white">
+                              <p className="font-medium truncate max-w-[200px] text-charcoal">
                                 {product.name}
                               </p>
                               <div className="flex gap-1 mt-0.5">
@@ -395,17 +395,17 @@ export default function InventoryPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-5 py-3 text-charcoal-muted dark:text-white/60 capitalize text-[13px]">
+                        <td className="px-5 py-3 text-charcoal-muted capitalize text-[13px]">
                           {product.category.replace(/-/g, " ")}
                         </td>
-                        <td className="px-5 py-3 font-medium text-[13px] dark:text-white">
+                        <td className="px-5 py-3 font-medium text-[13px]">
                           {formatPrice(product.price)}
                         </td>
                         <td className="px-5 py-3" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-center gap-1">
                             <button
                               onClick={() => handleStockChange(product.id, -1)}
-                              className="h-7 w-7 border border-ivory-dark/60 dark:border-white/10 flex items-center justify-center hover:bg-ivory-dark/40 dark:hover:bg-white/10 transition-colors rounded-md"
+                              className="h-7 w-7 border border-ivory-dark/60 flex items-center justify-center hover:bg-ivory-dark/40 transition-colors rounded-md"
                             >
                               <Minus className="h-3 w-3" />
                             </button>
@@ -415,15 +415,15 @@ export default function InventoryPage() {
                               value={currentStock}
                               onChange={(e) => handleStockInput(product.id, e.target.value)}
                               className={cn(
-                                "w-16 h-7 text-center text-sm font-medium border rounded-md transition-colors bg-white dark:bg-white/5",
-                                isEdited ? "border-amber-400" : "border-ivory-dark/60 dark:border-white/10",
+                                "w-16 h-7 text-center text-sm font-medium border rounded-md transition-colors bg-white",
+                                isEdited ? "border-amber-400" : "border-ivory-dark/60",
                                 currentStock === 0 && "text-rose-500",
                                 currentStock > 0 && currentStock <= 5 && "text-amber-600"
                               )}
                             />
                             <button
                               onClick={() => handleStockChange(product.id, 1)}
-                              className="h-7 w-7 border border-ivory-dark/60 dark:border-white/10 flex items-center justify-center hover:bg-ivory-dark/40 dark:hover:bg-white/10 transition-colors rounded-md"
+                              className="h-7 w-7 border border-ivory-dark/60 flex items-center justify-center hover:bg-ivory-dark/40 transition-colors rounded-md"
                             >
                               <Plus className="h-3 w-3" />
                             </button>
@@ -431,22 +431,22 @@ export default function InventoryPage() {
                         </td>
                         <td className="px-5 py-3">
                           {currentStock === 0 ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 dark:text-rose-400 bg-rose-50 dark:bg-rose-500/10 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-full">
                               <PackageX className="h-3 w-3" /> Out of Stock
                             </span>
                           ) : currentStock <= 5 ? (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
                               <AlertTriangle className="h-3 w-3" /> Low Stock
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">
                               <Check className="h-3 w-3" /> In Stock
                             </span>
                           )}
                         </td>
                         <td className="px-5 py-3 text-right">
                           {isEdited && currentStock !== originalStock && (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-500/10 px-2 py-1 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
                               {originalStock} &rarr; {currentStock}
                             </span>
                           )}
@@ -455,14 +455,14 @@ export default function InventoryPage() {
 
                       {/* Expanded Detail Row — Sizes, Colors, Cost Info, Reason, History */}
                       {isExpanded && hasVariants && (
-                        <tr className="bg-ivory-dark/10 dark:bg-white/[0.02]">
+                        <tr className="bg-ivory-dark/10">
                           <td colSpan={7} className="px-5 py-4">
                             <div className="space-y-5">
                               <div className="flex flex-wrap gap-8">
                                 {/* Sizes */}
                                 {product.sizes?.length > 0 && (
                                   <div className="space-y-2">
-                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
+                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal uppercase tracking-wider">
                                       <Ruler className="h-3.5 w-3.5 text-charcoal-muted" />
                                       Sizes ({product.sizes.length})
                                     </div>
@@ -470,7 +470,7 @@ export default function InventoryPage() {
                                       {product.sizes.map((size) => (
                                         <span
                                           key={size}
-                                          className="inline-flex items-center px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 dark:border-white/10 rounded-md bg-white dark:bg-white/5 text-charcoal dark:text-white"
+                                          className="inline-flex items-center px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 rounded-md bg-white text-charcoal"
                                         >
                                           {size}
                                         </span>
@@ -482,7 +482,7 @@ export default function InventoryPage() {
                                 {/* Colors */}
                                 {product.colors?.length > 0 && (
                                   <div className="space-y-2">
-                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
+                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal uppercase tracking-wider">
                                       <Palette className="h-3.5 w-3.5 text-charcoal-muted" />
                                       Colors ({product.colors.length})
                                     </div>
@@ -490,7 +490,7 @@ export default function InventoryPage() {
                                       {product.colors.map((color) => (
                                         <div
                                           key={color.name}
-                                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 dark:border-white/10 rounded-md bg-white dark:bg-white/5 text-charcoal dark:text-white"
+                                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 rounded-md bg-white text-charcoal"
                                         >
                                           <span
                                             className="h-3 w-3 rounded-full border border-black/10 flex-shrink-0"
@@ -506,13 +506,13 @@ export default function InventoryPage() {
                                 {/* Per-variant stock summary */}
                                 {product.sizes?.length > 0 && product.colors?.length > 0 && (
                                   <div className="space-y-2">
-                                    <div className="text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
+                                    <div className="text-xs font-semibold text-charcoal uppercase tracking-wider">
                                       Total Stock
                                     </div>
-                                    <div className="text-sm font-semibold text-charcoal dark:text-white">
+                                    <div className="text-sm font-semibold text-charcoal">
                                       {currentStock} units across {product.sizes.length} sizes &times; {product.colors.length} colors
                                     </div>
-                                    <p className="text-[11px] text-charcoal-muted dark:text-white/50">
+                                    <p className="text-[11px] text-charcoal-muted">
                                       Per-variant stock tracking coming soon. Currently tracking total stock only.
                                     </p>
                                   </div>
@@ -523,24 +523,24 @@ export default function InventoryPage() {
                               <div className="flex flex-wrap gap-6 text-[13px]">
                                 {(product.cost_price != null && product.cost_price > 0) && (
                                   <div>
-                                    <span className="text-charcoal-muted dark:text-white/50">Cost Price: </span>
-                                    <span className="font-medium text-charcoal dark:text-white">{formatPrice(product.cost_price)}</span>
+                                    <span className="text-charcoal-muted">Cost Price: </span>
+                                    <span className="font-medium text-charcoal">{formatPrice(product.cost_price)}</span>
                                   </div>
                                 )}
                                 {product.stock_alert > 0 && (
                                   <div>
-                                    <span className="text-charcoal-muted dark:text-white/50">Low Stock Alert: </span>
-                                    <span className="font-medium text-charcoal dark:text-white">{product.stock_alert} units</span>
+                                    <span className="text-charcoal-muted">Low Stock Alert: </span>
+                                    <span className="font-medium text-charcoal">{product.stock_alert} units</span>
                                   </div>
                                 )}
                                 <div>
-                                  <span className="text-charcoal-muted dark:text-white/50">Retail Value: </span>
-                                  <span className="font-medium text-charcoal dark:text-white">{formatPrice(currentStock * product.price)}</span>
+                                  <span className="text-charcoal-muted">Retail Value: </span>
+                                  <span className="font-medium text-charcoal">{formatPrice(currentStock * product.price)}</span>
                                 </div>
                                 {(product.cost_price != null && product.cost_price > 0) && (
                                   <div>
-                                    <span className="text-charcoal-muted dark:text-white/50">Cost Value: </span>
-                                    <span className="font-medium text-charcoal dark:text-white">{formatPrice(currentStock * product.cost_price)}</span>
+                                    <span className="text-charcoal-muted">Cost Value: </span>
+                                    <span className="font-medium text-charcoal">{formatPrice(currentStock * product.cost_price)}</span>
                                   </div>
                                 )}
                               </div>
@@ -559,10 +559,10 @@ export default function InventoryPage() {
                               )}
 
                               {/* Stock History */}
-                              <div className="border-t border-ivory-dark/40 dark:border-white/5 pt-4">
+                              <div className="border-t border-ivory-dark/40 pt-4">
                                 <button
                                   onClick={(e) => { e.stopPropagation(); toggleHistory(product.id); }}
-                                  className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider hover:text-gold-dark dark:hover:text-gold-light transition-colors"
+                                  className="flex items-center gap-1.5 text-xs font-semibold text-charcoal uppercase tracking-wider hover:text-gold-dark transition-colors"
                                 >
                                   <Clock className="h-3.5 w-3.5 text-charcoal-muted" />
                                   Stock History
@@ -578,12 +578,12 @@ export default function InventoryPage() {
                                     {historyLoading[product.id] ? (
                                       <p className="text-xs text-charcoal-muted">Loading history...</p>
                                     ) : stockHistory[product.id]?.length === 0 ? (
-                                      <p className="text-xs text-charcoal-muted dark:text-white/50">No stock history yet.</p>
+                                      <p className="text-xs text-charcoal-muted">No stock history yet.</p>
                                     ) : (
-                                      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-lg overflow-hidden">
+                                      <div className="bg-white border border-ivory-dark/60 rounded-lg overflow-hidden">
                                         <table className="w-full text-xs">
                                           <thead>
-                                            <tr className="border-b border-ivory-dark/60 dark:border-white/10 bg-ivory-dark/20 dark:bg-white/5 text-left text-[10px] text-charcoal-muted dark:text-white/50 uppercase tracking-wider">
+                                            <tr className="border-b border-ivory-dark/60 bg-ivory-dark/20 text-left text-[10px] text-charcoal-muted uppercase tracking-wider">
                                               <th className="px-3 py-2 font-medium">Date</th>
                                               <th className="px-3 py-2 font-medium">Type</th>
                                               <th className="px-3 py-2 font-medium">Before → After</th>
@@ -594,27 +594,27 @@ export default function InventoryPage() {
                                           </thead>
                                           <tbody>
                                             {stockHistory[product.id].map((h) => (
-                                              <tr key={h.id} className="border-b border-ivory-dark/30 dark:border-white/5 last:border-0">
-                                                <td className="px-3 py-2 text-charcoal-muted dark:text-white/60 whitespace-nowrap">
+                                              <tr key={h.id} className="border-b border-ivory-dark/30 last:border-0">
+                                                <td className="px-3 py-2 text-charcoal-muted whitespace-nowrap">
                                                   {new Date(h.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
                                                 </td>
                                                 <td className="px-3 py-2">
-                                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-ivory-dark/40 dark:bg-white/10 text-charcoal dark:text-white capitalize">
+                                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-ivory-dark/40 text-charcoal capitalize">
                                                     {h.change_type}
                                                   </span>
                                                 </td>
-                                                <td className="px-3 py-2 text-charcoal dark:text-white whitespace-nowrap">
+                                                <td className="px-3 py-2 text-charcoal whitespace-nowrap">
                                                   {h.quantity_before} → {h.quantity_after}
                                                 </td>
                                                 <td className="px-3 py-2 font-medium whitespace-nowrap">
-                                                  <span className={cn(h.quantity_change > 0 ? "text-green-600 dark:text-green-400" : "text-rose-600 dark:text-rose-400")}>
+                                                  <span className={cn(h.quantity_change > 0 ? "text-green-600" : "text-rose-600")}>
                                                     {h.quantity_change > 0 ? "+" : ""}{h.quantity_change}
                                                   </span>
                                                 </td>
-                                                <td className="px-3 py-2 text-charcoal-muted dark:text-white/60 max-w-[150px] truncate">
+                                                <td className="px-3 py-2 text-charcoal-muted max-w-[150px] truncate">
                                                   {h.reason || "—"}
                                                 </td>
-                                                <td className="px-3 py-2 text-charcoal-muted dark:text-white/60 max-w-[100px] truncate">
+                                                <td className="px-3 py-2 text-charcoal-muted max-w-[100px] truncate">
                                                   {h.performed_by ? h.performed_by.slice(0, 8) + "…" : "—"}
                                                 </td>
                                               </tr>
