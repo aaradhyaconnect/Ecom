@@ -1,14 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, Download } from "lucide-react";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useServiceWorker } from "@/hooks/useServiceWorker";
 
+const DISMISS_KEY = "arconstyle-pwa-dismissed";
+
 export function PwaInstallBanner() {
   const { isInstallable, promptInstall } = useInstallPrompt();
   const { updateAvailable, promptUpdate } = useServiceWorker();
-  const [dismissed, setDismissed] = useState(false);
+  const [dismissed, setDismissed] = useState(true);
+
+  useEffect(() => {
+    setDismissed(localStorage.getItem(DISMISS_KEY) === "true");
+  }, []);
+
+  const handleDismiss = () => {
+    setDismissed(true);
+    localStorage.setItem(DISMISS_KEY, "true");
+  };
 
   if (dismissed) return null;
 
@@ -24,7 +35,7 @@ export function PwaInstallBanner() {
             >
               Update
             </button>
-            <button onClick={() => setDismissed(true)} className="p-2 hover:bg-white/10 transition-colors">
+            <button onClick={handleDismiss} className="p-2 hover:bg-white/10 transition-colors">
               <X className="h-4 w-4" />
             </button>
           </div>
@@ -49,7 +60,7 @@ export function PwaInstallBanner() {
           >
             Install
           </button>
-          <button onClick={() => setDismissed(true)} className="p-2 hover:bg-white/10 transition-colors">
+          <button onClick={handleDismiss} className="p-2 hover:bg-white/10 transition-colors">
             <X className="h-4 w-4" />
           </button>
         </div>
