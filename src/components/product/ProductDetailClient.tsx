@@ -80,22 +80,33 @@ export function ProductDetailClient({
   const inStock = product.stock > 0;
   const lowStock = product.stock > 0 && product.stock <= 5;
 
-  const handleAddToCart = () => {
+  const validateSelection = () => {
     if (!user) {
-      toast.error("Please log in to add items to cart");
+      toast.error("Please log in to continue");
       window.location.replace(`/login?redirect=${encodeURIComponent(window.location.pathname)}`);
-      return;
+      return false;
     }
     if (product.sizes.length > 0 && !selectedSize) {
       toast.error("Please select a size");
-      return;
+      return false;
     }
     if (colors.length > 0 && !selectedColor) {
       toast.error("Please select a color");
-      return;
+      return false;
     }
+    return true;
+  };
+
+  const handleAddToCart = () => {
+    if (!validateSelection()) return;
     addItem(product, quantity, selectedSize || "default", selectedColor || "default");
     toast.success("Added to cart!");
+  };
+
+  const handleBuyNow = () => {
+    if (!validateSelection()) return;
+    addItem(product, quantity, selectedSize || "default", selectedColor || "default");
+    window.location.href = "/checkout?buyNow=true";
   };
 
   const handleShare = async () => {
@@ -387,6 +398,15 @@ export function ProductDetailClient({
               {inStock ? "Add to Cart" : "Out of Stock"}
             </Button>
             <Button
+              size="lg"
+              fullWidth
+              variant="outline"
+              onClick={handleBuyNow}
+              disabled={!inStock}
+            >
+              Buy Now
+            </Button>
+            <Button
               variant="outline"
               size="lg"
               onClick={() => toggleItem(product)}
@@ -544,7 +564,7 @@ export function ProductDetailClient({
       <RecentlyViewed />
 
       {/* Mobile Sticky Add to Cart */}
-      <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-4 lg:hidden z-[60]">
+      <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-3 lg:hidden z-[60]">
         <div className="flex-1 min-w-0">
           <p className="text-lg font-bold text-charcoal">{formatPrice(product.price)}</p>
           {product.compare_price && (
@@ -552,7 +572,16 @@ export function ProductDetailClient({
           )}
         </div>
         <Button
-          size="lg"
+          size="sm"
+          onClick={handleBuyNow}
+          disabled={!inStock}
+          variant="outline"
+          className="flex-shrink-0"
+        >
+          Buy Now
+        </Button>
+        <Button
+          size="sm"
           onClick={handleAddToCart}
           disabled={!inStock}
           className="flex-shrink-0"

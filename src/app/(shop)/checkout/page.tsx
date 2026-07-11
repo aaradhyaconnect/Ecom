@@ -52,6 +52,9 @@ export default function CheckoutPage() {
   const authLoading = useAuthStore((s) => s.loading);
   useAuth();
 
+  const isBuyNow = searchParams.get("buyNow") === "true";
+  const checkoutItems = isBuyNow && items.length > 0 ? [items[items.length - 1]] : items;
+
   const [address, setAddress] = useState<Address>(initialAddress);
   const [errors, setErrors] = useState<FormErrors>({});
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "cashfree" | "upi">("cod");
@@ -64,7 +67,9 @@ export default function CheckoutPage() {
   } | null>(null);
   const [couponError, setCouponError] = useState("");
 
-  const subtotal = getSubtotal();
+  const subtotal = isBuyNow
+    ? checkoutItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
+    : getSubtotal();
   const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
   const couponCode = searchParams.get("coupon")?.trim().toUpperCase();
 
@@ -127,7 +132,7 @@ export default function CheckoutPage() {
     else if (!/^\d{6}$/.test(address.pincode))
       errs.pincode = "Enter a valid 6-digit pincode";
 
-    if (items.length === 0) {
+    if (checkoutItems.length === 0) {
       errs._form = "Your cart is empty";
     }
 
@@ -163,7 +168,7 @@ export default function CheckoutPage() {
 
     try {
       const payload = {
-        items: items.map((item) => ({
+        items: checkoutItems.map((item) => ({
           product_id: item.product_id,
           name: item.product.name,
           price: item.product.price,
@@ -194,7 +199,12 @@ export default function CheckoutPage() {
       if (paymentMethod === "cod") {
         toast.success("Order placed successfully!");
         fireConfetti();
-        clearCart();
+        if (isBuyNow) {
+          const { removeItem } = useCartStore.getState();
+          checkoutItems.forEach((item) => removeItem(item.id));
+        } else {
+          clearCart();
+        }
         window.location.replace(`/account/orders/${data.data.id}`);
         return;
       }
@@ -236,7 +246,7 @@ export default function CheckoutPage() {
 
   if (!mounted || authLoading || !user) return null;
 
-  if (items.length === 0) {
+  if (checkoutItems.length === 0) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
         <p className="text-charcoal-muted mb-4">Your cart is empty</p>
@@ -251,7 +261,12 @@ export default function CheckoutPage() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       <div className="mb-8">
         <span className="text-xs uppercase tracking-[0.3em] text-gold-dark font-medium">Checkout</span>
-        <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">Complete Your Order</h1>
+        <h1 className="text-2xl lg:text-3xl font-serif font-bold text-charcoal mt-1">
+          {isBuyNow ? "Buy Now" : "Complete Your Order"}
+        </h1>
+        {isBuyNow && (
+          <p className="text-sm text-charcoal-muted mt-1">You&apos;re purchasing this item directly.</p>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-5 gap-8">
@@ -376,7 +391,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="space-y-3 max-h-64 overflow-auto">
-              {items.map((item) => (
+              {checkoutItems.map((item) => (
                 <div key={item.id} className="flex gap-3 text-sm">
                   <div className="w-14 h-16 bg-charcoal/5 flex-shrink-0">
                     {item.product.images?.[0] && (
