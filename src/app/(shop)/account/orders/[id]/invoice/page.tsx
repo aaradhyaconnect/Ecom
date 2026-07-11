@@ -77,7 +77,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="no-print mb-6 flex items-center justify-between">
-        <Link href={`/account/orders/${order.id}`} className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal:text-white inline-flex items-center gap-1 transition-colors">
+        <Link href={`/account/orders/${order.id}`} className="text-xs tracking-[0.1em] uppercase text-charcoal-muted hover:text-charcoal inline-flex items-center gap-1 transition-colors">
           <ArrowLeft className="h-3 w-3" /> Back to Order
         </Link>
         <button onClick={() => window.print()} className="flex items-center gap-2 bg-charcoal text-ivory px-4 py-2 text-sm font-medium hover:bg-charcoal/90 transition-colors">
