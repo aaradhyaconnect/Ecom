@@ -46,6 +46,7 @@ export const FOOTER_LINKS = {
     { href: "/contact", label: "Contact Us" },
     { href: "/shipping", label: "Shipping & Delivery" },
     { href: "/returns", label: "Returns & Exchanges" },
+    { href: "/returns", label: "Refund Policy" },
     { href: "/faq", label: "FAQ" },
     { href: "/size-guide", label: "Size Guide" },
   ],

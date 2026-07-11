@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { SlidersHorizontal, X, ChevronDown, Star, Search } from "lucide-react";
+import { SlidersHorizontal, X, ChevronDown, Star, Search, LayoutGrid, List } from "lucide-react";
 import { ProductGrid } from "./ProductGrid";
 import { cn } from "@/lib/utils/cn";
 import type { Product } from "@/types";
@@ -56,6 +56,7 @@ export function ProductListingClient({
   const searchParams = useSearchParams();
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const [brandSearch, setBrandSearch] = useState("");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   const currentSort = searchParams.get("sort") || "newest";
   const currentPage = Number(searchParams.get("page")) || 1;
@@ -595,6 +596,29 @@ export function ProductListingClient({
         </div>
 
         <div className="flex items-center gap-3">
+          <div className="hidden sm:flex items-center border border-ivory-dark">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={cn(
+                "p-2 transition-colors",
+                viewMode === "grid" ? "bg-charcoal text-ivory" : "text-charcoal-muted hover:text-charcoal"
+              )}
+              aria-label="Grid view"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setViewMode("list")}
+              className={cn(
+                "p-2 transition-colors",
+                viewMode === "list" ? "bg-charcoal text-ivory" : "text-charcoal-muted hover:text-charcoal"
+              )}
+              aria-label="List view"
+            >
+              <List className="h-4 w-4" />
+            </button>
+          </div>
+
           <div className="relative">
             <select
               value={currentSort}
@@ -636,6 +660,7 @@ export function ProductListingClient({
           <ProductGrid
             products={initialProducts.products}
             columns={3}
+            viewMode={viewMode}
           />
 
           {initialProducts.totalPages > 1 && (

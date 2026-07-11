@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Compass, Heart, ShoppingBag, User } from "lucide-react";
+import { Home, LayoutGrid, Heart, ShoppingBag, User } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
@@ -24,10 +24,10 @@ export function MobileNavigation() {
       active: pathname === "/",
     },
     {
-      label: "Browse",
-      icon: Compass,
-      href: "/search",
-      active: pathname.startsWith("/search") || pathname.startsWith("/products"),
+      label: "Categories",
+      icon: LayoutGrid,
+      href: "/products/all",
+      active: pathname.startsWith("/products"),
     },
     {
       label: "Wishlist",

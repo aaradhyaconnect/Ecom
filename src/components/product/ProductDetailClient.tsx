@@ -45,6 +45,7 @@ export function ProductDetailClient({
   const [selectedColor, setSelectedColor] = useState(colors[0]?.name || "");
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [activeTab, setActiveTab] = useState<"description" | "specifications" | "shipping">("description");
 
   const addItem = useCartStore((s) => s.addItem);
   const { isInWishlist, toggleItem } = useWishlistStore();
@@ -429,41 +430,110 @@ export function ProductDetailClient({
 
           <hr className="border-ivory-dark/80 animate-in slide-up" />
 
+          {/* Tabs */}
           <div className="animate-in slide-up">
-            <h3 className="text-[13px] font-semibold text-charcoal mb-2">Description</h3>
-            <p className="text-[13px] text-charcoal-muted leading-relaxed">
-              {product.description}
-            </p>
-          </div>
-
-          {product.material && (
-            <div className="animate-in slide-up">
-              <h3 className="text-[13px] font-semibold text-charcoal mb-1">Material</h3>
-              <p className="text-[13px] text-charcoal-muted">{product.material}</p>
-            </div>
-          )}
-
-          {product.care_instructions && (
-            <div className="animate-in slide-up">
-              <h3 className="text-[13px] font-semibold text-charcoal mb-1">Care Instructions</h3>
-              <p className="text-[13px] text-charcoal-muted whitespace-pre-line">
-                {product.care_instructions}
-              </p>
-            </div>
-          )}
-
-          {product.tags && product.tags.length > 0 && (
-            <div className="animate-in slide-up flex flex-wrap gap-2">
-              {product.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="px-3 py-1 bg-ivory-dark/50 text-charcoal-muted text-[11px] rounded-full"
+            <div className="flex border-b border-ivory-dark/80">
+              {(["description", "specifications", "shipping"] as const).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={cn(
+                    "px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] transition-colors border-b-2 -mb-[1px]",
+                    activeTab === tab
+                      ? "border-charcoal text-charcoal"
+                      : "border-transparent text-charcoal-muted hover:text-charcoal"
+                  )}
                 >
-                  {tag}
-                </span>
+                  {tab === "description" ? "Description" : tab === "specifications" ? "Specifications" : "Shipping & Returns"}
+                </button>
               ))}
             </div>
-          )}
+
+            <div className="py-4">
+              {activeTab === "description" && (
+                <div className="space-y-4">
+                  <p className="text-[13px] text-charcoal-muted leading-relaxed">
+                    {product.description}
+                  </p>
+                  {product.material && (
+                    <div>
+                      <h4 className="text-[12px] font-semibold text-charcoal mb-1">Material</h4>
+                      <p className="text-[13px] text-charcoal-muted">{product.material}</p>
+                    </div>
+                  )}
+                  {product.care_instructions && (
+                    <div>
+                      <h4 className="text-[12px] font-semibold text-charcoal mb-1">Care Instructions</h4>
+                      <p className="text-[13px] text-charcoal-muted whitespace-pre-line">{product.care_instructions}</p>
+                    </div>
+                  )}
+                  {product.tags && product.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {product.tags.map((tag) => (
+                        <span key={tag} className="px-3 py-1 bg-ivory-dark/50 text-charcoal-muted text-[11px] rounded-full">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === "specifications" && (
+                <div className="space-y-2">
+                  <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
+                    <span className="text-charcoal-muted">Category</span>
+                    <span className="text-charcoal font-medium capitalize">{product.category.replace(/-/g, " ")}</span>
+                  </div>
+                  {product.subcategory && (
+                    <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
+                      <span className="text-charcoal-muted">Subcategory</span>
+                      <span className="text-charcoal font-medium">{product.subcategory}</span>
+                    </div>
+                  )}
+                  {product.material && (
+                    <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
+                      <span className="text-charcoal-muted">Material</span>
+                      <span className="text-charcoal font-medium">{product.material}</span>
+                    </div>
+                  )}
+                  {product.sizes.length > 0 && (
+                    <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
+                      <span className="text-charcoal-muted">Sizes Available</span>
+                      <span className="text-charcoal font-medium">{product.sizes.join(", ")}</span>
+                    </div>
+                  )}
+                  {colors.length > 0 && (
+                    <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
+                      <span className="text-charcoal-muted">Colors</span>
+                      <span className="text-charcoal font-medium">{colors.map((c) => c.name).join(", ")}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
+                    <span className="text-charcoal-muted">Weight</span>
+                    <span className="text-charcoal font-medium">Standard</span>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "shipping" && (
+                <div className="space-y-4 text-[13px] text-charcoal-muted">
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Shipping</h4>
+                    <p>Free shipping on orders above ₹999. Standard delivery takes 3–7 business days.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Returns</h4>
+                    <p>We offer easy 7-day returns on all unworn items with original tags. To initiate a return, visit your order history and select the item.</p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Refunds</h4>
+                    <p>Refunds are processed within 5–7 business days after the return is received and inspected.</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
