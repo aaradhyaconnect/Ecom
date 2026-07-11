@@ -24,21 +24,18 @@ export function Modal({
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
-
-  const handleEscape = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    },
-    [onClose]
-  );
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!isOpen) return;
 
     previousFocusRef.current = document.activeElement as HTMLElement;
     document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", handleEscape);
 
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCloseRef.current();
+    };
     const handleTab = (e: KeyboardEvent) => {
       if (e.key !== "Tab" || !contentRef.current) return;
       const focusable = contentRef.current.querySelectorAll<HTMLElement>(
@@ -53,6 +50,8 @@ export function Modal({
         if (document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
     };
+
+    document.addEventListener("keydown", handleEscape);
     document.addEventListener("keydown", handleTab);
 
     return () => {
@@ -61,7 +60,7 @@ export function Modal({
       document.body.style.overflow = "";
       previousFocusRef.current?.focus();
     };
-  }, [isOpen, handleEscape]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
