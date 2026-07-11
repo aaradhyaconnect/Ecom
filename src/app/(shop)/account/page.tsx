@@ -9,7 +9,7 @@ import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Package, MapPin, LogOut, ChevronRight } from "lucide-react";
+import { Package, MapPin, LogOut, ChevronRight, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Order, Address, User } from "@/types";
 
@@ -39,6 +39,11 @@ export default function ProfilePage() {
   const [addressForm, setAddressForm] = useState<Address>({
     full_name: "", phone: "", street: "", city: "", state: "", pincode: "", landmark: "",
   });
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -144,6 +149,33 @@ export default function ProfilePage() {
     window.location.replace("/");
   }, [supabase]);
 
+  const handleChangePassword = useCallback(async () => {
+    if (!currentPassword) { toast.error("Current password is required"); return; }
+    if (!newPassword) { toast.error("New password is required"); return; }
+    if (newPassword.length < 8) { toast.error("Password must be at least 8 characters"); return; }
+    if (!/[A-Z]/.test(newPassword)) { toast.error("Password must contain an uppercase letter"); return; }
+    if (!/[0-9]/.test(newPassword)) { toast.error("Password must contain a number"); return; }
+    if (newPassword !== confirmPassword) { toast.error("Passwords do not match"); return; }
+
+    setChangingPassword(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        toast.error(error.message || "Failed to change password");
+      } else {
+        toast.success("Password changed successfully");
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+        setShowPasswordForm(false);
+      }
+    } catch {
+      toast.error("Failed to change password");
+    } finally {
+      setChangingPassword(false);
+    }
+  }, [currentPassword, newPassword, confirmPassword, supabase]);
+
   function getStatusStyle(v: string) {
     return ORDER_STATUSES.find((s) => s.value === v)?.color ?? "";
   }
@@ -225,6 +257,46 @@ export default function ProfilePage() {
             </div>
           ))}
         </div>
+      </div>
+
+      <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <Lock className="h-4 w-4 text-charcoal-muted" />
+            <h2 className="font-serif font-bold text-sm text-charcoal uppercase tracking-wider">Change Password</h2>
+          </div>
+          <Button variant="outline" size="sm" onClick={() => setShowPasswordForm(!showPasswordForm)}>
+            {showPasswordForm ? "Cancel" : "Change"}
+          </Button>
+        </div>
+
+        {showPasswordForm ? (
+          <div className="space-y-3">
+            <Input
+              label="Current Password"
+              type="password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+            />
+            <Input
+              label="New Password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+            />
+            <p className="text-[11px] text-charcoal-muted -mt-2">Min 8 chars, 1 uppercase, 1 number</p>
+            <Input
+              label="Confirm New Password"
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              error={confirmPassword && newPassword !== confirmPassword ? "Passwords do not match" : undefined}
+            />
+            <Button onClick={handleChangePassword} isLoading={changingPassword}>Update Password</Button>
+          </div>
+        ) : (
+          <p className="text-sm text-charcoal-muted">Keep your account secure by updating your password regularly.</p>
+        )}
       </div>
 
       <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm">
