@@ -191,7 +191,7 @@ export default function RegisterPage() {
         </div>
 
         {/* Right Panel - Form */}
-        <div className="w-full md:w-7/10 p-8 md:p-10 flex flex-col justify-center">
+        <div className="w-full md:w-7/12 p-8 md:p-10 flex flex-col justify-center">
           <div className="flex items-center justify-between mb-6 md:hidden">
             <Link href="/" className="text-lg font-serif font-bold tracking-[0.2em] text-charcoal">ARCON STYLE</Link>
           </div>
