@@ -32,57 +32,36 @@ export function Modal({
     [onClose]
   );
 
-  const handleTabTrap = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key !== "Tab" || !contentRef.current) return;
+  useEffect(() => {
+    if (!isOpen) return;
 
+    previousFocusRef.current = document.activeElement as HTMLElement;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", handleEscape);
+
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !contentRef.current) return;
       const focusable = contentRef.current.querySelectorAll<HTMLElement>(
-        'input, textarea, select, button, [tabindex]:not([tabindex="-1"])'
+        'input:not([type="hidden"]), textarea, select, button, [tabindex]:not([tabindex="-1"])'
       );
       if (focusable.length === 0) return;
-
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
-
       if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
+        if (document.activeElement === first) { e.preventDefault(); last.focus(); }
       } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+        if (document.activeElement === last) { e.preventDefault(); first.focus(); }
       }
-    },
-    []
-  );
+    };
+    document.addEventListener("keydown", handleTab);
 
-  useEffect(() => {
-    if (isOpen) {
-      previousFocusRef.current = document.activeElement as HTMLElement;
-      document.addEventListener("keydown", handleEscape);
-      document.addEventListener("keydown", handleTabTrap);
-      document.body.style.overflow = "hidden";
-
-      requestAnimationFrame(() => {
-        if (!contentRef.current) return;
-        const firstInput = contentRef.current.querySelector<HTMLElement>(
-          'input:not([type="hidden"]), textarea, select'
-        );
-        if (firstInput) {
-          firstInput.focus();
-        }
-      });
-    }
     return () => {
       document.removeEventListener("keydown", handleEscape);
-      document.removeEventListener("keydown", handleTabTrap);
+      document.removeEventListener("keydown", handleTab);
       document.body.style.overflow = "";
       previousFocusRef.current?.focus();
     };
-  }, [isOpen, handleEscape, handleTabTrap]);
+  }, [isOpen, handleEscape]);
 
   if (!isOpen) return null;
 
