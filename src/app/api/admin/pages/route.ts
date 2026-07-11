@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const supabase = await createAdminClient();
+    const admin = await requireAdmin();
+    if ("response" in admin) return admin.response;
+    const { supabase } = admin;
+
     const { data, error } = await supabase
       .from("pages")
       .select("*")
@@ -18,7 +21,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createAdminClient();
+    const admin = await requireAdmin();
+    if ("response" in admin) return admin.response;
+    const { supabase } = admin;
     const body = await request.json();
 
     const { data, error } = await supabase

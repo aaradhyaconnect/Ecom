@@ -8,10 +8,10 @@ import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
 import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
+import { SHIPPING } from "@/lib/constants/site";
 import toast from "react-hot-toast";
 
-const SHIPPING_THRESHOLD = 999;
-const SHIPPING_CHARGE = 49;
+const { THRESHOLD: SHIPPING_THRESHOLD, CHARGE: SHIPPING_CHARGE } = SHIPPING;
 
 export default function CartPage() {
   const { items, savedItems, removeItem, updateQuantity, getSubtotal, saveForLater, moveToCart, removeSaved } = useCartStore();

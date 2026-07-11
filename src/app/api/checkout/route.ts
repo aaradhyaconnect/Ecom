@@ -5,8 +5,9 @@ import { rateLimitCheckout, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
 import { createCashfreeOrder, isCashfreeConfigured } from "@/lib/cashfree";
 import type { Product } from "@/types";
 
-const SHIPPING_THRESHOLD = 999;
-const SHIPPING_CHARGE = 49;
+import { SHIPPING } from "@/lib/constants/site";
+
+const { THRESHOLD: SHIPPING_THRESHOLD, CHARGE: SHIPPING_CHARGE } = SHIPPING;
 const MAX_ITEM_QUANTITY = 20;
 
 type CheckoutItem = {

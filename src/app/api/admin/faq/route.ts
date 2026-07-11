@@ -1,9 +1,12 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const supabase = await createAdminClient();
+    const admin = await requireAdmin();
+    if ("response" in admin) return admin.response;
+    const { supabase } = admin;
+
     const { data, error } = await supabase.from("faq_items").select("*").order("sort_order");
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     return NextResponse.json({ success: true, data });
@@ -14,7 +17,9 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const supabase = await createAdminClient();
+    const admin = await requireAdmin();
+    if ("response" in admin) return admin.response;
+    const { supabase } = admin;
     const body = await request.json();
 
     const { data, error } = await supabase

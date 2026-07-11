@@ -1,10 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { Skeleton } from "@/components/ui/Skeleton";
 
-const faqs = [
+interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  sort_order: number;
+}
+
+const fallbackFaqs = [
   {
     q: "How do I track my order?",
     a: "Once your order ships, you'll receive an email with a tracking number. You can also check your order status in your Arcon Style account under Order History.",
@@ -39,8 +48,42 @@ const faqs = [
   },
 ];
 
+function FAQSkeleton() {
+  return (
+    <div className="space-y-2">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <Skeleton key={i} className="h-14 w-full" />
+      ))}
+    </div>
+  );
+}
+
 export function FAQClient() {
   const [open, setOpen] = useState<number | null>(null);
+  const [faqs, setFaqs] = useState<{ q: string; a: string }[]>(fallbackFaqs);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/faq")
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+          const sorted = [...json.data].sort(
+            (a: FaqItem, b: FaqItem) => a.sort_order - b.sort_order
+          );
+          setFaqs(
+            sorted.map((item: FaqItem) => ({
+              q: item.question,
+              a: item.answer,
+            }))
+          );
+        }
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <FAQSkeleton />;
 
   return (
     <div className="space-y-2">

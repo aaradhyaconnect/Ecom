@@ -30,8 +30,9 @@ interface FormErrors {
   [key: string]: string;
 }
 
-const SHIPPING_THRESHOLD = 999;
-const SHIPPING_CHARGE = 49;
+import { SHIPPING } from "@/lib/constants/site";
+
+const { THRESHOLD: SHIPPING_THRESHOLD, CHARGE: SHIPPING_CHARGE } = SHIPPING;
 
 const initialAddress: Address = {
   full_name: "",

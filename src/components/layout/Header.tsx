@@ -59,7 +59,7 @@ export function Header() {
   const isDark = isScrolled || !isHome;
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/set-session", { method: "DELETE", headers: { "Content-Type": "application/json" } }).catch(() => {});
     window.location.href = "/";
   }
 

@@ -15,6 +15,11 @@ export const SITE = {
   },
 } as const;
 
+export const SHIPPING = {
+  THRESHOLD: 999,
+  CHARGE: 49,
+} as const;
+
 export const NAV_LINKS = [
   { href: "/products/women-clothing", label: "Women's Clothing" },
   { href: "/products/artificial-jewellery", label: "Jewellery" },
