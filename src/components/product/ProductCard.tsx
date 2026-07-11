@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, ShoppingBag, Star, Eye } from "lucide-react";
+import { Heart, ShoppingBag, Star } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
 import { useWishlistStore } from "@/lib/store/wishlist";
@@ -143,18 +143,6 @@ export function ProductCard({ product, preload }: ProductCardProps) {
               Quick Add
             </button>
           </div>
-
-          {/* Quick View */}
-          <button
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-            }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-white/95 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-500 z-10 hover:bg-white rounded-full shadow-lg"
-            aria-label="Quick view"
-          >
-            <Eye className="h-4 w-4 text-charcoal" />
-          </button>
 
           {/* Sold Out overlay */}
           {product.stock <= 0 && (

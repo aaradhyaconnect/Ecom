@@ -1,20 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { X, Download } from "lucide-react";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { useServiceWorker } from "@/hooks/useServiceWorker";
 
 const DISMISS_KEY = "arconstyle-pwa-dismissed";
 
+function getDismissed(): boolean {
+  if (typeof window === "undefined") return false;
+  return localStorage.getItem(DISMISS_KEY) === "true";
+}
+
 export function PwaInstallBanner() {
   const { isInstallable, promptInstall } = useInstallPrompt();
   const { updateAvailable, promptUpdate } = useServiceWorker();
-  const [dismissed, setDismissed] = useState(true);
-
-  useEffect(() => {
-    setDismissed(localStorage.getItem(DISMISS_KEY) === "true");
-  }, []);
+  const [dismissed, setDismissed] = useState(getDismissed);
 
   const handleDismiss = () => {
     setDismissed(true);

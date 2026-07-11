@@ -509,10 +509,6 @@ export function ProductDetailClient({
                       <span className="text-charcoal font-medium">{colors.map((c) => c.name).join(", ")}</span>
                     </div>
                   )}
-                  <div className="flex justify-between py-2 border-b border-ivory-dark/50 text-[13px]">
-                    <span className="text-charcoal-muted">Weight</span>
-                    <span className="text-charcoal font-medium">Standard</span>
-                  </div>
                 </div>
               )}
 

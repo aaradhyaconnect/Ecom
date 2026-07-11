@@ -85,7 +85,7 @@ export function AdminSidebar() {
       <div className="flex h-16 items-center border-b border-ivory-dark/60 px-6">
         <Link href="/admin" className="flex items-center gap-2">
           <div className="h-8 w-8 bg-charcoal flex items-center justify-center">
-            <span className="text-ivory text-xs font-bold tracking-wider">H</span>
+            <span className="text-ivory text-xs font-bold tracking-wider">A</span>
           </div>
           <div>
             <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">Arcon Style</span>

@@ -78,11 +78,11 @@ export default function ContactPage() {
         <h2 className="text-2xl font-serif font-bold text-charcoal mb-6">Send us a Message</h2>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid md:grid-cols-2 gap-4">
-            <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
-            <input type="email" placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
+            <input type="text" placeholder="Your Name" value={name} onChange={(e) => setName(e.target.value)} aria-label="Your Name" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
+            <input type="email" placeholder="Your Email" value={email} onChange={(e) => setEmail(e.target.value)} aria-label="Your Email" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
           </div>
-          <input type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
-          <textarea rows={5} placeholder="Your Message" value={message} onChange={(e) => setMessage(e.target.value)} className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none resize-none" />
+          <input type="text" placeholder="Subject" value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="Subject" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none" />
+          <textarea rows={5} placeholder="Your Message" value={message} onChange={(e) => setMessage(e.target.value)} aria-label="Your Message" className="w-full border border-ivory-dark bg-ivory px-4 py-3 text-sm text-charcoal placeholder:text-charcoal-muted focus:border-gold/60 focus:ring-0 outline-none resize-none" />
           <button type="submit" disabled={sending} className="bg-charcoal text-ivory px-8 py-3 text-xs font-semibold uppercase tracking-[0.15em] hover:bg-charcoal-light transition-colors duration-300 disabled:opacity-50">
             {sending ? "Sending..." : "Send Message"}
           </button>

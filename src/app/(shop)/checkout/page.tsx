@@ -442,7 +442,7 @@ export default function CheckoutPage() {
                         <p className="text-xs text-charcoal-muted">
                           {subtotal >= SHIPPING_THRESHOLD
                             ? "Free — your order qualifies!"
-                            : `₹${SHIPPING_CHARGE} delivery charge`}
+                            : `${formatPrice(SHIPPING_CHARGE)} delivery charge`}
                         </p>
                       </div>
                     </div>

@@ -32,10 +32,10 @@ export function CartDrawer() {
               <div className="flex items-center gap-3">
                 <ShoppingBag className="h-4 w-4 text-charcoal-muted" />
                 <h2 className="text-sm font-semibold uppercase tracking-[0.15em] text-charcoal">
-                  Shopping Bag ({getItemCount()})
+                  Shopping Cart ({getItemCount()})
                 </h2>
               </div>
-              <button onClick={closeCart} className="p-2 hover:bg-ivory-dark  transition-colors">
+              <button onClick={closeCart} className="p-2 hover:bg-ivory-dark  transition-colors" aria-label="Close cart">
                 <X className="h-4 w-4 text-charcoal-muted" />
               </button>
             </div>
@@ -45,7 +45,7 @@ export function CartDrawer() {
                 <div className="w-20 h-20  bg-ivory-dark flex items-center justify-center">
                   <ShoppingBag className="h-8 w-8 text-charcoal-muted" />
                 </div>
-                <p className="text-lg font-medium text-charcoal">Your bag is empty</p>
+                <p className="text-lg font-medium text-charcoal">Your cart is empty</p>
                 <p className="text-sm text-charcoal-muted">Discover something you love</p>
                 <Button variant="outline" onClick={closeCart} className="mt-2 border-charcoal/20 text-charcoal hover:bg-charcoal hover:text-ivory text-xs uppercase tracking-[0.15em]">
                   Continue Shopping

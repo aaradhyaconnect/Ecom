@@ -152,6 +152,7 @@ export function SearchModal() {
             <button
               onClick={handleClose}
               className="absolute right-0 top-1/2 -translate-y-1/2 p-2 hover:bg-ivory-dark transition-colors"
+              aria-label="Close search"
             >
               <X className="h-4 w-4 text-charcoal-muted" />
             </button>

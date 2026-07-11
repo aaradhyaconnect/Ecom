@@ -219,7 +219,7 @@ export default function LoginPage() {
               </div>
               <div className="flex items-center gap-3 text-white/50">
                 <div className="w-1.5 h-1.5 rounded-full bg-gold" />
-                <span>Easy 30-day returns</span>
+                <span>Easy 7-day returns</span>
               </div>
             </div>
           </div>
