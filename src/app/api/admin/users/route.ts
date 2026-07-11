@@ -1,0 +1,142 @@
+import { NextResponse } from "next/server";
+import { requireAdmin, createAdminClient } from "@/lib/supabase/server";
+
+export async function GET(request: Request) {
+  try {
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
+
+    const url = new URL(request.url);
+    const search = url.searchParams.get("search") || "";
+    const page = Number(url.searchParams.get("page")) || 1;
+    const limit = Number(url.searchParams.get("limit")) || 50;
+    const role = url.searchParams.get("role") || "";
+    const offset = (page - 1) * limit;
+
+    let query = supabase
+      .from("staff_users")
+      .select("*, profiles(email)", { count: "exact" })
+      .order("created_at", { ascending: false });
+
+    if (search) {
+      const escaped = search.replace(/[%_\\]/g, "\\$&");
+      query = query.or(
+        `display_name.ilike.%${escaped}%,username.ilike.%${escaped}%`
+      );
+    }
+
+    if (role) {
+      query = query.eq("role", role);
+    }
+
+    const { data, error, count } = await query.range(offset, offset + limit - 1);
+
+    if (error) {
+      return NextResponse.json(
+        { success: false, error: error.message },
+        { status: 500 }
+      );
+    }
+
+    const users = (data || []).map((u) => ({
+      id: u.id,
+      user_id: u.user_id,
+      display_name: u.display_name,
+      username: u.username,
+      role: u.role,
+      permissions: u.permissions,
+      is_active: u.is_active,
+      last_login: u.last_login,
+      email: (u.profiles as { email?: string } | null)?.email ?? null,
+      created_at: u.created_at,
+      updated_at: u.updated_at,
+    }));
+
+    return NextResponse.json({
+      success: true,
+      data: users,
+      total: count || 0,
+      page,
+      limit,
+    });
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+
+    const body = await request.json();
+    const { email, password, display_name, username, role, permissions } = body;
+
+    if (!email || !password || !display_name || !username || !role) {
+      return NextResponse.json(
+        { success: false, error: "Missing required fields" },
+        { status: 400 }
+      );
+    }
+
+    const adminClient = await createAdminClient();
+
+    const { data: authData, error: authError } =
+      await adminClient.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+        user_metadata: { name: display_name, role: "admin" },
+      });
+
+    if (authError) {
+      return NextResponse.json(
+        { success: false, error: authError.message },
+        { status: 400 }
+      );
+    }
+
+    const { error: profileError } = await adminClient
+      .from("profiles")
+      .update({ role: "admin", name: display_name })
+      .eq("id", authData.user.id);
+
+    if (profileError) {
+      return NextResponse.json(
+        { success: false, error: profileError.message },
+        { status: 500 }
+      );
+    }
+
+    const { data: staffUser, error: staffError } = await adminClient
+      .from("staff_users")
+      .insert({
+        user_id: authData.user.id,
+        display_name,
+        username,
+        role,
+        permissions: permissions || {},
+        is_active: true,
+      })
+      .select()
+      .single();
+
+    if (staffError) {
+      return NextResponse.json(
+        { success: false, error: staffError.message },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data: staffUser }, { status: 201 });
+  } catch {
+    return NextResponse.json(
+      { success: false, error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}

@@ -10,9 +10,9 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { usePolling } from "@/hooks/usePolling";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
-import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight } from "lucide-react";
+import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight, MessageSquare, Printer } from "lucide-react";
 import toast from "react-hot-toast";
-import type { Order } from "@/types";
+import type { Order, OrderNote } from "@/types";
 
 const statusOptions = [
   { value: "", label: "All Statuses" },
@@ -35,6 +35,18 @@ export default function AdminOrdersPage() {
   });
   const [creatingShipment, setCreatingShipment] = useState(false);
 
+  const [dateFrom, setDateFrom] = useState(() => new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0]);
+  const [dateTo, setDateTo] = useState(() => new Date().toISOString().split("T")[0]);
+  const [dateFromApplied, setDateFromApplied] = useState(() => new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0]);
+  const [dateToApplied, setDateToApplied] = useState(() => new Date().toISOString().split("T")[0]);
+
+  const [orderNotes, setOrderNotes] = useState<OrderNote[]>([]);
+  const [notesLoading, setNotesLoading] = useState(false);
+  const [newNote, setNewNote] = useState("");
+  const [noteIsInternal, setNoteIsInternal] = useState(true);
+  const [savingNote, setSavingNote] = useState(false);
+  const [notesCountMap, setNotesCountMap] = useState<Record<string, number>>({});
+
   const search = useDebounce(searchInput, 300);
   const limit = 20;
   const totalPages = Math.ceil(total / limit);
@@ -45,6 +57,8 @@ export default function AdminOrdersPage() {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
+      if (dateFromApplied) params.set("from", dateFromApplied);
+      if (dateToApplied) params.set("to", dateToApplied);
       params.set("page", String(page));
       params.set("limit", String(limit));
       const res = await fetch(`/api/admin/orders?${params}`);
@@ -52,13 +66,16 @@ export default function AdminOrdersPage() {
       if (data.success) {
         setOrders(data.data);
         setTotal(data.total);
+        if (data.notes_count) {
+          setNotesCountMap(data.notes_count);
+        }
       }
     } catch {
       toast.error("Failed to load orders");
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter, page]);
+  }, [search, statusFilter, page, dateFromApplied, dateToApplied]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -123,6 +140,112 @@ export default function AdminOrdersPage() {
       courier_name: order.courier_name || "",
       estimated_delivery: order.estimated_delivery || "",
     });
+    setNewNote("");
+    setNoteIsInternal(true);
+    fetchNotes(order.id);
+  };
+
+  const fetchNotes = async (orderId: string) => {
+    setNotesLoading(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${orderId}/notes`);
+      const data = await res.json();
+      if (data.success) {
+        setOrderNotes(data.data);
+      }
+    } catch {
+      toast.error("Failed to load notes");
+    } finally {
+      setNotesLoading(false);
+    }
+  };
+
+  const handleAddNote = async () => {
+    if (!selectedOrder || !newNote.trim()) return;
+    setSavingNote(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}/notes`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ note: newNote, is_internal: noteIsInternal }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setOrderNotes((prev) => [...prev, data.data]);
+        setNewNote("");
+        toast.success("Note added");
+        setNotesCountMap((prev) => ({
+          ...prev,
+          [selectedOrder.id]: (prev[selectedOrder.id] || 0) + 1,
+        }));
+      } else {
+        toast.error(data.error);
+      }
+    } catch {
+      toast.error("Failed to add note");
+    } finally {
+      setSavingNote(false);
+    }
+  };
+
+  const printInvoice = () => {
+    if (!selectedOrder) return;
+    const o = selectedOrder;
+    const addr = o.shipping_address;
+    const itemsHtml = o.items
+      .map(
+        (item) => `
+        <tr>
+          <td>${item.product?.name || "Product"}</td>
+          <td>${item.size}</td>
+          <td>${item.color}</td>
+          <td style="text-align:right">${item.quantity}</td>
+          <td style="text-align:right">${formatPrice(item.product?.price || 0)}</td>
+        </tr>`
+      )
+      .join("");
+    const html = `<!DOCTYPE html>
+<html><head>
+<style>
+  body{font-family:Georgia,serif;color:#1a1a1a;padding:40px;max-width:700px;margin:auto}
+  h1{font-size:20px;margin:0 0 4px}
+  .sub{font-size:12px;color:#666;margin-bottom:24px}
+  table{width:100%;border-collapse:collapse;margin:16px 0}
+  th,td{padding:8px 10px;border-bottom:1px solid #ddd;font-size:13px}
+  th{text-align:left;background:#f5f5f0;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:0.5px}
+  .addr{font-size:13px;line-height:1.6;margin:12px 0}
+  .totals{text-align:right;margin-top:20px;font-size:13px}
+  .totals .row{display:flex;justify-content:flex-end;gap:24px;padding:4px 0}
+  .totals .grand{border-top:2px solid #1a1a1a;font-size:16px;font-weight:700;padding-top:8px;margin-top:4px}
+  @media print{body{padding:20px}}
+</style></head><body>
+  <h1>INVOICE</h1>
+  <div class="sub">Order ${o.order_id} &mdash; ${formatDate(o.created_at)}</div>
+  <table>
+    <thead><tr><th>Item</th><th>Size</th><th>Color</th><th style="text-align:right">Qty</th><th style="text-align:right">Price</th></tr></thead>
+    <tbody>${itemsHtml}</tbody>
+  </table>
+  <div class="totals">
+    <div class="row"><span>Subtotal</span><span>${formatPrice(o.subtotal)}</span></div>
+    <div class="row"><span>Shipping</span><span>${formatPrice(o.shipping_charge)}</span></div>
+    ${o.discount ? `<div class="row"><span>Discount</span><span>-${formatPrice(o.discount)}</span></div>` : ""}
+    <div class="row grand"><span>Total</span><span>${formatPrice(o.total)}</span></div>
+  </div>
+  <div class="addr">
+    <strong>Ship to:</strong><br/>
+    ${addr.full_name}<br/>
+    ${addr.street}<br/>
+    ${addr.city}, ${addr.state} - ${addr.pincode}<br/>
+    Phone: ${addr.phone}
+  </div>
+  <p style="font-size:12px;color:#666;margin-top:24px">Payment: ${o.payment_method} (${o.payment_status})</p>
+</body></html>`;
+    const w = window.open("", "_blank");
+    if (w) {
+      w.document.write(html);
+      w.document.close();
+      setTimeout(() => w.print(), 300);
+    }
   };
 
   const statusColor = (status: string) => {
@@ -209,6 +332,48 @@ export default function AdminOrdersPage() {
             options={statusOptions}
           />
         </div>
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 items-end">
+        <div className="flex flex-col">
+          <label className="text-[11px] uppercase tracking-wider font-medium text-charcoal-muted mb-1">From</label>
+          <input
+            type="date"
+            value={dateFrom}
+            onChange={(e) => setDateFrom(e.target.value)}
+            className="px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white dark:bg-white/5 dark:text-white"
+          />
+        </div>
+        <div className="flex flex-col">
+          <label className="text-[11px] uppercase tracking-wider font-medium text-charcoal-muted mb-1">To</label>
+          <input
+            type="date"
+            value={dateTo}
+            onChange={(e) => setDateTo(e.target.value)}
+            className="px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white dark:bg-white/5 dark:text-white"
+          />
+        </div>
+        <Button
+          size="sm"
+          onClick={() => { setDateFromApplied(dateFrom); setDateToApplied(dateTo); setPage(1); }}
+        >
+          Apply
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            const df = new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
+            const dt = new Date().toISOString().split("T")[0];
+            setDateFrom(df);
+            setDateTo(dt);
+            setDateFromApplied(df);
+            setDateToApplied(dt);
+            setPage(1);
+          }}
+        >
+          Clear
+        </Button>
       </div>
 
       <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
@@ -298,12 +463,22 @@ export default function AdminOrdersPage() {
                       {formatDate(order.created_at)}
                     </td>
                     <td className="px-5 py-3 text-right">
-                      <button
-                        onClick={() => viewOrder(order)}
-                        className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
-                      >
-                        <Eye className="h-4 w-4" />
-                      </button>
+                      <div className="flex items-center justify-end gap-1">
+                        {notesCountMap[order.id] > 0 && (
+                          <span className="relative inline-flex items-center text-gold-dark" title={`${notesCountMap[order.id]} note(s)`}>
+                            <MessageSquare className="h-4 w-4" />
+                            <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center w-3.5 h-3.5 text-[9px] font-bold text-white bg-gold-dark rounded-full leading-none">
+                              {notesCountMap[order.id]}
+                            </span>
+                          </span>
+                        )}
+                        <button
+                          onClick={() => viewOrder(order)}
+                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
+                        >
+                          <Eye className="h-4 w-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -498,6 +673,81 @@ export default function AdminOrdersPage() {
                 <Button size="sm" onClick={handleSaveTracking}>
                   Save Tracking
                 </Button>
+              </div>
+            </div>
+
+            <div className="border-t border-ivory-dark/60 pt-4">
+              <button
+                onClick={printInvoice}
+                className="flex items-center gap-2 text-sm text-charcoal hover:text-gold-dark transition-colors"
+              >
+                <Printer className="h-4 w-4" />
+                Print Invoice
+              </button>
+            </div>
+
+            <div className="border-t border-ivory-dark/60 pt-4">
+              <div className="flex items-center gap-2 mb-3">
+                <MessageSquare className="h-4 w-4" />
+                <span className="text-sm font-medium">Order Notes</span>
+              </div>
+
+              {notesLoading ? (
+                <p className="text-xs text-charcoal-muted">Loading notes...</p>
+              ) : orderNotes.length > 0 ? (
+                <div className="space-y-2 mb-4">
+                  {orderNotes.map((note) => (
+                    <div
+                      key={note.id}
+                      className={`p-3 rounded-lg text-sm border ${
+                        note.is_internal
+                          ? "bg-amber-50 border-amber-200 dark:bg-amber-950/30 dark:border-amber-800"
+                          : "bg-green-50 border-green-200 dark:bg-green-950/30 dark:border-green-800"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] uppercase tracking-wider font-medium text-charcoal-muted">
+                          {note.is_internal ? "Internal" : "Customer visible"}
+                        </span>
+                        <span className="text-[10px] text-charcoal-muted">
+                          {formatDate(note.created_at)}
+                        </span>
+                      </div>
+                      <p className="text-charcoal">{note.note}</p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-charcoal-muted mb-4">No notes yet.</p>
+              )}
+
+              <div className="space-y-2">
+                <textarea
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder="Add a note..."
+                  rows={3}
+                  className="w-full px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white dark:bg-white/5 dark:text-white resize-none focus:border-gold/60 focus:ring-0"
+                />
+                <div className="flex items-center justify-between">
+                  <label className="flex items-center gap-2 text-xs text-gray-900 dark:text-white cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={noteIsInternal}
+                      onChange={(e) => setNoteIsInternal(e.target.checked)}
+                      className="rounded border-ivory-dark/60"
+                    />
+                    Internal note
+                  </label>
+                  <Button
+                    size="sm"
+                    isLoading={savingNote}
+                    disabled={!newNote.trim()}
+                    onClick={handleAddNote}
+                  >
+                    Add Note
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

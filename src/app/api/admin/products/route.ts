@@ -12,6 +12,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const search = url.searchParams.get("search") || "";
     const category = url.searchParams.get("category") || "";
+    const status = url.searchParams.get("status") || "";
     const page = Number(url.searchParams.get("page")) || 1;
     const limit = Number(url.searchParams.get("limit")) || 50;
     const offset = (page - 1) * limit;
@@ -29,6 +30,9 @@ export async function GET(request: Request) {
     }
     if (category) {
       query = query.eq("category", category);
+    }
+    if (status) {
+      query = query.eq("status", status);
     }
 
     const { data, error, count } = await query.range(offset, offset + limit - 1);
@@ -93,6 +97,15 @@ export async function POST(request: Request) {
       is_best_seller: body.is_best_seller || false,
       is_sale: body.is_sale || false,
       stock: Math.max(0, Math.floor(Number(body.stock) || 0)),
+      sku: body.sku || null,
+      barcode: body.barcode || null,
+      seo_title: body.seo_title || null,
+      seo_description: body.seo_description || null,
+      status: body.status || "published",
+      cost_price: body.cost_price != null ? Number(body.cost_price) : null,
+      stock_alert: body.stock_alert != null ? Math.max(0, Number(body.stock_alert)) : 5,
+      video_url: body.video_url || null,
+      sale_percent: body.sale_percent != null ? Number(body.sale_percent) : null,
       rating: 0,
       review_count: 0,
       created_at: new Date().toISOString(),
@@ -141,6 +154,8 @@ export async function PUT(request: Request) {
       "name", "description", "category", "subcategory", "price", "compare_price",
       "images", "sizes", "colors", "tags", "material", "care_instructions",
       "is_new", "is_best_seller", "is_sale", "stock",
+      "sku", "barcode", "seo_title", "seo_description", "status",
+      "cost_price", "stock_alert", "video_url", "sale_percent",
     ] as const;
 
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };

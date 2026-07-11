@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("products")
-      .select("id, name, slug, category, stock, price, images, sizes, colors, is_new, is_best_seller, is_sale", { count: "exact" })
+      .select("id, name, slug, category, stock, price, images, sizes, colors, is_new, is_best_seller, is_sale, cost_price, stock_alert", { count: "exact" })
       .order("stock", { ascending: true });
 
     if (search) {
@@ -66,15 +66,47 @@ export async function PUT(request: Request) {
 
     if (updates && Array.isArray(updates)) {
       const results = await Promise.all(
-        updates.map(async (item: { id: string; stock: number }) => {
+        updates.map(async (item: { id: string; stock: number; reason?: string }) => {
           if (typeof item.stock !== "number" || item.stock < 0 || !Number.isFinite(item.stock)) {
             return { id: item.id, success: false, error: "Invalid stock value" };
           }
+          const newStock = Math.floor(item.stock);
+
+          const { data: product, error: fetchErr } = await supabase
+            .from("products")
+            .select("stock")
+            .eq("id", item.id)
+            .single();
+
+          if (fetchErr) {
+            return { id: item.id, success: false, error: fetchErr.message };
+          }
+
+          const quantityBefore = product.stock;
+          const quantityChange = newStock - quantityBefore;
+
           const { error } = await supabase
             .from("products")
-            .update({ stock: Math.floor(item.stock), updated_at: new Date().toISOString() })
+            .update({ stock: newStock, updated_at: new Date().toISOString() })
             .eq("id", item.id);
-          return { id: item.id, success: !error, error: error?.message };
+
+          if (error) {
+            return { id: item.id, success: false, error: error.message };
+          }
+
+          if (quantityChange !== 0) {
+            await supabase.from("stock_history").insert({
+              product_id: item.id,
+              change_type: "adjustment",
+              quantity_before: quantityBefore,
+              quantity_after: newStock,
+              quantity_change: quantityChange,
+              reason: item.reason || "Admin adjustment",
+              performed_by: auth.user.id,
+            });
+          }
+
+          return { id: item.id, success: true };
         })
       );
       return NextResponse.json({ success: true, data: results });

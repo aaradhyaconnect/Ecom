@@ -15,8 +15,12 @@ import {
   RefreshCw,
   ChevronDown,
   ChevronRight,
+  ChevronUp,
   Palette,
   Ruler,
+  Download,
+  Clock,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -24,7 +28,7 @@ import { Badge } from "@/components/ui/Badge";
 import { formatPrice } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import toast from "react-hot-toast";
-import type { Product, ColorOption } from "@/types";
+import type { Product, ColorOption, StockHistory } from "@/types";
 
 interface InventoryItem extends Product {
   sizes: string[];
@@ -43,6 +47,10 @@ export default function InventoryPage() {
   const [edits, setEdits] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [reasons, setReasons] = useState<Record<string, string>>({});
+  const [stockHistory, setStockHistory] = useState<Record<string, StockHistory[]>>({});
+  const [historyLoading, setHistoryLoading] = useState<Record<string, boolean>>({});
+  const [historyExpanded, setHistoryExpanded] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -76,6 +84,62 @@ export default function InventoryPage() {
     fetchProducts();
   }, [fetchProducts]);
 
+  const fetchStockHistory = useCallback(async (productId: string) => {
+    setHistoryLoading((prev) => ({ ...prev, [productId]: true }));
+    try {
+      const res = await fetch(`/api/admin/inventory/history?product_id=${productId}`);
+      const json = await res.json();
+      if (json.success) {
+        setStockHistory((prev) => ({ ...prev, [productId]: json.data }));
+      }
+    } catch {
+      toast.error("Failed to load stock history");
+    } finally {
+      setHistoryLoading((prev) => ({ ...prev, [productId]: false }));
+    }
+  }, []);
+
+  const toggleHistory = (productId: string) => {
+    setHistoryExpanded((prev) => {
+      const next = new Set(prev);
+      if (next.has(productId)) {
+        next.delete(productId);
+      } else {
+        next.add(productId);
+        if (!stockHistory[productId]) {
+          fetchStockHistory(productId);
+        }
+      }
+      return next;
+    });
+  };
+
+  const handleExportCSV = () => {
+    const headers = ["Name", "Category", "Price", "Stock", "Status", "Cost Price", "Stock Alert"];
+    const rows = products.map((p) => {
+      const stock = edits[p.id] ?? p.stock;
+      const status = stock === 0 ? "Out of Stock" : stock <= 5 ? "Low Stock" : "In Stock";
+      return [
+        `"${p.name.replace(/"/g, '""')}"`,
+        p.category,
+        p.price,
+        stock,
+        status,
+        p.cost_price ?? "",
+        p.stock_alert ?? "",
+      ].join(",");
+    });
+    const csv = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `inventory-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("CSV exported");
+  };
+
   const handleStockChange = (id: string, delta: number) => {
     setEdits((prev) => {
       const current = prev[id] ?? products.find((p) => p.id === id)?.stock ?? 0;
@@ -95,7 +159,11 @@ export default function InventoryPage() {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const updates = Object.entries(edits).map(([id, stock]) => ({ id, stock }));
+      const updates = Object.entries(edits).map(([id, stock]) => ({
+        id,
+        stock,
+        reason: reasons[id] || undefined,
+      }));
       const res = await fetch("/api/admin/inventory", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -105,6 +173,7 @@ export default function InventoryPage() {
       if (json.success) {
         toast.success(`Updated ${updates.length} product(s)`);
         setEdits({});
+        setReasons({});
         fetchProducts();
       } else {
         toast.error(json.error || "Failed to update");
@@ -140,6 +209,10 @@ export default function InventoryPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleExportCSV}>
+            <Download className="h-3.5 w-3.5 mr-1.5" />
+            Export CSV
+          </Button>
           <Button variant="outline" size="sm" onClick={fetchProducts}>
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
             Refresh
@@ -380,69 +453,179 @@ export default function InventoryPage() {
                         </td>
                       </tr>
 
-                      {/* Expanded Detail Row — Sizes & Colors */}
+                      {/* Expanded Detail Row — Sizes, Colors, Cost Info, Reason, History */}
                       {isExpanded && hasVariants && (
                         <tr className="bg-ivory-dark/10 dark:bg-white/[0.02]">
                           <td colSpan={7} className="px-5 py-4">
-                            <div className="flex flex-wrap gap-8">
-                              {/* Sizes */}
-                              {product.sizes?.length > 0 && (
-                                <div className="space-y-2">
-                                  <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
-                                    <Ruler className="h-3.5 w-3.5 text-charcoal-muted" />
-                                    Sizes ({product.sizes.length})
-                                  </div>
-                                  <div className="flex flex-wrap gap-1.5">
-                                    {product.sizes.map((size) => (
-                                      <span
-                                        key={size}
-                                        className="inline-flex items-center px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 dark:border-white/10 rounded-md bg-white dark:bg-white/5 text-charcoal dark:text-white"
-                                      >
-                                        {size}
-                                      </span>
-                                    ))}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* Colors */}
-                              {product.colors?.length > 0 && (
-                                <div className="space-y-2">
-                                  <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
-                                    <Palette className="h-3.5 w-3.5 text-charcoal-muted" />
-                                    Colors ({product.colors.length})
-                                  </div>
-                                  <div className="flex flex-wrap gap-2">
-                                    {product.colors.map((color) => (
-                                      <div
-                                        key={color.name}
-                                        className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 dark:border-white/10 rounded-md bg-white dark:bg-white/5 text-charcoal dark:text-white"
-                                      >
+                            <div className="space-y-5">
+                              <div className="flex flex-wrap gap-8">
+                                {/* Sizes */}
+                                {product.sizes?.length > 0 && (
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
+                                      <Ruler className="h-3.5 w-3.5 text-charcoal-muted" />
+                                      Sizes ({product.sizes.length})
+                                    </div>
+                                    <div className="flex flex-wrap gap-1.5">
+                                      {product.sizes.map((size) => (
                                         <span
-                                          className="h-3 w-3 rounded-full border border-black/10 flex-shrink-0"
-                                          style={{ backgroundColor: color.hex }}
-                                        />
-                                        {color.name}
-                                      </div>
-                                    ))}
+                                          key={size}
+                                          className="inline-flex items-center px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 dark:border-white/10 rounded-md bg-white dark:bg-white/5 text-charcoal dark:text-white"
+                                        >
+                                          {size}
+                                        </span>
+                                      ))}
+                                    </div>
                                   </div>
+                                )}
+
+                                {/* Colors */}
+                                {product.colors?.length > 0 && (
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
+                                      <Palette className="h-3.5 w-3.5 text-charcoal-muted" />
+                                      Colors ({product.colors.length})
+                                    </div>
+                                    <div className="flex flex-wrap gap-2">
+                                      {product.colors.map((color) => (
+                                        <div
+                                          key={color.name}
+                                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium border border-ivory-dark/60 dark:border-white/10 rounded-md bg-white dark:bg-white/5 text-charcoal dark:text-white"
+                                        >
+                                          <span
+                                            className="h-3 w-3 rounded-full border border-black/10 flex-shrink-0"
+                                            style={{ backgroundColor: color.hex }}
+                                          />
+                                          {color.name}
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* Per-variant stock summary */}
+                                {product.sizes?.length > 0 && product.colors?.length > 0 && (
+                                  <div className="space-y-2">
+                                    <div className="text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
+                                      Total Stock
+                                    </div>
+                                    <div className="text-sm font-semibold text-charcoal dark:text-white">
+                                      {currentStock} units across {product.sizes.length} sizes &times; {product.colors.length} colors
+                                    </div>
+                                    <p className="text-[11px] text-charcoal-muted dark:text-white/50">
+                                      Per-variant stock tracking coming soon. Currently tracking total stock only.
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Cost Info & Values */}
+                              <div className="flex flex-wrap gap-6 text-[13px]">
+                                {(product.cost_price != null && product.cost_price > 0) && (
+                                  <div>
+                                    <span className="text-charcoal-muted dark:text-white/50">Cost Price: </span>
+                                    <span className="font-medium text-charcoal dark:text-white">{formatPrice(product.cost_price)}</span>
+                                  </div>
+                                )}
+                                {product.stock_alert > 0 && (
+                                  <div>
+                                    <span className="text-charcoal-muted dark:text-white/50">Low Stock Alert: </span>
+                                    <span className="font-medium text-charcoal dark:text-white">{product.stock_alert} units</span>
+                                  </div>
+                                )}
+                                <div>
+                                  <span className="text-charcoal-muted dark:text-white/50">Retail Value: </span>
+                                  <span className="font-medium text-charcoal dark:text-white">{formatPrice(currentStock * product.price)}</span>
+                                </div>
+                                {(product.cost_price != null && product.cost_price > 0) && (
+                                  <div>
+                                    <span className="text-charcoal-muted dark:text-white/50">Cost Value: </span>
+                                    <span className="font-medium text-charcoal dark:text-white">{formatPrice(currentStock * product.cost_price)}</span>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Reason Input (shown when stock is edited) */}
+                              {isEdited && currentStock !== originalStock && (
+                                <div className="flex items-center gap-2 max-w-sm" onClick={(e) => e.stopPropagation()}>
+                                  <FileText className="h-3.5 w-3.5 text-charcoal-muted flex-shrink-0" />
+                                  <Input
+                                    placeholder="Reason for adjustment..."
+                                    value={reasons[product.id] || ""}
+                                    onChange={(e) => setReasons((prev) => ({ ...prev, [product.id]: e.target.value }))}
+                                    className="text-xs"
+                                  />
                                 </div>
                               )}
 
-                              {/* Per-variant stock summary */}
-                              {product.sizes?.length > 0 && product.colors?.length > 0 && (
-                                <div className="space-y-2">
-                                  <div className="text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider">
-                                    Total Stock
+                              {/* Stock History */}
+                              <div className="border-t border-ivory-dark/40 dark:border-white/5 pt-4">
+                                <button
+                                  onClick={(e) => { e.stopPropagation(); toggleHistory(product.id); }}
+                                  className="flex items-center gap-1.5 text-xs font-semibold text-charcoal dark:text-white uppercase tracking-wider hover:text-gold-dark dark:hover:text-gold-light transition-colors"
+                                >
+                                  <Clock className="h-3.5 w-3.5 text-charcoal-muted" />
+                                  Stock History
+                                  {historyExpanded.has(product.id) ? (
+                                    <ChevronUp className="h-3.5 w-3.5 ml-0.5" />
+                                  ) : (
+                                    <ChevronDown className="h-3.5 w-3.5 ml-0.5" />
+                                  )}
+                                </button>
+
+                                {historyExpanded.has(product.id) && (
+                                  <div className="mt-3">
+                                    {historyLoading[product.id] ? (
+                                      <p className="text-xs text-charcoal-muted">Loading history...</p>
+                                    ) : stockHistory[product.id]?.length === 0 ? (
+                                      <p className="text-xs text-charcoal-muted dark:text-white/50">No stock history yet.</p>
+                                    ) : (
+                                      <div className="bg-white dark:bg-white/5 border border-ivory-dark/60 dark:border-white/10 rounded-lg overflow-hidden">
+                                        <table className="w-full text-xs">
+                                          <thead>
+                                            <tr className="border-b border-ivory-dark/60 dark:border-white/10 bg-ivory-dark/20 dark:bg-white/5 text-left text-[10px] text-charcoal-muted dark:text-white/50 uppercase tracking-wider">
+                                              <th className="px-3 py-2 font-medium">Date</th>
+                                              <th className="px-3 py-2 font-medium">Type</th>
+                                              <th className="px-3 py-2 font-medium">Before → After</th>
+                                              <th className="px-3 py-2 font-medium">Change</th>
+                                              <th className="px-3 py-2 font-medium">Reason</th>
+                                              <th className="px-3 py-2 font-medium">By</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            {stockHistory[product.id].map((h) => (
+                                              <tr key={h.id} className="border-b border-ivory-dark/30 dark:border-white/5 last:border-0">
+                                                <td className="px-3 py-2 text-charcoal-muted dark:text-white/60 whitespace-nowrap">
+                                                  {new Date(h.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                                                </td>
+                                                <td className="px-3 py-2">
+                                                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-ivory-dark/40 dark:bg-white/10 text-charcoal dark:text-white capitalize">
+                                                    {h.change_type}
+                                                  </span>
+                                                </td>
+                                                <td className="px-3 py-2 text-charcoal dark:text-white whitespace-nowrap">
+                                                  {h.quantity_before} → {h.quantity_after}
+                                                </td>
+                                                <td className="px-3 py-2 font-medium whitespace-nowrap">
+                                                  <span className={cn(h.quantity_change > 0 ? "text-green-600 dark:text-green-400" : "text-rose-600 dark:text-rose-400")}>
+                                                    {h.quantity_change > 0 ? "+" : ""}{h.quantity_change}
+                                                  </span>
+                                                </td>
+                                                <td className="px-3 py-2 text-charcoal-muted dark:text-white/60 max-w-[150px] truncate">
+                                                  {h.reason || "—"}
+                                                </td>
+                                                <td className="px-3 py-2 text-charcoal-muted dark:text-white/60 max-w-[100px] truncate">
+                                                  {h.performed_by ? h.performed_by.slice(0, 8) + "…" : "—"}
+                                                </td>
+                                              </tr>
+                                            ))}
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    )}
                                   </div>
-                                  <div className="text-sm font-semibold text-charcoal dark:text-white">
-                                    {currentStock} units across {product.sizes.length} sizes &times; {product.colors.length} colors
-                                  </div>
-                                  <p className="text-[11px] text-charcoal-muted dark:text-white/50">
-                                    Per-variant stock tracking coming soon. Currently tracking total stock only.
-                                  </p>
-                                </div>
-                              )}
+                                )}
+                              </div>
                             </div>
                           </td>
                         </tr>

@@ -2,7 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import type { User } from "@supabase/supabase-js";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
+import type { StaffRole, Permissions, StaffUser } from "@/types";
+import { getPermissionsForRole } from "@/lib/permissions";
 
 function requiredEnv(name: string): string {
   const value = process.env[name];
@@ -57,8 +59,17 @@ export async function createAdminClient() {
   return createServiceClient();
 }
 
+export interface AdminAuthResult {
+  supabase: ReturnType<typeof createServiceClient>;
+  user: SupabaseUser;
+  profile: { role: string };
+  staffUser: StaffUser | null;
+  staffRole: StaffRole;
+  permissions: Permissions;
+}
+
 export async function requireAdmin(): Promise<
-  { supabase: ReturnType<typeof createServiceClient>; user: User } | { response: NextResponse }
+  AdminAuthResult | { response: NextResponse }
 > {
   const supabase = await createServerSupabase();
   const {
@@ -89,5 +100,48 @@ export async function requireAdmin(): Promise<
     };
   }
 
-  return { supabase: createServiceClient(), user };
+  // Try to get staff_user record (may not exist for legacy admins)
+  const { data: staffUser } = await supabase
+    .from("staff_users")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  const staffRole: StaffRole = staffUser?.role ?? "super_admin";
+  const permissions = getPermissionsForRole(staffRole, staffUser?.permissions as Partial<Permissions> | undefined);
+
+  return {
+    supabase: createServiceClient(),
+    user,
+    profile: profile!,
+    staffUser: staffUser as StaffUser | null,
+    staffRole,
+    permissions,
+  };
+}
+
+/**
+ * Require a specific permission. Returns 403 if the user lacks it.
+ */
+export async function requirePermission(
+  module: string,
+  action: string
+): Promise<AdminAuthResult | { response: NextResponse }> {
+  const auth = await requireAdmin();
+  if ("response" in auth) return auth;
+
+  // Super admins bypass all permission checks
+  if (auth.staffRole === "super_admin") return auth;
+
+  const hasPermission = auth.permissions[module as keyof Permissions]?.[action as keyof Permissions[keyof Permissions]] ?? false;
+  if (!hasPermission) {
+    return {
+      response: NextResponse.json(
+        { success: false, error: "Insufficient permissions" },
+        { status: 403 }
+      ),
+    };
+  }
+
+  return auth;
 }

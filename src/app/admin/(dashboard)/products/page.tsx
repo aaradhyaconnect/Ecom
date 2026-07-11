@@ -43,6 +43,14 @@ interface ProductForm {
   is_new: boolean;
   is_best_seller: boolean;
   is_sale: boolean;
+  sku: string;
+  barcode: string;
+  seo_title: string;
+  seo_description: string;
+  status: "draft" | "published" | "archived";
+  cost_price: string;
+  stock_alert: string;
+  video_url: string;
 }
 
 const emptyForm: ProductForm = {
@@ -62,6 +70,14 @@ const emptyForm: ProductForm = {
   is_new: false,
   is_best_seller: false,
   is_sale: false,
+  sku: "",
+  barcode: "",
+  seo_title: "",
+  seo_description: "",
+  status: "published",
+  cost_price: "",
+  stock_alert: "5",
+  video_url: "",
 };
 
 const ITEMS_PER_PAGE = 12;
@@ -71,6 +87,7 @@ export default function AdminProductsPage() {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [category, setCategory] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
   const [showModal, setShowModal] = useState(false);
@@ -90,6 +107,7 @@ export default function AdminProductsPage() {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (category) params.set("category", category);
+      if (statusFilter) params.set("status", statusFilter);
       params.set("page", String(page));
       params.set("limit", String(ITEMS_PER_PAGE));
       const res = await fetch(`/api/admin/products?${params}`);
@@ -103,7 +121,7 @@ export default function AdminProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, category, page]);
+  }, [search, category, statusFilter, page]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -137,6 +155,14 @@ export default function AdminProductsPage() {
       is_new: product.is_new,
       is_best_seller: product.is_best_seller,
       is_sale: product.is_sale,
+      sku: product.sku || "",
+      barcode: product.barcode || "",
+      seo_title: product.seo_title || "",
+      seo_description: product.seo_description || "",
+      status: product.status || "published",
+      cost_price: product.cost_price?.toString() || "",
+      stock_alert: product.stock_alert?.toString() || "5",
+      video_url: product.video_url || "",
     });
     setShowModal(true);
   };
@@ -158,6 +184,14 @@ export default function AdminProductsPage() {
         images: form.images.filter(Boolean),
         colors: form.colors,
         compare_price: form.compare_price || null,
+        sku: form.sku || undefined,
+        barcode: form.barcode || undefined,
+        seo_title: form.seo_title || undefined,
+        seo_description: form.seo_description || undefined,
+        status: form.status,
+        cost_price: form.cost_price ? parseFloat(form.cost_price) : undefined,
+        stock_alert: parseInt(form.stock_alert) || 5,
+        video_url: form.video_url || undefined,
         ...(editingProduct ? { id: editingProduct.id } : {}),
       };
 
@@ -366,6 +400,19 @@ export default function AdminProductsPage() {
             ...CATEGORIES.map((c) => ({ value: c.id, label: c.name })),
           ]}
         />
+        <Select
+          value={statusFilter}
+          onChange={(e) => {
+            setStatusFilter(e.target.value);
+            setPage(1);
+          }}
+          options={[
+            { value: "", label: "All Status" },
+            { value: "draft", label: "Draft" },
+            { value: "published", label: "Published" },
+            { value: "archived", label: "Archived" },
+          ]}
+        />
       </div>
 
       <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
@@ -462,6 +509,14 @@ export default function AdminProductsPage() {
                             {product.name}
                           </p>
                           <p className="text-xs text-charcoal-muted">{product.slug}</p>
+                          {product.sku && (
+                            <p className="text-[11px] text-charcoal-muted/70">SKU: {product.sku}</p>
+                          )}
+                          <div className="flex gap-1 mt-1">
+                            {product.is_new && <Badge variant="new">New</Badge>}
+                            {product.is_best_seller && <Badge variant="best">Best</Badge>}
+                            {product.is_sale && <Badge variant="sale">Sale</Badge>}
+                          </div>
                         </div>
                       </div>
                     </td>
@@ -526,14 +581,17 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-5 py-3">
-                      <div className="flex gap-1 flex-wrap">
-                        {product.is_new && <Badge variant="new">New</Badge>}
-                        {product.is_best_seller && <Badge variant="best">Best</Badge>}
-                        {product.is_sale && <Badge variant="sale">Sale</Badge>}
-                        {!product.is_new && !product.is_best_seller && !product.is_sale && (
-                          <span className="text-xs text-charcoal-muted">-</span>
-                        )}
-                      </div>
+                      <Badge
+                        variant={
+                          product.status === "published"
+                            ? "success"
+                            : product.status === "archived"
+                            ? "error"
+                            : "default"
+                        }
+                      >
+                        {product.status || "published"}
+                      </Badge>
                     </td>
                     <td className="px-5 py-3 text-charcoal-muted text-xs">
                       {formatDate(product.created_at)}
@@ -749,6 +807,39 @@ export default function AdminProductsPage() {
             />
           </div>
 
+          <div className="border-t border-ivory-dark/60 pt-4">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium mb-3">Inventory</p>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="SKU"
+                value={form.sku}
+                onChange={(e) => setForm((prev) => ({ ...prev, sku: e.target.value }))}
+                placeholder="e.g. HNJ-001"
+              />
+              <Input
+                label="Barcode"
+                value={form.barcode}
+                onChange={(e) => setForm((prev) => ({ ...prev, barcode: e.target.value }))}
+                placeholder="UPC / EAN code"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <Input
+                label="Cost Price (₹)"
+                type="number"
+                value={form.cost_price}
+                onChange={(e) => setForm((prev) => ({ ...prev, cost_price: e.target.value }))}
+                placeholder="Supplier cost"
+              />
+              <Input
+                label="Low Stock Alert"
+                type="number"
+                value={form.stock_alert}
+                onChange={(e) => setForm((prev) => ({ ...prev, stock_alert: e.target.value }))}
+              />
+            </div>
+          </div>
+
           <Input
             label="Material"
             value={form.material}
@@ -796,6 +887,51 @@ export default function AdminProductsPage() {
               <span className="text-sm text-charcoal">On Sale</span>
             </label>
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <Select
+              label="Status"
+              value={form.status}
+              onChange={(e) => setForm((prev) => ({ ...prev, status: e.target.value as ProductForm["status"] }))}
+              options={[
+                { value: "draft", label: "Draft" },
+                { value: "published", label: "Published" },
+                { value: "archived", label: "Archived" },
+              ]}
+            />
+            <Input
+              label="Video URL"
+              value={form.video_url}
+              onChange={(e) => setForm((prev) => ({ ...prev, video_url: e.target.value }))}
+              placeholder="YouTube / Vimeo link"
+            />
+          </div>
+
+          <details className="border-t border-ivory-dark/60 pt-4 group">
+            <summary className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium cursor-pointer select-none list-none flex items-center gap-1 before:content-['▸'] before:text-xs group-open:before:content-['▾']">
+              SEO
+            </summary>
+            <div className="space-y-4 mt-4">
+              <Input
+                label="SEO Title"
+                value={form.seo_title}
+                onChange={(e) => setForm((prev) => ({ ...prev, seo_title: e.target.value }))}
+                placeholder="Optimized title for search engines"
+              />
+              <div>
+                <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
+                  SEO Description
+                </label>
+                <textarea
+                  value={form.seo_description}
+                  onChange={(e) => setForm((prev) => ({ ...prev, seo_description: e.target.value }))}
+                  rows={3}
+                  placeholder="Meta description for search results (150-160 chars recommended)"
+                  className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-gray-900 dark:text-white"
+                />
+              </div>
+            </div>
+          </details>
         </div>
 
         <div className="mt-6 flex justify-end gap-3 border-t border-ivory-dark/60 pt-4">

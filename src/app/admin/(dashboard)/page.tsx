@@ -12,7 +12,7 @@ export default async function AdminDashboardPage() {
   const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0).toISOString();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
 
-  const [ordersAllCount, ordersToday, ordersMonth, ordersLastMonth, orders30d, productsCount, customersCount] = await Promise.all([
+  const [ordersAllCount, ordersToday, ordersMonth, ordersLastMonth, orders30d, productsCount, customersCount, pendingOrders, lowStockProducts] = await Promise.all([
     supabase.from("orders").select("id", { count: "exact", head: true }),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", todayStart),
     supabase.from("orders").select("total, order_status, created_at").gte("created_at", monthStart),
@@ -20,6 +20,8 @@ export default async function AdminDashboardPage() {
     supabase.from("orders").select("total, order_status, created_at, items").gte("created_at", thirtyDaysAgo),
     supabase.from("products").select("*", { count: "exact", head: true }),
     supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "customer"),
+    supabase.from("orders").select("id", { count: "exact", head: true }).in("order_status", ["pending", "confirmed", "processing"]),
+    supabase.from("products").select("id, name, stock, stock_alert, sku, images").lte("stock", 5).gt("stock_alert", 0).order("stock", { ascending: true }).limit(10),
   ]);
 
   const cancelledReturned = new Set(["cancelled", "returned"]);
@@ -100,6 +102,8 @@ export default async function AdminDashboardPage() {
     <DashboardClient
       analytics={analytics}
       recentOrders={(ordersData || []) as Order[]}
+      pendingOrdersCount={pendingOrders.count || 0}
+      lowStockProducts={(lowStockProducts.data || []) as { id: string; name: string; stock: number; stock_alert: number; sku?: string; images?: string[] }[]}
     />
   );
 }
