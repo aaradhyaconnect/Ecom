@@ -628,14 +628,14 @@ export default function AdminProductsPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-charcoal mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
               Description
             </label>
             <textarea
               value={form.description}
               onChange={(e) => setForm((prev) => ({ ...prev, description: e.target.value }))}
               rows={3}
-              className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-charcoal"
+              className="w-full border border-ivory-dark rounded-lg px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory dark:bg-white/5 text-gray-900 dark:text-white"
             />
           </div>
 
@@ -670,7 +670,7 @@ export default function AdminProductsPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-charcoal mb-2">Sizes</label>
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-2">Sizes</label>
             <div className="flex flex-wrap gap-2">
               {SIZES.map((size) => (
                 <button
@@ -691,7 +691,7 @@ export default function AdminProductsPage() {
 
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-charcoal">Colors</label>
+              <label className="block text-sm font-medium text-gray-900 dark:text-white">Colors</label>
               <button
                 type="button"
                 onClick={addColor}
@@ -756,7 +756,7 @@ export default function AdminProductsPage() {
           />
 
           <div>
-            <label className="block text-sm font-medium text-charcoal mb-1">
+            <label className="block text-sm font-medium text-gray-900 dark:text-white mb-1">
               Care Instructions
             </label>
             <textarea

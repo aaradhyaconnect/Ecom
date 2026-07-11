@@ -17,7 +17,7 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("products")
-      .select("id, name, slug, category, stock, price, images, is_new, is_best_seller, is_sale", { count: "exact" })
+      .select("id, name, slug, category, stock, price, images, sizes, colors, is_new, is_best_seller, is_sale", { count: "exact" })
       .order("stock", { ascending: true });
 
     if (search) {
