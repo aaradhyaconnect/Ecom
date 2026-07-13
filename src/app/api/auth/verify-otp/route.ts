@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase } from "@/lib/supabase/server";
 import { rateLimitOtp, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
+import { logger } from "@/lib/logger";
 
 export async function POST(request: Request) {
   cleanupRateLimitMap();
@@ -55,7 +56,7 @@ export async function POST(request: Request) {
             phone,
             role: "customer",
           });
-          if (profileError) console.error("Profile upsert failed:", profileError.message);
+          if (profileError) logger.error("Profile upsert failed", profileError);
         }
       }
 
@@ -95,7 +96,7 @@ export async function POST(request: Request) {
           name: data.user.user_metadata?.name || email.split("@")[0],
           role: "customer",
         });
-        if (profileError) console.error("Profile upsert failed:", profileError.message);
+        if (profileError) logger.error("Profile upsert failed", profileError);
       }
     }
 

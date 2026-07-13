@@ -21,7 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <>
       <ToastProvider />
       {!isAdmin && !isAuth && <Header />}
-      <main className={cn(!isAdmin && !isAuth && "pt-16 lg:pt-20 pb-16 lg:pb-0")}>
+      <main id="main-content" className={cn(!isAdmin && !isAuth && "pt-16 lg:pt-20 pb-16 lg:pb-0")}>
         {children}
       </main>
       {!isAdmin && !isAuth && <Footer />}

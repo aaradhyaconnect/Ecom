@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
+import { logger } from "@/lib/logger";
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
             avatar_url: user.user_metadata?.avatar_url || null,
             role: "customer",
           });
-          if (profileError) console.error("Profile creation failed:", profileError.message);
+          if (profileError) logger.error("Profile creation failed", profileError);
         }
 
         const isAdmin = profile?.role === "admin";

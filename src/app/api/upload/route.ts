@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { uploadImage } from "@/lib/r2";
 import { requireAdmin } from "@/lib/supabase/server";
+import { logger } from "@/lib/logger";
 
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
@@ -42,7 +43,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ success: true, url, key });
   } catch (error) {
-    console.error("Upload error:", error);
+    logger.error("Upload error", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
   }
 }

@@ -78,7 +78,8 @@ export function Header() {
             <button
               className="lg:hidden p-2 -ml-2 relative z-50"
               onClick={toggleMobileMenu}
-              aria-label="Menu"
+              aria-label={isMobileMenuOpen ? "Close menu" : "Menu"}
+              aria-expanded={isMobileMenuOpen}
             >
               <div className="w-5 h-4 flex flex-col justify-between">
                 <span className={cn(
