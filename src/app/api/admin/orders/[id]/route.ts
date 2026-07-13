@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/supabase/server";
+import { sendOrderStatusUpdate } from "@/lib/email";
 import type { Order } from "@/types";
 
 export async function GET(
@@ -167,6 +168,29 @@ export async function PUT(
             });
           }
         }
+      }
+    }
+
+    // Send status update email (non-blocking)
+    if (body.order_status && data) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("id", data.user_id)
+        .single();
+
+      if (profile?.email) {
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://arconstyle.com";
+        sendOrderStatusUpdate({
+          orderId: data.order_id,
+          customerName: profile.name || "Customer",
+          customerEmail: profile.email,
+          status: body.order_status,
+          trackingId: body.tracking_id || data.tracking_id || undefined,
+          courierName: body.courier_name || data.courier_name || undefined,
+          estimatedDelivery: body.estimated_delivery || data.estimated_delivery || undefined,
+          trackingUrl: body.tracking_id ? `${siteUrl}/account/orders/${data.id}` : undefined,
+        }).catch(() => {});
       }
     }
 

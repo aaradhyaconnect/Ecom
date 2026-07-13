@@ -1,9 +1,11 @@
 import { NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/server";
+import { requireAdmin } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const supabase = await createAdminClient();
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
     const { data, error } = await supabase.from("homepage_sections").select("*").order("sort_order");
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     return NextResponse.json({ success: true, data });
@@ -14,7 +16,9 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
-    const supabase = await createAdminClient();
+    const auth = await requireAdmin();
+    if ("response" in auth) return auth.response;
+    const { supabase } = auth;
     const body = await request.json();
     const { sections } = body;
 

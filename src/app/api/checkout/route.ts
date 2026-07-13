@@ -6,6 +6,7 @@ import { createCashfreeOrder, isCashfreeConfigured } from "@/lib/cashfree";
 import type { Product } from "@/types";
 
 import { SHIPPING } from "@/lib/constants/site";
+import { sendOrderConfirmation } from "@/lib/email";
 
 const { THRESHOLD: SHIPPING_THRESHOLD, CHARGE: SHIPPING_CHARGE } = SHIPPING;
 const MAX_ITEM_QUANTITY = 20;
@@ -358,6 +359,26 @@ export async function POST(request: NextRequest) {
         retries--;
       }
     }
+
+    // Send order confirmation email (non-blocking)
+    sendOrderConfirmation({
+      orderId,
+      customerName: shipping_address.name || user.email || "Customer",
+      customerEmail: user.email || "",
+      items: orderItems.map((item) => ({
+        name: item.product.name,
+        quantity: item.quantity,
+        price: item.product.price,
+        size: item.size,
+        color: item.color,
+      })),
+      subtotal,
+      shippingCharge,
+      discount,
+      total,
+      paymentMethod: payment_method,
+      shippingAddress: shipping_address,
+    }).catch(() => {});
 
     return Response.json({
       success: true,

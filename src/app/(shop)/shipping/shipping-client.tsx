@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/Skeleton";
+import { sanitizeHtml } from "@/lib/utils/sanitize";
 
 interface PageData {
   slug: string;
@@ -127,7 +128,7 @@ export function ShippingClient() {
       {pageData?.content ? (
         <div
           className="prose max-w-none text-sm text-charcoal-muted leading-relaxed"
-          dangerouslySetInnerHTML={{ __html: pageData.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(pageData.content) }}
         />
       ) : (
         <FallbackContent />

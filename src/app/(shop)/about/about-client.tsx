@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { SITE } from "@/lib/constants/site";
+import { sanitizeHtml } from "@/lib/utils/sanitize";
 import { Skeleton } from "@/components/ui/Skeleton";
 
 interface PageData {
@@ -111,7 +112,7 @@ export function AboutClient() {
       {pageData?.content ? (
         <div
           className="prose max-w-none text-charcoal-muted"
-          dangerouslySetInnerHTML={{ __html: pageData.content }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(pageData.content) }}
         />
       ) : (
         <FallbackContent />

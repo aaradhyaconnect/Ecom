@@ -55,7 +55,10 @@ export async function GET() {
       email_from_address: "",
     };
 
-    return NextResponse.json({ success: true, data: settings });
+    // Strip secrets before returning
+    const { razorpay_key_secret, cashfree_secret_key, shiprocket_password, ...safeSettings } = settings;
+
+    return NextResponse.json({ success: true, data: safeSettings });
   } catch {
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }
