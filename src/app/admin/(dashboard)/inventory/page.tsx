@@ -118,7 +118,7 @@ export default function InventoryPage() {
     const headers = ["Name", "Category", "Price", "Stock", "Status", "Cost Price", "Stock Alert"];
     const rows = products.map((p) => {
       const stock = edits[p.id] ?? p.stock;
-      const status = stock === 0 ? "Out of Stock" : stock <= 5 ? "Low Stock" : "In Stock";
+      const status = stock === 0 ? "Out of Stock" : stock <= (p.stock_alert || 5) ? "Low Stock" : "In Stock";
       return [
         `"${p.name.replace(/"/g, '""')}"`,
         p.category,
@@ -194,7 +194,7 @@ export default function InventoryPage() {
     });
   };
 
-  const lowStockCount = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
+  const lowStockCount = products.filter((p) => p.stock > 0 && p.stock <= (p.stock_alert || 5)).length;
   const outOfStockCount = products.filter((p) => p.stock === 0).length;
 
   return (
@@ -268,7 +268,7 @@ export default function InventoryPage() {
             <span className="text-sm font-medium">Low Stock</span>
           </div>
           <p className="mt-2 text-3xl font-bold tracking-tight">{lowStockCount}</p>
-          <p className="text-[11px] text-charcoal-muted mt-0.5">1-5 units remaining</p>
+          <p className="text-[11px] text-charcoal-muted mt-0.5">Below alert threshold</p>
         </button>
 
         <button
@@ -434,7 +434,7 @@ export default function InventoryPage() {
                             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-rose-600 bg-rose-50 px-2 py-1 rounded-full">
                               <PackageX className="h-3 w-3" /> Out of Stock
                             </span>
-                          ) : currentStock <= 5 ? (
+                          ) : currentStock <= (product.stock_alert || 5) ? (
                             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-600 bg-amber-50 px-2 py-1 rounded-full">
                               <AlertTriangle className="h-3 w-3" /> Low Stock
                             </span>

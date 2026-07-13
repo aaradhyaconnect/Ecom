@@ -25,7 +25,10 @@ export async function GET() {
       contact_phone: "",
       address: "",
       currency: "INR",
+      currency_symbol: "₹",
       tax_rate: 0,
+      gst_number: "",
+      gst_rate: 0,
       shipping_fee: 0,
       free_shipping_min: 0,
       social_instagram: "",
@@ -35,6 +38,21 @@ export async function GET() {
       seo_title: "Arcon Style - Premium Designer Clothing & Jewellery",
       seo_description: "Shop premium designer clothing and artificial jewellery at Arcon Style.",
       seo_keywords: "fashion, clothing, jewellery, designer, women",
+      logo_url: "",
+      favicon_url: "",
+      promo_popup_enabled: false,
+      promo_popup_title: "",
+      promo_popup_subtitle: "",
+      promo_popup_button_text: "Shop Now",
+      promo_popup_link: "",
+      razorpay_key_id: "",
+      razorpay_key_secret: "",
+      cashfree_app_id: "",
+      cashfree_secret_key: "",
+      shiprocket_email: "",
+      shiprocket_password: "",
+      email_from_name: "",
+      email_from_address: "",
     };
 
     return NextResponse.json({ success: true, data: settings });
@@ -53,9 +71,17 @@ export async function PUT(request: Request) {
 
     const ALLOWED_FIELDS = [
       "store_name", "store_description", "contact_email", "contact_phone", "address",
-      "currency", "tax_rate", "shipping_fee", "free_shipping_min",
+      "currency", "currency_symbol", "tax_rate", "gst_number", "gst_rate",
+      "shipping_fee", "free_shipping_min",
       "social_instagram", "social_facebook", "social_twitter", "social_youtube",
       "seo_title", "seo_description", "seo_keywords",
+      "logo_url", "favicon_url",
+      "promo_popup_enabled", "promo_popup_title", "promo_popup_subtitle",
+      "promo_popup_button_text", "promo_popup_link",
+      "razorpay_key_id", "razorpay_key_secret",
+      "cashfree_app_id", "cashfree_secret_key",
+      "shiprocket_email", "shiprocket_password",
+      "email_from_name", "email_from_address",
     ] as const;
 
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };

@@ -37,7 +37,7 @@ export default function WishlistPage() {
   }, []);
 
   const handleAddToCart = (product: Product) => {
-    const size = product.sizes[0] || "M";
+    const size = product.sizes[0] || "default";
     let colors: { name: string }[] = [];
     if (Array.isArray(product.colors)) colors = product.colors;
     else if (typeof product.colors === "string") { try { colors = JSON.parse(product.colors); } catch { /* ok */ } }

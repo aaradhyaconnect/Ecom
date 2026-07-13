@@ -188,6 +188,8 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const escapeHtml = (str: string) => str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
   const printInvoice = () => {
     if (!selectedOrder) return;
     const o = selectedOrder;
@@ -196,9 +198,9 @@ export default function AdminOrdersPage() {
       .map(
         (item) => `
         <tr>
-          <td>${item.product?.name || "Product"}</td>
-          <td>${item.size}</td>
-          <td>${item.color}</td>
+          <td>${escapeHtml(item.product?.name || "Product")}</td>
+          <td>${escapeHtml(item.size)}</td>
+          <td>${escapeHtml(item.color)}</td>
           <td style="text-align:right">${item.quantity}</td>
           <td style="text-align:right">${formatPrice(item.product?.price || 0)}</td>
         </tr>`
@@ -233,12 +235,12 @@ export default function AdminOrdersPage() {
   </div>
   <div class="addr">
     <strong>Ship to:</strong><br/>
-    ${addr.full_name}<br/>
-    ${addr.street}<br/>
-    ${addr.city}, ${addr.state} - ${addr.pincode}<br/>
-    Phone: ${addr.phone}
+    ${escapeHtml(addr.full_name)}<br/>
+    ${escapeHtml(addr.street)}<br/>
+    ${escapeHtml(addr.city)}, ${escapeHtml(addr.state)} - ${escapeHtml(addr.pincode)}<br/>
+    Phone: ${escapeHtml(addr.phone)}
   </div>
-  <p style="font-size:12px;color:#666;margin-top:24px">Payment: ${o.payment_method} (${o.payment_status})</p>
+  <p style="font-size:12px;color:#666;margin-top:24px">Payment: ${escapeHtml(o.payment_method)} (${escapeHtml(o.payment_status)})</p>
 </body></html>`;
     const w = window.open("", "_blank");
     if (w) {

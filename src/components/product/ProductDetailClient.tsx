@@ -434,7 +434,7 @@ export function ProductDetailClient({
 
           {product.is_prebook && (
             <div className="animate-in slide-up flex items-center gap-2.5 text-[13px] text-charcoal-muted bg-amber-50 border border-amber-200 px-4 py-3 rounded-lg">
-              <span className="text-amber-600 font-medium">₹{product.prebook_amount || 0}</span>
+              <span className="text-amber-600 font-medium">{formatPrice(product.prebook_amount || 0)}</span>
               <span>paid now &middot; remaining {formatPrice(product.price - (product.prebook_amount || 0))} due on delivery</span>
             </div>
           )}

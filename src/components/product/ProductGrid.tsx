@@ -38,6 +38,7 @@ function ProductListItem({ product }: { product: Product }) {
         <div className="absolute top-2 left-2 flex flex-col gap-1">
           {product.is_new && <Badge variant="new">New</Badge>}
           {product.is_sale && discount > 0 && <Badge variant="sale">-{discount}%</Badge>}
+          {product.is_prebook && <Badge variant="warning">Pre-Book</Badge>}
         </div>
       </div>
       <div className="flex-1 min-w-0 flex flex-col justify-between py-1">

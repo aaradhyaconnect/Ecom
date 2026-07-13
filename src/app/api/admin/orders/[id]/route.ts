@@ -116,9 +116,9 @@ export async function PUT(
       updateData.order_status = body.order_status;
     }
 
-    if (body.tracking_id) updateData.tracking_id = body.tracking_id;
-    if (body.courier_name) updateData.courier_name = body.courier_name;
-    if (body.estimated_delivery) updateData.estimated_delivery = body.estimated_delivery;
+    if (body.tracking_id != null) updateData.tracking_id = body.tracking_id || null;
+    if (body.courier_name != null) updateData.courier_name = body.courier_name || null;
+    if (body.estimated_delivery != null) updateData.estimated_delivery = body.estimated_delivery || null;
     if (body.shiprocket_shipment_id != null) updateData.shiprocket_shipment_id = body.shiprocket_shipment_id;
 
     const { data, error } = await supabase
@@ -138,7 +138,7 @@ export async function PUT(
     if (body.order_status === "cancelled" || body.order_status === "returned") {
       const { data: fullOrder } = await supabase
         .from("orders")
-        .select("items")
+        .select("items, order_id")
         .eq("id", id)
         .single();
       if (fullOrder) {
@@ -149,10 +149,22 @@ export async function PUT(
             .eq("id", item.product_id)
             .single();
           if (product) {
+            const newStock = product.stock + item.quantity;
             await supabase
               .from("products")
-              .update({ stock: product.stock + item.quantity })
-              .eq("id", item.product_id);
+              .update({ stock: newStock })
+              .eq("id", item.product_id)
+              .eq("stock", product.stock);
+            await supabase.from("stock_history").insert({
+              product_id: item.product_id,
+              change_type: "return",
+              quantity_before: product.stock,
+              quantity_after: newStock,
+              quantity_change: item.quantity,
+              reason: `${body.order_status === "cancelled" ? "Order cancelled" : "Order returned"} — ${fullOrder.order_id}`,
+              order_id: id,
+              performed_by: auth.user?.id || null,
+            });
           }
         }
       }

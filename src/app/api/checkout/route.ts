@@ -200,7 +200,8 @@ export async function POST(request: NextRequest) {
     const totalBalanceDue = hasPrebookItems
       ? orderItems.reduce((sum, item) => {
           if (item._is_prebook) {
-            return sum + (item.product.price - (item._prebook_amount || 0)) * item.quantity;
+            const deposit = item._prebook_amount || item.product.price;
+            return sum + Math.max(0, item.product.price - deposit) * item.quantity;
           }
           return sum;
         }, 0)

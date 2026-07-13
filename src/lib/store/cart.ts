@@ -41,9 +41,12 @@ export const useCartStore = create<CartStore>()(
               item.color === color
           );
 
+          const isPrebook = (product as Product & { is_prebook?: boolean }).is_prebook || false;
+          const maxQty = isPrebook ? 10 : product.stock;
+
           if (existingIndex > -1) {
             const existing = state.items[existingIndex];
-            const maxAdd = Math.max(0, product.stock - existing.quantity);
+            const maxAdd = Math.max(0, maxQty - existing.quantity);
             const addQty = Math.min(quantity, maxAdd);
             if (addQty <= 0) return state;
             const items = state.items.map((item, i) =>
@@ -52,7 +55,7 @@ export const useCartStore = create<CartStore>()(
             return { items };
           }
 
-          const addQty = Math.min(quantity, product.stock);
+          const addQty = Math.min(quantity, maxQty);
           if (addQty <= 0) return state;
 
           const newItem: CartItem = {
@@ -79,11 +82,13 @@ export const useCartStore = create<CartStore>()(
           get().removeItem(id);
           return;
         }
-        const maxQuantity = 20;
         set((state) => ({
-          items: state.items.map((item) =>
-            item.id === id ? { ...item, quantity: Math.min(quantity, maxQuantity) } : item
-          ),
+          items: state.items.map((item) => {
+            if (item.id !== id) return item;
+            const isPrebook = (item.product as Product & { is_prebook?: boolean }).is_prebook || false;
+            const maxQty = isPrebook ? 10 : Math.min(item.product.stock, 20);
+            return { ...item, quantity: Math.min(quantity, maxQty) };
+          }),
         }));
       },
 
@@ -124,7 +129,8 @@ export const useCartStore = create<CartStore>()(
         set((state) => {
           const item = state.savedItems.find((i) => i.id === id);
           if (!item) return state;
-          if (item.product.stock <= 0) return state;
+          const isPrebook = (item.product as Product & { is_prebook?: boolean }).is_prebook || false;
+          if (!isPrebook && item.product.stock <= 0) return state;
           const existingIndex = state.items.findIndex(
             (i) => i.product_id === item.product_id && i.size === item.size && i.color === item.color
           );

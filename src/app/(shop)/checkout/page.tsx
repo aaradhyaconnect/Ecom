@@ -100,7 +100,8 @@ export default function CheckoutPage() {
   const totalBalanceDue = hasPrebookItems
     ? checkoutItems.reduce((acc, item) => {
         if (item.product.is_prebook) {
-          return acc + (item.product.price - (item.product.prebook_amount || 0)) * item.quantity;
+          const deposit = item.product.prebook_amount || item.product.price;
+          return acc + Math.max(0, item.product.price - deposit) * item.quantity;
         }
         return acc;
       }, 0)
@@ -638,10 +639,10 @@ export default function CheckoutPage() {
                   onClick={handlePlaceOrder}
                   isLoading={isPlacingOrder}
                 >
-                  {paymentMethod === "cod" && !hasPrebookItems
+                  {paymentMethod === "cod" && hasPrebookItems
+                    ? `Place Order — ${formatPrice(total)} deposit`
+                    : paymentMethod === "cod"
                     ? "Place Order"
-                    : paymentMethod === "cod" && hasPrebookItems
-                    ? `Pay ${formatPrice(total)} Deposit`
                     : `Pay ${formatPrice(total)}`}
                 </Button>
               </div>

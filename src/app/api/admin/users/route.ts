@@ -56,6 +56,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: users,
+      current_user_id: auth.user?.id || null,
       total: count || 0,
       page,
       limit,
@@ -90,7 +91,7 @@ export async function POST(request: Request) {
         email,
         password,
         email_confirm: true,
-        user_metadata: { name: display_name, role: "admin" },
+        user_metadata: { name: display_name, role },
       });
 
     if (authError) {

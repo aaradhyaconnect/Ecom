@@ -110,6 +110,11 @@ export function ProductCard({ product, preload }: ProductCardProps) {
                 Best Seller
               </span>
             )}
+            {product.is_prebook && (
+              <span className="inline-flex items-center px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] bg-amber-500 text-white rounded-sm shadow-md">
+                Pre-Book
+              </span>
+            )}
           </div>
 
           {/* Wishlist button */}
@@ -145,7 +150,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
           </div>
 
           {/* Sold Out overlay */}
-          {product.stock <= 0 && (
+          {product.stock <= 0 && !product.is_prebook && (
             <div className="absolute inset-0 bg-charcoal/50 backdrop-blur-[2px] flex items-center justify-center z-20 rounded-lg">
               <span className="text-ivory text-[10px] font-semibold uppercase tracking-[0.3em] bg-charcoal/50 px-6 py-2.5 border border-ivory/10 rounded-sm">
                 Sold Out

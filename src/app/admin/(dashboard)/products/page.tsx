@@ -182,6 +182,11 @@ export default function AdminProductsPage() {
       return;
     }
 
+    if (form.is_prebook && (!form.prebook_amount || parseFloat(form.prebook_amount) <= 0)) {
+      toast.error("Pre-book amount is required when Pre-Book is enabled");
+      return;
+    }
+
     setSaving(true);
     try {
       const payload = {
