@@ -94,6 +94,9 @@ export interface Product {
   stock_alert: number;
   video_url?: string;
   sale_percent?: number;
+  is_prebook: boolean;
+  prebook_amount?: number;
+  prebook_note?: string;
   created_at: string;
   updated_at: string;
 }
@@ -178,6 +181,11 @@ export interface Order {
   estimated_delivery?: string;
   shiprocket_shipment_id?: number;
   awb_code?: string;
+  is_prebook: boolean;
+  prebook_amount: number;
+  balance_amount: number;
+  prebook_status?: "confirmed" | "ready_to_ship" | "shipped" | "delivered" | "balance_collected";
+  prebook_note?: string;
   notes?: string;
   created_at: string;
   updated_at: string;

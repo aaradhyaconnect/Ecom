@@ -46,61 +46,75 @@ export async function PUT(
 
     const body = await request.json();
 
-    if (!body.order_status) {
+    if (!body.order_status && !body.prebook_status) {
       return NextResponse.json(
-        { success: false, error: "order_status is required" },
-        { status: 400 }
-      );
-    }
-
-    const validStatuses = [
-      "pending",
-      "confirmed",
-      "processing",
-      "packed",
-      "shipped",
-      "out-for-delivery",
-      "delivered",
-      "cancelled",
-      "returned",
-    ];
-
-    if (!validStatuses.includes(body.order_status)) {
-      return NextResponse.json(
-        { success: false, error: "Invalid order status" },
-        { status: 400 }
-      );
-    }
-
-    const VALID_TRANSITIONS: Record<string, string[]> = {
-      pending: ["confirmed", "cancelled"],
-      confirmed: ["processing", "packed", "cancelled"],
-      processing: ["packed", "cancelled"],
-      packed: ["shipped", "cancelled"],
-      shipped: ["out-for-delivery"],
-      "out-for-delivery": ["delivered"],
-      delivered: ["returned"],
-      cancelled: [],
-      returned: [],
-    };
-
-    const { data: currentOrder } = await supabase
-      .from("orders")
-      .select("order_status")
-      .eq("id", id)
-      .single();
-
-    if (currentOrder && !VALID_TRANSITIONS[currentOrder.order_status]?.includes(body.order_status)) {
-      return NextResponse.json(
-        { success: false, error: `Cannot transition from "${currentOrder.order_status}" to "${body.order_status}"` },
+        { success: false, error: "order_status or prebook_status is required" },
         { status: 400 }
       );
     }
 
     const updateData: Record<string, unknown> = {
-      order_status: body.order_status,
       updated_at: new Date().toISOString(),
     };
+
+    if (body.prebook_status) {
+      const validPrebookStatuses = ["confirmed", "ready_to_ship", "shipped", "delivered", "balance_collected"];
+      if (!validPrebookStatuses.includes(body.prebook_status)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid prebook status" },
+          { status: 400 }
+        );
+      }
+      updateData.prebook_status = body.prebook_status;
+    }
+
+    if (body.order_status) {
+      const validStatuses = [
+        "pending",
+        "confirmed",
+        "processing",
+        "packed",
+        "shipped",
+        "out-for-delivery",
+        "delivered",
+        "cancelled",
+        "returned",
+      ];
+
+      if (!validStatuses.includes(body.order_status)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid order status" },
+          { status: 400 }
+        );
+      }
+
+      const VALID_TRANSITIONS: Record<string, string[]> = {
+        pending: ["confirmed", "cancelled"],
+        confirmed: ["processing", "packed", "cancelled"],
+        processing: ["packed", "cancelled"],
+        packed: ["shipped", "cancelled"],
+        shipped: ["out-for-delivery"],
+        "out-for-delivery": ["delivered"],
+        delivered: ["returned"],
+        cancelled: [],
+        returned: [],
+      };
+
+      const { data: currentOrder } = await supabase
+        .from("orders")
+        .select("order_status")
+        .eq("id", id)
+        .single();
+
+      if (currentOrder && !VALID_TRANSITIONS[currentOrder.order_status]?.includes(body.order_status)) {
+        return NextResponse.json(
+          { success: false, error: `Cannot transition from "${currentOrder.order_status}" to "${body.order_status}"` },
+          { status: 400 }
+        );
+      }
+
+      updateData.order_status = body.order_status;
+    }
 
     if (body.tracking_id) updateData.tracking_id = body.tracking_id;
     if (body.courier_name) updateData.courier_name = body.courier_name;
@@ -111,7 +125,6 @@ export async function PUT(
       .from("orders")
       .update(updateData)
       .eq("id", id)
-      .eq("order_status", currentOrder?.order_status || body.order_status)
       .select()
       .single();
 

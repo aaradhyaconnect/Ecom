@@ -51,6 +51,9 @@ interface ProductForm {
   cost_price: string;
   stock_alert: string;
   video_url: string;
+  is_prebook: boolean;
+  prebook_amount: string;
+  prebook_note: string;
 }
 
 const emptyForm: ProductForm = {
@@ -78,6 +81,9 @@ const emptyForm: ProductForm = {
   cost_price: "",
   stock_alert: "5",
   video_url: "",
+  is_prebook: false,
+  prebook_amount: "",
+  prebook_note: "",
 };
 
 const ITEMS_PER_PAGE = 12;
@@ -163,6 +169,9 @@ export default function AdminProductsPage() {
       cost_price: product.cost_price?.toString() || "",
       stock_alert: product.stock_alert?.toString() || "5",
       video_url: product.video_url || "",
+      is_prebook: product.is_prebook || false,
+      prebook_amount: product.prebook_amount?.toString() || "",
+      prebook_note: product.prebook_note || "",
     });
     setShowModal(true);
   };
@@ -192,6 +201,9 @@ export default function AdminProductsPage() {
         cost_price: form.cost_price ? parseFloat(form.cost_price) : undefined,
         stock_alert: parseInt(form.stock_alert) || 5,
         video_url: form.video_url || undefined,
+        is_prebook: form.is_prebook,
+        prebook_amount: form.is_prebook && form.prebook_amount ? parseFloat(form.prebook_amount) : null,
+        prebook_note: form.is_prebook ? form.prebook_note || null : null,
         ...(editingProduct ? { id: editingProduct.id } : {}),
       };
 
@@ -516,6 +528,7 @@ export default function AdminProductsPage() {
                             {product.is_new && <Badge variant="new">New</Badge>}
                             {product.is_best_seller && <Badge variant="best">Best</Badge>}
                             {product.is_sale && <Badge variant="sale">Sale</Badge>}
+                            {product.is_prebook && <Badge variant="warning">Pre-Book</Badge>}
                           </div>
                         </div>
                       </div>
@@ -886,7 +899,34 @@ export default function AdminProductsPage() {
               />
               <span className="text-sm text-charcoal">On Sale</span>
             </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={form.is_prebook}
+                onChange={(e) => setForm((prev) => ({ ...prev, is_prebook: e.target.checked }))}
+                className="border-ivory-dark rounded accent-charcoal"
+              />
+              <span className="text-sm text-charcoal">Pre-Book Available</span>
+            </label>
           </div>
+
+          {form.is_prebook && (
+            <div className="grid grid-cols-2 gap-4 bg-amber-50 border border-amber-200 p-4 rounded-lg">
+              <Input
+                label="Pre-Book Amount (₹)"
+                type="number"
+                value={form.prebook_amount}
+                onChange={(e) => setForm((prev) => ({ ...prev, prebook_amount: e.target.value }))}
+                placeholder="Deposit amount customer pays now"
+              />
+              <Input
+                label="Pre-Book Note"
+                value={form.prebook_note}
+                onChange={(e) => setForm((prev) => ({ ...prev, prebook_note: e.target.value }))}
+                placeholder="e.g. Ships in 2-3 weeks"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <Select

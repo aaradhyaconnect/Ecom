@@ -78,8 +78,8 @@ export function ProductDetailClient({
         ((product.compare_price - product.price) / product.compare_price) * 100
       )
     : 0;
-  const inStock = product.stock > 0;
-  const lowStock = product.stock > 0 && product.stock <= 5;
+  const inStock = product.is_prebook || product.stock > 0;
+  const lowStock = !product.is_prebook && product.stock > 0 && product.stock <= 5;
 
   const validateSelection = () => {
     if (!user) {
@@ -203,6 +203,9 @@ export function ProductDetailClient({
               {product.is_best_seller && !product.is_sale && (
                 <Badge variant="best">Best Seller</Badge>
               )}
+              {product.is_prebook && (
+                <Badge variant="warning">Pre-Order — Arriving Soon</Badge>
+              )}
             </div>
           </div>
         </div>
@@ -277,7 +280,9 @@ export function ProductDetailClient({
               )}
             />
             <span className="text-[13px] text-charcoal-muted">
-              {lowStock
+              {product.is_prebook
+                ? "Pre-Order — Arriving Soon"
+                : lowStock
                 ? `Only ${product.stock} left in stock`
                 : inStock
                 ? "In Stock"
@@ -380,8 +385,8 @@ export function ProductDetailClient({
               </button>
               <span className="w-12 text-center font-medium text-charcoal">{quantity}</span>
               <button
-                onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                disabled={quantity >= product.stock}
+                onClick={() => setQuantity(product.is_prebook ? quantity + 1 : Math.min(product.stock, quantity + 1))}
+                disabled={!product.is_prebook && quantity >= product.stock}
                 className="w-10 h-10 border border-ivory-dark rounded-lg flex items-center justify-center hover:bg-ivory-dark/50 disabled:opacity-40 transition-colors"
               >
                 <Plus className="h-4 w-4 text-charcoal-muted" />
@@ -396,7 +401,11 @@ export function ProductDetailClient({
               onClick={handleAddToCart}
               disabled={!inStock}
             >
-              {inStock ? "Add to Cart" : "Out of Stock"}
+              {product.is_prebook
+                ? `Pre-Book Now — Pay ${formatPrice(product.prebook_amount || 0)}`
+                : inStock
+                ? "Add to Cart"
+                : "Out of Stock"}
             </Button>
             <Button
               size="lg"
@@ -405,7 +414,7 @@ export function ProductDetailClient({
               onClick={handleBuyNow}
               disabled={!inStock}
             >
-              Buy Now
+              {product.is_prebook ? "Pre-Book Now" : "Buy Now"}
             </Button>
             <Button
               variant="outline"
@@ -422,6 +431,13 @@ export function ProductDetailClient({
               <Share2 className="h-5 w-5" />
             </Button>
           </div>
+
+          {product.is_prebook && (
+            <div className="animate-in slide-up flex items-center gap-2.5 text-[13px] text-charcoal-muted bg-amber-50 border border-amber-200 px-4 py-3 rounded-lg">
+              <span className="text-amber-600 font-medium">₹{product.prebook_amount || 0}</span>
+              <span>paid now &middot; remaining {formatPrice(product.price - (product.prebook_amount || 0))} due on delivery</span>
+            </div>
+          )}
 
           <div className="animate-in slide-up flex items-center gap-2.5 text-[13px] text-charcoal-muted bg-ivory-dark/30 px-4 py-3 rounded-lg">
             <Truck className="h-5 w-5 flex-shrink-0 text-gold-dark" />
@@ -632,8 +648,13 @@ export function ProductDetailClient({
       {/* Mobile Sticky Add to Cart */}
       <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-3 lg:hidden z-[60]">
         <div className="flex-1 min-w-0">
-          <p className="text-lg font-bold text-charcoal">{formatPrice(product.price)}</p>
-          {product.compare_price && (
+          <p className="text-lg font-bold text-charcoal">
+            {product.is_prebook ? formatPrice(product.prebook_amount || 0) : formatPrice(product.price)}
+          </p>
+          {product.is_prebook && product.prebook_amount && (
+            <p className="text-xs text-amber-600">Deposit — {formatPrice(product.price - product.prebook_amount)} due on delivery</p>
+          )}
+          {!product.is_prebook && product.compare_price && (
             <p className="text-xs text-charcoal-muted line-through">{formatPrice(product.compare_price)}</p>
           )}
         </div>
@@ -644,7 +665,7 @@ export function ProductDetailClient({
           variant="outline"
           className="flex-shrink-0"
         >
-          Buy Now
+          {product.is_prebook ? "Pre-Book" : "Buy Now"}
         </Button>
         <Button
           size="sm"
@@ -652,7 +673,7 @@ export function ProductDetailClient({
           disabled={!inStock}
           className="flex-shrink-0"
         >
-          {inStock ? "Add to Cart" : "Out of Stock"}
+          {product.is_prebook ? "Pre-Book Now" : inStock ? "Add to Cart" : "Out of Stock"}
         </Button>
       </div>
     </div>

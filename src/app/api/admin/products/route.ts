@@ -106,6 +106,9 @@ export async function POST(request: Request) {
       stock_alert: body.stock_alert != null ? Math.max(0, Number(body.stock_alert)) : 5,
       video_url: body.video_url || null,
       sale_percent: body.sale_percent != null ? Number(body.sale_percent) : null,
+      is_prebook: body.is_prebook || false,
+      prebook_amount: body.prebook_amount != null ? Number(body.prebook_amount) : null,
+      prebook_note: body.prebook_note || null,
       rating: 0,
       review_count: 0,
       created_at: new Date().toISOString(),
@@ -156,6 +159,7 @@ export async function PUT(request: Request) {
       "is_new", "is_best_seller", "is_sale", "stock",
       "sku", "barcode", "seo_title", "seo_description", "status",
       "cost_price", "stock_alert", "video_url", "sale_percent",
+      "is_prebook", "prebook_amount", "prebook_note",
     ] as const;
 
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -176,6 +180,7 @@ export async function PUT(request: Request) {
     if (updates.price !== undefined) updates.price = Number(updates.price);
     if (updates.compare_price !== undefined) updates.compare_price = updates.compare_price ? Number(updates.compare_price) : null;
     if (updates.stock !== undefined) updates.stock = Number(updates.stock);
+    if (updates.prebook_amount !== undefined) updates.prebook_amount = updates.prebook_amount != null ? Number(updates.prebook_amount) : null;
 
     const { data, error } = await supabase
       .from("products")

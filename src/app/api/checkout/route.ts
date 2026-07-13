@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     const productIds = [...new Set(items.map((item) => item.product_id))];
     const { data: products, error: productError } = await adminDb
       .from("products")
-      .select("id,name,slug,images,price,stock,sizes,colors")
+      .select("id,name,slug,images,price,stock,sizes,colors,is_prebook,prebook_amount")
       .in("id", productIds);
 
     if (productError || !products || products.length !== productIds.length) {
@@ -149,7 +149,14 @@ export async function POST(request: NextRequest) {
 
     const orderItems = items.map((item) => {
       const product = productsById.get(item.product_id);
-      if (!product || product.stock < item.quantity) {
+      if (!product) {
+        throw new Error("One or more products are unavailable");
+      }
+
+      const isPrebook = (product as Product & { is_prebook?: boolean }).is_prebook || false;
+      const prebookAmount = Number((product as Product & { prebook_amount?: number }).prebook_amount || 0);
+
+      if (!isPrebook && product.stock < item.quantity) {
         throw new Error("One or more products are out of stock");
       }
 
@@ -166,6 +173,8 @@ export async function POST(request: NextRequest) {
         size: item.size,
         color: item.color,
         _stock: product.stock,
+        _is_prebook: isPrebook,
+        _prebook_amount: prebookAmount,
       };
     });
 
@@ -173,7 +182,31 @@ export async function POST(request: NextRequest) {
       (sum, item) => sum + item.product.price * item.quantity,
       0
     );
-    const shippingCharge = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
+
+    const prebookDepositTotal = orderItems.reduce(
+      (sum, item) => {
+        if (item._is_prebook) {
+          return sum + (item._prebook_amount || item.product.price) * item.quantity;
+        }
+        return sum;
+      },
+      0
+    );
+    const regularItemsTotal = orderItems
+      .filter((item) => !item._is_prebook)
+      .reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+    const payNowSubtotal = prebookDepositTotal + regularItemsTotal;
+    const hasPrebookItems = orderItems.some((item) => item._is_prebook);
+    const totalBalanceDue = hasPrebookItems
+      ? orderItems.reduce((sum, item) => {
+          if (item._is_prebook) {
+            return sum + (item.product.price - (item._prebook_amount || 0)) * item.quantity;
+          }
+          return sum;
+        }, 0)
+      : 0;
+
+    const shippingCharge = payNowSubtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
 
     let coupon: CouponRecord | null = null;
     if (couponCode) {
@@ -201,8 +234,8 @@ export async function POST(request: NextRequest) {
       coupon = couponData as CouponRecord;
     }
 
-    const discount = calculateDiscount(coupon, subtotal);
-    const total = Math.max(subtotal + shippingCharge - discount, 0);
+    const discount = calculateDiscount(coupon, payNowSubtotal);
+    const total = Math.max(payNowSubtotal + shippingCharge - discount, 0);
     const orderId = generateOrderId();
     let cashfreeOrder = null;
 
@@ -237,7 +270,8 @@ export async function POST(request: NextRequest) {
       .insert({
         order_id: orderId,
         user_id: user.id,
-        items: orderItems,
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        items: orderItems.map(({ _stock, _is_prebook, _prebook_amount, ...rest }) => rest),
         shipping_address,
         billing_address: shipping_address,
         payment_method,
@@ -249,6 +283,9 @@ export async function POST(request: NextRequest) {
         total,
         coupon_code: coupon?.code || null,
         cashfree_order_id: cashfreeOrder?.cf_order_id || null,
+        is_prebook: hasPrebookItems,
+        prebook_amount: prebookDepositTotal,
+        balance_amount: totalBalanceDue,
       })
       .select()
       .single();
@@ -262,6 +299,8 @@ export async function POST(request: NextRequest) {
 
     const decremented: { id: string; quantity: number }[] = [];
     for (const item of orderItems) {
+      if (item._is_prebook) continue;
+
       const { data: currentProduct } = await adminDb
         .from("products")
         .select("stock")

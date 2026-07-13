@@ -85,19 +85,40 @@ export default function CheckoutPage() {
   const subtotal = isBuyNow
     ? checkoutItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
     : getSubtotal();
-  const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
+
+  const prebookDepositTotal = checkoutItems.reduce((acc, item) => {
+    if (item.product.is_prebook) {
+      return acc + (item.product.prebook_amount || item.product.price) * item.quantity;
+    }
+    return acc;
+  }, 0);
+  const hasPrebookItems = checkoutItems.some((item) => item.product.is_prebook);
+  const regularItemsTotal = checkoutItems
+    .filter((item) => !item.product.is_prebook)
+    .reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+  const payNowSubtotal = prebookDepositTotal + regularItemsTotal;
+  const totalBalanceDue = hasPrebookItems
+    ? checkoutItems.reduce((acc, item) => {
+        if (item.product.is_prebook) {
+          return acc + (item.product.price - (item.product.prebook_amount || 0)) * item.quantity;
+        }
+        return acc;
+      }, 0)
+    : 0;
+
+  const shipping = payNowSubtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_CHARGE;
   const couponCode = searchParams.get("coupon")?.trim().toUpperCase();
 
   const discount = useMemo(() => {
     if (!appliedCoupon) return 0;
     if (appliedCoupon.discount_type === "flat") return appliedCoupon.discount;
-    const calculated = (subtotal * appliedCoupon.discount) / 100;
+    const calculated = (payNowSubtotal * appliedCoupon.discount) / 100;
     return appliedCoupon.max_discount
       ? Math.min(calculated, appliedCoupon.max_discount)
       : calculated;
-  }, [appliedCoupon, subtotal]);
+  }, [appliedCoupon, payNowSubtotal]);
 
-  const total = Math.max(0, subtotal + shipping - discount);
+  const total = Math.max(0, payNowSubtotal + shipping - discount);
 
   useEffect(() => {
     if (!couponCode) return;
@@ -105,7 +126,7 @@ export default function CheckoutPage() {
       .then((r) => r.json())
       .then((data) => {
         if (data.success) {
-          if (subtotal < data.data.min_order) {
+          if (payNowSubtotal < data.data.min_order) {
             setCouponError(`Minimum order value is ${formatPrice(data.data.min_order)}`);
             return;
           }
@@ -118,7 +139,7 @@ export default function CheckoutPage() {
       .catch(() => {
         setCouponError("Failed to validate coupon");
       });
-  }, [couponCode, subtotal]);
+  }, [couponCode, payNowSubtotal]);
 
   const updateAddress = (field: keyof Address, value: string) => {
     setAddress((prev) => ({ ...prev, [field]: value }));
@@ -152,7 +173,7 @@ export default function CheckoutPage() {
       const res = await fetch(`/api/coupons/${couponInput.trim().toUpperCase()}`);
       const data = await res.json();
       if (data.success) {
-        if (subtotal < data.data.min_order) {
+        if (payNowSubtotal < data.data.min_order) {
           setCouponError(`Minimum order value is ${formatPrice(data.data.min_order)}`);
           return;
         }
@@ -440,7 +461,7 @@ export default function CheckoutPage() {
                       <div>
                         <p className="font-medium text-sm text-charcoal">Standard Delivery</p>
                         <p className="text-xs text-charcoal-muted">
-                          {subtotal >= SHIPPING_THRESHOLD
+                          {payNowSubtotal >= SHIPPING_THRESHOLD
                             ? "Free — your order qualifies!"
                             : `${formatPrice(SHIPPING_CHARGE)} delivery charge`}
                         </p>
@@ -617,7 +638,11 @@ export default function CheckoutPage() {
                   onClick={handlePlaceOrder}
                   isLoading={isPlacingOrder}
                 >
-                  {paymentMethod === "cod" ? "Place Order" : `Pay ${formatPrice(total)}`}
+                  {paymentMethod === "cod" && !hasPrebookItems
+                    ? "Place Order"
+                    : paymentMethod === "cod" && hasPrebookItems
+                    ? `Pay ${formatPrice(total)} Deposit`
+                    : `Pay ${formatPrice(total)}`}
                 </Button>
               </div>
             </div>
@@ -661,9 +686,15 @@ export default function CheckoutPage() {
             </div>
 
             <div className="border-t border-ivory-dark pt-4 space-y-2 text-sm">
+              {hasPrebookItems && (
+                <div className="flex justify-between text-charcoal-muted">
+                  <span>Product Total</span>
+                  <span>{formatPrice(subtotal)}</span>
+                </div>
+              )}
               <div className="flex justify-between">
-                <span className="text-charcoal-muted">Subtotal</span>
-                <span className="text-charcoal">{formatPrice(subtotal)}</span>
+                <span className="text-charcoal-muted">Subtotal{hasPrebookItems ? " (Pay Now)" : ""}</span>
+                <span className="text-charcoal">{formatPrice(payNowSubtotal)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-charcoal-muted">Shipping</span>
@@ -682,9 +713,17 @@ export default function CheckoutPage() {
                 </div>
               )}
               <div className="border-t border-ivory-dark pt-2 flex justify-between font-semibold text-base text-charcoal">
-                <span>Total</span>
+                <span>Pay Now</span>
                 <span>{formatPrice(total)}</span>
               </div>
+              {totalBalanceDue > 0 && (
+                <div className="bg-amber-50 border border-amber-200 p-3 rounded-lg mt-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-amber-700 font-medium">Balance Due on Delivery</span>
+                    <span className="text-amber-700 font-semibold">{formatPrice(totalBalanceDue)}</span>
+                  </div>
+                </div>
+              )}
             </div>
 
             <p className="text-xs text-charcoal-muted text-center">

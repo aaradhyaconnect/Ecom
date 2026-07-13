@@ -10,7 +10,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { usePolling } from "@/hooks/usePolling";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
-import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight, MessageSquare, Printer } from "lucide-react";
+import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight, MessageSquare, Printer, Clock } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Order, OrderNote } from "@/types";
 
@@ -411,7 +411,10 @@ export default function AdminOrdersPage() {
                     className="border-b border-ivory-dark/40 last:border-0 hover:bg-ivory-dark/20 transition-colors"
                   >
                     <td className="px-5 py-3 font-medium">
-                      {order.order_id}
+                      <div className="flex items-center gap-2">
+                        <span>{order.order_id}</span>
+                        {order.is_prebook && <Badge variant="warning"><Clock className="h-3 w-3 inline mr-1" />Pre-Book</Badge>}
+                      </div>
                     </td>
                     <td className="px-5 py-3">
                       {(order as unknown as Record<string, unknown>).profiles ? (
@@ -571,6 +574,57 @@ export default function AdminOrdersPage() {
                 <p className="text-sm">{formatDate(selectedOrder.created_at)}</p>
               </div>
             </div>
+
+            {selectedOrder.is_prebook && (
+              <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-semibold text-amber-800">Pre-Book Order</span>
+                </div>
+                <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p className="text-xs text-amber-600 mb-1">Deposit Paid</p>
+                    <p className="font-semibold text-amber-800">{formatPrice(selectedOrder.prebook_amount || 0)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-amber-600 mb-1">Balance Due</p>
+                    <p className="font-semibold text-amber-800">{formatPrice(selectedOrder.balance_amount || 0)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-amber-600 mb-1">Pre-Book Status</p>
+                    <select
+                      value={selectedOrder.prebook_status || "confirmed"}
+                      onChange={async (e) => {
+                        try {
+                          const res = await fetch(`/api/admin/orders/${selectedOrder.id}`, {
+                            method: "PUT",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ prebook_status: e.target.value }),
+                          });
+                          const data = await res.json();
+                          if (data.success) {
+                            setSelectedOrder({ ...selectedOrder, prebook_status: e.target.value as typeof selectedOrder.prebook_status });
+                            toast.success("Pre-book status updated");
+                            fetchOrders();
+                          } else {
+                            toast.error(data.error);
+                          }
+                        } catch {
+                          toast.error("Failed to update");
+                        }
+                      }}
+                      className="px-2 py-1 text-xs font-medium border border-amber-300 rounded bg-white text-amber-800"
+                    >
+                      <option value="confirmed">Confirmed</option>
+                      <option value="ready_to_ship">Ready to Ship</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="balance_collected">Balance Collected</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-ivory-dark/40 p-3 rounded-lg">

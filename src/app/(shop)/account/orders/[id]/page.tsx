@@ -8,7 +8,7 @@ import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink, ArrowLeft } from "lucide-react";
+import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink, ArrowLeft, Clock } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Order, User } from "@/types";
 
@@ -174,6 +174,24 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
         </div>
       )}
 
+      {/* Pre-Book Info Banner */}
+      {order.is_prebook && (
+        <div className="bg-amber-50 border border-amber-200 p-5 mb-6 rounded-lg animate-in fade-in">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-amber-100 flex items-center justify-center rounded-full flex-shrink-0">
+              <Clock className="h-5 w-5 text-amber-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-amber-800">Pre-Book Order</p>
+              <p className="text-sm text-amber-600">
+                Deposit paid: {formatPrice(order.prebook_amount || 0)} &middot; Balance due on delivery: {formatPrice(order.balance_amount || 0)}
+              </p>
+              {order.prebook_note && <p className="text-xs text-amber-500 mt-1">{order.prebook_note}</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Progress Stepper */}
       {!cancelled && !returned && (
         <div className="bg-ivory border border-ivory-dark/60 p-6 mb-6 shadow-sm rounded-lg animate-in fade-in">
@@ -295,7 +313,15 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
             <div className="flex justify-between text-charcoal-muted"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
             <div className="flex justify-between text-charcoal-muted"><span>Shipping</span><span>{order.shipping_charge === 0 ? "Free" : formatPrice(order.shipping_charge)}</span></div>
             {order.discount > 0 && <div className="flex justify-between text-green-600"><span>Discount{order.coupon_code ? ` (${order.coupon_code})` : ""}</span><span>&minus;{formatPrice(order.discount)}</span></div>}
-            <div className="flex justify-between font-bold text-charcoal pt-2 border-t border-ivory-dark/60 text-base"><span>Total</span><span>{formatPrice(order.total)}</span></div>
+            <div className="flex justify-between font-bold text-charcoal pt-2 border-t border-ivory-dark/60 text-base"><span>Total{order.is_prebook ? " (Paid Now)" : ""}</span><span>{formatPrice(order.total)}</span></div>
+            {order.is_prebook && order.balance_amount > 0 && (
+              <div className="bg-amber-100/50 p-3 rounded-lg mt-2">
+                <div className="flex justify-between text-sm text-amber-700 font-medium">
+                  <span>Balance Due on Delivery</span>
+                  <span>{formatPrice(order.balance_amount)}</span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
