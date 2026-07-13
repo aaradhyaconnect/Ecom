@@ -52,7 +52,16 @@ export async function PUT(
 
     const updates: Record<string, unknown> = {};
     if (body.display_name !== undefined) updates.display_name = body.display_name;
-    if (body.role !== undefined) updates.role = body.role;
+    if (body.role !== undefined) {
+      const validRoles = ["staff", "admin", "super_admin"];
+      if (!validRoles.includes(body.role)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid role" },
+          { status: 400 }
+        );
+      }
+      updates.role = body.role;
+    }
     if (body.permissions !== undefined) updates.permissions = body.permissions;
     if (body.is_active !== undefined) updates.is_active = body.is_active;
     updates.updated_at = new Date().toISOString();

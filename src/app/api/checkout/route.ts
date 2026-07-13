@@ -341,11 +341,22 @@ export async function POST(request: NextRequest) {
     }
 
     if (coupon?.code) {
-      await adminDb
-        .from("coupons")
-        .update({ used_count: (coupon.used_count || 0) + 1 })
-        .eq("code", coupon.code)
-        .eq("used_count", coupon.used_count || 0);
+      let retries = 3;
+      while (retries > 0) {
+        const { data: freshCoupon } = await adminDb
+          .from("coupons")
+          .select("used_count")
+          .eq("code", coupon.code)
+          .single();
+        if (!freshCoupon) break;
+        const { error: couponErr } = await adminDb
+          .from("coupons")
+          .update({ used_count: (freshCoupon.used_count || 0) + 1 })
+          .eq("code", coupon.code)
+          .eq("used_count", freshCoupon.used_count || 0);
+        if (!couponErr) break;
+        retries--;
+      }
     }
 
     return Response.json({

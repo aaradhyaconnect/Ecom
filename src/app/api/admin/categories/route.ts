@@ -54,6 +54,19 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString(),
     };
 
+    const { data: existing } = await supabase
+      .from("categories")
+      .select("id")
+      .eq("slug", category.slug)
+      .maybeSingle();
+
+    if (existing) {
+      return NextResponse.json(
+        { success: false, error: "A category with this slug already exists" },
+        { status: 409 }
+      );
+    }
+
     const { data, error } = await supabase
       .from("categories")
       .insert(category)

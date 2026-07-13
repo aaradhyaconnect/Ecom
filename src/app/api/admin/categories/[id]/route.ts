@@ -46,7 +46,21 @@ export async function PUT(
 
     const updates: Record<string, unknown> = {};
     if (body.name !== undefined) updates.name = body.name;
-    if (body.slug !== undefined) updates.slug = body.slug;
+    if (body.slug !== undefined) {
+      const { data: existing } = await supabase
+        .from("categories")
+        .select("id")
+        .eq("slug", body.slug)
+        .neq("id", id)
+        .maybeSingle();
+      if (existing) {
+        return NextResponse.json(
+          { success: false, error: "A category with this slug already exists" },
+          { status: 409 }
+        );
+      }
+      updates.slug = body.slug;
+    }
     if (body.description !== undefined) updates.description = body.description;
     if (body.image !== undefined) updates.image = body.image;
     if (body.sort_order !== undefined) updates.sort_order = body.sort_order;

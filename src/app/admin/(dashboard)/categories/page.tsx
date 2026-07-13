@@ -175,11 +175,10 @@ export default function AdminCategoriesPage() {
   };
 
   const moveCategory = async (index: number, direction: "up" | "down") => {
-    const list = [...filtered];
-    const sourceIdx = categories.indexOf(list[index]);
-    const swapItem = direction === "up" ? list[index - 1] : list[index + 1];
-    if (!swapItem) return;
-    const swapIdx = categories.indexOf(swapItem);
+    const item = filtered[index];
+    const sourceIdx = categories.findIndex((c) => c.id === item.id);
+    const swapIdx = direction === "up" ? sourceIdx - 1 : sourceIdx + 1;
+    if (swapIdx < 0 || swapIdx >= categories.length) return;
 
     const reordered = [...categories];
     const temp = reordered[sourceIdx];

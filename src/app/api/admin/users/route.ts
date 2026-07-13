@@ -84,6 +84,14 @@ export async function POST(request: Request) {
       );
     }
 
+    const validRoles = ["staff", "admin", "super_admin"];
+    if (!validRoles.includes(role)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid role" },
+        { status: 400 }
+      );
+    }
+
     const adminClient = await createAdminClient();
 
     const { data: authData, error: authError } =

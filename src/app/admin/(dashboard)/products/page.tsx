@@ -814,6 +814,8 @@ export default function AdminProductsPage() {
             <Input
               label="Stock"
               type="number"
+              step="1"
+              min="0"
               value={form.stock}
               onChange={(e) => setForm((prev) => ({ ...prev, stock: e.target.value }))}
             />

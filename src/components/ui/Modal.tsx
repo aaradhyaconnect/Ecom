@@ -57,6 +57,13 @@ export function Modal({
     document.addEventListener("keydown", handleEscape);
     document.addEventListener("keydown", handleTab);
 
+    requestAnimationFrame(() => {
+      const firstInput = contentRef.current?.querySelector<HTMLElement>(
+        'input:not([type="hidden"]), textarea, select, button:not([aria-label="Close modal"])'
+      );
+      firstInput?.focus();
+    });
+
     return () => {
       document.removeEventListener("keydown", handleEscape);
       document.removeEventListener("keydown", handleTab);
