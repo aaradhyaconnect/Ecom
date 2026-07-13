@@ -1,13 +1,16 @@
 import type { MetadataRoute } from "next";
-import { SITE } from "@/lib/constants/site";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://arconstyle.com";
+
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-      disallow: ["/admin", "/api/", "/offline", "/search"],
-    },
-    sitemap: `${SITE.url}/sitemap.xml`,
+    rules: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/admin", "/api/", "/account", "/checkout", "/cart"],
+      },
+    ],
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

@@ -114,10 +114,22 @@ export async function PUT(
         .eq("id", item.product_id)
         .single();
       if (product) {
+        const newStock = product.stock + item.quantity;
         await adminDb
           .from("products")
-          .update({ stock: product.stock + item.quantity })
-          .eq("id", item.product_id);
+          .update({ stock: newStock })
+          .eq("id", item.product_id)
+          .eq("stock", product.stock);
+        await adminDb.from("stock_history").insert({
+          product_id: item.product_id,
+          change_type: "return",
+          quantity_before: product.stock,
+          quantity_after: newStock,
+          quantity_change: item.quantity,
+          reason: `Order cancelled by customer — ${order.order_id}`,
+          order_id: order.id,
+          performed_by: user.id,
+        });
       }
     }
 

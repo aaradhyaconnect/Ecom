@@ -11,7 +11,14 @@ export async function GET() {
       .order("sort_order");
 
     if (error) return NextResponse.json({ success: false, error: error.message }, { status: 400 });
-    return NextResponse.json({ success: true, data });
+    return NextResponse.json(
+      { success: true, data },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      }
+    );
   } catch {
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
   }

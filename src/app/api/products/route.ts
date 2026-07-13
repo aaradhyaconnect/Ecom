@@ -31,10 +31,17 @@ export async function GET(request: NextRequest) {
       colors,
     });
 
-    return Response.json({
-      success: true,
-      data: result,
-    });
+    return Response.json(
+      {
+        success: true,
+        data: result,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300",
+        },
+      }
+    );
   } catch (_error) {
     const message =
       _error instanceof Error ? _error.message : "Failed to fetch products";
