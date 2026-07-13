@@ -97,3 +97,15 @@ export async function getCashfreePayments(
 export function isCashfreeConfigured(): boolean {
   return Boolean(process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY);
 }
+
+export async function terminateCashfreeOrder(
+  orderId: string
+): Promise<void> {
+  try {
+    await cashfreeRequest(`/orders/${orderId}/terminate`, {
+      method: "POST",
+    });
+  } catch {
+    // Terminate is best-effort — don't fail checkout if it fails
+  }
+}

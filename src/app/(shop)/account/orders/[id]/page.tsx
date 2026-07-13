@@ -12,7 +12,7 @@ import { Check, X, Package, Truck, MapPin, CreditCard, ExternalLink, ArrowLeft, 
 import toast from "react-hot-toast";
 import type { Order, User } from "@/types";
 
-const STATUS_FLOW = ["pending", "confirmed", "packed", "shipped", "out-for-delivery", "delivered"];
+const STATUS_FLOW = ["pending", "confirmed", "processing", "packed", "shipped", "out-for-delivery", "delivered"];
 function getCurrentStep(status: string) { return STATUS_FLOW.indexOf(status); }
 function isCancelable(status: string) { return ["pending", "confirmed"].includes(status); }
 

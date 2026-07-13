@@ -144,6 +144,7 @@ export async function PUT(
         .single();
       if (fullOrder) {
         for (const item of fullOrder.items) {
+          if (item._is_prebook) continue;
           const { data: product } = await supabase
             .from("products")
             .select("stock")

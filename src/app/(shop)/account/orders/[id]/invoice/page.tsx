@@ -98,7 +98,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
             <h2 className="text-xl font-bold text-charcoal">INVOICE</h2>
             <p className="text-sm text-gray-500 mt-1">#{order.order_id}</p>
             <p className="text-xs text-gray-400 mt-1">Date: {formatDate(order.created_at)}</p>
-            <p className="text-xs text-gray-400">Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : "Online (Razorpay)"}</p>
+            <p className="text-xs text-gray-400">Payment: {order.payment_method === "cod" ? "Cash on Delivery" : order.payment_method === "cashfree" ? "Online (Cashfree)" : order.payment_method === "upi" ? "UPI Payment" : "Online"}</p>
             <p className="text-xs text-gray-400">Status: {order.payment_status?.toUpperCase()}</p>
           </div>
         </div>
@@ -148,7 +148,13 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
             <div className="flex justify-between text-sm"><span className="text-gray-500">Shipping</span><span className="text-charcoal">{order.shipping_charge === 0 ? "FREE" : formatPrice(order.shipping_charge)}</span></div>
             {(order.discount ?? 0) > 0 && <div className="flex justify-between text-sm"><span className="text-gray-500">Discount</span><span className="text-green-600">-{formatPrice(order.discount!)}</span></div>}
             {order.coupon_code && <div className="flex justify-between text-xs"><span className="text-gray-400">Coupon ({order.coupon_code})</span><span className="text-green-600">Applied</span></div>}
-            <div className="flex justify-between text-base font-bold border-t border-gray-200 pt-2"><span className="text-charcoal">Total</span><span className="text-charcoal">{formatPrice(order.total)}</span></div>
+            <div className="flex justify-between text-base font-bold border-t border-gray-200 pt-2"><span className="text-charcoal">Total{order.is_prebook ? " (Paid Now)" : ""}</span><span className="text-charcoal">{formatPrice(order.total)}</span></div>
+            {order.is_prebook && order.balance_amount > 0 && (
+              <div className="flex justify-between text-sm text-amber-700 font-medium mt-2">
+                <span>Balance Due on Delivery</span>
+                <span>{formatPrice(order.balance_amount)}</span>
+              </div>
+            )}
           </div>
         </div>
 

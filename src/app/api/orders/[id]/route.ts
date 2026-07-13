@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createServerSupabase, createAdminClient } from "@/lib/supabase/server";
+import { sendOrderStatusUpdate } from "@/lib/email";
 
 export async function GET(
   _request: Request,
@@ -105,9 +106,10 @@ export async function PUT(
       );
     }
 
-    // Always restore stock on cancellation
+    // Restore stock on cancellation (skip prebook items — never decremented)
     const adminDb = await createAdminClient();
     for (const item of order.items) {
+      if (item._is_prebook) continue;
       const { data: product } = await adminDb
         .from("products")
         .select("stock")
@@ -131,6 +133,21 @@ export async function PUT(
           performed_by: user.id,
         });
       }
+    }
+
+    // Send cancellation email (non-blocking)
+    const { data: profile } = await adminDb
+      .from("profiles")
+      .select("name, email")
+      .eq("id", user.id)
+      .single();
+    if (profile?.email) {
+      sendOrderStatusUpdate({
+        orderId: order.order_id,
+        customerName: profile.name || "Customer",
+        customerEmail: profile.email,
+        status: "cancelled",
+      }).catch(() => {});
     }
 
     return NextResponse.json({

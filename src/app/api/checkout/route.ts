@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { createServerSupabase, createAdminClient } from "@/lib/supabase/server";
 import { generateOrderId } from "@/lib/utils/format";
 import { rateLimitCheckout, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
-import { createCashfreeOrder, isCashfreeConfigured } from "@/lib/cashfree";
+import { createCashfreeOrder, isCashfreeConfigured, terminateCashfreeOrder } from "@/lib/cashfree";
 import type { Product } from "@/types";
 
 import { SHIPPING } from "@/lib/constants/site";
@@ -315,6 +315,7 @@ export async function POST(request: NextRequest) {
           if (p) await adminDb.from("products").update({ stock: p.stock + d.quantity }).eq("id", d.id);
         }
         await adminDb.from("orders").delete().eq("id", order.id);
+        if (cashfreeOrder) terminateCashfreeOrder(orderId).catch(() => {});
         return Response.json(
           { success: false, error: "Insufficient stock. Please try again." },
           { status: 400 }
@@ -333,6 +334,7 @@ export async function POST(request: NextRequest) {
           if (p) await adminDb.from("products").update({ stock: p.stock + d.quantity }).eq("id", d.id);
         }
         await adminDb.from("orders").delete().eq("id", order.id);
+        if (cashfreeOrder) terminateCashfreeOrder(orderId).catch(() => {});
         return Response.json(
           { success: false, error: "Insufficient stock. Please try again." },
           { status: 400 }
@@ -363,7 +365,7 @@ export async function POST(request: NextRequest) {
     // Send order confirmation email (non-blocking)
     sendOrderConfirmation({
       orderId,
-      customerName: shipping_address.name || user.email || "Customer",
+      customerName: shipping_address.full_name || user.email || "Customer",
       customerEmail: user.email || "",
       items: orderItems.map((item) => ({
         name: item.product.name,

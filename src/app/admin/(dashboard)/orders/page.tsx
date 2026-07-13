@@ -116,7 +116,6 @@ export default function AdminOrdersPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          order_status: selectedOrder.order_status,
           ...trackingForm,
         }),
       });

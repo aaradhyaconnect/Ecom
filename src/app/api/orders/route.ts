@@ -21,7 +21,8 @@ export async function GET() {
       .from("orders")
       .select("*")
       .eq("user_id", user.id)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(100);
 
     if (error) {
       return NextResponse.json(
