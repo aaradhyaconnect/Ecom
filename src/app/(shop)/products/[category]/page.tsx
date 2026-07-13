@@ -4,6 +4,12 @@ import { getProducts } from "@/lib/supabase/queries";
 import { ProductListingClient } from "@/components/product/ProductListingClient";
 import type { Product } from "@/types";
 
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  return CATEGORIES.map((c) => ({ category: c.slug }));
+}
+
 interface Props {
   params: Promise<{ category: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;

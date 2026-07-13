@@ -1,7 +1,8 @@
+import type { Metadata } from "next";
 import { SITE } from "@/lib/constants/site";
 import { Mail, MapPin } from "lucide-react";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Careers",
   description: "Join the Arcon Style team. Explore open positions in fashion design, marketing, and more.",
   alternates: { canonical: "/careers" },

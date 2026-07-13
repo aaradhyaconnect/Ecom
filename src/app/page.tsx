@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { HeroBanner } from "@/components/home/HeroBanner";
 import { CategoryShowcase } from "@/components/home/CategoryShowcase";
 import { EditorialCollection } from "@/components/home/EditorialCollection";
@@ -10,6 +11,11 @@ import { CustomerReviews } from "@/components/home/CustomerReviews";
 import { getBanners } from "@/lib/supabase/queries";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  description: "Discover premium self-designed clothing and exquisite artificial jewellery at Arcon Style. Shop new arrivals, best sellers, and exclusive collections.",
+  alternates: { canonical: "/" },
+};
 
 export default async function HomePage() {
   let bannerSlides;

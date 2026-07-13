@@ -1,12 +1,23 @@
 import type { Metadata } from "next";
 import { Suspense, cache } from "react";
 import { notFound } from "next/navigation";
-import { getProduct, getRelatedProducts } from "@/lib/supabase/queries";
+import { getProduct, getRelatedProducts, getProducts } from "@/lib/supabase/queries";
 import { ProductDetailClient } from "@/components/product/ProductDetailClient";
 import { ProductDetailSkeleton } from "@/components/ui/Skeleton";
 import type { Product } from "@/types";
 
 const cachedGetProduct = cache(getProduct);
+
+export const revalidate = 60;
+
+export async function generateStaticParams() {
+  try {
+    const result = await getProducts({ limit: 100 });
+    return result.products.map((p: Product) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
 
 interface Props {
   params: Promise<{ slug: string }>;
