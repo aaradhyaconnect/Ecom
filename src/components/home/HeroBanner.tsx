@@ -68,7 +68,7 @@ export function HeroBanner({ initialSlides }: { initialSlides?: BannerSlide[] })
       });
     }, 6000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [slides.length, current]);
 
   const slide = slides[current];
   const isRight = slide.textPosition === "right";

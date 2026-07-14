@@ -544,6 +544,7 @@ export default function AdminProductsPage() {
                     <td className="px-5 py-3">
                       {editingField?.id === product.id && editingField.field === "price" ? (
                         <input
+                          key={`price-${product.id}-${product.price}`}
                           autoFocus
                           type="number"
                           defaultValue={product.price}
@@ -574,6 +575,7 @@ export default function AdminProductsPage() {
                     <td className="px-5 py-3">
                       {editingField?.id === product.id && editingField.field === "stock" ? (
                         <input
+                          key={`stock-${product.id}-${product.stock}`}
                           autoFocus
                           type="number"
                           defaultValue={product.stock}

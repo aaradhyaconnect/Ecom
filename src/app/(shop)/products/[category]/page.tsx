@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { CATEGORIES } from "@/lib/constants/categories";
 import { getProducts } from "@/lib/supabase/queries";
 import { ProductListingClient } from "@/components/product/ProductListingClient";
@@ -77,6 +78,8 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   }
 
   return (
-    <ProductListingClient category={category} initialProducts={result} />
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-charcoal border-t-transparent" /></div>}>
+      <ProductListingClient category={category} initialProducts={result} />
+    </Suspense>
   );
 }

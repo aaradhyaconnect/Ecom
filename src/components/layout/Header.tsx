@@ -55,6 +55,7 @@ export function Header() {
   const isSolid = isScrolled || !isHome;
 
   async function handleLogout() {
+    useAuthStore.setState({ user: null, loading: false });
     await fetch("/api/auth/set-session", { method: "DELETE", headers: { "Content-Type": "application/json" } }).catch(() => {});
     window.location.href = "/";
   }

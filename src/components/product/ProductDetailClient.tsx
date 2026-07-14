@@ -111,12 +111,16 @@ export function ProductDetailClient({
   };
 
   const handleShare = async () => {
-    const url = window.location.href;
-    if (navigator.share) {
-      await navigator.share({ title: product.name, url });
-    } else {
-      await navigator.clipboard.writeText(url);
-      toast.success("Link copied to clipboard!");
+    try {
+      const url = window.location.href;
+      if (navigator.share) {
+        await navigator.share({ title: product.name, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied to clipboard!");
+      }
+    } catch {
+      // User cancelled share or clipboard not available — ignore
     }
   };
 

@@ -125,7 +125,7 @@ export default function AdminCustomersPage() {
       });
       const data = await res.json();
       if (data.success) {
-        toast.success(`Customer ${action}ned`);
+        toast.success(`Customer ${action}ed`);
         fetchCustomers();
       } else {
         toast.error(data.error || `Failed to ${action}`);
@@ -153,8 +153,9 @@ export default function AdminCustomersPage() {
 
   const exportCustomers = () => {
     const headers = ["Name", "Email", "Phone", "Role", "Orders", "Total Spent", "Joined"];
+    const escapeCsv = (val: string) => val.includes(",") || val.includes('"') ? `"${val.replace(/"/g, '""')}"` : val;
     const rows = customers.map((c) => [
-      c.name,
+      escapeCsv(c.name),
       c.email,
       c.phone || "",
       c.role || "customer",

@@ -48,6 +48,10 @@ export function ProductCard({ product, preload }: ProductCardProps) {
       window.location.href = "/login";
       return;
     }
+    if (product.stock <= 0) {
+      toast.error("Out of stock");
+      return;
+    }
     if (product.sizes.length > 0 && colors.length > 0) {
       addItem(product, 1, product.sizes[0], colors[0].name);
     } else if (product.sizes.length > 0) {

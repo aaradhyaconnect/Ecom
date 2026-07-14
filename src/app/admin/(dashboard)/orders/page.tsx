@@ -630,24 +630,24 @@ export default function AdminOrdersPage() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-ivory-dark/40 p-3 rounded-lg">
                 <p className="text-xs font-medium text-charcoal-muted mb-1">Shipping Address</p>
-                <p className="text-sm">{selectedOrder.shipping_address.full_name}</p>
-                <p className="text-sm">{selectedOrder.shipping_address.phone}</p>
-                <p className="text-sm">{selectedOrder.shipping_address.street}</p>
+                <p className="text-sm">{selectedOrder.shipping_address?.full_name || "—"}</p>
+                <p className="text-sm">{selectedOrder.shipping_address?.phone || "—"}</p>
+                <p className="text-sm">{selectedOrder.shipping_address?.street || "—"}</p>
                 <p className="text-sm">
-                  {selectedOrder.shipping_address.city},{" "}
-                  {selectedOrder.shipping_address.state} -{" "}
-                  {selectedOrder.shipping_address.pincode}
+                  {selectedOrder.shipping_address?.city || "—"},{" "}
+                  {selectedOrder.shipping_address?.state || "—"} -{" "}
+                  {selectedOrder.shipping_address?.pincode || "—"}
                 </p>
               </div>
               <div className="bg-ivory-dark/40 p-3 rounded-lg">
                 <p className="text-xs font-medium text-charcoal-muted mb-1">Billing Address</p>
-                <p className="text-sm">{selectedOrder.billing_address.full_name}</p>
-                <p className="text-sm">{selectedOrder.billing_address.phone}</p>
-                <p className="text-sm">{selectedOrder.billing_address.street}</p>
+                <p className="text-sm">{selectedOrder.billing_address?.full_name || "—"}</p>
+                <p className="text-sm">{selectedOrder.billing_address?.phone || "—"}</p>
+                <p className="text-sm">{selectedOrder.billing_address?.street || "—"}</p>
                 <p className="text-sm">
-                  {selectedOrder.billing_address.city},{" "}
-                  {selectedOrder.billing_address.state} -{" "}
-                  {selectedOrder.billing_address.pincode}
+                  {selectedOrder.billing_address?.city || "—"},{" "}
+                  {selectedOrder.billing_address?.state || "—"} -{" "}
+                  {selectedOrder.billing_address?.pincode || "—"}
                 </p>
               </div>
             </div>

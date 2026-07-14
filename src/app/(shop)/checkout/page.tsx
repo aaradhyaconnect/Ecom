@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import { useSearchParams, usePathname } from "next/navigation";
 import { useCartStore } from "@/lib/store/cart";
 import { useAuthStore } from "@/lib/store/auth";
@@ -54,7 +54,7 @@ const initialAddress: Address = {
   pincode: "",
 };
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { items, getSubtotal, clearCart } = useCartStore();
@@ -283,7 +283,12 @@ export default function CheckoutPage() {
         }
 
         const mode = process.env.NEXT_PUBLIC_CASHFREE_MODE === "production" ? "production" : "sandbox";
-        const cashfree = window.Cashfree!({ mode });
+        const cashfree = window.Cashfree?.({ mode });
+        if (!cashfree) {
+          toast.error("Payment gateway not loaded. Please refresh and try again.");
+          setIsPlacingOrder(false);
+          return;
+        }
         await cashfree.checkout({ paymentSessionId, redirectTarget: "_self" });
       }
     } catch {
@@ -741,5 +746,13 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="h-8 w-8 animate-spin rounded-full border-2 border-charcoal border-t-transparent" /></div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 }

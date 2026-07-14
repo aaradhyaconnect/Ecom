@@ -148,6 +148,10 @@ export default function InventoryPage() {
   };
 
   const handleStockInput = (id: string, value: string) => {
+    if (value === "" || value === "-") {
+      setEdits((prev) => ({ ...prev, [id]: 0 }));
+      return;
+    }
     const num = parseInt(value, 10);
     if (!isNaN(num) && num >= 0) {
       setEdits((prev) => ({ ...prev, [id]: num }));
