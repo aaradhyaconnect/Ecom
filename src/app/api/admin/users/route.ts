@@ -16,7 +16,7 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("staff_users")
-      .select("*, profiles(email)", { count: "exact" })
+      .select("*", { count: "exact" })
       .order("created_at", { ascending: false });
 
     if (search) {
@@ -39,6 +39,18 @@ export async function GET(request: Request) {
       );
     }
 
+    const userIds = (data || []).map((u) => u.user_id).filter(Boolean);
+    let emailMap: Record<string, string> = {};
+    if (userIds.length > 0) {
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, email")
+        .in("id", userIds);
+      (profiles || []).forEach((p) => {
+        emailMap[p.id] = p.email;
+      });
+    }
+
     const users = (data || []).map((u) => ({
       id: u.id,
       user_id: u.user_id,
@@ -48,7 +60,7 @@ export async function GET(request: Request) {
       permissions: u.permissions,
       is_active: u.is_active,
       last_login: u.last_login,
-      email: (u.profiles as { email?: string } | null)?.email ?? null,
+      email: emailMap[u.user_id] || null,
       created_at: u.created_at,
       updated_at: u.updated_at,
     }));
@@ -99,7 +111,7 @@ export async function POST(request: Request) {
         email,
         password,
         email_confirm: true,
-        user_metadata: { name: display_name, role },
+        user_metadata: { name: display_name, role: "admin" },
       });
 
     if (authError) {

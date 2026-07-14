@@ -14,6 +14,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "pub-bfd52c501031474e9474ff3c3b7e3ca5.r2.dev",
+      },
+      {
+        protocol: "https",
         hostname: "lh3.googleusercontent.com",
       },
       {
@@ -38,7 +42,7 @@ const nextConfig: NextConfig = {
               "default-src 'self'",
               "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://www.googletagmanager.com https://www.clarity.ms https://js.razorpay.com https://accounts.google.com https://browser.sentry-cdn.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "img-src 'self' data: blob: https://*.r2.cloudflarestorage.com https://pub-5f274d699fd14be18a8456b06f1732ec.r2.dev https://images.unsplash.com https://lh3.googleusercontent.com",
+              "img-src 'self' data: blob: https://*.r2.cloudflarestorage.com https://pub-5f274d699fd14be18a8456b06f1732ec.r2.dev https://pub-bfd52c501031474e9474ff3c3b7e3ca5.r2.dev https://images.unsplash.com https://lh3.googleusercontent.com",
               "font-src 'self' https://fonts.gstatic.com",
               "connect-src 'self' https://sqknikmhacxvugkmfqgd.supabase.co https://api.razorpay.com https://apiv2.shiprocket.in https://www.google-analytics.com https://www.clarity.ms https://*.sentry.io",
               "frame-src 'self' https://api.razorpay.com https://accounts.google.com",
