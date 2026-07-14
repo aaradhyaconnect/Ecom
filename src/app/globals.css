@@ -115,6 +115,15 @@ a, button, [role="button"], select, label[for] {
   100% { background-position: 200% 0%; }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-33.333%); }
+}
+
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
 /* ===== ANIMATION UTILITIES ===== */
 .animate-in {
   animation-duration: 0.5s;

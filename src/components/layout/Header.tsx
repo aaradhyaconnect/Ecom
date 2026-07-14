@@ -21,6 +21,7 @@ import { useHydrated } from "@/hooks/useHydrated";
 import { NAV_LINKS, SITE } from "@/lib/constants/site";
 import { CartDrawer } from "./CartDrawer";
 import { SearchModal } from "./SearchModal";
+import { AnnouncementBar } from "./AnnouncementBar";
 
 export function Header() {
   const pathname = usePathname();
@@ -66,13 +67,15 @@ export function Header() {
 
   return (
     <>
+      <AnnouncementBar />
       <header
         className={cn(
-          "fixed top-0 left-0 right-0 z-40 transition-all duration-500",
+          "fixed left-0 right-0 z-40 transition-all duration-500",
           isSolid
             ? "bg-white/95 backdrop-blur-lg shadow-sm py-2"
             : "bg-gradient-to-b from-black/40 via-black/20 to-transparent backdrop-blur-sm py-4"
         )}
+        style={{ top: "var(--header-top, 0px)" }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-12 lg:h-16">
