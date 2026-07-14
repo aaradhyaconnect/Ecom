@@ -52,7 +52,7 @@ export async function getProducts({
   if (colors && colors.length > 0) {
     const safeColors = colors.map((c) => c.replace(/[^a-zA-Z0-9 ]/g, ""));
     const colorConditions = safeColors.map(
-      (c) => `colors::text.ilike.%"name":"${c}"%`
+      (c) => `colors::text.ilike.%${c}%`
     );
     query = query.or(colorConditions.join(","));
   }

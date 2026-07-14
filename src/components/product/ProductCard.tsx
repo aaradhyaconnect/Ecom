@@ -48,7 +48,7 @@ export function ProductCard({ product, preload }: ProductCardProps) {
       window.location.href = "/login";
       return;
     }
-    if (product.stock <= 0) {
+    if (product.stock <= 0 && !product.is_prebook) {
       toast.error("Out of stock");
       return;
     }

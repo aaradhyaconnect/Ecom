@@ -101,7 +101,7 @@ export default function WishlistPage() {
               </Link>
               <Link href={`/product/${product.slug}`} className="block">
                 <h3 className="text-sm font-medium text-charcoal truncate group-hover:text-gold transition-colors">{product.name}</h3>
-                <p className="text-xs text-charcoal-muted mt-0.5 capitalize">{product.category.replace("-", " ")}</p>
+                <p className="text-xs text-charcoal-muted mt-0.5 capitalize">{product.category.replace(/-/g, " ")}</p>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-sm font-semibold text-charcoal">{formatPrice(product.price)}</span>
                   {product.compare_price && <span className="text-xs text-charcoal-muted line-through">{formatPrice(product.compare_price)}</span>}

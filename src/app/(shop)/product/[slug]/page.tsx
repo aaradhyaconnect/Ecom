@@ -74,9 +74,11 @@ function ProductJsonLd({ product }: { product: Product }) {
       "@type": "Offer",
       price: product.price,
       priceCurrency: "INR",
-      availability: product.stock > 0
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
+      availability: product.is_prebook
+        ? "https://schema.org/PreOrder"
+        : product.stock > 0
+          ? "https://schema.org/InStock"
+          : "https://schema.org/OutOfStock",
     },
     ...(product.rating > 0 && product.review_count > 0 && {
       aggregateRating: {

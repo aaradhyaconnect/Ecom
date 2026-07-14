@@ -59,6 +59,23 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Delete items no longer in local cart
+    if (sanitized.length > 0) {
+      const { data: serverItems } = await supabase
+        .from("cart_items")
+        .select("id, product_id, size, color")
+        .eq("user_id", user.id);
+
+      if (serverItems) {
+        const toDelete = serverItems.filter(
+          (si) => !sanitized.some((s) => s.product_id === si.product_id && s.size === si.size && s.color === si.color)
+        );
+        if (toDelete.length > 0) {
+          await supabase.from("cart_items").delete().in("id", toDelete.map((d) => d.id));
+        }
+      }
+    }
+
     return Response.json({ success: true, message: "Cart saved" });
   } catch {
     return Response.json(

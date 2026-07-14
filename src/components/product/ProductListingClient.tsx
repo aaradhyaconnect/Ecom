@@ -71,6 +71,31 @@ export function ProductListingClient({
   const currentMaterials = searchParams.get("materials")?.split(",").filter(Boolean) || [];
   const currentTags = searchParams.get("tags")?.split(",").filter(Boolean) || [];
 
+  const filteredProducts = useMemo(() => {
+    let products = initialProducts.products;
+    if (currentMinRating) {
+      const minR = Number(currentMinRating);
+      products = products.filter((p) => p.rating >= minR);
+    }
+    if (currentMinDiscount) {
+      const minD = Number(currentMinDiscount);
+      products = products.filter((p) => p.compare_price && ((p.compare_price - p.price) / p.compare_price) * 100 >= minD);
+    }
+    if (currentMaterials.length > 0) {
+      products = products.filter((p) => {
+        const productMaterial = p.material || "";
+        return currentMaterials.some((m) => productMaterial.toLowerCase().includes(m.toLowerCase()));
+      });
+    }
+    if (currentTags.length > 0) {
+      products = products.filter((p) => {
+        const productTags = Array.isArray(p.tags) ? p.tags : [];
+        return currentTags.some((t) => productTags.includes(t));
+      });
+    }
+    return products;
+  }, [initialProducts.products, currentMinRating, currentMinDiscount, currentMaterials, currentTags]);
+
   const buildHref = useCallback(
     (updates: Record<string, string | undefined>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -658,7 +683,7 @@ export function ProductListingClient({
 
         <div className="flex-1 min-w-0">
           <ProductGrid
-            products={initialProducts.products}
+            products={filteredProducts}
             columns={3}
             viewMode={viewMode}
           />

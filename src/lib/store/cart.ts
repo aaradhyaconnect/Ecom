@@ -86,7 +86,7 @@ export const useCartStore = create<CartStore>()(
           items: state.items.map((item) => {
             if (item.id !== id) return item;
             const isPrebook = (item.product as Product & { is_prebook?: boolean }).is_prebook || false;
-            const maxQty = isPrebook ? 10 : Math.min(item.product.stock, 20);
+            const maxQty = isPrebook ? 10 : item.product.stock;
             return { ...item, quantity: Math.min(quantity, maxQty) };
           }),
         }));

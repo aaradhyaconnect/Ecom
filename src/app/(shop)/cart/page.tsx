@@ -226,8 +226,9 @@ export default function CartPage() {
                     </span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      disabled={item.product.is_prebook ? item.quantity >= 10 : item.quantity >= item.product.stock}
                       aria-label="Increase quantity"
-                      className="p-1.5 hover:bg-charcoal/5 transition-colors"
+                      className="p-1.5 hover:bg-charcoal/5 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                     >
                       <Plus className="h-4 w-4" />
                     </button>
@@ -371,8 +372,11 @@ export default function CartPage() {
 
             <div className="border-t border-ivory-dark pt-4">
               {appliedCoupon ? (
-                <div className="flex items-center justify-between bg-green-50 text-green-700 px-3 py-2 text-sm">
-                  <span className="font-medium">{appliedCoupon.code}</span>
+                <div className={`flex items-center justify-between px-3 py-2 text-sm ${isCouponExpired ? "bg-amber-50 text-amber-700" : "bg-green-50 text-green-700"}`}>
+                  <span className="font-medium">
+                    {appliedCoupon.code}
+                    {isCouponExpired && <span className="text-xs ml-1">(min ₹{appliedCoupon.min_order})</span>}
+                  </span>
                   <button
                     onClick={handleRemoveCoupon}
                     className="text-green-600 hover:text-green-800"

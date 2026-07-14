@@ -84,20 +84,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Failed to submit review" }, { status: 500 });
     }
 
-    // Update product rating and review count (only approved reviews)
-    const { data: approvedReviews } = await supabase
+    // Update product rating and review count (include the new review)
+    const { data: allReviews } = await supabase
       .from("reviews")
       .select("rating")
-      .eq("product_id", product_id)
-      .eq("is_approved", true);
+      .eq("product_id", product_id);
 
-    if (approvedReviews && approvedReviews.length > 0) {
-      const avgRating = approvedReviews.reduce((sum, r) => sum + r.rating, 0) / approvedReviews.length;
+    if (allReviews && allReviews.length > 0) {
+      const avgRating = allReviews.reduce((sum, r) => sum + r.rating, 0) / allReviews.length;
       await supabase
         .from("products")
         .update({
           rating: Math.round(avgRating * 100) / 100,
-          review_count: approvedReviews.length,
+          review_count: allReviews.length,
           updated_at: new Date().toISOString(),
         })
         .eq("id", product_id);

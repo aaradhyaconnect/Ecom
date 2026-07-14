@@ -293,6 +293,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (error) {
+      if (cashfreeOrder) terminateCashfreeOrder(orderId).catch(() => {});
       return Response.json(
         { success: false, error: "Failed to create order" },
         { status: 500 }
@@ -322,13 +323,15 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const { error: decError } = await adminDb
+      const { error: decError, count } = await adminDb
         .from("products")
         .update({ stock: currentProduct.stock - item.quantity })
         .eq("id", item.product_id)
-        .eq("stock", currentProduct.stock);
+        .eq("stock", currentProduct.stock)
+        .select()
+        .then((res) => ({ error: res.error, count: res.data?.length ?? 0 }));
 
-      if (decError) {
+      if (decError || count === 0) {
         for (const d of decremented) {
           const { data: p } = await adminDb.from("products").select("stock").eq("id", d.id).single();
           if (p) await adminDb.from("products").update({ stock: p.stock + d.quantity }).eq("id", d.id);

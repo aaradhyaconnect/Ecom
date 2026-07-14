@@ -100,12 +100,20 @@ export function ProductDetailClient({
 
   const handleAddToCart = () => {
     if (!validateSelection()) return;
+    if (!inStock) {
+      toast.error("Product is out of stock");
+      return;
+    }
     addItem(product, quantity, selectedSize || "default", selectedColor || "default");
     toast.success("Added to cart!");
   };
 
   const handleBuyNow = () => {
     if (!validateSelection()) return;
+    if (!inStock) {
+      toast.error("Product is out of stock");
+      return;
+    }
     addItem(product, quantity, selectedSize || "default", selectedColor || "default");
     window.location.href = "/checkout?buyNow=true";
   };
@@ -669,7 +677,7 @@ export function ProductDetailClient({
           variant="outline"
           className="flex-shrink-0"
         >
-          {product.is_prebook ? "Pre-Book" : "Buy Now"}
+          Buy Now
         </Button>
         <Button
           size="sm"
@@ -677,7 +685,7 @@ export function ProductDetailClient({
           disabled={!inStock}
           className="flex-shrink-0"
         >
-          {product.is_prebook ? "Pre-Book Now" : inStock ? "Add to Cart" : "Out of Stock"}
+          {inStock ? "Add to Cart" : "Out of Stock"}
         </Button>
       </div>
     </div>

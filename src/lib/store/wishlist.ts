@@ -35,8 +35,14 @@ export const useWishlistStore = create<WishlistStore>()(
         const exists = get().items.some((item) => item.id === product.id);
         if (exists) {
           get().removeItem(product.id);
+          fetch(`/api/wishlist?product_id=${product.id}`, { method: "DELETE" }).catch(() => {});
         } else {
           get().addItem(product);
+          fetch("/api/wishlist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ product_id: product.id }),
+          }).catch(() => {});
         }
       },
 

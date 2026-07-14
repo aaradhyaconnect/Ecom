@@ -102,8 +102,9 @@ export function CartDrawer() {
                             <span className="px-3 text-xs font-medium">{item.quantity}</span>
                             <button
                               onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                              disabled={item.product.is_prebook ? item.quantity >= 10 : item.quantity >= item.product.stock}
                               aria-label="Increase quantity"
-                              className="p-1.5 hover:bg-ivory-dark transition-colors"
+                              className="p-1.5 hover:bg-ivory-dark transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                             >
                               <Plus className="h-3 w-3" />
                             </button>

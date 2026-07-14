@@ -80,7 +80,7 @@ function CheckoutContent() {
   const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
 
   const isBuyNow = searchParams.get("buyNow") === "true";
-  const checkoutItems = isBuyNow && items.length > 0 ? [items[items.length - 1]] : items;
+  const checkoutItems = isBuyNow && items.length > 0 ? [items.find((i) => i.product_id === items[items.length - 1].product_id && i.size === items[items.length - 1].size && i.color === items[items.length - 1].color) || items[items.length - 1]] : items;
 
   const subtotal = isBuyNow
     ? checkoutItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
@@ -306,7 +306,18 @@ function CheckoutContent() {
     if (step > 1) setStep((step - 1) as Step);
   };
 
-  if (!mounted || authLoading || !user) return null;
+  if (!mounted || authLoading) return null;
+
+  if (!user) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center px-4">
+        <p className="text-charcoal-muted mb-4">Please log in to continue checkout</p>
+        <Link href={`/login?redirect=${encodeURIComponent("/checkout" + (isBuyNow ? "?buyNow=true" : ""))}`}>
+          <Button>Log In</Button>
+        </Link>
+      </div>
+    );
+  }
 
   if (checkoutItems.length === 0 && !orderPlaced) {
     return (
