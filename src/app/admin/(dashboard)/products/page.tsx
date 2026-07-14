@@ -144,6 +144,24 @@ export default function AdminProductsPage() {
 
   const openEdit = (product: Product) => {
     setEditingProduct(product);
+    let parsedColors: { name: string; hex: string }[] = [];
+    if (Array.isArray(product.colors)) {
+      parsedColors = product.colors;
+    } else if (typeof product.colors === "string") {
+      try { parsedColors = JSON.parse(product.colors); } catch { parsedColors = []; }
+    }
+    let parsedSizes: string[] = [];
+    if (Array.isArray(product.sizes)) {
+      parsedSizes = product.sizes;
+    } else if (typeof product.sizes === "string") {
+      try { parsedSizes = JSON.parse(product.sizes); } catch { parsedSizes = []; }
+    }
+    let parsedTags: string[] = [];
+    if (Array.isArray(product.tags)) {
+      parsedTags = product.tags;
+    } else if (typeof product.tags === "string") {
+      try { parsedTags = JSON.parse(product.tags); } catch { parsedTags = []; }
+    }
     setForm({
       name: product.name,
       description: product.description,
@@ -151,10 +169,10 @@ export default function AdminProductsPage() {
       compare_price: product.compare_price ? String(product.compare_price) : "",
       category: product.category,
       subcategory: product.subcategory || "",
-      sizes: product.sizes,
-      colors: product.colors,
-      images: product.images.length > 0 ? product.images : [],
-      tags: product.tags.join(", "),
+      sizes: parsedSizes,
+      colors: parsedColors,
+      images: product.images?.length > 0 ? product.images : [],
+      tags: parsedTags.join(", "),
       stock: String(product.stock),
       material: product.material || "",
       care_instructions: product.care_instructions || "",
