@@ -111,8 +111,7 @@ export async function POST(request: Request) {
 
     const { error: profileError } = await adminClient
       .from("profiles")
-      .update({ role: "admin", name: display_name })
-      .eq("id", authData.user.id);
+      .upsert({ id: authData.user.id, role: "admin", name: display_name }, { onConflict: "id" });
 
     if (profileError) {
       return NextResponse.json(

@@ -185,8 +185,8 @@ export default function UsersPage() {
   };
 
   const handleAdd = async () => {
-    if (!addForm.email || !addForm.password || !addForm.display_name) {
-      toast.error("Email, password, and display name are required");
+    if (!addForm.email || !addForm.password || !addForm.display_name || !addForm.username) {
+      toast.error("Email, password, display name, and username are required");
       return;
     }
     setAdding(true);
