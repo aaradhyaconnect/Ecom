@@ -199,204 +199,161 @@ export default function LoginPage() {
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="w-full max-w-6xl relative">
-        {/* Top brand for mobile/tablet */}
-        <div className="text-center mb-6 xl:hidden">
+      <div className="w-full max-w-md relative">
+        {/* Brand */}
+        <div className="text-center mb-8">
           <h1 className="text-2xl font-serif font-bold tracking-[0.35em] text-charcoal">ARCON STYLE</h1>
           <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark mt-2">Premium Collections</p>
           <div className="w-8 h-[1px] bg-gold/60 mx-auto mt-3" />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 flex overflow-hidden min-h-[500px] sm:min-h-[600px]">
-          {/* Left Panel - Branding (xl+ only) */}
-          <div className="hidden xl:flex xl:w-[42%] bg-gradient-to-br from-charcoal via-charcoal to-[#1a1a1a] relative flex-col justify-between p-10 2xl:p-12 text-white overflow-hidden flex-shrink-0">
-            {/* Decorative circles */}
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-gold/8 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3" />
-              <div className="absolute bottom-0 left-0 w-64 h-64 bg-gold/8 rounded-full blur-3xl translate-y-1/3 -translate-x-1/3" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] border border-white/[0.03] rounded-full" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[350px] border border-white/[0.03] rounded-full" />
-            </div>
-
-            <div className="relative z-10">
-              <div>
-                <h2 className="text-3xl 2xl:text-4xl font-serif font-bold tracking-[0.2em] leading-tight">ARCON<br />STYLE</h2>
-                <div className="w-10 h-[1px] bg-gold/60 mt-4 mb-6" />
-              </div>
-              <p className="text-white/50 text-sm leading-relaxed max-w-xs">
-                Discover curated luxury fashion that defines modern elegance. Timeless pieces crafted for the discerning individual.
-              </p>
-            </div>
-
-            <div className="relative z-10 space-y-4">
-              {[
-                "Exclusive member-only collections",
-                "Free shipping on orders above ₹999",
-                "Easy 7-day returns",
-              ].map((text) => (
-                <div key={text} className="flex items-center gap-3 text-white/40 text-sm">
-                  <div className="w-1.5 h-1.5 rounded-full bg-gold/60 flex-shrink-0" />
-                  <span>{text}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="relative z-10 mt-8">
-              <p className="text-[10px] text-white/20 uppercase tracking-[0.3em]">&copy; {new Date().getFullYear()} Arcon Style</p>
-            </div>
+        <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 p-6 sm:p-8">
+          <div className="mb-6 sm:mb-8">
+            <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Welcome back</span>
+            <h2 className="text-2xl font-serif font-bold text-charcoal mt-2">Sign In</h2>
+            <p className="text-charcoal-muted text-sm mt-2">
+              {authMethod === "password" ? "Enter your credentials to continue" : "Enter your phone or email to get OTP"}
+            </p>
           </div>
 
-          {/* Right Panel - Form */}
-          <div className="w-full xl:w-[58%] p-6 sm:p-8 lg:p-10 xl:p-12 flex flex-col justify-center">
-            <div className="w-full max-w-lg mx-auto xl:mx-0 xl:max-w-none">
-              <div className="mb-6 sm:mb-8">
-                <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Welcome back</span>
-                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-charcoal mt-2">Sign In</h1>
-                <p className="text-charcoal-muted text-sm mt-2">
-                  {authMethod === "password" ? "Enter your credentials to continue" : "Enter your phone or email to get OTP"}
-                </p>
-              </div>
+          {/* Auth method tabs */}
+          <div className="flex bg-ivory-dark/30 rounded-lg p-1 mb-6 sm:mb-8">
+            <button
+              onClick={() => setAuthMethod("password")}
+              className={`flex-1 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase rounded-md transition-all duration-200 ${
+                authMethod === "password"
+                  ? "bg-white text-charcoal shadow-sm"
+                  : "text-charcoal-muted hover:text-charcoal"
+              }`}
+            >
+              Password
+            </button>
+            <button
+              onClick={() => setAuthMethod("otp")}
+              className={`flex-1 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase rounded-md transition-all duration-200 ${
+                authMethod === "otp"
+                  ? "bg-white text-charcoal shadow-sm"
+                  : "text-charcoal-muted hover:text-charcoal"
+              }`}
+            >
+              OTP
+            </button>
+          </div>
 
-              {/* Auth method tabs */}
-              <div className="flex bg-ivory-dark/30 rounded-lg p-1 mb-6 sm:mb-8">
-                <button
-                  onClick={() => setAuthMethod("password")}
-                  className={`flex-1 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase rounded-md transition-all duration-200 ${
-                    authMethod === "password"
-                      ? "bg-white text-charcoal shadow-sm"
-                      : "text-charcoal-muted hover:text-charcoal"
-                  }`}
-                >
-                  Password
-                </button>
-                <button
-                  onClick={() => setAuthMethod("otp")}
-                  className={`flex-1 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase rounded-md transition-all duration-200 ${
-                    authMethod === "otp"
-                      ? "bg-white text-charcoal shadow-sm"
-                      : "text-charcoal-muted hover:text-charcoal"
-                  }`}
-                >
-                  OTP
-                </button>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
-                {authMethod === "password" ? (
-                  <>
-                    <Input
-                      label="Email"
-                      type="email"
-                      placeholder="you@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      icon={<Mail className="h-4 w-4" />}
-                    />
-                    <div className="relative">
-                      <Input
-                        label="Password"
-                        type={showPassword ? "text" : "password"}
-                        placeholder="Enter your password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        icon={<Lock className="h-4 w-4" />}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-[38px] text-charcoal-muted hover:text-charcoal transition-colors"
-                        aria-label={showPassword ? "Hide password" : "Show password"}
-                      >
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                    </div>
-                    <div className="flex justify-end">
-                      <Link href="/forgot-password" className="text-xs text-gold hover:text-gold-dark transition-colors">
-                        Forgot password?
-                      </Link>
-                    </div>
-                  </>
+          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
+            {authMethod === "password" ? (
+              <>
+                <Input
+                  label="Email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  icon={<Mail className="h-4 w-4" />}
+                />
+                <div className="relative">
+                  <Input
+                    label="Password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    icon={<Lock className="h-4 w-4" />}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-[38px] text-charcoal-muted hover:text-charcoal transition-colors"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+                <div className="flex justify-end">
+                  <Link href="/forgot-password" className="text-xs text-gold hover:text-gold-dark transition-colors">
+                    Forgot password?
+                  </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                {/* OTP channel tabs */}
+                <div className="flex bg-ivory-dark/30 rounded-lg p-1">
+                  <button
+                    type="button"
+                    onClick={() => setOtpChannel("email")}
+                    className={`flex-1 py-2 text-xs font-semibold tracking-[0.1em] uppercase rounded-md transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                      otpChannel === "email"
+                        ? "bg-white text-charcoal shadow-sm"
+                        : "text-charcoal-muted hover:text-charcoal"
+                    }`}
+                  >
+                    <Mail className="h-3.5 w-3.5" /> Email
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setOtpChannel("phone")}
+                    className={`flex-1 py-2 text-xs font-semibold tracking-[0.1em] uppercase rounded-md transition-all duration-200 flex items-center justify-center gap-1.5 ${
+                      otpChannel === "phone"
+                        ? "bg-white text-charcoal shadow-sm"
+                        : "text-charcoal-muted hover:text-charcoal"
+                    }`}
+                  >
+                    <Phone className="h-3.5 w-3.5" /> Phone
+                  </button>
+                </div>
+                {otpChannel === "email" ? (
+                  <Input
+                    label="Email"
+                    type="email"
+                    placeholder="you@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    icon={<Mail className="h-4 w-4" />}
+                  />
                 ) : (
-                  <>
-                    {/* OTP channel tabs */}
-                    <div className="flex bg-ivory-dark/30 rounded-lg p-1">
-                      <button
-                        type="button"
-                        onClick={() => setOtpChannel("email")}
-                        className={`flex-1 py-2 text-xs font-semibold tracking-[0.1em] uppercase rounded-md transition-all duration-200 flex items-center justify-center gap-1.5 ${
-                          otpChannel === "email"
-                            ? "bg-white text-charcoal shadow-sm"
-                            : "text-charcoal-muted hover:text-charcoal"
-                        }`}
-                      >
-                        <Mail className="h-3.5 w-3.5" /> Email
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setOtpChannel("phone")}
-                        className={`flex-1 py-2 text-xs font-semibold tracking-[0.1em] uppercase rounded-md transition-all duration-200 flex items-center justify-center gap-1.5 ${
-                          otpChannel === "phone"
-                            ? "bg-white text-charcoal shadow-sm"
-                            : "text-charcoal-muted hover:text-charcoal"
-                        }`}
-                      >
-                        <Phone className="h-3.5 w-3.5" /> Phone
-                      </button>
-                    </div>
-                    {otpChannel === "email" ? (
-                      <Input
-                        label="Email"
-                        type="email"
-                        placeholder="you@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        icon={<Mail className="h-4 w-4" />}
-                      />
-                    ) : (
-                      <Input
-                        label="Phone Number"
-                        type="tel"
-                        placeholder="98765 43210"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        icon={<Phone className="h-4 w-4" />}
-                      />
-                    )}
-                  </>
+                  <Input
+                    label="Phone Number"
+                    type="tel"
+                    placeholder="98765 43210"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    icon={<Phone className="h-4 w-4" />}
+                  />
                 )}
+              </>
+            )}
 
-                <Button type="submit" fullWidth isLoading={isLoading} size="lg">
-                  {authMethod === "password" ? "Sign In" : "Send OTP"}
-                </Button>
-              </form>
+            <Button type="submit" fullWidth isLoading={isLoading} size="lg">
+              {authMethod === "password" ? "Sign In" : "Send OTP"}
+            </Button>
+          </form>
 
-              <div className="relative my-6 sm:my-8">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-ivory-dark" />
-                </div>
-                <div className="relative flex justify-center">
-                  <span className="bg-white px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted">or continue with</span>
-                </div>
-              </div>
-
-              <Button type="button" variant="outline" fullWidth size="lg" isLoading={isLoading} onClick={handleGoogleLogin}>
-                <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
-                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
-                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-                </svg>
-                Google
-              </Button>
-
-              <p className="mt-6 sm:mt-8 text-center text-sm text-charcoal-muted">
-                Don&apos;t have an account?{" "}
-                <Link href={`/signup?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
-                  Create one
-                </Link>
-              </p>
+          <div className="relative my-6 sm:my-8">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-ivory-dark" />
+            </div>
+            <div className="relative flex justify-center">
+              <span className="bg-white px-4 text-[11px] uppercase tracking-[0.2em] text-charcoal-muted">or continue with</span>
             </div>
           </div>
+
+          <Button type="button" variant="outline" fullWidth size="lg" isLoading={isLoading} onClick={handleGoogleLogin}>
+            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
+            </svg>
+            Google
+          </Button>
+
+          <p className="mt-6 sm:mt-8 text-center text-sm text-charcoal-muted">
+            Don&apos;t have an account?{" "}
+            <Link href={`/signup?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
+              Create one
+            </Link>
+          </p>
         </div>
       </div>
     </div>
