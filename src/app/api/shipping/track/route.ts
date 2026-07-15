@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { requireAdmin } from "@/lib/supabase/server";
-import { trackShipment } from "@/lib/shiprocket";
+import { trackShipment, trackByAWB } from "@/lib/shiprocket";
 
 export async function GET(request: NextRequest) {
   try {
@@ -8,16 +8,20 @@ export async function GET(request: NextRequest) {
     if ("response" in auth) return auth.response;
 
     const { searchParams } = new URL(request.url);
-    const shipmentId = searchParams.get("shipment_id");
+    const q = searchParams.get("q") || searchParams.get("shipment_id");
 
-    if (!shipmentId) {
-      return Response.json(
-        { success: false, error: "shipment_id is required" },
-        { status: 400 }
-      );
+    if (!q) {
+      return Response.json({ success: false, error: "Query parameter required" }, { status: 400 });
     }
 
-    const tracking = await trackShipment(Number(shipmentId));
+    let tracking;
+    const trimmed = q.trim();
+
+    if (/^\d+$/.test(trimmed)) {
+      tracking = await trackShipment(Number(trimmed));
+    } else {
+      tracking = await trackByAWB(trimmed);
+    }
 
     return Response.json({ success: true, data: tracking });
   } catch (error: unknown) {

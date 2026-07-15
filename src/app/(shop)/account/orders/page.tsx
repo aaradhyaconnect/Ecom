@@ -7,7 +7,7 @@ import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Button } from "@/components/ui/Button";
 import { Skeleton } from "@/components/ui/Skeleton";
-import { Package, ChevronRight } from "lucide-react";
+import { Package, ChevronRight, Truck } from "lucide-react";
 import type { Order, User } from "@/types";
 
 export default function OrdersPage() {
@@ -102,6 +102,12 @@ export default function OrdersPage() {
                   <div className="flex items-center gap-3 mb-2">
                     <span className="font-mono text-sm text-charcoal-muted">#{order.order_id}</span>
                     <span className={`inline-flex items-center px-2.5 py-0.5 text-xs font-medium ${getStatusStyle(order.order_status)}`}>{getStatusLabel(order.order_status)}</span>
+                    {order.tracking_id && (
+                      <span className="inline-flex items-center gap-1 text-xs text-charcoal-muted">
+                        <Truck className="h-3 w-3" />
+                        {order.courier_name || "Shipped"} — {order.tracking_id}
+                      </span>
+                    )}
                   </div>
                   <p className="text-sm text-charcoal-muted">{formatDate(order.created_at)} &middot; {order.items.length} item{order.items.length !== 1 ? "s" : ""}</p>
                   <p className="text-lg font-semibold text-charcoal mt-1">{formatPrice(order.total)}</p>

@@ -23,7 +23,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
   const [order, setOrder] = useState<Order | null>(null);
   const [fetching, setFetching] = useState(true);
   const [cancelling, setCancelling] = useState(false);
-  const [trackingEvents, setTrackingEvents] = useState<{ status: string; location: string; timestamp: string }[]>([]);
+  const [trackingEvents, setTrackingEvents] = useState<{ status: string; location: string; date: string }[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -76,7 +76,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/api/tracking?order_id=${order.id}`);
+        const res = await fetch(`/api/public/track?order_id=${order.order_id}`);
         const data = await res.json();
         if (!cancelled && data.success && data.data?.events?.length > 0) {
           setTrackingEvents(data.data.events);
@@ -84,7 +84,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
       } catch { /* ok */ }
     })();
     return () => { cancelled = true; };
-  }, [order?.id, order?.tracking_id]);
+  }, [order?.id, order?.tracking_id, order?.order_id]);
 
   async function handleCancel() {
     if (!order) return;
@@ -239,11 +239,15 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                 {order.courier_name && <p className="text-xs text-charcoal-muted/60">{order.courier_name}</p>}
               </div>
             </div>
-            <a href={`https://shiprocket.co/tracking/${order.shiprocket_shipment_id || order.tracking_id}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.1em] font-semibold text-gold-dark hover:text-gold transition-colors group">
-              Track <ExternalLink className="h-3.5 w-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
           </div>
           {order.estimated_delivery && <p className="text-sm text-charcoal-muted mt-3">Estimated delivery: {formatDate(order.estimated_delivery)}</p>}
+
+          <div className="bg-ivory-dark/50 p-4 rounded-lg mt-4">
+            <p className="text-xs text-charcoal-muted mb-2">Track on your phone</p>
+            <p className="text-sm font-mono font-medium text-charcoal">{order.tracking_id}</p>
+            <p className="text-xs text-charcoal-muted mt-1">Use this tracking ID on the courier&apos;s website or app</p>
+          </div>
+
           {trackingEvents.length > 0 && (
             <div className="mt-5 border-t border-ivory-dark/60 pt-5">
               <p className="text-xs uppercase tracking-[0.15em] font-medium text-charcoal-muted mb-3">Tracking Updates</p>
@@ -253,7 +257,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ id: stri
                     <div className={`w-2.5 h-2.5 rounded-full mt-1 flex-shrink-0 transition-all ${idx === 0 ? "bg-green-500 ring-2 ring-green-500/20" : "bg-charcoal/15"}`} />
                     <div>
                       <p className="text-sm font-medium text-charcoal">{event.status}</p>
-                      <p className="text-xs text-charcoal-muted">{event.location} &middot; {new Date(event.timestamp).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}</p>
+                      <p className="text-xs text-charcoal-muted">{event.location} &middot; {event.date}</p>
                     </div>
                   </div>
                 ))}

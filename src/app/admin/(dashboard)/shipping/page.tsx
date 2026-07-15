@@ -256,7 +256,7 @@ export default function ShippingPage() {
                       <div className="flex items-center justify-end gap-1">
                         {s.tracking_id && (
                           <button
-                            onClick={() => { setTrackSearch(s.tracking_id); setActiveTab("track"); }}
+                            onClick={() => { setTrackSearch(String(s.shiprocket_shipment_id || s.tracking_id)); setActiveTab("track"); }}
                             className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
                             title="Track"
                           >
@@ -471,7 +471,7 @@ export default function ShippingPage() {
     setTrackError("");
     setTrackingData(null);
     try {
-      const res = await fetch(`/api/shipping/track?shipment_id=${trackSearch.trim()}`);
+      const res = await fetch(`/api/shipping/track?q=${encodeURIComponent(trackSearch.trim())}`);
       const data = await res.json();
       if (data.success) {
         setTrackingData(data.data);

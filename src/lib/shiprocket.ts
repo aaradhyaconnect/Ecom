@@ -148,6 +148,20 @@ export async function trackShipment(
   return data;
 }
 
+export async function trackByAWB(awbCode: string): Promise<ShiprocketTrackResponse> {
+  const data = await apiRequest<ShiprocketTrackResponse>(
+    `/courier/track/awb/${awbCode}`
+  );
+  return data;
+}
+
+export async function trackByOrderId(orderId: number): Promise<ShiprocketTrackResponse> {
+  const data = await apiRequest<ShiprocketTrackResponse>(
+    `/courier/track/shipment/${orderId}`
+  );
+  return data;
+}
+
 export async function getPickupLocations(): Promise<
   { pickup_location: string; address: string; phone: string; email: string }[]
 > {
