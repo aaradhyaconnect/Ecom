@@ -11,6 +11,7 @@ import { ProductCard } from "./ProductCard";
 import { ZoomImage } from "./ZoomImage";
 import { RecentlyViewed } from "./RecentlyViewed";
 import { ReviewForm } from "./ReviewForm";
+import { SizeGuideModal } from "./SizeGuideModal";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import { cn } from "@/lib/utils/cn";
 import { formatPrice } from "@/lib/utils/format";
@@ -46,6 +47,7 @@ export function ProductDetailClient({
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
   const [activeTab, setActiveTab] = useState<"description" | "specifications" | "shipping">("description");
+  const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
 
   const addItem = useCartStore((s) => s.addItem);
   const { isInWishlist, toggleItem } = useWishlistStore();
@@ -313,12 +315,12 @@ export function ProductDetailClient({
                 <h3 className="text-[13px] font-semibold text-charcoal">
                   Size: <span className="font-normal text-charcoal-muted">{selectedSize}</span>
                 </h3>
-                <Link
-                  href="/size-guide"
+                <button
+                  onClick={() => setSizeGuideOpen(true)}
                   className="text-[10px] text-charcoal-muted hover:text-gold-dark uppercase tracking-wider transition-colors underline underline-offset-4"
                 >
                   Size Guide
-                </Link>
+                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((size) => (
@@ -659,6 +661,8 @@ export function ProductDetailClient({
       )}
 
       <RecentlyViewed />
+
+      <SizeGuideModal isOpen={sizeGuideOpen} onClose={() => setSizeGuideOpen(false)} />
 
       {/* Mobile Sticky Add to Cart — positioned above bottom nav */}
       <div className="fixed bottom-16 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-3 lg:hidden z-[60]">
