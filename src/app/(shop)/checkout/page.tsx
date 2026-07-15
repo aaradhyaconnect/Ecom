@@ -80,7 +80,19 @@ function CheckoutContent() {
   const [placedOrderId, setPlacedOrderId] = useState<string | null>(null);
 
   const isBuyNow = searchParams.get("buyNow") === "true";
-  const checkoutItems = isBuyNow && items.length > 0 ? [items.find((i) => i.product_id === items[items.length - 1].product_id && i.size === items[items.length - 1].size && i.color === items[items.length - 1].color) || items[items.length - 1]] : items;
+  const buyNowPid = searchParams.get("pid");
+  const buyNowSize = searchParams.get("size");
+  const buyNowColor = searchParams.get("color");
+
+  const checkoutItems = isBuyNow && items.length > 0
+    ? [items.find((i) => {
+        // Match by product ID first (most reliable), then size/color if provided
+        if (i.product_id !== buyNowPid) return false;
+        if (buyNowSize && i.size !== buyNowSize) return false;
+        if (buyNowColor && i.color !== buyNowColor) return false;
+        return true;
+      }) || items[items.length - 1]]
+    : items;
 
   const subtotal = isBuyNow
     ? checkoutItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)

@@ -56,7 +56,8 @@ export async function GET() {
       email_from_address: "",
     };
 
-    // Strip secrets before returning
+    // Strip secrets before returning (never send to client)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { razorpay_key_secret, cashfree_secret_key, shiprocket_password, ...safeSettings } = settings;
 
     return NextResponse.json({ success: true, data: safeSettings });
@@ -91,9 +92,16 @@ export async function PUT(request: Request) {
       "maintenance_mode", "maintenance_message",
     ] as const;
 
+    // Secret fields: only overwrite if user actually provided a non-empty value
+    const SECRET_FIELDS = ["razorpay_key_secret", "cashfree_secret_key", "shiprocket_password"];
+
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
     for (const key of ALLOWED_FIELDS) {
-      if (key in body) updates[key] = body[key];
+      if (key in body) {
+        // Skip secret fields if value is empty string (preserve existing)
+        if (SECRET_FIELDS.includes(key) && body[key] === "") continue;
+        updates[key] = body[key];
+      }
     }
 
     const { data: existing } = await supabase

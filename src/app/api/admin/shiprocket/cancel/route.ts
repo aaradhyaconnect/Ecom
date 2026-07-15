@@ -21,6 +21,43 @@ export async function POST(request: Request) {
     const result = await cancelShipment(shipment_id);
 
     const adminDb = await createAdminClient();
+
+    // Restore stock for cancelled order items
+    const { data: orderItems } = await adminDb
+      .from("orders")
+      .select("items")
+      .eq("id", order_id)
+      .single();
+
+    if (orderItems?.items && Array.isArray(orderItems.items)) {
+      for (const item of orderItems.items) {
+        if (item.product_id && item.quantity) {
+          const { data: product } = await adminDb
+            .from("products")
+            .select("stock")
+            .eq("id", item.product_id)
+            .single();
+          if (product) {
+            const newStock = product.stock + item.quantity;
+            await adminDb
+              .from("products")
+              .update({ stock: newStock })
+              .eq("id", item.product_id);
+            await adminDb.from("stock_history").insert({
+              product_id: item.product_id,
+              change_type: "return",
+              quantity_before: product.stock,
+              quantity_after: newStock,
+              quantity_change: item.quantity,
+              reason: `Shipment cancelled — ${shipment_id}`,
+              order_id: order_id,
+              performed_by: auth.user.id,
+            });
+          }
+        }
+      }
+    }
+
     await adminDb
       .from("orders")
       .update({
@@ -33,7 +70,7 @@ export async function POST(request: Request) {
       "shipment_cancelled",
       "order",
       order_id,
-      { shipment_id, reason: result.message },
+      { shipment_id, reason: result.message, stock_restored: true },
       auth.user.id
     );
 

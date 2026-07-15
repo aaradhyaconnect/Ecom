@@ -32,7 +32,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold disabled:opacity-40 disabled:cursor-not-allowed",
+          "inline-flex items-center justify-center font-medium transition-all duration-400 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold disabled:opacity-40 disabled:cursor-not-allowed",
           {
             "bg-charcoal text-ivory hover:bg-charcoal-light active:bg-charcoal hover:shadow-lg hover:shadow-charcoal/10":
               variant === "primary",

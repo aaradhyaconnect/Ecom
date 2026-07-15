@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { PwaInstallBanner } from "@/components/layout/PwaInstallBanner";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import { ToastProvider } from "@/components/ui/Toast";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
@@ -20,6 +21,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <>
       <ToastProvider />
+      <ScrollToTop />
       {!isAdmin && !isAuth && <Header />}
       <main id="main-content" className={cn(!isAdmin && !isAuth && "pt-16 lg:pt-20 pb-16 lg:pb-0")}>
         {children}

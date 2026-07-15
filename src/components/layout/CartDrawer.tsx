@@ -3,11 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useEffect } from "react";
-import { X, Plus, Minus, ShoppingBag, ArrowRight } from "lucide-react";
+import { X, Plus, Minus, ShoppingBag, ArrowRight, Truck } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart";
 import { useUIStore } from "@/lib/store/ui";
 import { formatPrice } from "@/lib/utils/format";
 import { Button } from "@/components/ui/Button";
+import { SHIPPING } from "@/lib/constants/site";
 
 export function CartDrawer() {
   const { items, removeItem, updateQuantity, getSubtotal, getItemCount } = useCartStore();
@@ -126,6 +127,17 @@ export function CartDrawer() {
                     <span className="text-charcoal-muted uppercase tracking-wider text-[11px]">Subtotal</span>
                     <span className="font-bold text-charcoal">{formatPrice(getSubtotal())}</span>
                   </div>
+                  {getSubtotal() < SHIPPING.THRESHOLD ? (
+                    <div className="flex items-center gap-2 text-[11px] text-charcoal-muted bg-ivory-dark/30 px-3 py-2 rounded-lg">
+                      <Truck className="h-3.5 w-3.5 text-gold-dark" />
+                      <span>Add <span className="font-semibold text-charcoal">{formatPrice(SHIPPING.THRESHOLD - getSubtotal())}</span> more for free shipping</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-[11px] text-green-600 bg-green-50 px-3 py-2 rounded-lg">
+                      <Truck className="h-3.5 w-3.5" />
+                      <span className="font-medium">You qualify for free shipping!</span>
+                    </div>
+                  )}
                   <p className="text-[11px] text-charcoal-muted">
                     Shipping & taxes calculated at checkout
                   </p>

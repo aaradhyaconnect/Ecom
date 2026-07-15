@@ -115,7 +115,10 @@ export function ProductDetailClient({
       return;
     }
     addItem(product, quantity, selectedSize || "default", selectedColor || "default");
-    window.location.href = "/checkout?buyNow=true";
+    const params = new URLSearchParams({ buyNow: "true", pid: product.id });
+    if (selectedSize) params.set("size", selectedSize);
+    if (selectedColor) params.set("color", selectedColor);
+    window.location.href = `/checkout?${params.toString()}`;
   };
 
   const handleShare = async () => {
@@ -657,8 +660,8 @@ export function ProductDetailClient({
 
       <RecentlyViewed />
 
-      {/* Mobile Sticky Add to Cart */}
-      <div className="fixed bottom-0 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-3 lg:hidden z-[60]">
+      {/* Mobile Sticky Add to Cart — positioned above bottom nav */}
+      <div className="fixed bottom-16 left-0 right-0 bg-ivory/95 backdrop-blur-sm border-t border-ivory-dark/80 p-4 flex items-center gap-3 lg:hidden z-[60]">
         <div className="flex-1 min-w-0">
           <p className="text-lg font-bold text-charcoal">
             {product.is_prebook ? formatPrice(product.prebook_amount || 0) : formatPrice(product.price)}
