@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils/format";
 import type { Product } from "@/types";
 
 export async function GET(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("products", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 
@@ -61,7 +61,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("products", "create");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 
@@ -139,7 +139,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("products", "edit");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 
@@ -207,7 +207,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("products", "delete");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 

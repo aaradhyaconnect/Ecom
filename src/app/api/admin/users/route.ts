@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { requireAdmin, createAdminClient } from "@/lib/supabase/server";
+import { requirePermission, createAdminClient } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("users", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 
@@ -83,7 +83,7 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("users", "create");
     if ("response" in auth) return auth.response;
 
     const body = await request.json();

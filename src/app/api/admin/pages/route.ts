@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const admin = await requireAdmin();
+    const admin = await requirePermission("marketing", "view");
     if ("response" in admin) return admin.response;
     const { supabase } = admin;
 
@@ -21,7 +21,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const admin = await requireAdmin();
+    const admin = await requirePermission("marketing", "create");
     if ("response" in admin) return admin.response;
     const { supabase } = admin;
     const body = await request.json();

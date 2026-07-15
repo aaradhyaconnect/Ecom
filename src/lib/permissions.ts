@@ -8,10 +8,10 @@ import type { StaffRole, Permissions, PermissionModule, PermissionAction } from 
  */
 export function getPermissionsForRole(role: StaffRole, customPermissions?: Partial<Permissions>): Permissions {
   const base: Permissions = {
-    products:  { view: true, create: true, edit: true, delete: role === "super_admin" },
-    orders:    { view: true, create: false, edit: true, delete: role === "super_admin" },
-    customers: { view: true, create: false, edit: role !== "staff", delete: role === "super_admin" },
-    inventory: { view: true, create: false, edit: true, delete: role === "super_admin" },
+    products:  { view: true, create: role !== "staff", edit: role !== "staff", delete: role === "super_admin" },
+    orders:    { view: true, create: false, edit: role !== "staff", delete: false },
+    customers: { view: true, create: false, edit: role === "super_admin", delete: false },
+    inventory: { view: true, create: false, edit: role !== "staff", delete: false },
     marketing: { view: true, create: role !== "staff", edit: role !== "staff", delete: role === "super_admin" },
     reports:   { view: role !== "staff", create: false, edit: false, delete: false },
     settings:  { view: role === "super_admin", create: false, edit: role === "super_admin", delete: false },

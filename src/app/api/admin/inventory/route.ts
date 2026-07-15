@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 import type { Product } from "@/types";
 
 export async function GET(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("inventory", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 
@@ -57,7 +57,7 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("inventory", "edit");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 

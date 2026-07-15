@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { Image, Plus, Pencil, Trash2, EyeOff, Eye } from "lucide-react";
 import toast from "react-hot-toast";
 import type { Banner } from "@/types";
@@ -31,6 +32,7 @@ const emptyForm: BannerForm = {
 };
 
 export default function AdminBannersPage() {
+  const { hasPerm } = useAdminPermissions();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -190,10 +192,12 @@ export default function AdminBannersPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Banners</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Manage homepage banners and promotions</p>
         </div>
-        <Button onClick={openAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Banner
-        </Button>
+        {hasPerm("marketing", "create") && (
+          <Button onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Banner
+          </Button>
+        )}
       </div>
 
       {loading ? (
@@ -271,29 +275,35 @@ export default function AdminBannersPage() {
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <button
-                    onClick={() => toggleActive(banner)}
-                    className="p-2 text-charcoal-muted hover:bg-ivory-dark transition-colors"
-                    title={banner.is_active ? "Hide" : "Show"}
-                  >
-                    {banner.is_active ? (
-                      <Eye className="h-4 w-4" />
-                    ) : (
-                      <EyeOff className="h-4 w-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => openEdit(banner)}
-                    className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => handleDelete(banner)}
-                    className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                  {hasPerm("marketing", "edit") && (
+                    <>
+                      <button
+                        onClick={() => toggleActive(banner)}
+                        className="p-2 text-charcoal-muted hover:bg-ivory-dark transition-colors"
+                        title={banner.is_active ? "Hide" : "Show"}
+                      >
+                        {banner.is_active ? (
+                          <Eye className="h-4 w-4" />
+                        ) : (
+                          <EyeOff className="h-4 w-4" />
+                        )}
+                      </button>
+                      <button
+                        onClick={() => openEdit(banner)}
+                        className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    </>
+                  )}
+                  {hasPerm("marketing", "delete") && (
+                    <button
+                      onClick={() => handleDelete(banner)}
+                      className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

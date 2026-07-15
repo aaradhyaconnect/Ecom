@@ -25,6 +25,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Badge } from "@/components/ui/Badge";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatPrice } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
 import toast from "react-hot-toast";
@@ -37,6 +38,7 @@ interface InventoryItem extends Product {
 }
 
 export default function InventoryPage() {
+  const { hasPerm } = useAdminPermissions();
   const [products, setProducts] = useState<InventoryItem[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -221,7 +223,7 @@ export default function InventoryPage() {
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
             Refresh
           </Button>
-          {hasChanges && (
+          {hasChanges && hasPerm("inventory", "edit") && (
             <Button onClick={handleSave} isLoading={saving} size="sm">
               <Save className="h-3.5 w-3.5 mr-1.5" />
               Save {Object.keys(edits).length} change(s)

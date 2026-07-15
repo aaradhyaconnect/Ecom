@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatPrice, formatDate, getInitials } from "@/lib/utils/format";
 import { Users, Search, Mail, Phone, ShoppingBag, IndianRupee, ChevronLeft, ChevronRight, Download, Edit, Trash2, Ban } from "lucide-react";
 import toast from "react-hot-toast";
@@ -23,6 +24,7 @@ interface Customer {
 }
 
 export default function AdminCustomersPage() {
+  const { hasPerm } = useAdminPermissions();
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -253,15 +255,21 @@ export default function AdminCustomersPage() {
                         <button onClick={() => viewCustomer(customer)} className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors" title="View Details">
                           <ShoppingBag className="h-4 w-4" />
                         </button>
-                        <button onClick={() => openEdit(customer)} className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors" title="Edit Customer">
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button onClick={() => toggleBan(customer)} className={`p-1.5 rounded-lg hover:bg-ivory-dark/40 transition-colors ${customer.is_banned ? "text-green-500 hover:text-green-600" : "text-orange-500 hover:text-orange-600"}`} title={customer.is_banned ? "Unban" : "Ban"}>
-                          <Ban className="h-4 w-4" />
-                        </button>
-                        <button onClick={() => deleteCustomer(customer)} className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-rose-500 hover:text-rose-600 transition-colors" title="Delete">
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {hasPerm("customers", "edit") && (
+                          <>
+                            <button onClick={() => openEdit(customer)} className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors" title="Edit Customer">
+                              <Edit className="h-4 w-4" />
+                            </button>
+                            <button onClick={() => toggleBan(customer)} className={`p-1.5 rounded-lg hover:bg-ivory-dark/40 transition-colors ${customer.is_banned ? "text-green-500 hover:text-green-600" : "text-orange-500 hover:text-orange-600"}`} title={customer.is_banned ? "Unban" : "Ban"}>
+                              <Ban className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                        {hasPerm("customers", "delete") && (
+                          <button onClick={() => deleteCustomer(customer)} className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-rose-500 hover:text-rose-600 transition-colors" title="Delete">
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

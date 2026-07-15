@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 import { sendOrderStatusUpdate } from "@/lib/email";
 import type { Order } from "@/types";
 
@@ -8,7 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("orders", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { id } = await params;
@@ -40,7 +40,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("orders", "edit");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { id } = await params;

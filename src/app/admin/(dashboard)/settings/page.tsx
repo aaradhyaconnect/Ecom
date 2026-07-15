@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
 import { MultiImageUpload } from "@/components/ui/ImageUpload";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 
 interface StoreSettings {
   store_name: string;
@@ -94,6 +95,7 @@ function Section({ icon: Icon, title, children }: { icon: React.ComponentType<{ 
 }
 
 export default function SettingsPage() {
+  const { hasPerm } = useAdminPermissions();
   const [settings, setSettings] = useState<StoreSettings>(defaults);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -153,9 +155,11 @@ export default function SettingsPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal mt-1">Store Settings</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Configure your store details and preferences</p>
         </div>
-        <Button onClick={handleSave} isLoading={saving} size="sm">
-          <Save className="h-3.5 w-3.5 mr-1.5" /> Save Changes
-        </Button>
+        {hasPerm("settings", "edit") && (
+          <Button onClick={handleSave} isLoading={saving} size="sm">
+            <Save className="h-3.5 w-3.5 mr-1.5" /> Save Changes
+          </Button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -338,9 +342,11 @@ export default function SettingsPage() {
       )}
 
       <div className="flex justify-end pb-4">
-        <Button onClick={handleSave} isLoading={saving}>
-          <Save className="h-4 w-4 mr-2" /> Save All Settings
-        </Button>
+        {hasPerm("settings", "edit") && (
+          <Button onClick={handleSave} isLoading={saving}>
+            <Save className="h-4 w-4 mr-2" /> Save All Settings
+          </Button>
+        )}
       </div>
     </div>
   );

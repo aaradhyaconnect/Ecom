@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Users, Trash2, RefreshCw, Download, Mail, UserX, UserCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatDate } from "@/lib/utils/format";
 import toast from "react-hot-toast";
 
@@ -16,6 +17,7 @@ interface Subscriber {
 }
 
 export default function SubscribersPage() {
+  const { hasPerm } = useAdminPermissions();
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -143,7 +145,9 @@ export default function SubscribersPage() {
                       <button onClick={() => handleToggle(sub.id, sub.is_active)} className={`p-1.5 rounded-md transition-colors ${sub.is_active ? "text-amber-600 hover:bg-amber-50" : "text-green-600 hover:bg-green-50"}`} title={sub.is_active ? "Deactivate" : "Activate"}>
                         {sub.is_active ? <UserX className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
                       </button>
-                      <button onClick={() => handleDelete(sub.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
+                      {hasPerm("marketing", "delete") && (
+                        <button onClick={() => handleDelete(sub.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
+                      )}
                     </div>
                   </td>
                 </tr>

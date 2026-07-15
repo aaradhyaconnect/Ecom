@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatDate } from "@/lib/utils/format";
 import { Tag, Plus, Pencil, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -35,6 +36,7 @@ const emptyForm: CouponForm = {
 };
 
 export default function AdminCouponsPage() {
+  const { hasPerm } = useAdminPermissions();
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -172,10 +174,12 @@ export default function AdminCouponsPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Coupons</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Create and manage discount coupons</p>
         </div>
-        <Button onClick={openAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Coupon
-        </Button>
+        {hasPerm("marketing", "create") && (
+          <Button onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Coupon
+          </Button>
+        )}
       </div>
 
       <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
@@ -264,18 +268,22 @@ export default function AdminCouponsPage() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <button
-                          onClick={() => openEdit(coupon)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(coupon)}
-                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {hasPerm("marketing", "edit") && (
+                          <button
+                            onClick={() => openEdit(coupon)}
+                            className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                        )}
+                        {hasPerm("marketing", "delete") && (
+                          <button
+                            onClick={() => handleDelete(coupon)}
+                            className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

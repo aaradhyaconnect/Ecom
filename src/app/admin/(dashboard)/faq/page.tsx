@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { HelpCircle, Plus, Trash2, Edit } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -52,6 +53,7 @@ const categoryLabels: Record<string, string> = {
 };
 
 export default function AdminFAQPage() {
+  const { hasPerm } = useAdminPermissions();
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -180,10 +182,12 @@ export default function AdminFAQPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">FAQs</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Manage frequently asked questions</p>
         </div>
-        <Button onClick={openAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add FAQ
-        </Button>
+        {hasPerm("marketing", "create") && (
+          <Button onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add FAQ
+          </Button>
+        )}
       </div>
 
       <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
@@ -242,18 +246,22 @@ export default function AdminFAQPage() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <button
-                          onClick={() => openEdit(faq)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(faq)}
-                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {hasPerm("marketing", "edit") && (
+                          <button
+                            onClick={() => openEdit(faq)}
+                            className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        )}
+                        {hasPerm("marketing", "delete") && (
+                          <button
+                            onClick={() => handleDelete(faq)}
+                            className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

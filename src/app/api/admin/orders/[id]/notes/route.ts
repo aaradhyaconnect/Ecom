@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 import type { OrderNote } from "@/types";
 
 export async function GET(
@@ -7,7 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("orders", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { id } = await params;
@@ -42,7 +42,7 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("orders", "edit");
     if ("response" in auth) return auth.response;
     const { supabase, user } = auth;
     const { id } = await params;

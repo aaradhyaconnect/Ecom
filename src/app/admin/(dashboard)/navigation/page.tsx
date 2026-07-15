@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { Navigation, Plus, Trash2, Edit } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -52,6 +53,7 @@ const positionLabels: Record<string, string> = {
 const positionOrder = ["header", "footer_shop", "footer_customer", "footer_help", "footer_company"];
 
 export default function AdminNavigationPage() {
+  const { hasPerm } = useAdminPermissions();
   const [links, setLinks] = useState<NavLink[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -192,10 +194,12 @@ export default function AdminNavigationPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Navigation Links</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Manage header and footer navigation links</p>
         </div>
-        <Button onClick={() => openAdd()}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Link
-        </Button>
+        {hasPerm("marketing", "create") && (
+          <Button onClick={() => openAdd()}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Link
+          </Button>
+        )}
       </div>
 
       {loading ? (
@@ -213,10 +217,12 @@ export default function AdminNavigationPage() {
             <div key={group.position} className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
               <div className="flex items-center justify-between px-5 py-3 bg-ivory-dark/20 border-b border-ivory-dark/60">
                 <h3 className="text-sm font-semibold text-charcoal">{group.label}</h3>
-                <Button variant="ghost" size="sm" onClick={() => openAdd(group.position)}>
-                  <Plus className="mr-1 h-3.5 w-3.5" />
-                  Add
-                </Button>
+                {hasPerm("marketing", "create") && (
+                  <Button variant="ghost" size="sm" onClick={() => openAdd(group.position)}>
+                    <Plus className="mr-1 h-3.5 w-3.5" />
+                    Add
+                  </Button>
+                )}
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -255,18 +261,22 @@ export default function AdminNavigationPage() {
                         </td>
                         <td className="px-5 py-2.5 text-right">
                           <div className="flex justify-end gap-1">
-                            <button
-                              onClick={() => openEdit(link)}
-                              className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(link)}
-                              className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                            {hasPerm("marketing", "edit") && (
+                              <button
+                                onClick={() => openEdit(link)}
+                                className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </button>
+                            )}
+                            {hasPerm("marketing", "delete") && (
+                              <button
+                                onClick={() => handleDelete(link)}
+                                className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-600 transition-colors"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -331,9 +341,11 @@ export default function AdminNavigationPage() {
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSave} isLoading={saving}>
-            {editingLink ? "Update Link" : "Create Link"}
-          </Button>
+          {hasPerm("marketing", "edit") && (
+            <Button onClick={handleSave} isLoading={saving}>
+              {editingLink ? "Update Link" : "Create Link"}
+            </Button>
+          )}
         </div>
       </Modal>
     </div>

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("marketing", "edit");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { id } = await params;
@@ -32,7 +32,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("marketing", "delete");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { id } = await params;

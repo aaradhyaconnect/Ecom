@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function GET(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("reports", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
 

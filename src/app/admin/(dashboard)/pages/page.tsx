@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatDate } from "@/lib/utils/format";
 import { FileText, Save, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
@@ -36,6 +37,7 @@ const emptyForm: PageForm = {
 };
 
 export default function AdminPagesPage() {
+  const { hasPerm } = useAdminPermissions();
   const [pages, setPages] = useState<PageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -190,20 +192,22 @@ export default function AdminPagesPage() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            togglePublished(page);
-                          }}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark transition-colors"
-                          title={page.is_published ? "Unpublish" : "Publish"}
-                        >
-                          {page.is_published ? (
-                            <Eye className="h-4 w-4" />
-                          ) : (
-                            <EyeOff className="h-4 w-4" />
-                          )}
-                        </button>
+                        {hasPerm("marketing", "edit") && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              togglePublished(page);
+                            }}
+                            className="p-2 text-charcoal-muted hover:bg-ivory-dark transition-colors"
+                            title={page.is_published ? "Unpublish" : "Publish"}
+                          >
+                            {page.is_published ? (
+                              <Eye className="h-4 w-4" />
+                            ) : (
+                              <EyeOff className="h-4 w-4" />
+                            )}
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -276,10 +280,12 @@ export default function AdminPagesPage() {
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Cancel
           </Button>
-          <Button onClick={handleSave} isLoading={saving}>
-            <Save className="mr-2 h-4 w-4" />
-            Save Page
-          </Button>
+          {hasPerm("marketing", "edit") && (
+            <Button onClick={handleSave} isLoading={saving}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Page
+            </Button>
+          )}
         </div>
       </Modal>
     </div>

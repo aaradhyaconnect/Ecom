@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { Layout, ArrowUp, ArrowDown, Eye, EyeOff, Edit } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -19,6 +20,7 @@ interface HomepageSection {
 }
 
 export default function AdminHomepagePage() {
+  const { hasPerm } = useAdminPermissions();
   const [sections, setSections] = useState<HomepageSection[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -114,9 +116,11 @@ export default function AdminHomepagePage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Homepage Sections</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Configure homepage content sections</p>
         </div>
-        <Button onClick={handleSaveAll} isLoading={saving}>
-          Save Changes
-        </Button>
+        {hasPerm("marketing", "edit") && (
+          <Button onClick={handleSaveAll} isLoading={saving}>
+            Save Changes
+          </Button>
+        )}
       </div>
 
       <div className="bg-white border border-ivory-dark/60 rounded-xl shadow-sm overflow-hidden">
@@ -249,9 +253,11 @@ export default function AdminHomepagePage() {
           <Button variant="outline" onClick={() => setShowModal(false)}>
             Close
           </Button>
-          <Button onClick={handleSaveAll} isLoading={saving}>
-            Save Changes
-          </Button>
+          {hasPerm("marketing", "edit") && (
+            <Button onClick={handleSaveAll} isLoading={saving}>
+              Save Changes
+            </Button>
+          )}
         </div>
       </Modal>
     </div>

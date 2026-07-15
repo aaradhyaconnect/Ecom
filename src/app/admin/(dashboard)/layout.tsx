@@ -3,6 +3,7 @@ import { createServerSupabase } from "@/lib/supabase/server";
 import { AdminSidebar } from "../_components/admin-sidebar";
 import { AdminHeader } from "../_components/admin-header";
 import { AdminMobileNav } from "../_components/admin-mobile-nav";
+import { AdminPermissionsProvider } from "../_components/admin-permissions-provider";
 import type { User as UserType } from "@/types";
 
 export default async function AdminLayout({
@@ -42,12 +43,14 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-[#f8f7f4]">
-      <AdminSidebar />
-      <AdminHeader user={user} />
-      <main className="lg:pl-64 pt-16 pb-20 lg:pb-8">
-        <div className="p-4 lg:p-6">{children}</div>
-      </main>
-      <AdminMobileNav />
+      <AdminPermissionsProvider>
+        <AdminSidebar />
+        <AdminHeader user={user} />
+        <main className="lg:pl-64 pt-16 pb-20 lg:pb-8">
+          <div className="p-4 lg:p-6">{children}</div>
+        </main>
+        <AdminMobileNav />
+      </AdminPermissionsProvider>
     </div>
   );
 }

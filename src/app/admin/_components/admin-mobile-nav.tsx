@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
+import { useAdminPermissions } from "./admin-permissions-provider";
 import {
   LayoutDashboard,
   Package,
@@ -16,22 +17,31 @@ import {
 
 const navItems = [
   { href: "/admin", label: "Home", icon: LayoutDashboard },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart },
-  { href: "/admin/products", label: "Products", icon: Package },
-  { href: "/admin/inventory", label: "Stock", icon: Warehouse },
-  { href: "/admin/customers", label: "Customers", icon: Users },
-  { href: "/admin/categories", label: "Categories", icon: FolderTree },
-  { href: "/admin/reports", label: "Reports", icon: ClipboardList },
-  { href: "/admin/coupons", label: "Coupons", icon: Tag },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart, permissionModule: "orders", permissionAction: "view" },
+  { href: "/admin/products", label: "Products", icon: Package, permissionModule: "products", permissionAction: "view" },
+  { href: "/admin/inventory", label: "Stock", icon: Warehouse, permissionModule: "inventory", permissionAction: "view" },
+  { href: "/admin/customers", label: "Customers", icon: Users, permissionModule: "customers", permissionAction: "view" },
+  { href: "/admin/categories", label: "Categories", icon: FolderTree, permissionModule: "categories", permissionAction: "view" },
+  { href: "/admin/reports", label: "Reports", icon: ClipboardList, permissionModule: "reports", permissionAction: "view" },
+  { href: "/admin/coupons", label: "Coupons", icon: Tag, permissionModule: "marketing", permissionAction: "view" },
 ];
 
 export function AdminMobileNav() {
   const pathname = usePathname();
+  const { hasPerm, loading } = useAdminPermissions();
+
+  const visibleItems = loading
+    ? []
+    : navItems.filter(
+        (item) =>
+          !item.permissionModule ||
+          hasPerm(item.permissionModule, item.permissionAction!)
+      );
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-ivory-dark/60 bg-white/95 backdrop-blur-sm lg:hidden">
       <div className="flex items-center justify-around py-2 px-1">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive =
             item.href === "/admin"
               ? pathname === "/admin"

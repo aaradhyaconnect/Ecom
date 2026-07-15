@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
+import { useAdminPermissions } from "./admin-permissions-provider";
 import {
   LayoutDashboard,
   Package,
@@ -31,28 +32,30 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   group?: string;
+  permissionModule?: string;
+  permissionAction?: string;
 }
 
 const navItems: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "main" },
-  { href: "/admin/orders", label: "Orders", icon: ShoppingCart, group: "main" },
-  { href: "/admin/products", label: "Products", icon: Package, group: "catalog" },
-  { href: "/admin/categories", label: "Categories", icon: FolderTree, group: "catalog" },
-  { href: "/admin/inventory", label: "Inventory", icon: Warehouse, group: "catalog" },
-  { href: "/admin/customers", label: "Customers", icon: Users, group: "people" },
-  { href: "/admin/users", label: "Staff Users", icon: UserCog, group: "people" },
-  { href: "/admin/coupons", label: "Coupons", icon: Tag, group: "marketing" },
-  { href: "/admin/banners", label: "Banners", icon: Image, group: "marketing" },
-  { href: "/admin/subscribers", label: "Subscribers", icon: Mail, group: "marketing" },
-  { href: "/admin/pages", label: "Pages", icon: FileText, group: "content" },
-  { href: "/admin/faq", label: "FAQ", icon: HelpCircle, group: "content" },
-  { href: "/admin/homepage", label: "Homepage", icon: Layout, group: "content" },
-  { href: "/admin/navigation", label: "Navigation", icon: Navigation, group: "content" },
-  { href: "/admin/reviews", label: "Reviews", icon: Star, group: "content" },
-  { href: "/admin/messages", label: "Messages", icon: MessageSquare, group: "content" },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3, group: "insights" },
-  { href: "/admin/reports", label: "Reports", icon: ClipboardList, group: "insights" },
-  { href: "/admin/settings", label: "Settings", icon: Settings, group: "system" },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingCart, group: "main", permissionModule: "orders", permissionAction: "view" },
+  { href: "/admin/products", label: "Products", icon: Package, group: "catalog", permissionModule: "products", permissionAction: "view" },
+  { href: "/admin/categories", label: "Categories", icon: FolderTree, group: "catalog", permissionModule: "categories", permissionAction: "view" },
+  { href: "/admin/inventory", label: "Inventory", icon: Warehouse, group: "catalog", permissionModule: "inventory", permissionAction: "view" },
+  { href: "/admin/customers", label: "Customers", icon: Users, group: "people", permissionModule: "customers", permissionAction: "view" },
+  { href: "/admin/users", label: "Staff Users", icon: UserCog, group: "people", permissionModule: "users", permissionAction: "view" },
+  { href: "/admin/coupons", label: "Coupons", icon: Tag, group: "marketing", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/banners", label: "Banners", icon: Image, group: "marketing", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/subscribers", label: "Subscribers", icon: Mail, group: "marketing", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/pages", label: "Pages", icon: FileText, group: "content", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/faq", label: "FAQ", icon: HelpCircle, group: "content", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/homepage", label: "Homepage", icon: Layout, group: "content", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/navigation", label: "Navigation", icon: Navigation, group: "content", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/reviews", label: "Reviews", icon: Star, group: "content", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/messages", label: "Messages", icon: MessageSquare, group: "content", permissionModule: "marketing", permissionAction: "view" },
+  { href: "/admin/analytics", label: "Analytics", icon: BarChart3, group: "insights", permissionModule: "reports", permissionAction: "view" },
+  { href: "/admin/reports", label: "Reports", icon: ClipboardList, group: "insights", permissionModule: "reports", permissionAction: "view" },
+  { href: "/admin/settings", label: "Settings", icon: Settings, group: "system", permissionModule: "settings", permissionAction: "view" },
 ];
 
 const groupLabels: Record<string, string> = {
@@ -71,8 +74,17 @@ const bottomItems = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const { hasPerm, loading } = useAdminPermissions();
 
-  const groupedItems = navItems.reduce<Record<string, NavItem[]>>((acc, item) => {
+  const visibleItems = loading
+    ? []
+    : navItems.filter(
+        (item) =>
+          !item.permissionModule ||
+          hasPerm(item.permissionModule, item.permissionAction!)
+      );
+
+  const groupedItems = visibleItems.reduce<Record<string, NavItem[]>>((acc, item) => {
     const group = item.group || "main";
     if (!acc[group]) acc[group] = [];
     acc[group].push(item);

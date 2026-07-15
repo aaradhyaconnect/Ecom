@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
-import { requireAdmin, createAdminClient } from "@/lib/supabase/server";
+import { requirePermission, createAdminClient } from "@/lib/supabase/server";
 
 export async function PUT(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("users", "edit");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { id } = await params;

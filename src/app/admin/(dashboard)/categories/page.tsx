@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { MultiImageUpload } from "@/components/ui/ImageUpload";
 import { useDebounce } from "@/hooks/useDebounce";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { cn } from "@/lib/utils/cn";
 import {
   Search,
@@ -40,6 +41,7 @@ const emptyForm: CategoryForm = {
 };
 
 export default function AdminCategoriesPage() {
+  const { hasPerm } = useAdminPermissions();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
@@ -219,10 +221,12 @@ export default function AdminCategoriesPage() {
             {categories.length} categor{categories.length !== 1 ? "ies" : "y"}
           </p>
         </div>
-        <Button onClick={openAdd}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Category
-        </Button>
+        {hasPerm("categories", "create") && (
+          <Button onClick={openAdd}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Category
+          </Button>
+        )}
       </div>
 
       <div className="relative max-w-sm">
@@ -358,34 +362,40 @@ export default function AdminCategoriesPage() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <button
-                          onClick={() => toggleActive(category)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
-                          title={category.is_active ? "Deactivate" : "Activate"}
-                        >
-                          <span className={cn(
-                            "text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded",
-                            category.is_active
-                              ? "text-green-700 bg-green-50"
-                              : "text-charcoal-muted bg-ivory-dark"
-                          )}>
-                            {category.is_active ? "ON" : "OFF"}
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => openEdit(category)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
-                          title="Edit category"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(category)}
-                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 transition-colors rounded"
-                          title="Delete category"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {hasPerm("categories", "edit") && (
+                          <>
+                            <button
+                              onClick={() => toggleActive(category)}
+                              className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
+                              title={category.is_active ? "Deactivate" : "Activate"}
+                            >
+                              <span className={cn(
+                                "text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded",
+                                category.is_active
+                                  ? "text-green-700 bg-green-50"
+                                  : "text-charcoal-muted bg-ivory-dark"
+                              )}>
+                                {category.is_active ? "ON" : "OFF"}
+                              </span>
+                            </button>
+                            <button
+                              onClick={() => openEdit(category)}
+                              className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
+                              title="Edit category"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                        {hasPerm("categories", "delete") && (
+                          <button
+                            onClick={() => handleDelete(category)}
+                            className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 transition-colors rounded"
+                            title="Delete category"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

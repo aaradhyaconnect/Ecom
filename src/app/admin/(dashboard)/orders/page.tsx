@@ -8,6 +8,7 @@ import { Modal } from "@/components/ui/Modal";
 import { Badge } from "@/components/ui/Badge";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePolling } from "@/hooks/usePolling";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { ORDER_STATUSES } from "@/lib/constants/categories";
 import { Search, ShoppingCart, Eye, Truck, ChevronLeft, ChevronRight, MessageSquare, Printer, Clock } from "lucide-react";
@@ -20,6 +21,7 @@ const statusOptions = [
 ];
 
 export default function AdminOrdersPage() {
+  const { hasPerm } = useAdminPermissions();
   const [orders, setOrders] = useState<Order[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -432,20 +434,34 @@ export default function AdminOrdersPage() {
                       )}
                     </td>
                     <td className="px-5 py-3">
-                      <select
-                        value={order.order_status}
-                        onChange={(e) =>
-                          handleStatusChange(order.id, e.target.value)
-                        }
-                        disabled={updatingId === order.id}
-                        className={`px-2 py-1 text-xs font-medium border-0 cursor-pointer ${statusColor(order.order_status)}`}
-                      >
-                        {ORDER_STATUSES.map((s) => (
-                          <option key={s.value} value={s.value}>
-                            {s.label}
-                          </option>
-                        ))}
-                      </select>
+                      {hasPerm("orders", "edit") ? (
+                        <select
+                          value={order.order_status}
+                          onChange={(e) =>
+                            handleStatusChange(order.id, e.target.value)
+                          }
+                          disabled={updatingId === order.id}
+                          className={`px-2 py-1 text-xs font-medium border-0 cursor-pointer ${statusColor(order.order_status)}`}
+                        >
+                          {ORDER_STATUSES.map((s) => (
+                            <option key={s.value} value={s.value}>
+                              {s.label}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <Badge
+                          variant={
+                            order.order_status === "delivered"
+                              ? "success"
+                              : order.order_status === "cancelled"
+                              ? "error"
+                              : "default"
+                          }
+                        >
+                          {ORDER_STATUSES.find((s) => s.value === order.order_status)?.label || order.order_status}
+                        </Badge>
+                      )}
                     </td>
                     <td className="px-5 py-3">
                       <Badge
@@ -529,20 +545,34 @@ export default function AdminOrdersPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-xs text-charcoal-muted mb-1">Order Status</p>
-                <select
-                  value={selectedOrder.order_status}
-                  onChange={(e) =>
-                    handleStatusChange(selectedOrder.id, e.target.value)
-                  }
-                  disabled={updatingId === selectedOrder.id}
-                  className={`px-3 py-1.5 text-sm font-medium border cursor-pointer ${statusColor(selectedOrder.order_status)}`}
-                >
-                  {ORDER_STATUSES.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
+                {hasPerm("orders", "edit") ? (
+                  <select
+                    value={selectedOrder.order_status}
+                    onChange={(e) =>
+                      handleStatusChange(selectedOrder.id, e.target.value)
+                    }
+                    disabled={updatingId === selectedOrder.id}
+                    className={`px-3 py-1.5 text-sm font-medium border cursor-pointer ${statusColor(selectedOrder.order_status)}`}
+                  >
+                    {ORDER_STATUSES.map((s) => (
+                      <option key={s.value} value={s.value}>
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <Badge
+                    variant={
+                      selectedOrder.order_status === "delivered"
+                        ? "success"
+                        : selectedOrder.order_status === "cancelled"
+                        ? "error"
+                        : "default"
+                    }
+                  >
+                    {ORDER_STATUSES.find((s) => s.value === selectedOrder.order_status)?.label || selectedOrder.order_status}
+                  </Badge>
+                )}
               </div>
               <div>
                 <p className="text-xs text-charcoal-muted mb-1">Payment</p>
@@ -715,7 +745,7 @@ export default function AdminOrdersPage() {
                 />
               </div>
               <div className="mt-3 flex justify-end gap-2">
-                {!selectedOrder.shiprocket_shipment_id && (
+                {hasPerm("orders", "edit") && !selectedOrder.shiprocket_shipment_id && (
                   <Button
                     size="sm"
                     variant="outline"
@@ -725,9 +755,11 @@ export default function AdminOrdersPage() {
                     Create Shipment via Shiprocket
                   </Button>
                 )}
-                <Button size="sm" onClick={handleSaveTracking}>
-                  Save Tracking
-                </Button>
+                {hasPerm("orders", "edit") && (
+                  <Button size="sm" onClick={handleSaveTracking}>
+                    Save Tracking
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -777,32 +809,36 @@ export default function AdminOrdersPage() {
               )}
 
               <div className="space-y-2">
-                <textarea
-                  value={newNote}
-                  onChange={(e) => setNewNote(e.target.value)}
-                  placeholder="Add a note..."
-                  rows={3}
-                  className="w-full px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white resize-none focus:border-gold/60 focus:ring-0"
-                />
-                <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-xs text-gray-900 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={noteIsInternal}
-                      onChange={(e) => setNoteIsInternal(e.target.checked)}
-                      className="rounded border-ivory-dark/60"
+                {hasPerm("orders", "edit") && (
+                  <>
+                    <textarea
+                      value={newNote}
+                      onChange={(e) => setNewNote(e.target.value)}
+                      placeholder="Add a note..."
+                      rows={3}
+                      className="w-full px-3 py-2 border border-ivory-dark/60 rounded-lg text-sm bg-white resize-none focus:border-gold/60 focus:ring-0"
                     />
-                    Internal note
-                  </label>
-                  <Button
-                    size="sm"
-                    isLoading={savingNote}
-                    disabled={!newNote.trim()}
-                    onClick={handleAddNote}
-                  >
-                    Add Note
-                  </Button>
-                </div>
+                    <div className="flex items-center justify-between">
+                      <label className="flex items-center gap-2 text-xs text-gray-900 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={noteIsInternal}
+                          onChange={(e) => setNoteIsInternal(e.target.checked)}
+                          className="rounded border-ivory-dark/60"
+                        />
+                        Internal note
+                      </label>
+                      <Button
+                        size="sm"
+                        isLoading={savingNote}
+                        disabled={!newNote.trim()}
+                        onClick={handleAddNote}
+                      >
+                        Add Note
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

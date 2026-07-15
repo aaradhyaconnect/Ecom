@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Star, Check, X, Trash2, RefreshCw, MessageSquare } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatDate } from "@/lib/utils/format";
 import toast from "react-hot-toast";
 
@@ -18,6 +19,7 @@ interface Review {
 }
 
 export default function ReviewsPage() {
+  const { hasPerm } = useAdminPermissions();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -144,7 +146,9 @@ export default function ReviewsPage() {
                 {review.is_approved && (
                   <button onClick={() => handleReject(review.id)} className="p-1.5 text-amber-600 hover:bg-amber-50 rounded-md transition-colors" title="Hide"><X className="h-4 w-4" /></button>
                 )}
-                <button onClick={() => handleDelete(review.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                {hasPerm("marketing", "delete") && (
+                  <button onClick={() => handleDelete(review.id)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Delete"><Trash2 className="h-4 w-4" /></button>
+                )}
               </div>
             </div>
           </div>

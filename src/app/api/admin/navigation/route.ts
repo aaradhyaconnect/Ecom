@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function GET() {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("marketing", "view");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const { data, error } = await supabase.from("navigation_links").select("*").order("sort_order");
@@ -16,7 +16,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("marketing", "create");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const body = await request.json();
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("marketing", "edit");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const body = await request.json();
@@ -73,7 +73,7 @@ export async function PUT(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const auth = await requireAdmin();
+    const auth = await requirePermission("marketing", "delete");
     if ("response" in auth) return auth.response;
     const { supabase } = auth;
     const body = await request.json();

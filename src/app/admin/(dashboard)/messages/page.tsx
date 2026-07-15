@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Mail, MailOpen, Trash2, Eye, RefreshCw, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatDate } from "@/lib/utils/format";
 import toast from "react-hot-toast";
 
@@ -18,6 +19,7 @@ interface Message {
 }
 
 export default function MessagesPage() {
+  const { hasPerm } = useAdminPermissions();
   const [messages, setMessages] = useState<Message[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -135,7 +137,9 @@ export default function MessagesPage() {
                   <td className="px-5 py-3 text-right">
                     <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                       <button onClick={() => openMessage(msg)} className="p-1.5 text-charcoal-muted hover:bg-ivory-dark/40 hover:text-charcoal rounded-md transition-colors"><Eye className="h-4 w-4" /></button>
-                      <button onClick={() => handleDelete(msg.id)} className="p-1.5 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
+                      {hasPerm("marketing", "delete") && (
+                        <button onClick={() => handleDelete(msg.id)} className="p-1.5 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 rounded-md transition-colors"><Trash2 className="h-4 w-4" /></button>
+                      )}
                     </div>
                   </td>
                 </tr>

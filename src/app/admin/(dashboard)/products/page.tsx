@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/Badge";
 import { MultiImageUpload } from "@/components/ui/ImageUpload";
 import { useDebounce } from "@/hooks/useDebounce";
 import { usePolling } from "@/hooks/usePolling";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import { formatPrice, formatDate } from "@/lib/utils/format";
 import { CATEGORIES, SIZES } from "@/lib/constants/categories";
 import {
@@ -89,6 +90,7 @@ const emptyForm: ProductForm = {
 const ITEMS_PER_PAGE = 12;
 
 export default function AdminProductsPage() {
+  const { hasPerm } = useAdminPermissions();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
@@ -394,7 +396,7 @@ export default function AdminProductsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {selectedIds.size > 0 && (
+          {selectedIds.size > 0 && hasPerm("products", "delete") && (
             <Button
               variant="danger"
               size="sm"
@@ -405,10 +407,12 @@ export default function AdminProductsPage() {
               Delete ({selectedIds.size})
             </Button>
           )}
-          <Button onClick={openAdd}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Product
-          </Button>
+          {hasPerm("products", "create") && (
+            <Button onClick={openAdd}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Product
+            </Button>
+          )}
         </div>
       </div>
 
@@ -636,20 +640,24 @@ export default function AdminProductsPage() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex justify-end gap-1">
-                        <button
-                          onClick={() => openEdit(product)}
-                          className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
-                          title="Edit product"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(product)}
-                          className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 transition-colors rounded"
-                          title="Delete product"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {hasPerm("products", "edit") && (
+                          <button
+                            onClick={() => openEdit(product)}
+                            className="p-2 text-charcoal-muted hover:bg-ivory-dark hover:text-charcoal transition-colors rounded"
+                            title="Edit product"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                        )}
+                        {hasPerm("products", "delete") && (
+                          <button
+                            onClick={() => handleDelete(product)}
+                            className="p-2 text-charcoal-muted hover:bg-rose-50 hover:text-rose-500 transition-colors rounded"
+                            title="Delete product"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>

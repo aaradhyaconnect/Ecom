@@ -9,6 +9,7 @@ import { Search, Plus, Shield, Key, Trash2, Edit, Users } from "lucide-react";
 import toast from "react-hot-toast";
 import { formatDate } from "@/lib/utils/format";
 import { cn } from "@/lib/utils/cn";
+import { useAdminPermissions } from "@/app/admin/_components/admin-permissions-provider";
 import type { StaffUser, Permissions, PermissionModule, PermissionAction, StaffRole } from "@/types";
 import { DEFAULT_PERMISSIONS } from "@/types";
 
@@ -128,6 +129,7 @@ function PermissionsGrid({ permissions, onToggle }: { permissions: Permissions; 
 }
 
 export default function UsersPage() {
+  const { hasPerm } = useAdminPermissions();
   const [users, setUsers] = useState<StaffUserWithEmail[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -343,10 +345,12 @@ export default function UsersPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Users</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Manage staff users, roles, and permissions</p>
         </div>
-        <Button onClick={openAdd}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add User
-        </Button>
+        {hasPerm("users", "create") && (
+          <Button onClick={openAdd}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add User
+          </Button>
+        )}
       </div>
 
       <div className="flex items-center gap-3">
@@ -426,33 +430,39 @@ export default function UsersPage() {
                     </td>
                     <td className="px-5 py-3 text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <button
-                          onClick={() => openEdit(user)}
-                          className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors"
-                          title="Edit"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => openResetPassword(user.id)}
-                          className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors"
-                          title="Reset Password"
-                        >
-                          <Key className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(user)}
-                          className={cn(
-                            "p-1.5 rounded-lg hover:bg-ivory-dark/40 transition-colors",
-                            currentUserId && user.user_id === currentUserId
-                              ? "text-gray-300 cursor-not-allowed"
-                              : "text-rose-500 hover:text-rose-600"
-                          )}
-                          title={currentUserId && user.user_id === currentUserId ? "Cannot delete yourself" : "Delete"}
-                          disabled={!!(currentUserId && user.user_id === currentUserId)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
+                        {hasPerm("users", "edit") && (
+                          <button
+                            onClick={() => openEdit(user)}
+                            className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors"
+                            title="Edit"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                        )}
+                        {hasPerm("users", "edit") && (
+                          <button
+                            onClick={() => openResetPassword(user.id)}
+                            className="p-1.5 rounded-lg hover:bg-ivory-dark/40 text-charcoal-muted hover:text-charcoal transition-colors"
+                            title="Reset Password"
+                          >
+                            <Key className="h-4 w-4" />
+                          </button>
+                        )}
+                        {hasPerm("users", "delete") && (
+                          <button
+                            onClick={() => handleDelete(user)}
+                            className={cn(
+                              "p-1.5 rounded-lg hover:bg-ivory-dark/40 transition-colors",
+                              currentUserId && user.user_id === currentUserId
+                                ? "text-gray-300 cursor-not-allowed"
+                                : "text-rose-500 hover:text-rose-600"
+                            )}
+                            title={currentUserId && user.user_id === currentUserId ? "Cannot delete yourself" : "Delete"}
+                            disabled={!!(currentUserId && user.user_id === currentUserId)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
