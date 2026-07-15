@@ -32,16 +32,23 @@ export async function PUT(
       );
     }
 
-    const adminClient = await createAdminClient();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-    const { error } = await adminClient.auth.admin.updateUserById(
-      staffUser.user_id,
-      { password: body.password }
-    );
+    const updateRes = await fetch(`${supabaseUrl}/auth/v1/admin/users/${staffUser.user_id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+        apikey: serviceKey,
+      },
+      body: JSON.stringify({ password: body.password }),
+    });
 
-    if (error) {
+    if (!updateRes.ok) {
+      const errBody = await updateRes.json().catch(() => ({}));
       return NextResponse.json(
-        { success: false, error: error.message },
+        { success: false, error: (errBody as { msg?: string }).msg || "Failed to update password" },
         { status: 400 }
       );
     }

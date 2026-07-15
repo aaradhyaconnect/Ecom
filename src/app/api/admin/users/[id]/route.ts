@@ -13,7 +13,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from("staff_users")
-      .select("*, profiles(email)")
+      .select("*")
       .eq("id", id)
       .single();
 
@@ -24,11 +24,17 @@ export async function GET(
       );
     }
 
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("email")
+      .eq("id", data.user_id)
+      .maybeSingle();
+
     return NextResponse.json({
       success: true,
       data: {
         ...data,
-        email: (data.profiles as { email?: string } | null)?.email ?? null,
+        email: profile?.email ?? null,
       },
     });
   } catch {
@@ -121,13 +127,21 @@ export async function DELETE(
 
     const adminClient = await createAdminClient();
 
-    const { error: deleteError } = await adminClient.auth.admin.deleteUser(
-      staffUser.user_id
-    );
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
-    if (deleteError) {
+    const delRes = await fetch(`${supabaseUrl}/auth/v1/admin/users/${staffUser.user_id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        apikey: serviceKey,
+      },
+    });
+
+    if (!delRes.ok) {
+      const errBody = await delRes.json().catch(() => ({}));
       return NextResponse.json(
-        { success: false, error: deleteError.message },
+        { success: false, error: (errBody as { msg?: string }).msg || "Failed to delete auth user" },
         { status: 400 }
       );
     }

@@ -106,24 +106,38 @@ export async function POST(request: Request) {
 
     const adminClient = await createAdminClient();
 
-    const { data: authData, error: authError } =
-      await adminClient.auth.admin.createUser({
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+    const gotriveRes = await fetch(`${supabaseUrl}/auth/v1/admin/users`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        "Content-Type": "application/json",
+        apikey: serviceKey,
+      },
+      body: JSON.stringify({
         email,
         password,
         email_confirm: true,
-        user_metadata: { name: display_name, role: "admin" },
-      });
+        user_metadata: { name: display_name },
+      }),
+    });
 
-    if (authError) {
+    if (!gotriveRes.ok) {
+      const errBody = await gotriveRes.json().catch(() => ({}));
       return NextResponse.json(
-        { success: false, error: authError.message },
+        { success: false, error: (errBody as { msg?: string; message?: string }).msg || (errBody as { msg?: string; message?: string }).message || "Failed to create auth user" },
         { status: 400 }
       );
     }
 
+    const authData = await gotriveRes.json();
+    const authUser = authData as { id: string; email: string };
+
     const { error: profileError } = await adminClient
       .from("profiles")
-      .upsert({ id: authData.user.id, role: "admin", name: display_name }, { onConflict: "id" });
+      .upsert({ id: authUser.id, role: "admin", name: display_name }, { onConflict: "id" });
 
     if (profileError) {
       return NextResponse.json(
@@ -135,7 +149,7 @@ export async function POST(request: Request) {
     const { data: staffUser, error: staffError } = await adminClient
       .from("staff_users")
       .insert({
-        user_id: authData.user.id,
+        user_id: authUser.id,
         display_name,
         username,
         role,
