@@ -407,6 +407,15 @@ export default function AdminProductsPage() {
               Delete ({selectedIds.size})
             </Button>
           )}
+          {hasPerm("products", "view") && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open("/api/admin/export?type=products", "_blank")}
+            >
+              Export CSV
+            </Button>
+          )}
           {hasPerm("products", "create") && (
             <Button onClick={openAdd}>
               <Plus className="mr-2 h-4 w-4" />

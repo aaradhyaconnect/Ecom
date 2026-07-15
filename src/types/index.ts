@@ -187,6 +187,11 @@ export interface Order {
   prebook_status?: "confirmed" | "ready_to_ship" | "shipped" | "delivered" | "balance_collected";
   prebook_note?: string;
   notes?: string;
+  refund_amount: number;
+  refund_status: "none" | "pending" | "processing" | "completed" | "failed";
+  refund_id?: string;
+  refund_date?: string;
+  cancel_reason?: string;
   created_at: string;
   updated_at: string;
 }

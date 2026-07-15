@@ -53,6 +53,16 @@ export default function InventoryPage() {
   const [stockHistory, setStockHistory] = useState<Record<string, StockHistory[]>>({});
   const [historyLoading, setHistoryLoading] = useState<Record<string, boolean>>({});
   const [historyExpanded, setHistoryExpanded] = useState<Set<string>>(new Set());
+  const [lowStockAlertCount, setLowStockAlertCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/inventory/alerts")
+      .then((r) => r.json())
+      .then((json) => {
+        if (json.success) setLowStockAlertCount(json.data.length);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -205,6 +215,22 @@ export default function InventoryPage() {
 
   return (
     <div className="space-y-6">
+      {/* Low Stock Alert Banner */}
+      {lowStockAlertCount !== null && lowStockAlertCount > 0 && (
+        <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded-xl text-sm">
+          <AlertTriangle className="h-4 w-4 flex-shrink-0 text-amber-600" />
+          <span>
+            <strong>{lowStockAlertCount}</strong> product{lowStockAlertCount !== 1 ? "s" : ""} below low stock threshold.{" "}
+            <button
+              onClick={() => setFilter("low")}
+              className="underline font-semibold hover:text-amber-900 transition-colors"
+            >
+              View low stock items
+            </button>
+          </span>
+        </div>
+      )}
+
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>

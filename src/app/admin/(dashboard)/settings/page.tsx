@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Store, Mail, Phone, MapPin, Globe, Search as SearchIcon, CreditCard, Truck, ImageIcon, Shield } from "lucide-react";
+import { Save, Store, Mail, Phone, MapPin, Globe, Search as SearchIcon, CreditCard, Truck, ImageIcon, Shield, Warehouse } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import toast from "react-hot-toast";
@@ -30,6 +30,8 @@ interface StoreSettings {
   favicon_url: string;
   gst_number: string;
   gst_rate: number;
+  gst_enabled: boolean;
+  tax_inclusive: boolean;
   promo_popup_enabled: boolean;
   promo_popup_title: string;
   promo_popup_subtitle: string;
@@ -43,6 +45,10 @@ interface StoreSettings {
   cashfree_secret_key: string;
   shiprocket_email: string;
   shiprocket_password: string;
+  low_stock_threshold: number;
+  low_stock_alert_email: string;
+  maintenance_mode: boolean;
+  maintenance_message: string;
 }
 
 const defaults: StoreSettings = {
@@ -67,6 +73,8 @@ const defaults: StoreSettings = {
   favicon_url: "",
   gst_number: "",
   gst_rate: 0,
+  gst_enabled: false,
+  tax_inclusive: false,
   promo_popup_enabled: false,
   promo_popup_title: "",
   promo_popup_subtitle: "",
@@ -80,6 +88,10 @@ const defaults: StoreSettings = {
   cashfree_secret_key: "",
   shiprocket_email: "",
   shiprocket_password: "",
+  low_stock_threshold: 5,
+  low_stock_alert_email: "",
+  maintenance_mode: false,
+  maintenance_message: "We are currently performing maintenance. Please check back soon.",
 };
 
 function Section({ icon: Icon, title, children }: { icon: React.ComponentType<{ className?: string }>; title: string; children: React.ReactNode }) {
@@ -202,16 +214,88 @@ export default function SettingsPage() {
             </div>
           </Section>
           <Section icon={Shield} title="Tax / GST">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <Input label="GST Number" value={settings.gst_number} onChange={(e) => update("gst_number", e.target.value)} placeholder="22AAAAA0000A1Z5" />
-              <Input label="GST Rate (%)" type="number" value={settings.gst_rate} onChange={(e) => update("gst_rate", Number(e.target.value))} />
-              <Input label="Currency Symbol" value={settings.currency_symbol} onChange={(e) => update("currency_symbol", e.target.value)} />
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => update("gst_enabled", !settings.gst_enabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.gst_enabled ? "bg-charcoal" : "bg-gray-300"}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.gst_enabled ? "translate-x-6" : "translate-x-1"}`} />
+                </button>
+                <span className="text-sm font-medium text-charcoal">Enable GST</span>
+              </div>
+              {settings.gst_enabled && (
+                <>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => update("tax_inclusive", !settings.tax_inclusive)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.tax_inclusive ? "bg-charcoal" : "bg-gray-300"}`}
+                    >
+                      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.tax_inclusive ? "translate-x-6" : "translate-x-1"}`} />
+                    </button>
+                    <span className="text-sm font-medium text-charcoal">Tax Inclusive (price includes GST)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <Input label="GST Number" value={settings.gst_number} onChange={(e) => update("gst_number", e.target.value)} placeholder="22AAAAA0000A1Z5" />
+                    <Input label="GST Rate (%)" type="number" value={settings.gst_rate} onChange={(e) => update("gst_rate", Number(e.target.value))} />
+                    <Input label="Currency Symbol" value={settings.currency_symbol} onChange={(e) => update("currency_symbol", e.target.value)} />
+                  </div>
+                </>
+              )}
+              {!settings.gst_enabled && (
+                <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+                  <Input label="Currency Symbol" value={settings.currency_symbol} onChange={(e) => update("currency_symbol", e.target.value)} />
+                </div>
+              )}
+            </div>
+          </Section>
+          <Section icon={Warehouse} title="Inventory Alerts">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <Input
+                label="Low Stock Threshold"
+                type="number"
+                value={settings.low_stock_threshold}
+                onChange={(e) => update("low_stock_threshold", Number(e.target.value))}
+                placeholder="5"
+              />
+              <Input
+                label="Low Stock Alert Email"
+                type="email"
+                value={settings.low_stock_alert_email}
+                onChange={(e) => update("low_stock_alert_email", e.target.value)}
+                placeholder="alerts@example.com"
+              />
+            </div>
+          </Section>
+          <Section icon={Shield} title="Maintenance Mode">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => update("maintenance_mode", !settings.maintenance_mode)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${settings.maintenance_mode ? "bg-red-600" : "bg-gray-300"}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.maintenance_mode ? "translate-x-6" : "translate-x-1"}`} />
+                </button>
+                <div>
+                  <span className="text-sm font-medium text-charcoal">Enable Maintenance Mode</span>
+                  <p className="text-xs text-charcoal-muted">Visitors will see a maintenance page. Admin access is unaffected.</p>
+                </div>
+              </div>
+              {settings.maintenance_mode && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-900 mb-1.5">Maintenance Message</label>
+                  <textarea
+                    value={settings.maintenance_message}
+                    onChange={(e) => update("maintenance_message", e.target.value)}
+                    rows={2}
+                    className="w-full border border-ivory-dark/60 px-4 py-2.5 text-sm focus:border-gold/60 focus:ring-0 outline-none bg-ivory text-gray-900 rounded-lg"
+                  />
+                </div>
+              )}
             </div>
           </Section>
         </div>
       )}
-
-      {/* Payment Tab */}
       {activeTab === "payment" && (
         <div className="space-y-4">
           <Section icon={CreditCard} title="Razorpay">

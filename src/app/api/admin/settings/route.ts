@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function GET() {
   try {
@@ -68,13 +69,14 @@ export async function PUT(request: Request) {
   try {
     const auth = await requirePermission("settings", "edit");
     if ("response" in auth) return auth.response;
-    const { supabase } = auth;
+    const { supabase, user } = auth;
 
     const body = await request.json();
 
     const ALLOWED_FIELDS = [
       "store_name", "store_description", "contact_email", "contact_phone", "address",
       "currency", "currency_symbol", "tax_rate", "gst_number", "gst_rate",
+      "gst_enabled", "tax_inclusive",
       "shipping_fee", "free_shipping_min",
       "social_instagram", "social_facebook", "social_twitter", "social_youtube",
       "seo_title", "seo_description", "seo_keywords",
@@ -85,6 +87,8 @@ export async function PUT(request: Request) {
       "cashfree_app_id", "cashfree_secret_key",
       "shiprocket_email", "shiprocket_password",
       "email_from_name", "email_from_address",
+      "low_stock_threshold", "low_stock_alert_email",
+      "maintenance_mode", "maintenance_message",
     ] as const;
 
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
@@ -116,6 +120,8 @@ export async function PUT(request: Request) {
         return NextResponse.json({ success: false, error: error.message }, { status: 500 });
       }
     }
+
+    await logActivity("settings_updated", "settings", "1", { fields: Object.keys(updates) }, user?.id);
 
     return NextResponse.json({ success: true });
   } catch {

@@ -1,4 +1,5 @@
 import { updateSession } from "@/lib/supabase/middleware";
+import { isMaintenanceMode } from "@/lib/utils/maintenance";
 import { type NextRequest, NextResponse } from "next/server";
 
 const protectedRoutes = [
@@ -11,6 +12,24 @@ const adminRoutes = ["/admin"];
 export async function proxy(request: NextRequest) {
   const { supabase, supabaseResponse, user } = await updateSession(request);
   const { pathname } = request.nextUrl;
+
+  const isMaintPath =
+    pathname.startsWith("/admin") ||
+    pathname.startsWith("/api") ||
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/signup") ||
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico" ||
+    pathname === "/maintenance" ||
+    pathname.includes(".");
+  if (!isMaintPath) {
+    const maintenance = await isMaintenanceMode();
+    if (maintenance) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/maintenance";
+      return NextResponse.redirect(url);
+    }
+  }
 
   const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
   const isAdmin = adminRoutes.some((r) => pathname.startsWith(r));

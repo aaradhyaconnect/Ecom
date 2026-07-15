@@ -48,6 +48,9 @@ export default function AdminOrdersPage() {
   const [noteIsInternal, setNoteIsInternal] = useState(true);
   const [savingNote, setSavingNote] = useState(false);
   const [notesCountMap, setNotesCountMap] = useState<Record<string, number>>({});
+  const [processingRefund, setProcessingRefund] = useState(false);
+  const [refundAmount, setRefundAmount] = useState<string>("");
+  const [showRefundModal, setShowRefundModal] = useState(false);
 
   const search = useDebounce(searchInput, 300);
   const limit = 20;
@@ -285,6 +288,44 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const handleProcessRefund = async () => {
+    if (!selectedOrder) return;
+    setProcessingRefund(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}/refund`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: refundAmount ? parseFloat(refundAmount) : selectedOrder.total,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Refund processed successfully");
+        setShowRefundModal(false);
+        setRefundAmount("");
+        setSelectedOrder({
+          ...selectedOrder,
+          refund_status: "completed",
+          refund_amount: refundAmount ? parseFloat(refundAmount) : selectedOrder.total,
+        });
+        fetchOrders();
+      } else {
+        toast.error(data.error || "Failed to process refund");
+      }
+    } catch {
+      toast.error("Failed to process refund");
+    } finally {
+      setProcessingRefund(false);
+    }
+  };
+
+  const canRefund = (order: Order) =>
+    order.order_status === "cancelled" &&
+    order.payment_method !== "cod" &&
+    (order.refund_status === "none" || order.refund_status === "failed") &&
+    hasPerm("orders", "edit");
+
   const exportOrders = () => {
     const headers = ["Order ID", "Customer", "Status", "Payment", "Total", "Date"];
     const rows = orders.map((o) => [
@@ -314,7 +355,7 @@ export default function AdminOrdersPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Orders</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">Manage and track customer orders</p>
         </div>
-        <Button variant="outline" size="sm" onClick={exportOrders}>
+        <Button variant="outline" size="sm" onClick={() => window.open("/api/admin/export?type=orders", "_blank")}>
           Export CSV
         </Button>
       </div>
@@ -760,7 +801,34 @@ export default function AdminOrdersPage() {
                     Save Tracking
                   </Button>
                 )}
+                {canRefund(selectedOrder) && (
+                  <Button
+                    size="sm"
+                    variant="danger"
+                    onClick={() => {
+                      setRefundAmount(String(selectedOrder.total));
+                      setShowRefundModal(true);
+                    }}
+                  >
+                    Process Refund
+                  </Button>
+                )}
               </div>
+              {selectedOrder.refund_status && selectedOrder.refund_status !== "none" && (
+                <div className="mt-3 bg-amber-50 border border-amber-200 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium text-amber-800">Refund Status:</span>
+                    <Badge variant={selectedOrder.refund_status === "completed" ? "success" : "warning"}>
+                      {selectedOrder.refund_status}
+                    </Badge>
+                    {selectedOrder.refund_amount ? (
+                      <span className="text-amber-700">
+                        — {formatPrice(selectedOrder.refund_amount)}
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              )}
             </div>
 
             <div className="border-t border-ivory-dark/60 pt-4">
@@ -843,6 +911,46 @@ export default function AdminOrdersPage() {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Refund Confirmation Modal */}
+      <Modal
+        isOpen={showRefundModal}
+        onClose={() => { setShowRefundModal(false); setRefundAmount(""); }}
+        title="Process Refund"
+        size="sm"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-charcoal-muted">
+            Process a refund for order <strong>{selectedOrder?.order_id}</strong>. This action cannot be undone.
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-gray-900 mb-1.5">Refund Amount (₹)</label>
+            <Input
+              type="number"
+              value={refundAmount}
+              onChange={(e) => setRefundAmount(e.target.value)}
+              placeholder={selectedOrder ? String(selectedOrder.total) : "0"}
+            />
+          </div>
+          <div className="flex justify-end gap-2 pt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setShowRefundModal(false); setRefundAmount(""); }}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="danger"
+              size="sm"
+              isLoading={processingRefund}
+              onClick={handleProcessRefund}
+            >
+              Confirm Refund
+            </Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

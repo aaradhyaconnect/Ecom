@@ -184,7 +184,7 @@ export default function AdminCustomersPage() {
           <h1 className="text-2xl font-serif font-bold text-charcoal">Customers</h1>
           <p className="text-[13px] text-charcoal-muted mt-0.5">View, edit, and manage your customers</p>
         </div>
-        <Button variant="outline" size="sm" onClick={exportCustomers}>
+        <Button variant="outline" size="sm" onClick={() => window.open("/api/admin/export?type=customers", "_blank")}>
           <Download className="h-4 w-4 mr-2" />
           Export CSV
         </Button>
