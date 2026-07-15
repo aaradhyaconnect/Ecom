@@ -192,23 +192,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-[#FAF9F6]">
+    <div className="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12 bg-[#FAF9F6]">
       {/* Background decorative elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -right-40 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
       </div>
 
-      <div className="w-full max-w-5xl relative">
-        {/* Top brand for mobile */}
-        <div className="text-center mb-8 md:hidden">
+      <div className="w-full max-w-6xl relative">
+        {/* Top brand for mobile/tablet */}
+        <div className="text-center mb-6 xl:hidden">
           <h1 className="text-2xl font-serif font-bold tracking-[0.35em] text-charcoal">ARCON STYLE</h1>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark mt-2">Premium Collections</p>
           <div className="w-8 h-[1px] bg-gold/60 mx-auto mt-3" />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 flex overflow-hidden min-h-[600px]">
-          {/* Left Panel - Branding */}
-          <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-charcoal via-charcoal to-[#1a1a1a] relative flex-col justify-between p-12 text-white overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 flex overflow-hidden min-h-[500px] sm:min-h-[600px]">
+          {/* Left Panel - Branding (xl+ only) */}
+          <div className="hidden xl:flex xl:w-[42%] bg-gradient-to-br from-charcoal via-charcoal to-[#1a1a1a] relative flex-col justify-between p-10 2xl:p-12 text-white overflow-hidden flex-shrink-0">
             {/* Decorative circles */}
             <div className="absolute inset-0 overflow-hidden">
               <div className="absolute top-0 right-0 w-80 h-80 bg-gold/8 rounded-full blur-3xl -translate-y-1/3 translate-x-1/3" />
@@ -219,8 +220,8 @@ export default function LoginPage() {
 
             <div className="relative z-10">
               <div>
-                <h2 className="text-4xl font-serif font-bold tracking-[0.2em] leading-tight">ARCON<br />STYLE</h2>
-                <div className="w-12 h-[1px] bg-gold/60 mt-5 mb-8" />
+                <h2 className="text-3xl 2xl:text-4xl font-serif font-bold tracking-[0.2em] leading-tight">ARCON<br />STYLE</h2>
+                <div className="w-10 h-[1px] bg-gold/60 mt-4 mb-6" />
               </div>
               <p className="text-white/50 text-sm leading-relaxed max-w-xs">
                 Discover curated luxury fashion that defines modern elegance. Timeless pieces crafted for the discerning individual.
@@ -246,18 +247,18 @@ export default function LoginPage() {
           </div>
 
           {/* Right Panel - Form */}
-          <div className="w-full lg:w-[55%] p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
-            <div className="w-full max-w-md mx-auto">
-              <div className="mb-8">
+          <div className="w-full xl:w-[58%] p-6 sm:p-8 lg:p-10 xl:p-12 flex flex-col justify-center">
+            <div className="w-full max-w-lg mx-auto xl:mx-0 xl:max-w-none">
+              <div className="mb-6 sm:mb-8">
                 <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Welcome back</span>
-                <h1 className="text-3xl font-serif font-bold text-charcoal mt-2">Sign In</h1>
+                <h1 className="text-2xl sm:text-3xl font-serif font-bold text-charcoal mt-2">Sign In</h1>
                 <p className="text-charcoal-muted text-sm mt-2">
                   {authMethod === "password" ? "Enter your credentials to continue" : "Enter your phone or email to get OTP"}
                 </p>
               </div>
 
               {/* Auth method tabs */}
-              <div className="flex bg-ivory-dark/30 rounded-lg p-1 mb-8">
+              <div className="flex bg-ivory-dark/30 rounded-lg p-1 mb-6 sm:mb-8">
                 <button
                   onClick={() => setAuthMethod("password")}
                   className={`flex-1 py-2.5 text-xs font-semibold tracking-[0.15em] uppercase rounded-md transition-all duration-200 ${
@@ -280,7 +281,7 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
                 {authMethod === "password" ? (
                   <>
                     <Input
@@ -369,7 +370,7 @@ export default function LoginPage() {
                 </Button>
               </form>
 
-              <div className="relative my-8">
+              <div className="relative my-6 sm:my-8">
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-ivory-dark" />
                 </div>
@@ -388,7 +389,7 @@ export default function LoginPage() {
                 Google
               </Button>
 
-              <p className="mt-8 text-center text-sm text-charcoal-muted">
+              <p className="mt-6 sm:mt-8 text-center text-sm text-charcoal-muted">
                 Don&apos;t have an account?{" "}
                 <Link href={`/signup?redirect=${encodeURIComponent(redirectTo)}`} className="font-medium text-gold hover:text-gold-dark transition-colors">
                   Create one
