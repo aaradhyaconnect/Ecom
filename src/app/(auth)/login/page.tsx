@@ -200,13 +200,6 @@ export default function LoginPage() {
       </div>
 
       <div className="w-full max-w-md relative">
-        {/* Brand */}
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-serif font-bold tracking-[0.35em] text-charcoal">ARCON STYLE</h1>
-          <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark mt-2">Premium Collections</p>
-          <div className="w-8 h-[1px] bg-gold/60 mx-auto mt-3" />
-        </div>
-
         <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 p-6 sm:p-8">
           <div className="mb-6 sm:mb-8">
             <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Welcome back</span>
