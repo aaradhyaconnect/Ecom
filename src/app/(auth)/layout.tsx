@@ -6,19 +6,20 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-ivory-dark/20 px-4 py-12 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(#d4c9b8_1px,transparent_1px)] [background-size:24px_24px] opacity-30" />
+    <div className="min-h-screen flex items-center justify-center bg-[#FAF9F6] px-4 py-8 sm:py-12 relative overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+      </div>
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-serif font-bold text-charcoal tracking-[0.15em]">Arcon Style</h1>
-            <p className="text-[10px] uppercase tracking-[0.4em] text-gold-dark mt-1">Premium Collections</p>
+            <h1 className="text-2xl font-serif font-bold text-charcoal tracking-[0.35em]">ARCON STYLE</h1>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark mt-2">Premium Collections</p>
+            <div className="w-8 h-[1px] bg-gold/60 mx-auto mt-3" />
           </Link>
         </div>
-        <div className="relative">
-          <div className="absolute -top-3 left-8 right-8 h-[1px] bg-gradient-to-r from-transparent via-gold/40 to-transparent" />
-          {children}
-        </div>
+        {children}
         <div className="text-center mt-8">
           <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted">&copy; {new Date().getFullYear()} Arcon Style</p>
         </div>

@@ -43,28 +43,30 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="bg-ivory border border-ivory-dark/60 p-8 shadow-sm">
+      <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 p-6 sm:p-8">
         <div className="text-center mb-8">
-          <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
+          <div className="w-12 h-12 bg-green-100 flex items-center justify-center mx-auto mb-4 rounded-full">
+            <Mail className="h-6 w-6 text-green-600" />
+          </div>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Check Your Email</h1>
-          <p className="text-charcoal-muted text-sm mt-1">
+          <p className="text-charcoal-muted text-sm mt-2">
             We&apos;ve sent a password reset link to <strong>{email}</strong>
           </p>
         </div>
 
-        <div className="bg-ivory-dark/20 border border-ivory-dark/40 p-4 mb-6 text-center">
+        <div className="bg-ivory-dark/20 border border-ivory-dark/40 p-4 rounded-lg mb-6 text-center">
           <p className="text-sm text-charcoal-muted">
             Didn&apos;t receive the email? Check your spam folder or try again.
           </p>
         </div>
 
-        <Button variant="outline" fullWidth onClick={() => setSent(false)}>
+        <Button variant="outline" fullWidth size="lg" onClick={() => setSent(false)}>
           Try Again
         </Button>
 
         <p className="mt-6 text-center text-sm text-charcoal-muted">
-          <Link href="/login" className="font-medium text-charcoal hover:text-gold-dark transition-colors">
-            Back to sign in
+          <Link href="/login" className="font-medium text-charcoal hover:text-gold-dark transition-colors inline-flex items-center gap-1">
+            <ArrowLeft className="h-3 w-3" /> Back to sign in
           </Link>
         </p>
       </div>
@@ -72,16 +74,18 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="bg-ivory border border-ivory-dark/60 p-8 shadow-sm">
+    <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 p-6 sm:p-8">
       <div className="text-center mb-8">
-        <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
+        <div className="w-12 h-12 bg-ivory-dark/30 flex items-center justify-center mx-auto mb-4 rounded-full">
+          <Mail className="h-6 w-6 text-charcoal-muted" />
+        </div>
         <h1 className="text-2xl font-serif font-bold text-charcoal">Forgot Password?</h1>
-        <p className="text-charcoal-muted text-sm mt-1">
+        <p className="text-charcoal-muted text-sm mt-2">
           Enter your email and we&apos;ll send you a reset link
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <Input
           label="Email"
           type="email"
@@ -91,7 +95,7 @@ export default function ForgotPasswordPage() {
           icon={<Mail className="h-4 w-4" />}
         />
 
-        <Button type="submit" fullWidth isLoading={isLoading}>
+        <Button type="submit" fullWidth isLoading={isLoading} size="lg">
           Send Reset Link
         </Button>
       </form>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Lock, Eye, EyeOff, Check } from "lucide-react";
+import { Lock, Eye, EyeOff, Check, ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -74,42 +74,43 @@ export default function ResetPasswordPage() {
 
   if (success) {
     return (
-      <div className="bg-ivory border border-ivory-dark/60 p-8 shadow-sm">
+      <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 p-6 sm:p-8">
         <div className="text-center mb-8">
-          <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
-          <div className="w-12 h-12 bg-green-100 flex items-center justify-center mx-auto mb-4">
+          <div className="w-12 h-12 bg-green-100 flex items-center justify-center mx-auto mb-4 rounded-full">
             <Check className="h-6 w-6 text-green-600" />
           </div>
           <h1 className="text-2xl font-serif font-bold text-charcoal">Password Updated</h1>
-          <p className="text-charcoal-muted text-sm mt-1">
+          <p className="text-charcoal-muted text-sm mt-2">
             Your password has been successfully updated
           </p>
         </div>
 
         <Link href="/login">
-          <Button fullWidth>Sign In with New Password</Button>
+          <Button fullWidth size="lg">Sign In with New Password</Button>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="bg-ivory border border-ivory-dark/60 p-8 shadow-sm">
+    <div className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] border border-ivory-dark/40 p-6 sm:p-8">
       <div className="text-center mb-8">
-        <div className="w-12 h-[1px] bg-gold/40 mx-auto mb-4" />
+        <div className="w-12 h-12 bg-ivory-dark/30 flex items-center justify-center mx-auto mb-4 rounded-full">
+          <Lock className="h-6 w-6 text-charcoal-muted" />
+        </div>
         <h1 className="text-2xl font-serif font-bold text-charcoal">Reset Password</h1>
-        <p className="text-charcoal-muted text-sm mt-1">
+        <p className="text-charcoal-muted text-sm mt-2">
           Enter your new password below
         </p>
       </div>
 
       {error && (
-        <div className="bg-rose-50/50 border border-rose-200/60 p-4 mb-6 text-center">
+        <div className="bg-rose-50/50 border border-rose-200/60 p-4 mb-6 text-center rounded-lg">
           <p className="text-sm text-rose-600">{error}</p>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">
         <div className="relative">
           <Input
             label="New Password"
@@ -123,6 +124,7 @@ export default function ResetPasswordPage() {
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-3 top-[38px] text-charcoal-muted hover:text-charcoal transition-colors"
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>
@@ -137,20 +139,20 @@ export default function ResetPasswordPage() {
           icon={<Lock className="h-4 w-4" />}
         />
 
-        <div className="bg-ivory-dark/20 border border-ivory-dark/40 p-3 text-xs text-charcoal-muted space-y-1">
+        <div className="bg-ivory-dark/20 border border-ivory-dark/40 p-3 rounded-lg text-xs text-charcoal-muted space-y-1">
           <p className={password.length >= 8 ? "text-green-600" : ""}>✓ At least 8 characters</p>
           <p className={/[A-Z]/.test(password) ? "text-green-600" : ""}>✓ One uppercase letter</p>
           <p className={/[0-9]/.test(password) ? "text-green-600" : ""}>✓ One number</p>
         </div>
 
-        <Button type="submit" fullWidth isLoading={isLoading}>
+        <Button type="submit" fullWidth isLoading={isLoading} size="lg">
           Update Password
         </Button>
       </form>
 
       <p className="mt-6 text-center text-sm text-charcoal-muted">
-        <Link href="/login" className="font-medium text-charcoal hover:text-gold-dark transition-colors">
-          Back to sign in
+        <Link href="/login" className="font-medium text-charcoal hover:text-gold-dark transition-colors inline-flex items-center gap-1">
+          <ArrowLeft className="h-3 w-3" /> Back to sign in
         </Link>
       </p>
     </div>
