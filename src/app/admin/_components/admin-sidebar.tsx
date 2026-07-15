@@ -25,6 +25,7 @@ import {
   FolderTree,
   UserCog,
   ClipboardList,
+  Truck,
 } from "lucide-react";
 
 interface NavItem {
@@ -39,9 +40,11 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, group: "main" },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart, group: "main", permissionModule: "orders", permissionAction: "view" },
+  { href: "/admin/shipping", label: "Shipping", icon: Truck, group: "main", permissionModule: "orders", permissionAction: "view" },
   { href: "/admin/products", label: "Products", icon: Package, group: "catalog", permissionModule: "products", permissionAction: "view" },
   { href: "/admin/categories", label: "Categories", icon: FolderTree, group: "catalog", permissionModule: "categories", permissionAction: "view" },
   { href: "/admin/inventory", label: "Inventory", icon: Warehouse, group: "catalog", permissionModule: "inventory", permissionAction: "view" },
+  { href: "/admin/suppliers", label: "Suppliers", icon: Truck, group: "catalog", permissionModule: "customers", permissionAction: "view" },
   { href: "/admin/customers", label: "Customers", icon: Users, group: "people", permissionModule: "customers", permissionAction: "view" },
   { href: "/admin/users", label: "Staff Users", icon: UserCog, group: "people", permissionModule: "users", permissionAction: "view" },
   { href: "/admin/coupons", label: "Coupons", icon: Tag, group: "marketing", permissionModule: "marketing", permissionAction: "view" },

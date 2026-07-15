@@ -13,11 +13,13 @@ import {
   Warehouse,
   FolderTree,
   ClipboardList,
+  Truck,
 } from "lucide-react";
 
 const navItems = [
   { href: "/admin", label: "Home", icon: LayoutDashboard },
   { href: "/admin/orders", label: "Orders", icon: ShoppingCart, permissionModule: "orders", permissionAction: "view" },
+  { href: "/admin/shipping", label: "Shipping", icon: Truck, permissionModule: "orders", permissionAction: "view" },
   { href: "/admin/products", label: "Products", icon: Package, permissionModule: "products", permissionAction: "view" },
   { href: "/admin/inventory", label: "Stock", icon: Warehouse, permissionModule: "inventory", permissionAction: "view" },
   { href: "/admin/customers", label: "Customers", icon: Users, permissionModule: "customers", permissionAction: "view" },

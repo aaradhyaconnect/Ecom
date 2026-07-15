@@ -169,3 +169,58 @@ export async function getCourierServiceability(
   );
   return data.data?.available_courier_companies || [];
 }
+
+export async function cancelShipment(
+  shipmentId: number
+): Promise<{ status: string; message: string }> {
+  return apiRequest("/orders/cancel/shipment", {
+    method: "POST",
+    body: JSON.stringify({ shipment_id: shipmentId }),
+  });
+}
+
+export async function generateLabel(
+  shipmentId: number
+): Promise<{ label_url: string }> {
+  return apiRequest("/courier/generate/label", {
+    method: "POST",
+    body: JSON.stringify({ shipment_id: shipmentId }),
+  });
+}
+
+export async function generateManifest(
+  shipmentId: number
+): Promise<{ manifest_url: string }> {
+  return apiRequest("/courier/generate/manifest", {
+    method: "POST",
+    body: JSON.stringify({ shipment_id: shipmentId }),
+  });
+}
+
+export async function returnShipment(
+  shipmentId: number,
+  reason: string
+): Promise<{ status: string }> {
+  return apiRequest("/orders/create/return", {
+    method: "POST",
+    body: JSON.stringify({ shipment_id: shipmentId, reason }),
+  });
+}
+
+export async function getOrderDetails(
+  shiprocketOrderId: number
+): Promise<Record<string, unknown>> {
+  return apiRequest(`/orders/show/${shiprocketOrderId}`);
+}
+
+export async function getShipmentList(params?: {
+  page?: number;
+  per_page?: number;
+  status?: string;
+}): Promise<{ data: Record<string, unknown>[]; total: number }> {
+  const query = new URLSearchParams();
+  if (params?.page) query.set("page", String(params.page));
+  if (params?.per_page) query.set("per_page", String(params.per_page));
+  if (params?.status) query.set("status", params.status);
+  return apiRequest(`/orders?${query.toString()}`);
+}
