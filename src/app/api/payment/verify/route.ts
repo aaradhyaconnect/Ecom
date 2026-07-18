@@ -63,7 +63,8 @@ export async function POST(request: NextRequest) {
         (p) => p.payment_status === "SUCCESS"
       );
 
-      await adminDb
+      // Atomic update: only if still pending (race-safe with webhook)
+      const { data: updated } = await adminDb
         .from("orders")
         .update({
           payment_status: "paid",
@@ -71,7 +72,17 @@ export async function POST(request: NextRequest) {
           cashfree_payment_id: successfulPayment?.cf_payment_id || null,
           updated_at: new Date().toISOString(),
         })
-        .eq("id", order_id);
+        .eq("id", order_id)
+        .eq("payment_status", "pending")
+        .select("id, fulfillment_type")
+        .single();
+
+      if (!updated) {
+        return Response.json({
+          success: true,
+          message: "Payment already processed",
+        });
+      }
 
       const { data: settings } = await adminDb
         .from("store_settings")
@@ -80,7 +91,7 @@ export async function POST(request: NextRequest) {
         .maybeSingle();
 
       let shipped = false;
-      if (settings?.auto_ship_enabled) {
+      if (settings?.auto_ship_enabled && updated.fulfillment_type !== "manufacturer") {
         const shipResult = await autoShipOrder(order_id);
         shipped = shipResult.success;
       }

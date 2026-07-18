@@ -27,6 +27,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [searchInput, setSearchInput] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [fulfillmentFilter, setFulfillmentFilter] = useState("");
   const [page, setPage] = useState(1);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [updatingId, setUpdatingId] = useState<string | null>(null);
@@ -51,6 +52,10 @@ export default function AdminOrdersPage() {
   const [processingRefund, setProcessingRefund] = useState(false);
   const [refundAmount, setRefundAmount] = useState<string>("");
   const [showRefundModal, setShowRefundModal] = useState(false);
+  const [suppliers, setSuppliers] = useState<Array<{ id: string; name: string; is_active: boolean }>>([]);
+  const [assigningFulfillment, setAssigningFulfillment] = useState(false);
+  const [notifyingSupplier, setNotifyingSupplier] = useState(false);
+  const [selectedSupplierId, setSelectedSupplierId] = useState("");
 
   const search = useDebounce(searchInput, 300);
   const limit = 20;
@@ -62,6 +67,7 @@ export default function AdminOrdersPage() {
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (statusFilter) params.set("status", statusFilter);
+      if (fulfillmentFilter) params.set("fulfillment", fulfillmentFilter);
       if (dateFromApplied) params.set("from", dateFromApplied);
       if (dateToApplied) params.set("to", dateToApplied);
       params.set("page", String(page));
@@ -80,7 +86,7 @@ export default function AdminOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [search, statusFilter, page, dateFromApplied, dateToApplied]);
+  }, [search, statusFilter, fulfillmentFilter, page, dateFromApplied, dateToApplied]);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -347,6 +353,72 @@ export default function AdminOrdersPage() {
     toast.success("Orders exported");
   };
 
+  const fetchSuppliers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/admin/suppliers");
+      const data = await res.json();
+      if (data.success) setSuppliers(data.data?.filter((s: { is_active: boolean }) => s.is_active) || []);
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (selectedOrder) fetchSuppliers();
+  }, [selectedOrder, fetchSuppliers]);
+
+  const handleAssignFulfillment = async () => {
+    if (!selectedOrder || !selectedSupplierId) return;
+    setAssigningFulfillment(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}/fulfillment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fulfillment_type: "manufacturer", supplier_id: selectedSupplierId }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Order assigned to manufacturer");
+        setSelectedOrder({
+          ...selectedOrder,
+          fulfillment_type: "manufacturer",
+          fulfillment_status: "pending",
+        } as unknown as Order);
+        fetchOrders();
+      } else {
+        toast.error(data.error);
+      }
+    } catch {
+      toast.error("Failed to assign");
+    } finally {
+      setAssigningFulfillment(false);
+    }
+  };
+
+  const handleNotifySupplier = async () => {
+    if (!selectedOrder) return;
+    setNotifyingSupplier(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}/notify-supplier`, {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Supplier notified");
+        setSelectedOrder({
+          ...selectedOrder,
+          fulfillment_status: "supplier_notified",
+        } as unknown as Order);
+        fetchOrders();
+      } else {
+        toast.error(data.error);
+      }
+    } catch {
+      toast.error("Failed to notify supplier");
+    } finally {
+      setNotifyingSupplier(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -374,6 +446,17 @@ export default function AdminOrdersPage() {
             value={statusFilter}
             onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
             options={statusOptions}
+          />
+        </div>
+        <div className="w-full sm:w-48">
+          <Select
+            value={fulfillmentFilter}
+            onChange={(e) => { setFulfillmentFilter(e.target.value); setPage(1); }}
+            options={[
+              { value: "", label: "All Fulfillment" },
+              { value: "warehouse", label: "Warehouse" },
+              { value: "manufacturer", label: "Manufacturer" },
+            ]}
           />
         </div>
       </div>
@@ -458,6 +541,15 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center gap-2">
                         <span>{order.order_id}</span>
                         {order.is_prebook && <Badge variant="warning"><Clock className="h-3 w-3 inline mr-1" />Pre-Book</Badge>}
+                        {(order as unknown as Record<string, unknown>).fulfillment_type === "manufacturer" && (
+                          <Badge variant={
+                            (order as unknown as Record<string, unknown>).fulfillment_status === "supplier_accepted" ? "success"
+                            : (order as unknown as Record<string, unknown>).fulfillment_status === "supplier_rejected" ? "error"
+                            : "warning"
+                          }>
+                            {String((order as unknown as Record<string, unknown>).fulfillment_status || "pending").replace("supplier_", "")}
+                          </Badge>
+                        )}
                       </div>
                     </td>
                     <td className="px-5 py-3">
@@ -721,6 +813,67 @@ export default function AdminOrdersPage() {
                   {selectedOrder.billing_address?.pincode || "—"}
                 </p>
               </div>
+            </div>
+
+            <div className="bg-ivory-dark/40 p-3 rounded-lg">
+              <p className="text-xs font-medium text-charcoal-muted mb-2">Fulfillment</p>
+              <div className="flex items-center gap-3 mb-3">
+                <div>
+                  <span className="text-xs text-charcoal-muted">Type: </span>
+                  <Badge variant={(selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type === "manufacturer" ? "warning" : "default"}>
+                    {((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type as string) || "warehouse"}
+                  </Badge>
+                </div>
+                <div>
+                  <span className="text-xs text-charcoal-muted">Status: </span>
+                  <Badge variant={
+                    ((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status as string) === "supplier_accepted" ? "success"
+                    : ((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status as string) === "supplier_rejected" ? "error"
+                    : "warning"
+                  }>
+                    {(((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status as string) || "pending").replace("supplier_", "")}
+                  </Badge>
+                </div>
+              </div>
+
+              {hasPerm("orders", "edit") && (selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type !== "manufacturer" &&
+                !(selectedOrder as unknown as Record<string, unknown>)?.shiprocket_shipment_id &&
+                selectedOrder.order_status !== "cancelled" && selectedOrder.order_status !== "delivered" && (
+                <div className="flex items-center gap-2 pt-2 border-t border-ivory-dark/60">
+                  <select
+                    value={selectedSupplierId}
+                    onChange={(e) => setSelectedSupplierId(e.target.value)}
+                    className="px-3 py-1.5 border border-ivory-dark/60 rounded-lg text-sm bg-white flex-1"
+                  >
+                    <option value="">Select supplier...</option>
+                    {suppliers.map((s) => (
+                      <option key={s.id} value={s.id}>{s.name}</option>
+                    ))}
+                  </select>
+                  <Button
+                    size="sm"
+                    onClick={handleAssignFulfillment}
+                    disabled={!selectedSupplierId || assigningFulfillment}
+                  >
+                    {assigningFulfillment ? "Assigning..." : "Assign"}
+                  </Button>
+                </div>
+              )}
+
+              {(selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type === "manufacturer" &&
+                (selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status === "assigned" &&
+                hasPerm("orders", "edit") && (
+                <div className="pt-2 border-t border-ivory-dark/60">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={handleNotifySupplier}
+                    disabled={notifyingSupplier}
+                  >
+                    {notifyingSupplier ? "Notifying..." : "Notify Supplier"}
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div>

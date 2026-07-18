@@ -10,6 +10,7 @@ export async function GET(request: Request) {
     const url = new URL(request.url);
     const status = url.searchParams.get("status") || "";
     const search = url.searchParams.get("search") || "";
+    const fulfillment = url.searchParams.get("fulfillment") || "";
     const from = url.searchParams.get("from") || "";
     const to = url.searchParams.get("to") || "";
     const page = Number(url.searchParams.get("page")) || 1;
@@ -18,11 +19,15 @@ export async function GET(request: Request) {
 
     let query = supabase
       .from("orders")
-      .select("*, profiles!inner(name, email)", { count: "exact" })
+      .select("*, profiles!inner(name, email), order_fulfillments(*)", { count: "exact" })
       .order("created_at", { ascending: false });
 
     if (status) {
       query = query.eq("order_status", status);
+    }
+
+    if (fulfillment) {
+      query = query.eq("fulfillment_type", fulfillment);
     }
 
     if (search) {

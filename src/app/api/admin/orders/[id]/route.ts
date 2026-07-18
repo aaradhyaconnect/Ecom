@@ -15,7 +15,7 @@ export async function GET(
 
     const { data, error } = await supabase
       .from("orders")
-      .select("*, profiles(name, email, phone)")
+      .select("*, profiles(name, email, phone), order_fulfillments(*)")
       .eq("id", id)
       .single();
 
@@ -122,6 +122,28 @@ export async function PUT(
     if (body.estimated_delivery != null) updateData.estimated_delivery = body.estimated_delivery || null;
     if (body.shiprocket_shipment_id != null) updateData.shiprocket_shipment_id = body.shiprocket_shipment_id;
 
+    if (body.fulfillment_status) {
+      const validFulfillmentStatuses = [
+        "pending", "supplier_notified", "supplier_accepted", "supplier_rejected",
+        "supplier_packing", "ready_for_pickup", "picked_up",
+      ];
+      if (!validFulfillmentStatuses.includes(body.fulfillment_status)) {
+        return NextResponse.json(
+          { success: false, error: "Invalid fulfillment status" },
+          { status: 400 }
+        );
+      }
+      updateData.fulfillment_status = body.fulfillment_status;
+    }
+
+    if (body.fulfillment_type) {
+      updateData.fulfillment_type = body.fulfillment_type;
+    }
+
+    if (body.supplier_id !== undefined) {
+      updateData.supplier_id = body.supplier_id || null;
+    }
+
     const { data, error } = await supabase
       .from("orders")
       .update(updateData)
@@ -134,6 +156,15 @@ export async function PUT(
         { success: false, error: error.message },
         { status: 500 }
       );
+    }
+
+    if (body.fulfillment_status && data) {
+      await supabase
+        .from("order_fulfillments")
+        .update({ status: body.fulfillment_status, updated_at: new Date().toISOString() })
+        .eq("order_id", id)
+        .order("created_at", { ascending: false })
+        .limit(1);
     }
 
     if (body.order_status === "cancelled" || body.order_status === "returned") {

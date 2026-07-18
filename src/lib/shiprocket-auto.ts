@@ -35,6 +35,37 @@ export async function autoShipOrder(orderId: string): Promise<AutoShipResult> {
     return { success: false, error: "Incomplete shipping address" };
   }
 
+  if (!order.items || order.items.length === 0) {
+    return { success: false, error: "Order has no items" };
+  }
+
+  // Atomic guard: only update if still not shipped (prevents race condition)
+  const { error: lockError } = await adminDb
+    .from("orders")
+    .update({ updated_at: new Date().toISOString() })
+    .eq("id", orderId)
+    .is("shiprocket_shipment_id", null)
+    .not("order_status", "in", "(cancelled,returned)");
+
+  if (lockError) {
+    return { success: false, error: "Could not lock order for shipping" };
+  }
+
+  // Re-read to confirm lock
+  const { data: recheck } = await adminDb
+    .from("orders")
+    .select("shiprocket_shipment_id, order_status")
+    .eq("id", orderId)
+    .single();
+
+  if (recheck?.shiprocket_shipment_id) {
+    return { success: false, error: "Already shipped (concurrent request)" };
+  }
+
+  if (recheck?.order_status === "cancelled" || recheck?.order_status === "returned") {
+    return { success: false, error: "Order was cancelled/returned" };
+  }
+
   const { data: pickupLoc } = await adminDb
     .from("pickup_locations")
     .select("pickup_location")
@@ -104,19 +135,22 @@ export async function autoShipOrder(orderId: string): Promise<AutoShipResult> {
     // Label generation is best-effort
   }
 
+  const hasTracking = Boolean(awbData?.awb_code || shipment.awb_code);
+
   const updates: Record<string, unknown> = {
     shiprocket_shipment_id: shipment.shipment_id,
     tracking_id: awbData?.awb_code || shipment.awb_code || "",
     courier_name: awbData?.courier_name || shipment.courier_name || "",
     shipping_label_url: labelUrl,
-    order_status: "shipped",
+    order_status: hasTracking ? "shipped" : "processing",
     updated_at: new Date().toISOString(),
   };
 
   const { error: updateError } = await adminDb
     .from("orders")
     .update(updates)
-    .eq("id", orderId);
+    .eq("id", orderId)
+    .is("shiprocket_shipment_id", null);
 
   if (updateError) {
     return { success: false, error: "Failed to update order" };
