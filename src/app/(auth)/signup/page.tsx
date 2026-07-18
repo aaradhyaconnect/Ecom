@@ -123,7 +123,7 @@ export default function RegisterPage() {
                 }),
               }).catch(() => {});
             }
-            toast.success("Welcome to Arcon Style!");
+            toast.success("Welcome to G2I Style!");
             window.location.replace(e.data.path || redirectTo);
           }
         };
@@ -145,7 +145,7 @@ export default function RegisterPage() {
                 refresh_token: session.refresh_token,
               }),
             }).catch(() => {});
-            toast.success("Welcome to Arcon Style!");
+            toast.success("Welcome to G2I Style!");
             window.location.replace(redirectTo);
           }
         }, 30000);
@@ -161,7 +161,7 @@ export default function RegisterPage() {
       <div className="mb-6 sm:mb-8">
         <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Get started</span>
         <h2 className="text-2xl font-serif font-bold text-charcoal mt-2">Create Account</h2>
-        <p className="text-charcoal-muted text-sm mt-2">Join Arcon Style today</p>
+        <p className="text-charcoal-muted text-sm mt-2">Join G2I Style today</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">

@@ -4,7 +4,7 @@ import { Mail, MapPin } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Careers",
-  description: "Join the Arcon Style team. Explore open positions in fashion design, marketing, and more.",
+  description: "Join the G2I Style team. Explore open positions in fashion design, marketing, and more.",
   alternates: { canonical: "/careers" },
 };
 

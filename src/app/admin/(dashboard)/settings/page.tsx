@@ -52,9 +52,9 @@ interface StoreSettings {
 }
 
 const defaults: StoreSettings = {
-  store_name: "Arcon Style",
+  store_name: "G2I Style",
   store_description: "Premium Designer Clothing & Jewellery",
-  contact_email: "hello@arconstyle.com",
+  contact_email: "hello@g2istyle.com",
   contact_phone: "",
   address: "",
   currency: "INR",
@@ -66,8 +66,8 @@ const defaults: StoreSettings = {
   social_facebook: "",
   social_twitter: "",
   social_youtube: "",
-  seo_title: "Arcon Style - Premium Designer Clothing & Jewellery",
-  seo_description: "Shop premium designer clothing and artificial jewellery at Arcon Style.",
+  seo_title: "G2I Style - Premium Designer Clothing & Jewellery",
+  seo_description: "Shop premium designer clothing and artificial jewellery at G2I Style.",
   seo_keywords: "fashion, clothing, jewellery, designer, women",
   logo_url: "",
   favicon_url: "",
@@ -80,8 +80,8 @@ const defaults: StoreSettings = {
   promo_popup_subtitle: "",
   promo_popup_image: "",
   promo_popup_link: "",
-  email_from_name: "Arcon Style",
-  email_from_address: "hello@arconstyle.com",
+  email_from_name: "G2I Style",
+  email_from_address: "hello@g2istyle.com",
   razorpay_key_id: "",
   razorpay_key_secret: "",
   cashfree_app_id: "",

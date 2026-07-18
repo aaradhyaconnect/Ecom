@@ -3,7 +3,7 @@ import { FAQClient } from "./faq-client";
 
 export const metadata: Metadata = {
   title: "FAQ",
-  description: "Frequently asked questions about Arcon Style — shipping, returns, payments, and more.",
+  description: "Frequently asked questions about G2I Style — shipping, returns, payments, and more.",
   alternates: { canonical: "/faq" },
 };
 

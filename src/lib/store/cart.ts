@@ -163,6 +163,6 @@ export const useCartStore = create<CartStore>()(
         }));
       },
     }),
-    { name: "arconstyle-cart" }
+    { name: "g2istyle-cart" }
   )
 );

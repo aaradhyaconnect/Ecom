@@ -5,7 +5,7 @@ const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null;
 
-const FROM = `${SITE.name} <${process.env.EMAIL_FROM_ADDRESS || "orders@arconstyle.com"}>`;
+const FROM = `${SITE.name} <${process.env.EMAIL_FROM_ADDRESS || "orders@g2istyle.com"}>`;
 
 function formatPrice(amount: number): string {
   return `₹${amount.toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`;

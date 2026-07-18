@@ -16,7 +16,7 @@ interface FaqItem {
 const fallbackFaqs = [
   {
     q: "How do I track my order?",
-    a: "Once your order ships, you'll receive an email with a tracking number. You can also check your order status in your Arcon Style account under Order History.",
+    a: "Once your order ships, you'll receive an email with a tracking number. You can also check your order status in your G2I Style account under Order History.",
   },
   {
     q: "What payment methods do you accept?",

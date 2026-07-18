@@ -22,7 +22,7 @@ export function InstagramGallery() {
             <span className="h-[1px] w-8 bg-gold/40" />
           </div>
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-charcoal">
-            @arconstyle
+            @g2istyle
           </h2>
           <p className="text-[13px] text-charcoal-muted mt-2">
             Follow us for daily style inspiration
@@ -32,7 +32,7 @@ export function InstagramGallery() {
           {GALLERY_ITEMS.map((item, idx) => (
             <Link
               key={idx}
-              href="https://instagram.com/arconstyle"
+              href="https://instagram.com/g2istyle"
               target="_blank"
               rel="noopener noreferrer"
               className="relative aspect-square overflow-hidden group rounded-lg"

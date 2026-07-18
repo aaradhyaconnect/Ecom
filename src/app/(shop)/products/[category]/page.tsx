@@ -23,13 +23,13 @@ export async function generateMetadata({ params }: { params: Promise<{ category:
 
   return {
     title: `${name} - Shop Online`,
-    description: `Browse our ${name} collection at Arcon Style. Premium designer clothing and artificial jewellery.`,
+    description: `Browse our ${name} collection at G2I Style. Premium designer clothing and artificial jewellery.`,
     alternates: {
       canonical: `/products/${category}`,
     },
     openGraph: {
-      title: `${name} | Arcon Style`,
-      description: `Browse our ${name} collection at Arcon Style.`,
+      title: `${name} | G2I Style`,
+      description: `Browse our ${name} collection at G2I Style.`,
       url: `/products/${category}`,
     },
   };

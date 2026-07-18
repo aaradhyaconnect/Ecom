@@ -38,7 +38,7 @@ export function AdminHeader({ user }: { user: UserType }) {
       <div className="flex h-16 items-center justify-between px-4 lg:px-6">
         {/* Mobile logo */}
         <div className="lg:hidden">
-          <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">Arcon Style</span>
+          <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">G2I Style</span>
           <span className="text-[10px] tracking-[0.25em] text-charcoal-muted ml-1 uppercase">Admin</span>
         </div>
         <div className="hidden lg:block" />

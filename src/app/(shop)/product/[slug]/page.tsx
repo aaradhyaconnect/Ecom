@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: product.name,
       description: product.description?.slice(0, 160),
       url: `/product/${product.slug}`,
-      siteName: "Arcon Style",
+      siteName: "G2I Style",
       images: product.images?.[0]
         ? [{ url: product.images[0], width: 1200, height: 630, alt: product.name }]
         : [],
@@ -69,7 +69,7 @@ function ProductJsonLd({ product }: { product: Product }) {
     name: product.name,
     description: product.description,
     image: product.images,
-    brand: { "@type": "Brand", name: "Arcon Style" },
+    brand: { "@type": "Brand", name: "G2I Style" },
     offers: {
       "@type": "Offer",
       price: product.price,

@@ -24,7 +24,7 @@ export const useAuthStore = create<AuthStore>()(
       logout: () => set({ user: null, isAdmin: false, loading: false }),
     }),
     {
-      name: "arconstyle-auth",
+      name: "g2istyle-auth",
       partialize: (state) => ({
         user: state.user,
         isAdmin: state.isAdmin,

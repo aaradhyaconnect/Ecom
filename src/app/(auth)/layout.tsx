@@ -14,14 +14,14 @@ export default function AuthLayout({
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
-            <h1 className="text-2xl font-serif font-bold text-charcoal tracking-[0.35em]">ARCON STYLE</h1>
+            <h1 className="text-2xl font-serif font-bold text-charcoal tracking-[0.35em]">G2I STYLE</h1>
             <p className="text-[10px] uppercase tracking-[0.3em] text-gold-dark mt-2">Premium Collections</p>
             <div className="w-8 h-[1px] bg-gold/60 mx-auto mt-3" />
           </Link>
         </div>
         {children}
         <div className="text-center mt-8">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted">&copy; {new Date().getFullYear()} Arcon Style</p>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-charcoal-muted">&copy; {new Date().getFullYear()} G2I Style</p>
         </div>
       </div>
     </div>

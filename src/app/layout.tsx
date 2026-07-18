@@ -25,11 +25,11 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "Arcon Style | Premium Designer Clothing & Artificial Jewellery",
-    template: "%s | Arcon Style",
+    default: "G2I Style | Premium Designer Clothing & Artificial Jewellery",
+    template: "%s | G2I Style",
   },
   description:
-    "Discover Arcon Style's premium self-designed clothing and exquisite artificial jewellery. Elevate your style with our curated collections for the modern trendsetter.",
+    "Discover G2I Style's premium self-designed clothing and exquisite artificial jewellery. Elevate your style with our curated collections for the modern trendsetter.",
   keywords: [
     "designer clothing",
     "artificial jewellery",
@@ -38,22 +38,22 @@ export const metadata: Metadata = {
     "online shopping",
     "Indian fashion",
   ],
-  authors: [{ name: "Arcon Style" }],
-  creator: "Arcon Style",
+  authors: [{ name: "G2I Style" }],
+  creator: "G2I Style",
   manifest: "/manifest.json",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://arconstyle.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://g2istyle.com"),
   openGraph: {
     type: "website",
     locale: "en_IN",
-    siteName: "Arcon Style",
-    title: "Arcon Style | Premium Designer Clothing & Artificial Jewellery",
+    siteName: "G2I Style",
+    title: "G2I Style | Premium Designer Clothing & Artificial Jewellery",
     description:
       "Discover premium self-designed clothing and exquisite artificial jewellery.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Arcon Style",
-    description: "Premium self-designed clothing and artificial jewellery by Arcon Style.",
+    title: "G2I Style",
+    description: "Premium self-designed clothing and artificial jewellery by G2I Style.",
   },
   robots: {
     index: true,

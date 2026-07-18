@@ -10,7 +10,7 @@ export default function MaintenancePage() {
           We are currently performing scheduled maintenance. Our store will be back online shortly. Thank you for your patience.
         </p>
         <div className="mt-8 text-xs text-charcoal-muted/60">
-          Arcon Style &mdash; Curated Luxury Fashion
+          G2I Style &mdash; Curated Luxury Fashion
         </div>
       </div>
     </div>
