@@ -124,6 +124,7 @@ export default function ShippingPage() {
     success: boolean;
     error?: string;
     awb?: string;
+    label_url?: string;
   }[] | null>(null);
 
   // Track state
@@ -415,6 +416,16 @@ export default function ShippingPage() {
                   <span className="text-green-700">AWB: {r.awb}</span>
                 ) : (
                   <span className="text-red-600">{r.error}</span>
+                )}
+                {r.success && r.label_url && (
+                  <a
+                    href={r.label_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-blue-600 hover:underline inline-flex items-center gap-1"
+                  >
+                    <FileText className="h-3 w-3" /> Label
+                  </a>
                 )}
               </div>
             ))}

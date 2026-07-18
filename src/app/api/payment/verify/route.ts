@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { createAdminClient, createServerSupabase } from "@/lib/supabase/server";
 import { getCashfreeOrder, getCashfreePayments } from "@/lib/cashfree";
+import { autoShipOrder } from "@/lib/shiprocket-auto";
 
 export async function POST(request: NextRequest) {
   try {
@@ -72,9 +73,22 @@ export async function POST(request: NextRequest) {
         })
         .eq("id", order_id);
 
+      const { data: settings } = await adminDb
+        .from("store_settings")
+        .select("auto_ship_enabled")
+        .limit(1)
+        .maybeSingle();
+
+      let shipped = false;
+      if (settings?.auto_ship_enabled) {
+        const shipResult = await autoShipOrder(order_id);
+        shipped = shipResult.success;
+      }
+
       return Response.json({
         success: true,
         message: "Payment verified successfully",
+        shipped,
       });
     }
 

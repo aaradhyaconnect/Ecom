@@ -90,6 +90,7 @@ export async function PUT(request: Request) {
       "email_from_name", "email_from_address",
       "low_stock_threshold", "low_stock_alert_email",
       "maintenance_mode", "maintenance_message",
+      "auto_ship_enabled",
     ] as const;
 
     // Secret fields: only overwrite if user actually provided a non-empty value

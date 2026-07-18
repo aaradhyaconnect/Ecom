@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission, createAdminClient } from "@/lib/supabase/server";
-import { createShipment, generateAWB } from "@/lib/shiprocket";
+import { createShipment, generateAWB, generateLabel } from "@/lib/shiprocket";
 
 export async function POST(request: Request) {
   try {
@@ -23,6 +23,7 @@ export async function POST(request: Request) {
       success: boolean;
       error?: string;
       awb?: string;
+      label_url?: string;
     }[] = [];
 
     for (const orderId of order_ids.slice(0, 20)) {
@@ -85,6 +86,9 @@ export async function POST(request: Request) {
           payment_method:
             order.payment_method === "cod" ? "COD" : "Prepaid",
           sub_total: Math.round(order.subtotal),
+          length: 20,
+          breadth: 15,
+          height: 10,
           weight: 0.5,
         });
 
@@ -100,6 +104,14 @@ export async function POST(request: Request) {
           }
         }
 
+        let labelUrl = "";
+        try {
+          const label = await generateLabel(shipment.shipment_id);
+          labelUrl = label.label_url || "";
+        } catch {
+          // Label generation is best-effort
+        }
+
         await adminDb
           .from("orders")
           .update({
@@ -108,6 +120,7 @@ export async function POST(request: Request) {
               awbData?.awb_code || shipment.awb_code || "",
             courier_name:
               awbData?.courier_name || shipment.courier_name || "",
+            shipping_label_url: labelUrl,
             order_status: "shipped",
             updated_at: new Date().toISOString(),
           })
@@ -117,6 +130,7 @@ export async function POST(request: Request) {
           order_id: orderId,
           success: true,
           awb: awbData?.awb_code || "",
+          label_url: labelUrl,
         });
       } catch (err: unknown) {
         results.push({

@@ -49,6 +49,7 @@ interface StoreSettings {
   low_stock_alert_email: string;
   maintenance_mode: boolean;
   maintenance_message: string;
+  auto_ship_enabled: boolean;
 }
 
 const defaults: StoreSettings = {
@@ -92,6 +93,7 @@ const defaults: StoreSettings = {
   low_stock_alert_email: "",
   maintenance_mode: false,
   maintenance_message: "We are currently performing maintenance. Please check back soon.",
+  auto_ship_enabled: false,
 };
 
 function Section({ icon: Icon, title, children }: { icon: React.ComponentType<{ className?: string }>; title: string; children: React.ReactNode }) {
@@ -327,6 +329,20 @@ export default function SettingsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input label="Email" type="email" value={settings.shiprocket_email} onChange={(e) => update("shiprocket_email", e.target.value)} />
               <Input label="Password" type="password" value={settings.shiprocket_password} onChange={(e) => update("shiprocket_password", e.target.value)} />
+            </div>
+            <div className="mt-4 pt-4 border-t border-ivory-dark/60">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={settings.auto_ship_enabled}
+                  onChange={(e) => update("auto_ship_enabled", e.target.checked)}
+                  className="rounded border-ivory-dark accent-gold"
+                />
+                <div>
+                  <span className="text-sm font-medium text-gray-900">Enable auto-ship on payment</span>
+                  <p className="text-xs text-charcoal-muted mt-0.5">Automatically create Shiprocket shipment + generate label when payment is confirmed</p>
+                </div>
+              </label>
             </div>
           </Section>
         </div>

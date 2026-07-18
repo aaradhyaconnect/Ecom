@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { requireAdmin, createAdminClient } from "@/lib/supabase/server";
-import { createShipment, generateAWB } from "@/lib/shiprocket";
+import { createShipment, generateAWB, generateLabel } from "@/lib/shiprocket";
 
 export async function POST(request: NextRequest) {
   try {
@@ -96,10 +96,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    let labelUrl = "";
+    try {
+      const label = await generateLabel(shipment.shipment_id);
+      labelUrl = label.label_url || "";
+    } catch {
+      // Label generation is best-effort
+    }
+
     const updates: Record<string, unknown> = {
       shiprocket_shipment_id: shipment.shipment_id,
       tracking_id: awbData?.awb_code || shipment.awb_code || "",
       courier_name: awbData?.courier_name || shipment.courier_name || "",
+      shipping_label_url: labelUrl,
       order_status: "shipped",
       updated_at: new Date().toISOString(),
     };

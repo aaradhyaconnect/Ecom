@@ -178,6 +178,7 @@ export interface Order {
   cashfree_payment_id?: string;
   tracking_id?: string;
   courier_name?: string;
+  shipping_label_url?: string;
   estimated_delivery?: string;
   shiprocket_shipment_id?: number;
   awb_code?: string;
