@@ -185,9 +185,45 @@ export default function ShippingPage() {
   }, []);
 
   useEffect(() => {
-    fetchDashboard();
-    fetchUnshippedOrders();
-  }, [fetchDashboard, fetchUnshippedOrders]);
+    let cancelled = false;
+    (async () => {
+      setLoadingDashboard(true);
+      try {
+        const res = await fetch("/api/admin/shiprocket");
+        const data = await res.json();
+        if (!cancelled && data.success) {
+          setSummary(data.data.summary);
+          setRecentShipments(data.data.recentShipments);
+        }
+      } catch {
+        toast.error("Failed to load dashboard");
+      } finally {
+        if (!cancelled) setLoadingDashboard(false);
+      }
+
+      setLoadingOrders(true);
+      try {
+        const params = new URLSearchParams();
+        params.set("status", "confirmed");
+        params.set("limit", "100");
+        const res = await fetch(`/api/admin/orders?${params}`);
+        const data = await res.json();
+        if (!cancelled) {
+          const orders = (data.data || []).filter(
+            (o: UnshippedOrder) =>
+              !o.shiprocket_shipment_id &&
+              ["confirmed", "processing", "pending", "packed"].includes(o.order_status)
+          );
+          setUnshippedOrders(orders);
+        }
+      } catch {
+        toast.error("Failed to load orders");
+      } finally {
+        if (!cancelled) setLoadingOrders(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // --- Dashboard ---
   const renderDashboard = () => (

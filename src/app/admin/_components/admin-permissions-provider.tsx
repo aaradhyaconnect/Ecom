@@ -43,24 +43,24 @@ export function AdminPermissionsProvider({ children }: { children: ReactNode }) 
   const [data, setData] = useState<AdminMeData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  async function fetchPermissions() {
-    try {
-      const res = await fetch("/api/admin/me");
-      if (res.ok) {
-        const json = await res.json();
-        if (json.success) {
-          setData(json.data);
-        }
-      }
-    } catch {
-      // silent
-    } finally {
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
-    fetchPermissions();
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/admin/me");
+        if (res.ok) {
+          const json = await res.json();
+          if (!cancelled && json.success) {
+            setData(json.data);
+          }
+        }
+      } catch {
+        // silent
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, []);
 
   const value: AdminPermsCtx = {
@@ -74,7 +74,7 @@ export function AdminPermissionsProvider({ children }: { children: ReactNode }) 
       if (data.staffRole === "super_admin") return true;
       return data.permissions[module as keyof Permissions]?.[action as keyof Permissions[keyof Permissions]] ?? false;
     },
-    refresh: fetchPermissions,
+    refresh: () => { void (async () => { try { const res = await fetch("/api/admin/me"); if (res.ok) { const json = await res.json(); if (json.success) setData(json.data); } } catch {} })(); },
   };
 
   return (

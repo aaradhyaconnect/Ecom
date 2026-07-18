@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     }
 
     const userIds = (data || []).map((u) => u.user_id).filter(Boolean);
-    let emailMap: Record<string, string> = {};
+    const emailMap: Record<string, string> = {};
     if (userIds.length > 0) {
       const { data: profiles } = await supabase
         .from("profiles")

@@ -296,9 +296,39 @@ export default function SuppliersPage() {
 
   useEffect(() => {
     if (tab === "payments") {
-      fetchPayments();
+      let cancelled = false;
+      (async () => {
+        try {
+          setPayLoading(true);
+          const [poRes, payRes] = await Promise.all([
+            fetch("/api/admin/purchase-orders"),
+            fetch(`/api/admin/suppliers/payments?page=${payPage}&limit=20`),
+          ]);
+          if (cancelled) return;
+          const poJson = await poRes.json();
+          const payJson = await payRes.json();
+          if (poJson.success && payJson.success) {
+            const poList: { id: string; order_number: string; supplier_id: string }[] = poJson.data || [];
+            const poMap = new Map(poList.map((po) => [po.id, po]));
+            const allPayments = (payJson.data || []).map((p: { purchase_order_id: string; paid_at: string } & Record<string, unknown>) => ({
+              ...p,
+              po_number: poMap.get(p.purchase_order_id)?.order_number || "—",
+              supplier_name: "—",
+            }));
+            allPayments.sort((a: { paid_at: string }, b: { paid_at: string }) => new Date(b.paid_at).getTime() - new Date(a.paid_at).getTime());
+            const start = (payPage - 1) * 20;
+            setPayments(allPayments.slice(start, start + 20));
+            setPayTotal(allPayments.length);
+          }
+        } catch {
+          if (!cancelled) toast.error("Failed to load payments");
+        } finally {
+          if (!cancelled) setPayLoading(false);
+        }
+      })();
+      return () => { cancelled = true; };
     }
-  }, [tab, fetchPayments]);
+  }, [tab, payPage]);
 
   /* ═══════════════════════════════════════
      SUPPLIER CRUD

@@ -82,14 +82,17 @@ export function SizeGuideModal({ isOpen, onClose }: SizeGuideModalProps) {
 
   useEffect(() => {
     if (!isOpen) return;
-    setLoading(true);
-    fetch("/api/pages?slug=size-guide")
-      .then((r) => r.json())
-      .then((json) => {
-        if (json.success && json.data?.content) setContent(json.data.content);
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false));
+    let cancelled = false;
+    (async () => {
+      try {
+        const r = await fetch("/api/pages?slug=size-guide");
+        const json = await r.json();
+        if (!cancelled && json.success && json.data?.content) setContent(json.data.content);
+      } catch {} finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
   }, [isOpen]);
 
   return (
