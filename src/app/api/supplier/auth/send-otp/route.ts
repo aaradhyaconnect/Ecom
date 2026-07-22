@@ -26,47 +26,32 @@ export async function POST(request: Request) {
 
     const adminDb = await createAdminClient();
 
-    const { data: supplier } = await adminDb
+    const { data: supplier, error: supplierError } = await adminDb
       .from("suppliers")
       .select("id, auth_user_id, is_active")
       .eq("email", email)
       .single();
 
-    if (!supplier || !supplier.is_active) {
-      return NextResponse.json({ success: false, error: "No active supplier found with this email" }, { status: 404 });
+    if (supplierError || !supplier) {
+      return NextResponse.json({ success: false, error: "No supplier found with this email" }, { status: 404 });
+    }
+
+    if (!supplier.is_active) {
+      return NextResponse.json({ success: false, error: "Supplier account is inactive" }, { status: 403 });
     }
 
     if (!supplier.auth_user_id) {
-      const { data: newUser, error: createError } = await adminDb.auth.admin.createUser({
+      const { data: newUser } = await adminDb.auth.admin.createUser({
         email,
         email_confirm: true,
-        user_metadata: { role: "supplier", name: supplier.id },
+        user_metadata: { role: "supplier" },
       });
 
-      if (createError) {
-        if (!createError.message?.includes("already")) {
-          return NextResponse.json({ success: false, error: "Failed to create supplier account" }, { status: 500 });
-        }
-      } else if (newUser?.user) {
+      if (newUser?.user) {
         await adminDb
           .from("suppliers")
           .update({ auth_user_id: newUser.user.id })
           .eq("id", supplier.id);
-
-        const { data: newProfile } = await adminDb
-          .from("profiles")
-          .select("id")
-          .eq("id", newUser.user.id)
-          .single();
-
-        if (!newProfile) {
-          await adminDb.from("profiles").insert({
-            id: newUser.user.id,
-            email: email,
-            name: email.split("@")[0],
-            role: "supplier",
-          });
-        }
       }
     }
 
@@ -82,7 +67,10 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, message: "OTP sent to your email" });
-  } catch {
-    return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
+  } catch (err) {
+    return NextResponse.json(
+      { success: false, error: err instanceof Error ? err.message : "Internal server error" },
+      { status: 500 }
+    );
   }
 }
