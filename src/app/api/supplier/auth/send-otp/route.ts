@@ -24,9 +24,10 @@ export async function POST(request: Request) {
       rateLimitMap.set(key, { count: 1, resetAt: now + 5 * 60 * 1000 });
     }
 
-    const supabase = await createAdminClient();
+    const adminDb = await createAdminClient();
 
-    const { data: supplier } = await supabase
+    // 1. Look up supplier
+    const { data: supplier } = await adminDb
       .from("suppliers")
       .select("id, auth_user_id, is_active")
       .eq("email", email)
@@ -42,33 +43,84 @@ export async function POST(request: Request) {
       { auth: { persistSession: false } }
     );
 
-    if (supplier.auth_user_id) {
-      const { error } = await supabaseAnon.auth.signInWithOtp({ email });
-      if (error) {
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
-      }
-    } else {
-      const { data: authData, error: createError } = await supabase.auth.admin.inviteUserByEmail(email, {
-        data: { role: "supplier", name: supplier.id },
-        redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "https://g2istyle.com"}/supplier/login`,
-      });
+    // 2. Ensure auth user exists and is linked
+    if (!supplier.auth_user_id) {
+      // Try to find existing auth user by email
+      const { data: listUsers } = await adminDb.auth.admin.listUsers();
+      const existingUser = listUsers?.users?.find(
+        (u) => u.email?.toLowerCase() === email.toLowerCase()
+      );
 
-      if (createError) {
-        const { error: otpError } = await supabaseAnon.auth.signInWithOtp({ email });
-        if (otpError) {
-          return NextResponse.json({ success: false, error: otpError.message }, { status: 500 });
-        }
-      } else if (authData?.user) {
-        await supabase
+      if (existingUser) {
+        // Link existing auth user to this supplier
+        await adminDb
           .from("suppliers")
-          .update({ auth_user_id: authData.user.id })
+          .update({ auth_user_id: existingUser.id })
           .eq("id", supplier.id);
 
-        const { error: otpError } = await supabaseAnon.auth.signInWithOtp({ email });
-        if (otpError) {
-          return NextResponse.json({ success: false, error: otpError.message }, { status: 500 });
+        // Ensure profile exists with supplier role
+        const { data: existingProfile } = await adminDb
+          .from("profiles")
+          .select("id")
+          .eq("id", existingUser.id)
+          .single();
+
+        if (!existingProfile) {
+          await adminDb.from("profiles").insert({
+            id: existingUser.id,
+            email: email,
+            name: email.split("@")[0],
+            role: "supplier",
+          });
+        } else {
+          // Update role to supplier if it's not already
+          await adminDb
+            .from("profiles")
+            .update({ role: "supplier" })
+            .eq("id", existingUser.id)
+            .neq("role", "supplier");
+        }
+      } else {
+        // Create new auth user (no invite email, just create the account)
+        const { data: newUser, error: createError } = await adminDb.auth.admin.createUser({
+          email,
+          email_confirm: true,
+          user_metadata: { role: "supplier", name: supplier.id },
+        });
+
+        if (createError) {
+          return NextResponse.json({ success: false, error: "Failed to create supplier account" }, { status: 500 });
+        }
+
+        if (newUser?.user) {
+          await adminDb
+            .from("suppliers")
+            .update({ auth_user_id: newUser.user.id })
+            .eq("id", supplier.id);
+
+          // Ensure profile exists (trigger should handle this, but be safe)
+          const { data: newProfile } = await adminDb
+            .from("profiles")
+            .select("id")
+            .eq("id", newUser.user.id)
+            .single();
+
+          if (!newProfile) {
+            await adminDb.from("profiles").insert({
+              id: newUser.user.id,
+              email: email,
+              name: email.split("@")[0],
+              role: "supplier",
+            });
+          }
         }
       }
+    }
+
+    // 3. Send OTP via Supabase signInWithOtp
+    const { error: otpError } = await supabaseAnon.auth.signInWithOtp({ email });
+    if (otpError) {
+      return NextResponse.json({ success: false, error: otpError.message }, { status: 500 });
     }
 
     return NextResponse.json({ success: true, message: "OTP sent to your email" });

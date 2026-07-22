@@ -1,15 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Package, Mail, KeyRound } from "lucide-react";
 import toast from "react-hot-toast";
-import { createClient } from "@supabase/supabase-js";
 
 export default function SupplierLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
@@ -51,23 +48,23 @@ export default function SupplierLoginPage() {
       });
       const data = await res.json();
       if (data.success && data.data?.session) {
-        const supabase = createClient(
-          process.env.NEXT_PUBLIC_SUPABASE_URL!,
-          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-        );
-        await supabase.auth.setSession(data.data.session);
-
-        await fetch("/api/auth/set-session", {
+        const sessionRes = await fetch("/api/auth/set-session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             access_token: data.data.session.access_token,
             refresh_token: data.data.session.refresh_token,
           }),
-        });
+        }).catch(() => null);
+
+        if (!sessionRes?.ok) {
+          toast.error("Session setup failed. Please try again.");
+          setLoading(false);
+          return;
+        }
 
         toast.success("Login successful");
-        router.push("/supplier/dashboard");
+        window.location.replace("/supplier/dashboard");
       } else {
         toast.error(data.error);
       }
