@@ -95,6 +95,7 @@ export default function ProfilePage() {
     })();
 
     return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, supabase]);
 
   const handleSaveProfile = useCallback(async () => {

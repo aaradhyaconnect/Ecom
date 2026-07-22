@@ -332,27 +332,6 @@ export default function AdminOrdersPage() {
     (order.refund_status === "none" || order.refund_status === "failed") &&
     hasPerm("orders", "edit");
 
-  const exportOrders = () => {
-    const headers = ["Order ID", "Customer", "Status", "Payment", "Total", "Date"];
-    const rows = orders.map((o) => [
-      o.order_id,
-      (o as unknown as Record<string, Record<string, string>>).profiles?.name || "N/A",
-      o.order_status,
-      o.payment_status,
-      String(o.total),
-      formatDate(o.created_at),
-    ]);
-    const csv = [headers, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `orders-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success("Orders exported");
-  };
-
   const fetchSuppliers = useCallback(async () => {
     try {
       const res = await fetch("/api/admin/suppliers");

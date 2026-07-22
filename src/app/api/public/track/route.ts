@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get("order_id");
     const awbCode = searchParams.get("awb");
-    const email = searchParams.get("email");
 
     if (!orderId && !awbCode) {
       return Response.json({ success: false, error: "order_id or awb parameter required" }, { status: 400 });

@@ -15,13 +15,10 @@ import {
   ChevronLeft,
   ChevronRight,
   FileText,
-  IndianRupee,
   Package,
   CreditCard,
   CheckCircle2,
   XCircle,
-  Clock,
-  AlertCircle,
   ExternalLink,
   RefreshCw,
 } from "lucide-react";

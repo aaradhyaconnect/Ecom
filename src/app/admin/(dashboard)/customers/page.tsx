@@ -153,29 +153,6 @@ export default function AdminCustomersPage() {
     }
   };
 
-  const exportCustomers = () => {
-    const headers = ["Name", "Email", "Phone", "Role", "Orders", "Total Spent", "Joined"];
-    const escapeCsv = (val: string) => val.includes(",") || val.includes('"') ? `"${val.replace(/"/g, '""')}"` : val;
-    const rows = customers.map((c) => [
-      escapeCsv(c.name),
-      c.email,
-      c.phone || "",
-      c.role || "customer",
-      String(c.order_count),
-      String(c.total_spent),
-      formatDate(c.created_at),
-    ]);
-    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `customers-${new Date().toISOString().split("T")[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-    toast.success("Customers exported");
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">

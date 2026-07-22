@@ -8,6 +8,7 @@ const protectedRoutes = [
 ];
 
 const adminRoutes = ["/admin"];
+const supplierRoutes = ["/supplier"];
 
 export async function proxy(request: NextRequest) {
   const { supabase, supabaseResponse, user } = await updateSession(request);
@@ -34,6 +35,8 @@ export async function proxy(request: NextRequest) {
   const isProtected = protectedRoutes.some((r) => pathname.startsWith(r));
   const isAdmin = adminRoutes.some((r) => pathname.startsWith(r));
   const isAdminLogin = pathname === "/admin/login";
+  const isSupplier = supplierRoutes.some((r) => pathname.startsWith(r));
+  const isSupplierLogin = pathname === "/supplier/login";
   const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   if (user && isAuthPage) {
@@ -64,6 +67,26 @@ export async function proxy(request: NextRequest) {
       .single();
 
     if (profile?.role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+  }
+
+  if (!user && isSupplier && !isSupplierLogin) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/supplier/login";
+    return NextResponse.redirect(url);
+  }
+
+  if (user && isSupplier && !isSupplierLogin) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+
+    if (profile?.role !== "supplier") {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);

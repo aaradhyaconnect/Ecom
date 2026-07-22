@@ -145,3 +145,63 @@ export async function requirePermission(
 
   return auth;
 }
+
+export interface SupplierAuthResult {
+  supabase: ReturnType<typeof createServiceClient>;
+  user: SupabaseUser;
+  supplier: { id: string; name: string; email: string; is_active: boolean };
+}
+
+export async function requireSupplier(): Promise<
+  SupplierAuthResult | { response: NextResponse }
+> {
+  const supabase = await createServerSupabase();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return {
+      response: NextResponse.json(
+        { success: false, error: "Unauthorized" },
+        { status: 401 }
+      ),
+    };
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profileError || profile?.role !== "supplier") {
+    return {
+      response: NextResponse.json(
+        { success: false, error: "Forbidden" },
+        { status: 403 }
+      ),
+    };
+  }
+
+  const { data: supplier, error: supplierError } = await supabase
+    .from("suppliers")
+    .select("id, name, email, is_active")
+    .eq("auth_user_id", user.id)
+    .single();
+
+  if (supplierError || !supplier || !supplier.is_active) {
+    return {
+      response: NextResponse.json(
+        { success: false, error: "Supplier account not found or inactive" },
+        { status: 403 }
+      ),
+    };
+  }
+
+  return {
+    supabase: createServiceClient(),
+    user,
+    supplier,
+  };
+}

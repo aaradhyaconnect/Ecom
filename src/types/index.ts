@@ -1,4 +1,4 @@
-export type UserRole = "customer" | "admin";
+export type UserRole = "customer" | "admin" | "supplier";
 
 export type StaffRole = "super_admin" | "admin" | "staff";
 

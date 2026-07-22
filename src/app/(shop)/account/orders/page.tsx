@@ -60,6 +60,7 @@ export default function OrdersPage() {
     function onVisible() { if (document.visibilityState === "visible") fetchOrders(); }
     document.addEventListener("visibilitychange", onVisible);
     return () => { cancelled = true; document.removeEventListener("visibilitychange", onVisible); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id, supabase]);
 
   function getStatusStyle(value: string) {

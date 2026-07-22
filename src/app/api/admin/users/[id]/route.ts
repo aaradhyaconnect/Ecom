@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requirePermission, createAdminClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function GET(
   _request: Request,
@@ -124,8 +124,6 @@ export async function DELETE(
         { status: 400 }
       );
     }
-
-    const adminClient = await createAdminClient();
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;

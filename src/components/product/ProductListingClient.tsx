@@ -68,7 +68,9 @@ export function ProductListingClient({
   const currentOnSale = searchParams.get("onSale") === "true";
   const currentMinRating = searchParams.get("minRating");
   const currentMinDiscount = searchParams.get("minDiscount");
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentMaterials = searchParams.get("materials")?.split(",").filter(Boolean) || [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const currentTags = searchParams.get("tags")?.split(",").filter(Boolean) || [];
 
   const filteredProducts = useMemo(() => {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { requirePermission, createAdminClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function PUT(
   request: Request,

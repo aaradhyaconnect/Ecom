@@ -13,6 +13,7 @@ async function sendSupplierNotification(
 ) {
   const acceptUrl = `${SITE.url}/api/supplier/accept?token=${token}&action=accept`;
   const rejectUrl = `${SITE.url}/api/supplier/accept?token=${token}&action=reject`;
+  const portalUrl = `${SITE.url}/supplier/dashboard`;
 
   const itemList = orderItems
     .map((item) => `<li>${item.name} × ${item.quantity}</li>`)
@@ -36,6 +37,7 @@ async function sendSupplierNotification(
         <a href="${rejectUrl}" style="background: #ef4444; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px;">Reject Order</a>
       </div>
       <p style="color: #666; font-size: 12px;">This link expires in 48 hours.</p>
+      <p style="margin-top: 16px;"><a href="${portalUrl}" style="color: #111; text-decoration: underline;">Open Supplier Portal</a> to manage all your orders.</p>
     </div>
  `;
 

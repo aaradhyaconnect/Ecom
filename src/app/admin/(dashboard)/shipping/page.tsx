@@ -17,8 +17,6 @@ import {
   RotateCcw,
   FileText,
   MapPin,
-  ChevronLeft,
-  ChevronRight,
   ExternalLink,
   Send,
   AlertTriangle,

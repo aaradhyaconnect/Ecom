@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     
-    const { awb, current_status, order_id } = body;
+    const { awb, current_status } = body;
 
     if (!awb) {
       return new Response("OK");
