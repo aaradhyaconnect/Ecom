@@ -26,11 +26,14 @@ export async function POST(request: Request) {
 
     const adminDb = await createAdminClient();
 
-    const { data: supplier, error: supplierError } = await adminDb
+    const { data: suppliers, error: supplierError } = await adminDb
       .from("suppliers")
       .select("id, auth_user_id, is_active")
       .eq("email", email)
-      .single();
+      .order("is_active", { ascending: false })
+      .limit(1);
+
+    const supplier = suppliers?.[0] || null;
 
     if (supplierError || !supplier) {
       return NextResponse.json({ success: false, error: "No supplier found with this email" }, { status: 404 });
