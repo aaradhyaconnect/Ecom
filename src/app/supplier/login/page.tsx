@@ -3,16 +3,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Package, Mail, KeyRound } from "lucide-react";
+import { Package, Mail, CheckCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SupplierLoginPage() {
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sent, setSent] = useState(false);
 
-  const handleSendOtp = async (e: React.FormEvent) => {
+  const handleSendLink = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) return;
     setLoading(true);
@@ -24,52 +23,13 @@ export default function SupplierLoginPage() {
       });
       const data = await res.json();
       if (data.success) {
-        setOtpSent(true);
-        toast.success("OTP sent to your email");
+        setSent(true);
+        toast.success("Login link sent to your email");
       } else {
         toast.error(data.error);
       }
     } catch {
-      toast.error("Failed to send OTP");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!otp.trim()) return;
-    setLoading(true);
-    try {
-      const res = await fetch("/api/supplier/auth/verify-otp", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token: otp }),
-      });
-      const data = await res.json();
-      if (data.success && data.data?.session) {
-        const sessionRes = await fetch("/api/auth/set-session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            access_token: data.data.session.access_token,
-            refresh_token: data.data.session.refresh_token,
-          }),
-        }).catch(() => null);
-
-        if (!sessionRes?.ok) {
-          toast.error("Session setup failed. Please try again.");
-          setLoading(false);
-          return;
-        }
-
-        toast.success("Login successful");
-        window.location.replace("/supplier/dashboard");
-      } else {
-        toast.error(data.error);
-      }
-    } catch {
-      toast.error("Login failed");
+      toast.error("Failed to send login link");
     } finally {
       setLoading(false);
     }
@@ -86,8 +46,8 @@ export default function SupplierLoginPage() {
           <p className="text-sm text-charcoal-muted mt-1">Sign in to manage your orders</p>
         </div>
 
-        {!otpSent ? (
-          <form onSubmit={handleSendOtp} className="space-y-4">
+        {!sent ? (
+          <form onSubmit={handleSendLink} className="space-y-4">
             <div>
               <label className="text-xs uppercase tracking-wider text-charcoal-muted mb-1 block">Email</label>
               <div className="relative">
@@ -103,38 +63,31 @@ export default function SupplierLoginPage() {
               </div>
             </div>
             <Button type="submit" className="w-full" disabled={loading || !email.trim()}>
-              {loading ? "Sending..." : "Send OTP Code"}
+              {loading ? "Sending..." : "Send Login Link"}
             </Button>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOtp} className="space-y-4">
-            <div>
-              <label className="text-xs uppercase tracking-wider text-charcoal-muted mb-1 block">OTP Code</label>
-              <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-charcoal-muted" />
-                <Input
-                  type="text"
-                  placeholder="Enter 6-digit code"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className="pl-10"
-                  maxLength={6}
-                  required
-                />
-              </div>
-              <p className="text-xs text-charcoal-muted mt-1">Sent to {email}</p>
+          <div className="text-center space-y-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-50">
+              <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
-            <Button type="submit" className="w-full" disabled={loading || otp.length < 4}>
-              {loading ? "Verifying..." : "Sign In"}
-            </Button>
+            <div>
+              <p className="text-sm font-medium">Check your email</p>
+              <p className="text-sm text-charcoal-muted mt-1">
+                We sent a login link to <span className="font-medium">{email}</span>
+              </p>
+            </div>
+            <p className="text-xs text-charcoal-muted">
+              Click the link in the email to sign in. The link expires in 5 minutes.
+            </p>
             <button
               type="button"
-              onClick={() => { setOtpSent(false); setOtp(""); }}
-              className="w-full text-sm text-charcoal-muted hover:text-charcoal text-center"
+              onClick={() => { setSent(false); setEmail(""); }}
+              className="text-sm text-charcoal-muted hover:text-charcoal"
             >
               Use a different email
             </button>
-          </form>
+          </div>
         )}
       </div>
     </div>

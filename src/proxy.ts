@@ -36,7 +36,7 @@ export async function proxy(request: NextRequest) {
   const isAdmin = adminRoutes.some((r) => pathname.startsWith(r));
   const isAdminLogin = pathname === "/admin/login";
   const isSupplier = supplierRoutes.some((r) => pathname.startsWith(r));
-  const isSupplierLogin = pathname === "/supplier/login";
+  const isSupplierLogin = pathname === "/supplier/login" || pathname.startsWith("/supplier/auth/");
   const isAuthPage = pathname === "/login" || pathname === "/signup" || pathname === "/forgot-password" || pathname === "/reset-password";
 
   if (user && isAuthPage) {

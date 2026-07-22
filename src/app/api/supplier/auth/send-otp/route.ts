@@ -1,44 +1,8 @@
 import { NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 import { createAdminClient } from "@/lib/supabase/server";
-import crypto from "crypto";
 
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
-
-function generateOtp(): string {
-  return Math.floor(100000 + Math.random() * 900000).toString();
-}
-
-async function sendEmailViaResend(to: string, code: string): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return false;
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: process.env.EMAIL_FROM_ADDRESS || "noreply@resend.dev",
-      to,
-      subject: "Your G2I Style Login Code",
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 400px; margin: 0 auto; text-align: center; padding: 40px 20px;">
-          <h2 style="color: #111; font-weight: 300; letter-spacing: 2px;">SUPPLIER PORTAL</h2>
-          <p style="color: #666; font-size: 14px; margin-top: 20px;">Your one-time login code is:</p>
-          <div style="font-size: 36px; font-weight: bold; letter-spacing: 8px; color: #111; margin: 20px 0; padding: 16px; background: #FAF9F6; border-radius: 8px;">${code}</div>
-          <p style="color: #999; font-size: 12px;">This code expires in 10 minutes. Do not share it with anyone.</p>
-        </div>
-      `,
-    }),
-  });
-
-  return res.ok;
-}
-
-function hashOtp(code: string): string {
-  return crypto.createHash("sha256").update(code).digest("hex");
-}
 
 export async function POST(request: Request) {
   try {
@@ -90,26 +54,26 @@ export async function POST(request: Request) {
       }
     }
 
-    const code = generateOtp();
-    const codeHash = hashOtp(code);
-    const expiresAt = Date.now() + 10 * 60 * 1000;
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://hainju.vercel.app";
 
-    const sent = await sendEmailViaResend(email, code);
-    if (!sent) {
-      return NextResponse.json({ success: false, error: "Failed to send OTP email" }, { status: 500 });
-    }
+    const supabaseAnon = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      { auth: { persistSession: false } }
+    );
 
-    const response = NextResponse.json({ success: true, message: "OTP sent to your email" });
-
-    response.cookies.set("supplier_otp", JSON.stringify({ email, hash: codeHash, expiresAt }), {
-      httpOnly: true,
-      secure: true,
-      sameSite: "lax",
-      maxAge: 600,
-      path: "/",
+    const { error: otpError } = await supabaseAnon.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: `${siteUrl}/supplier/auth/callback`,
+      },
     });
 
-    return response;
+    if (otpError) {
+      return NextResponse.json({ success: false, error: otpError.message }, { status: 500 });
+    }
+
+    return NextResponse.json({ success: true, message: "Check your email for the login link" });
   } catch (err) {
     return NextResponse.json(
       { success: false, error: err instanceof Error ? err.message : "Internal server error" },
