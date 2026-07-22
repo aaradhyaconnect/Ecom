@@ -11,6 +11,7 @@ interface ModalProps {
   children: React.ReactNode;
   size?: "sm" | "md" | "lg" | "xl" | "full";
   showClose?: boolean;
+  closeOnOverlay?: boolean;
 }
 
 export function Modal({
@@ -20,6 +21,7 @@ export function Modal({
   children,
   size = "md",
   showClose = true,
+  closeOnOverlay = true,
 }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -77,34 +79,39 @@ export function Modal({
   return (
     <div
       ref={overlayRef}
-      className="fixed inset-0 z-50 flex items-center justify-center"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? "modal-title" : undefined}
     >
+      {/* Overlay */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+        className="fixed inset-0 bg-charcoal/40 backdrop-blur-sm animate-in fade-in duration-200"
         onMouseDown={(e) => {
-          if (e.target === e.currentTarget) onClose();
+          if (closeOnOverlay && e.target === e.currentTarget) onClose();
         }}
       />
+
+      {/* Content */}
       <div
         ref={contentRef}
         className={cn(
-          "relative z-10 bg-ivory shadow-2xl max-h-[90vh] overflow-auto animate-in fade-in zoom-in-95 duration-200",
+          "relative z-10 bg-white rounded-xl shadow-2xl max-h-[90vh] overflow-auto",
+          "animate-in fade-in zoom-in-95 duration-200",
           {
             "w-full max-w-sm": size === "sm",
             "w-full max-w-md": size === "md",
             "w-full max-w-lg": size === "lg",
             "w-full max-w-2xl": size === "xl",
-            "w-full max-w-full mx-4": size === "full",
+            "w-full max-w-full": size === "full",
           }
         )}
       >
+        {/* Header */}
         {(title || showClose) && (
-          <div className="flex items-center justify-between p-4 border-b border-ivory-dark">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border-light">
             {title && (
-              <h2 id="modal-title" className="text-lg font-serif font-semibold text-charcoal">
+              <h2 id="modal-title" className="heading-4 text-charcoal">
                 {title}
               </h2>
             )}
@@ -112,14 +119,16 @@ export function Modal({
               <button
                 onClick={onClose}
                 aria-label="Close modal"
-                className="p-1 hover:bg-ivory-dark transition-colors rounded"
+                className="p-1.5 rounded-lg hover:bg-surface-raised text-charcoal-muted hover:text-charcoal transition-colors"
               >
-                <X className="h-5 w-5 text-charcoal-muted" />
+                <X className="h-4 w-4" />
               </button>
             )}
           </div>
         )}
-        <div className="p-4 text-charcoal">{children}</div>
+
+        {/* Body */}
+        <div className="px-6 py-5 text-charcoal">{children}</div>
       </div>
     </div>
   );

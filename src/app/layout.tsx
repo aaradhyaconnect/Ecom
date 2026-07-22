@@ -8,7 +8,7 @@ import { MicrosoftClarity } from "@/components/analytics/MicrosoftClarity";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#FFFFF0",
+  themeColor: "#FAF9F6",
 };
 
 const inter = Inter({
