@@ -134,24 +134,27 @@ export default function LoginPage() {
           if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
             handled = true;
             cleanup();
-            if (e.data.accessToken) {
-              await supabase.auth.setSession({
+            if (!e.data.accessToken) {
+              toast.error("Authentication failed. Please try again.");
+              setIsLoading(false);
+              return;
+            }
+            await supabase.auth.setSession({
+              access_token: e.data.accessToken,
+              refresh_token: e.data.refreshToken,
+            });
+            const sessionRes = await fetch("/api/auth/set-session", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
                 access_token: e.data.accessToken,
                 refresh_token: e.data.refreshToken,
-              });
-              const sessionRes = await fetch("/api/auth/set-session", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  access_token: e.data.accessToken,
-                  refresh_token: e.data.refreshToken,
-                }),
-              }).catch(() => null);
-              if (!sessionRes?.ok) {
-                toast.error("Session setup failed. Please try again.");
-                setIsLoading(false);
-                return;
-              }
+              }),
+            }).catch(() => null);
+            if (!sessionRes?.ok) {
+              toast.error("Session setup failed. Please try again.");
+              setIsLoading(false);
+              return;
             }
             toast.success("Welcome back!");
             window.location.replace(e.data.path || redirectTo);
