@@ -98,95 +98,15 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const supabase = createClient();
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}&popup=true`,
-          skipBrowserRedirect: true,
+          redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
         },
       });
       if (error) {
         toast.error(error.message);
         setIsLoading(false);
-        return;
-      }
-      if (data?.url) {
-        const width = 500;
-        const height = 600;
-        const left = window.screenX + (window.outerWidth - width) / 2;
-        const top = window.screenY + (window.outerHeight - height) / 2;
-        window.open(
-          data.url,
-          "google-auth",
-          `width=${width},height=${height},left=${left},top=${top}`
-        );
-
-        let handled = false;
-        const cleanup = () => {
-          window.removeEventListener("message", handleMessage);
-          clearTimeout(pollTimer);
-          cleanupRef.current = null;
-        };
-        cleanupRef.current = cleanup;
-
-        const handleMessage = async (e: MessageEvent) => {
-          if (e.origin !== window.location.origin) return;
-          if (e.data?.type === "auth-callback" && e.data?.success && !handled) {
-            handled = true;
-            cleanup();
-            if (!e.data.accessToken) {
-              toast.error("Authentication failed. Please try again.");
-              setIsLoading(false);
-              return;
-            }
-            await supabase.auth.setSession({
-              access_token: e.data.accessToken,
-              refresh_token: e.data.refreshToken,
-            });
-            const sessionRes = await fetch("/api/auth/set-session", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                access_token: e.data.accessToken,
-                refresh_token: e.data.refreshToken,
-              }),
-            }).catch(() => null);
-            if (!sessionRes?.ok) {
-              toast.error("Session setup failed. Please try again.");
-              setIsLoading(false);
-              return;
-            }
-            toast.success("Welcome back!");
-            window.location.replace(e.data.path || redirectTo);
-          }
-        };
-
-        window.addEventListener("message", handleMessage);
-
-        const pollTimer = setTimeout(async () => {
-          if (handled) return;
-          cleanup();
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session) {
-            handled = true;
-            const sessionRes = await fetch("/api/auth/set-session", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                access_token: session.access_token,
-                refresh_token: session.refresh_token,
-              }),
-            }).catch(() => null);
-            if (!sessionRes?.ok) {
-              toast.error("Session setup failed. Please try again.");
-              setIsLoading(false);
-              return;
-            }
-            toast.success("Welcome back!");
-            window.location.replace(redirectTo);
-          }
-          setIsLoading(false);
-        }, 30000);
       }
     } catch {
       toast.error("Failed to sign in with Google");
