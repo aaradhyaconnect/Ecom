@@ -182,6 +182,9 @@ export interface Order {
   estimated_delivery?: string;
   shiprocket_shipment_id?: number;
   awb_code?: string;
+  fulfillment_type?: "warehouse" | "manufacturer";
+  fulfillment_status?: string;
+  supplier_id?: string;
   is_prebook: boolean;
   prebook_amount: number;
   balance_amount: number;

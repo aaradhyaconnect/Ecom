@@ -520,13 +520,13 @@ export default function AdminOrdersPage() {
                       <div className="flex items-center gap-2">
                         <span>{order.order_id}</span>
                         {order.is_prebook && <Badge variant="warning"><Clock className="h-3 w-3 inline mr-1" />Pre-Book</Badge>}
-                        {(order as unknown as Record<string, unknown>).fulfillment_type === "manufacturer" && (
+                        {order.fulfillment_type === "manufacturer" && (
                           <Badge variant={
-                            (order as unknown as Record<string, unknown>).fulfillment_status === "supplier_accepted" ? "success"
-                            : (order as unknown as Record<string, unknown>).fulfillment_status === "supplier_rejected" ? "error"
+                            order.fulfillment_status === "supplier_accepted" ? "success"
+                            : order.fulfillment_status === "supplier_rejected" ? "error"
                             : "warning"
                           }>
-                            {String((order as unknown as Record<string, unknown>).fulfillment_status || "pending").replace("supplier_", "")}
+                            {String(order.fulfillment_status || "pending").replace("supplier_", "")}
                           </Badge>
                         )}
                       </div>
@@ -799,24 +799,24 @@ export default function AdminOrdersPage() {
               <div className="flex items-center gap-3 mb-3">
                 <div>
                   <span className="text-xs text-charcoal-muted">Type: </span>
-                  <Badge variant={(selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type === "manufacturer" ? "warning" : "default"}>
-                    {((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type as string) || "warehouse"}
+                  <Badge variant={selectedOrder?.fulfillment_type === "manufacturer" ? "warning" : "default"}>
+                    {selectedOrder?.fulfillment_type || "warehouse"}
                   </Badge>
                 </div>
                 <div>
                   <span className="text-xs text-charcoal-muted">Status: </span>
                   <Badge variant={
-                    ((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status as string) === "supplier_accepted" ? "success"
-                    : ((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status as string) === "supplier_rejected" ? "error"
+                    selectedOrder?.fulfillment_status === "supplier_accepted" ? "success"
+                    : selectedOrder?.fulfillment_status === "supplier_rejected" ? "error"
                     : "warning"
                   }>
-                    {(((selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status as string) || "pending").replace("supplier_", "")}
+                    {(selectedOrder?.fulfillment_status || "pending").replace("supplier_", "")}
                   </Badge>
                 </div>
               </div>
 
-              {hasPerm("orders", "edit") && (selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type !== "manufacturer" &&
-                !(selectedOrder as unknown as Record<string, unknown>)?.shiprocket_shipment_id &&
+              {hasPerm("orders", "edit") && selectedOrder?.fulfillment_type !== "manufacturer" &&
+                !selectedOrder?.shiprocket_shipment_id &&
                 selectedOrder.order_status !== "cancelled" && selectedOrder.order_status !== "delivered" && (
                 <div className="flex items-center gap-2 pt-2 border-t border-ivory-dark/60">
                   <select
@@ -839,8 +839,8 @@ export default function AdminOrdersPage() {
                 </div>
               )}
 
-              {(selectedOrder as unknown as Record<string, unknown>)?.fulfillment_type === "manufacturer" &&
-                (selectedOrder as unknown as Record<string, unknown>)?.fulfillment_status === "assigned" &&
+              {selectedOrder?.fulfillment_type === "manufacturer" &&
+                selectedOrder?.fulfillment_status === "assigned" &&
                 hasPerm("orders", "edit") && (
                 <div className="pt-2 border-t border-ivory-dark/60">
                   <Button

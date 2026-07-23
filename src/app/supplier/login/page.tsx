@@ -1,14 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Package, Mail, Lock, CheckCircle, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SupplierLoginPage() {
-  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -54,8 +52,7 @@ export default function SupplierLoginPage() {
     }
   };
 
-  const handleSendLink = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSendLink = async () => {
     if (!email.trim()) return;
     setLoading(true);
     try {
@@ -143,8 +140,9 @@ export default function SupplierLoginPage() {
 
             <button
               type="button"
-              onClick={() => setSent(true)}
-              className="w-full text-sm text-charcoal-muted hover:text-charcoal text-center py-2"
+              onClick={handleSendLink}
+              disabled={loading || !email.trim()}
+              className="w-full text-sm text-charcoal-muted hover:text-charcoal text-center py-2 disabled:opacity-50"
             >
               Sign in with email link instead
             </button>

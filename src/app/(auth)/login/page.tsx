@@ -24,7 +24,8 @@ export default function LoginPage() {
   const cleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
-    return () => { cleanupRef.current?.(); };
+    const cleanup = cleanupRef.current;
+    return () => { cleanup?.(); };
   }, []);
 
   async function handleSubmit(e: React.FormEvent) {

@@ -90,14 +90,14 @@ export async function PUT(
       }
 
       const VALID_TRANSITIONS: Record<string, string[]> = {
-        pending: ["confirmed", "cancelled"],
-        confirmed: ["processing", "packed", "cancelled"],
-        processing: ["packed", "cancelled"],
-        packed: ["shipped", "cancelled"],
-        shipped: ["out-for-delivery"],
-        "out-for-delivery": ["delivered"],
+        pending: ["confirmed", "processing", "packed", "shipped", "cancelled"],
+        confirmed: ["processing", "packed", "shipped", "pending", "cancelled"],
+        processing: ["packed", "shipped", "confirmed", "pending", "cancelled"],
+        packed: ["shipped", "processing", "confirmed", "cancelled"],
+        shipped: ["out-for-delivery", "delivered", "packed"],
+        "out-for-delivery": ["delivered", "shipped"],
         delivered: ["returned"],
-        cancelled: [],
+        cancelled: ["pending", "confirmed"],
         returned: [],
       };
 

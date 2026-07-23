@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { requirePermission, createAdminClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 
 export async function POST(
   request: NextRequest,
@@ -8,6 +8,7 @@ export async function POST(
   try {
     const auth = await requirePermission("orders", "edit");
     if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const { id: orderId } = await params;
     const body = await request.json();
@@ -27,9 +28,7 @@ export async function POST(
       );
     }
 
-    const adminDb = await createAdminClient();
-
-    const { data: order, error: orderError } = await adminDb
+    const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("id, order_status, fulfillment_type, shiprocket_shipment_id")
       .eq("id", orderId)
@@ -37,7 +36,7 @@ export async function POST(
 
     if (orderError || !order) {
       return Response.json(
-        { success: false, error: "Order not found" },
+        { success: false, error: `Order not found: ${orderError?.message || "no match"}` },
         { status: 404 }
       );
     }
@@ -57,7 +56,7 @@ export async function POST(
     }
 
     if (supplier_id) {
-      const { data: supplier } = await adminDb
+      const { data: supplier } = await supabase
         .from("suppliers")
         .select("id, is_active")
         .eq("id", supplier_id)
@@ -73,7 +72,7 @@ export async function POST(
 
     const updates: Record<string, unknown> = {
       fulfillment_type,
-      fulfillment_status: fulfillment_type === "manufacturer" ? "pending" : "pending",
+      fulfillment_status: "pending",
       updated_at: new Date().toISOString(),
     };
 
@@ -83,7 +82,7 @@ export async function POST(
       updates.supplier_id = null;
     }
 
-    const { error: updateError } = await adminDb
+    const { error: updateError } = await supabase
       .from("orders")
       .update(updates)
       .eq("id", orderId);
@@ -96,7 +95,7 @@ export async function POST(
     }
 
     if (fulfillment_type === "manufacturer" && supplier_id) {
-      const { error: fulfillError } = await adminDb
+      const { error: fulfillError } = await supabase
         .from("order_fulfillments")
         .insert({
           order_id: orderId,

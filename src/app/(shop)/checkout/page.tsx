@@ -25,7 +25,32 @@ declare global {
         redirectTarget: string;
       }) => Promise<void>;
     };
+    Razorpay?: new (options: RazorpayOptions) => RazorpayInstance;
   }
+}
+
+interface RazorpayOptions {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description?: string;
+  order_id: string;
+  handler: (response: RazorpayResponse) => void;
+  prefill?: { name?: string; email?: string; contact?: string };
+  theme?: { color?: string };
+  modal?: { ondismiss?: () => void };
+}
+
+interface RazorpayResponse {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+}
+
+interface RazorpayInstance {
+  open: () => void;
+  on: (event: string, handler: (response: { error: { description: string } }) => void) => void;
 }
 
 interface FormErrors {
@@ -66,7 +91,7 @@ function CheckoutContent() {
   const [step, setStep] = useState<Step>(1);
   const [address, setAddress] = useState<Address>(initialAddress);
   const [errors, setErrors] = useState<FormErrors>({});
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "cashfree" | "upi">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "cashfree" | "upi" | "razorpay">("cod");
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [appliedCoupon, setAppliedCoupon] = useState<{
     code: string;
@@ -221,6 +246,21 @@ function CheckoutContent() {
     });
   };
 
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handlePlaceOrder = async () => {
     if (!user) {
       toast.error("Please log in to place an order");
@@ -302,6 +342,87 @@ function CheckoutContent() {
           return;
         }
         await cashfree.checkout({ paymentSessionId, redirectTarget: "_self" });
+      }
+
+      if (paymentMethod === "razorpay") {
+        const loaded = await loadRazorpayScript();
+        if (!loaded) {
+          toast.error("Failed to load Razorpay");
+          setIsPlacingOrder(false);
+          return;
+        }
+
+        const razorpayOrderId = data.data.razorpay_order?.id;
+        if (!razorpayOrderId) {
+          toast.error("Razorpay order not created");
+          setIsPlacingOrder(false);
+          return;
+        }
+
+        const options = {
+          key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || "",
+          amount: (data.data.razorpay_order?.amount || total * 100),
+          currency: "INR",
+          name: "Femme Drip",
+          description: `Order ${data.data.order_id}`,
+          order_id: razorpayOrderId,
+          handler: async (response: RazorpayResponse) => {
+            try {
+              const verifyRes = await fetch("/api/payment/razorpay/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  order_id: data.data.id,
+                }),
+              });
+              const verifyData = await verifyRes.json();
+              if (verifyData.success) {
+                fireConfetti();
+                if (isBuyNow) {
+                  const { removeItem } = useCartStore.getState();
+                  checkoutItems.forEach((item) => removeItem(item.id));
+                } else {
+                  clearCart();
+                }
+                setPlacedOrderId(data.data.id);
+                setOrderPlaced(true);
+              } else {
+                toast.error(verifyData.error || "Payment verification failed");
+              }
+            } catch {
+              toast.error("Payment verification failed. Please contact support.");
+            }
+            setIsPlacingOrder(false);
+          },
+          prefill: {
+            name: address.full_name,
+            email: user?.email || "",
+            contact: address.phone,
+          },
+          theme: { color: "#D4AF37" },
+          modal: {
+            ondismiss: () => {
+              setIsPlacingOrder(false);
+              toast.error("Payment cancelled");
+            },
+          },
+        };
+
+        const RazorpayConstructor = window.Razorpay;
+        if (!RazorpayConstructor) {
+          toast.error("Razorpay not loaded. Please refresh and try again.");
+          setIsPlacingOrder(false);
+          return;
+        }
+        const rzp = new RazorpayConstructor(options);
+        rzp.on("payment.failed", (response: { error: { description: string } }) => {
+          toast.error(response.error.description || "Payment failed");
+          setIsPlacingOrder(false);
+        });
+        rzp.open();
       }
     } catch {
       toast.error("Something went wrong. Please try again.");
@@ -566,6 +687,20 @@ function CheckoutContent() {
                     <p className="text-xs text-charcoal-muted">Visa, Mastercard, RuPay, Net Banking</p>
                   </div>
                 </label>
+                <label className="flex items-center gap-3 p-4 border border-ivory-dark cursor-pointer hover:border-gold transition-colors has-[:checked]:border-gold has-[:checked]:bg-gold/5">
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="razorpay"
+                    checked={paymentMethod === "razorpay"}
+                    onChange={() => setPaymentMethod("razorpay")}
+                    className="accent-gold text-gold"
+                  />
+                  <div>
+                    <p className="font-medium text-sm text-charcoal">Razorpay</p>
+                    <p className="text-xs text-charcoal-muted">UPI, Cards, Net Banking, Wallets via Razorpay</p>
+                  </div>
+                </label>
               </div>
               <div className="mt-6 flex justify-between">
                 <Button variant="outline" onClick={goBack}>
@@ -629,6 +764,7 @@ function CheckoutContent() {
                   {paymentMethod === "cod" && "Cash on Delivery"}
                   {paymentMethod === "upi" && "UPI Payment"}
                   {paymentMethod === "cashfree" && "Card / Net Banking / Wallets"}
+                  {paymentMethod === "razorpay" && "Razorpay"}
                 </p>
               </div>
 

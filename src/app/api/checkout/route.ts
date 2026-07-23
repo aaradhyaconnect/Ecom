@@ -3,6 +3,7 @@ import { createServerSupabase, createAdminClient } from "@/lib/supabase/server";
 import { generateOrderId } from "@/lib/utils/format";
 import { rateLimitCheckout, cleanupRateLimitMap } from "@/lib/utils/rate-limit";
 import { createCashfreeOrder, isCashfreeConfigured, terminateCashfreeOrder } from "@/lib/cashfree";
+import { createRazorpayOrder, isRazorpayConfigured } from "@/lib/razorpay";
 import type { Product } from "@/types";
 
 import { SHIPPING } from "@/lib/constants/site";
@@ -123,7 +124,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!["cod", "cashfree", "upi"].includes(payment_method)) {
+    if (!["cod", "cashfree", "upi", "razorpay"].includes(payment_method)) {
       return Response.json(
         { success: false, error: "Invalid payment method" },
         { status: 400 }
@@ -240,6 +241,7 @@ export async function POST(request: NextRequest) {
     const total = Math.max(payNowSubtotal + shippingCharge - discount, 0);
     const orderId = generateOrderId();
     let cashfreeOrder = null;
+    let razorpayOrder = null;
 
     if (payment_method === "cashfree" || payment_method === "upi") {
       if (!isCashfreeConfigured()) {
@@ -267,6 +269,21 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    if (payment_method === "razorpay") {
+      if (!isRazorpayConfigured()) {
+        return Response.json(
+          { success: false, error: "Razorpay not configured" },
+          { status: 500 }
+        );
+      }
+
+      razorpayOrder = await createRazorpayOrder({
+        amount: total,
+        currency: "INR",
+        receipt: orderId,
+      });
+    }
+
     const { data: order, error } = await adminDb
       .from("orders")
       .insert({
@@ -285,6 +302,7 @@ export async function POST(request: NextRequest) {
         total,
         coupon_code: coupon?.code || null,
         cashfree_order_id: cashfreeOrder?.cf_order_id || null,
+        razorpay_order_id: razorpayOrder?.id || null,
         is_prebook: hasPrebookItems,
         prebook_amount: prebookDepositTotal,
         balance_amount: totalBalanceDue,
@@ -390,6 +408,7 @@ export async function POST(request: NextRequest) {
       data: {
         ...order,
         cashfree_order: cashfreeOrder,
+        razorpay_order: razorpayOrder,
       },
     });
   } catch (error: unknown) {
