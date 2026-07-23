@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireSupplier } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 const VALID_TRANSITIONS: Record<string, string[]> = {
   assigned: ["accepted", "rejected"],
   notified: ["accepted", "rejected"],
   accepted: ["packing"],
   packing: ["ready_for_pickup"],
-  ready_for_pickup: ["picked_up"],
 };
 
 export async function POST(
@@ -16,7 +16,7 @@ export async function POST(
   try {
     const auth = await requireSupplier();
     if ("response" in auth) return auth.response;
-    const { supabase, supplier } = auth;
+    const { supabase, supplier, user } = auth;
     const { id: fulfillmentId } = await params;
     const body = await request.json();
     const { status, tracking_id, courier_name, notes } = body;
@@ -57,7 +57,6 @@ export async function POST(
     else if (status === "rejected") updateData.rejected_at = now;
     else if (status === "packing") updateData.packing_at = now;
     else if (status === "ready_for_pickup") updateData.ready_at = now;
-    else if (status === "picked_up") updateData.picked_up_at = now;
 
     if (tracking_id) updateData.tracking_id = tracking_id;
     if (courier_name) updateData.courier_name = courier_name;
@@ -77,7 +76,6 @@ export async function POST(
       rejected: "supplier_rejected",
       packing: "supplier_packing",
       ready_for_pickup: "ready_for_pickup",
-      picked_up: "picked_up",
     };
 
     if (fulfillmentStatusMap[status]) {
@@ -86,6 +84,15 @@ export async function POST(
         .update({ fulfillment_status: fulfillmentStatusMap[status], updated_at: now })
         .eq("id", fulfillment.order_id);
     }
+
+    await logActivity({
+      action: `fulfillment_${status}`,
+      entity: "order",
+      entityId: fulfillment.order_id,
+      userId: user.id,
+      before: { fulfillment_status: fulfillment.status },
+      after: { fulfillment_status: status, tracking_id: tracking_id || null, courier_name: courier_name || null },
+    });
 
     return NextResponse.json({ success: true, message: `Fulfillment updated to "${status}"` });
   } catch {

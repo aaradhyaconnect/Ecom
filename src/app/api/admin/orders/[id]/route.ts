@@ -134,6 +134,34 @@ export async function PUT(
           { status: 400 }
         );
       }
+
+      const { data: currentOrderFull } = await supabase
+        .from("orders")
+        .select("fulfillment_status")
+        .eq("id", id)
+        .single();
+
+      const VALID_FULFILLMENT_TRANSITIONS: Record<string, string[]> = {
+        pending: ["supplier_notified", "picked_up", "warehouse"],
+        supplier_notified: ["supplier_accepted", "supplier_rejected", "picked_up"],
+        supplier_accepted: ["supplier_packing", "picked_up"],
+        supplier_rejected: ["pending", "supplier_notified"],
+        supplier_packing: ["ready_for_pickup", "picked_up"],
+        ready_for_pickup: ["picked_up"],
+        picked_up: ["ready_for_pickup"],
+      };
+
+      const currentFulfillmentStatus = currentOrderFull?.fulfillment_status || "pending";
+      if (currentFulfillmentStatus !== body.fulfillment_status) {
+        const allowed = VALID_FULFILLMENT_TRANSITIONS[currentFulfillmentStatus] || [];
+        if (!allowed.includes(body.fulfillment_status)) {
+          return NextResponse.json(
+            { success: false, error: `Cannot transition fulfillment from "${currentFulfillmentStatus}" to "${body.fulfillment_status}"` },
+            { status: 400 }
+          );
+        }
+      }
+
       updateData.fulfillment_status = body.fulfillment_status;
     }
 

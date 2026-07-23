@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
-import { requirePermission, createAdminClient } from "@/lib/supabase/server";
+import { requirePermission } from "@/lib/supabase/server";
 import { SITE } from "@/lib/constants/site";
+import { logActivity } from "@/lib/utils/activity";
 
 async function sendSupplierNotification(
   supplierEmail: string,
@@ -61,11 +62,11 @@ export async function POST(
   try {
     const auth = await requirePermission("orders", "edit");
     if ("response" in auth) return auth.response;
+    const { supabase } = auth;
 
     const { id: orderId } = await params;
-    const adminDb = await createAdminClient();
 
-    const { data: order, error: orderError } = await adminDb
+    const { data: order, error: orderError } = await supabase
       .from("orders")
       .select("id, order_id, items, shipping_address, fulfillment_type, supplier_id, fulfillment_status")
       .eq("id", orderId)
@@ -92,7 +93,7 @@ export async function POST(
       );
     }
 
-    const { data: supplier, error: supplierError } = await adminDb
+    const { data: supplier, error: supplierError } = await supabase
       .from("suppliers")
       .select("id, name, email, is_active")
       .eq("id", order.supplier_id)
@@ -131,7 +132,7 @@ export async function POST(
       token
     );
 
-    await adminDb
+    await supabase
       .from("orders")
       .update({
         fulfillment_status: "supplier_notified",
@@ -140,7 +141,7 @@ export async function POST(
       })
       .eq("id", orderId);
 
-    await adminDb
+    await supabase
       .from("order_fulfillments")
       .update({
         status: "notified",
@@ -149,6 +150,14 @@ export async function POST(
       })
       .eq("order_id", orderId)
       .eq("supplier_id", supplier.id);
+
+    await logActivity({
+      action: "fulfillment_notified",
+      entity: "order",
+      entityId: orderId,
+      userId: auth.user?.id,
+      after: { supplier_id: supplier.id, supplier_name: supplier.name },
+    });
 
     return Response.json({
       success: true,
