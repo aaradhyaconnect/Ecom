@@ -48,9 +48,14 @@ export async function PUT(
 
     const body = await request.json();
 
-    if (!body.order_status && !body.prebook_status) {
+    const hasOrderField = body.order_status || body.prebook_status || body.tracking_id !== undefined ||
+      body.courier_name !== undefined || body.estimated_delivery !== undefined ||
+      body.fulfillment_status || body.fulfillment_type || body.supplier_id !== undefined ||
+      body.shiprocket_shipment_id !== undefined;
+
+    if (!hasOrderField) {
       return NextResponse.json(
-        { success: false, error: "order_status or prebook_status is required" },
+        { success: false, error: "No update fields provided" },
         { status: 400 }
       );
     }

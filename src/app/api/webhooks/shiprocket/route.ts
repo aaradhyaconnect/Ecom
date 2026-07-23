@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
     
     const { awb, current_status } = body;
 
-    if (!awb) {
+    if (!awb || !current_status) {
       return new Response("OK");
     }
 

@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
           order_status: "confirmed",
           updated_at: new Date().toISOString(),
         })
-        .eq("id", orderId)
+        .eq("order_id", orderId)
         .eq("payment_status", "pending")
         .select("id, payment_status, fulfillment_type")
         .single();
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
           payment_status: "failed",
           updated_at: new Date().toISOString(),
         })
-        .eq("id", orderId)
+        .eq("order_id", orderId)
         .eq("payment_status", "pending");
     }
 

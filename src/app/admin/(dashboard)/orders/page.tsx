@@ -868,7 +868,7 @@ export default function AdminOrdersPage() {
               )}
 
               {selectedOrder?.fulfillment_type === "manufacturer" &&
-                selectedOrder?.fulfillment_status === "assigned" &&
+                (selectedOrder?.fulfillment_status === "pending" || selectedOrder?.fulfillment_status === "assigned") &&
                 hasPerm("orders", "edit") && (
                 <div className="pt-2 border-t border-ivory-dark/60">
                   <Button
