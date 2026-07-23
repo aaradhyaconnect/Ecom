@@ -55,6 +55,7 @@ export default function AdminOrdersPage() {
   const [suppliers, setSuppliers] = useState<Array<{ id: string; name: string; is_active: boolean }>>([]);
   const [assigningFulfillment, setAssigningFulfillment] = useState(false);
   const [notifyingSupplier, setNotifyingSupplier] = useState(false);
+  const [markingPickedUp, setMarkingPickedUp] = useState(false);
   const [selectedSupplierId, setSelectedSupplierId] = useState("");
 
   const search = useDebounce(searchInput, 300);
@@ -395,6 +396,33 @@ export default function AdminOrdersPage() {
       toast.error("Failed to notify supplier");
     } finally {
       setNotifyingSupplier(false);
+    }
+  };
+
+  const handleMarkPickedUp = async () => {
+    if (!selectedOrder) return;
+    setMarkingPickedUp(true);
+    try {
+      const res = await fetch(`/api/admin/orders/${selectedOrder.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fulfillment_status: "picked_up" }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success("Marked as picked up");
+        setSelectedOrder({
+          ...selectedOrder,
+          fulfillment_status: "picked_up",
+        } as Order);
+        fetchOrders();
+      } else {
+        toast.error(data.error);
+      }
+    } catch {
+      toast.error("Failed to mark picked up");
+    } finally {
+      setMarkingPickedUp(false);
     }
   };
 
@@ -851,6 +879,22 @@ export default function AdminOrdersPage() {
                   >
                     {notifyingSupplier ? "Notifying..." : "Notify Supplier"}
                   </Button>
+                </div>
+              )}
+
+              {selectedOrder?.fulfillment_type === "manufacturer" &&
+                selectedOrder?.fulfillment_status === "ready_for_pickup" &&
+                hasPerm("orders", "edit") && (
+                <div className="pt-2 border-t border-ivory-dark/60">
+                  <Button
+                    size="sm"
+                    onClick={handleMarkPickedUp}
+                    disabled={markingPickedUp}
+                    className="bg-green-700 hover:bg-green-800"
+                  >
+                    {markingPickedUp ? "Marking..." : "Mark Picked Up"}
+                  </Button>
+                  <p className="text-[10px] text-charcoal-muted mt-1">Confirm courier has picked up the package</p>
                 </div>
               )}
             </div>
