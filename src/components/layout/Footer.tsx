@@ -8,7 +8,7 @@ export function Footer() {
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-12 lg:gap-16">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-12 lg:gap-16">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="text-2xl font-serif font-bold tracking-[0.3em] text-ivory inline-block mb-5">
               {SITE.name}
@@ -81,6 +81,22 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.25em] text-ivory/50 mb-6">Portals</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link href="/admin/login" className="text-[13px] text-ivory/40 hover:text-ivory transition-colors duration-300">
+                  Admin Login
+                </Link>
+              </li>
+              <li>
+                <Link href="/supplier/login" className="text-[13px] text-ivory/40 hover:text-ivory transition-colors duration-300">
+                  Supplier Login
+                </Link>
+              </li>
             </ul>
           </div>
         </div>
