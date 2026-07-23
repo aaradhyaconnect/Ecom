@@ -32,12 +32,6 @@ export async function GET(request: NextRequest) {
       const { data: { user } } = await supabase.auth.getUser();
 
       if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("role")
-          .eq("id", user.id)
-          .single();
-
         const redirectUrl = `${origin}/supplier/dashboard`;
         const redirectResponse = NextResponse.redirect(redirectUrl);
         pendingCookies.forEach(({ name, value, options }) => {

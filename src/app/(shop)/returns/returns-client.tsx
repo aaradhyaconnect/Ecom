@@ -48,7 +48,7 @@ function FallbackContent() {
       <div>
         <h2 className="text-xl font-serif font-bold text-charcoal mb-4">How to Return</h2>
         <ol className="space-y-3 text-sm text-charcoal-muted list-decimal list-inside">
-          <li>Log into your G2I Style account and go to Order History</li>
+          <li>Log into your Femme Drip account and go to Order History</li>
           <li>Select the order containing the item you wish to return</li>
           <li>Click &quot;Return Item&quot; and select your reason</li>
           <li>Print the prepaid return shipping label</li>

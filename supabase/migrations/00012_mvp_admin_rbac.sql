@@ -132,8 +132,8 @@ ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS promo_popup_title TEXT DEFAU
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS promo_popup_subtitle TEXT DEFAULT '';
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS promo_popup_image TEXT DEFAULT '';
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS promo_popup_link TEXT DEFAULT '';
-ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS email_from_name TEXT DEFAULT 'G2I Style';
-ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS email_from_address TEXT DEFAULT 'hello@g2istyle.com';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS email_from_name TEXT DEFAULT 'Femme Drip';
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS email_from_address TEXT DEFAULT 'hello@femmedrip.com';
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS razorpay_key_id TEXT;
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS razorpay_key_secret TEXT;
 ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS cashfree_app_id TEXT;

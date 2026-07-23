@@ -94,7 +94,7 @@ export default function RegisterPage() {
       <div className="mb-6 sm:mb-8">
         <span className="text-[10px] uppercase tracking-[0.3em] text-gold-dark font-medium">Get started</span>
         <h2 className="text-2xl font-serif font-bold text-charcoal mt-2">Create Account</h2>
-        <p className="text-charcoal-muted text-sm mt-2">Join G2I Style today</p>
+        <p className="text-charcoal-muted text-sm mt-2">Join Femme Drip today</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-5">

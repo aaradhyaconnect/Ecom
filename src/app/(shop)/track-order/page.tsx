@@ -80,7 +80,7 @@ export default function TrackOrderPage() {
         <form onSubmit={handleTrack} className="flex flex-col sm:flex-row gap-4">
           <input
             type="text"
-            placeholder="Enter Order ID (e.g., G2I-123)"
+            placeholder="Enter Order ID (e.g., FD-123)"
             value={orderId}
             onChange={(e) => setOrderId(e.target.value)}
             aria-label="Order ID"

@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "G2I Style",
-    short_name: "G2I Style",
+    name: "Femme Drip",
+    short_name: "Femme Drip",
     description: "Premium designer clothing & artificial jewellery",
     start_url: "/",
     display: "standalone",

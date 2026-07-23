@@ -88,11 +88,11 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
       <div className="bg-white border border-gray-200 p-8 print:p-6 print:border-0 print:shadow-none">
         <div className="flex justify-between items-start mb-8">
           <div>
-            <h1 className="text-3xl font-serif font-bold text-charcoal">G2I Style</h1>
+            <h1 className="text-3xl font-serif font-bold text-charcoal">Femme Drip</h1>
             <p className="text-sm text-gray-500 mt-1">Premium Designer Clothing & Jewellery</p>
             <p className="text-xs text-gray-400 mt-2">123 Fashion Street, Boutique Lane</p>
             <p className="text-xs text-gray-400">Mumbai - 400001, India</p>
-            <p className="text-xs text-gray-400">hello@g2istyle.com</p>
+            <p className="text-xs text-gray-400">hello@femmedrip.com</p>
           </div>
           <div className="text-right">
             <h2 className="text-xl font-bold text-charcoal">INVOICE</h2>
@@ -159,7 +159,7 @@ export default function InvoicePage({ params }: { params: Promise<{ id: string }
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-400 text-center">Thank you for shopping with G2I Style. For any queries, contact us at hello@g2istyle.com</p>
+          <p className="text-xs text-gray-400 text-center">Thank you for shopping with Femme Drip. For any queries, contact us at hello@femmedrip.com</p>
         </div>
       </div>
     </div>

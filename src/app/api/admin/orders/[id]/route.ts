@@ -212,7 +212,7 @@ export async function PUT(
         .single();
 
       if (profile?.email) {
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://g2istyle.com";
+        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://femmedrip.com";
         sendOrderStatusUpdate({
           orderId: data.order_id,
           customerName: profile.name || "Customer",

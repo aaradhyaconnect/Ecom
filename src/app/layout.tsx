@@ -25,11 +25,11 @@ const playfair = Playfair_Display({
 
 export const metadata: Metadata = {
   title: {
-    default: "G2I Style | Premium Designer Clothing & Artificial Jewellery",
-    template: "%s | G2I Style",
+    default: "Femme Drip | Premium Designer Clothing & Artificial Jewellery",
+    template: "%s | Femme Drip",
   },
   description:
-    "Discover G2I Style's premium self-designed clothing and exquisite artificial jewellery. Elevate your style with our curated collections for the modern trendsetter.",
+    "Discover Femme Drip's premium self-designed clothing and exquisite artificial jewellery. Elevate your style with our curated collections for the modern trendsetter.",
   keywords: [
     "designer clothing",
     "artificial jewellery",
@@ -38,22 +38,22 @@ export const metadata: Metadata = {
     "online shopping",
     "Indian fashion",
   ],
-  authors: [{ name: "G2I Style" }],
-  creator: "G2I Style",
+  authors: [{ name: "Femme Drip" }],
+  creator: "Femme Drip",
   manifest: "/manifest.json",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://g2istyle.com"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://femmedrip.com"),
   openGraph: {
     type: "website",
     locale: "en_IN",
-    siteName: "G2I Style",
-    title: "G2I Style | Premium Designer Clothing & Artificial Jewellery",
+    siteName: "Femme Drip",
+    title: "Femme Drip | Premium Designer Clothing & Artificial Jewellery",
     description:
       "Discover premium self-designed clothing and exquisite artificial jewellery.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "G2I Style",
-    description: "Premium self-designed clothing and artificial jewellery by G2I Style.",
+    title: "Femme Drip",
+    description: "Premium self-designed clothing and artificial jewellery by Femme Drip.",
   },
   robots: {
     index: true,

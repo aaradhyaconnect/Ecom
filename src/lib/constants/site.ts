@@ -1,17 +1,17 @@
 export const SITE = {
-  name: "G2I Style",
+  name: "Femme Drip",
   tagline: "Elevate Your Style",
   description: "Premium self-designed clothing and exquisite artificial jewellery for the modern trendsetter.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
-  email: "hello@g2istyle.com",
+  email: "hello@femmedrip.com",
   phone: "+91 12345 67890",
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "911234567890",
   address: "123 Fashion Street, Boutique Lane, Mumbai - 400001, India",
   social: {
-    instagram: "https://instagram.com/g2istyle",
-    facebook: "https://facebook.com/g2istyle",
-    twitter: "https://twitter.com/g2istyle",
-    pinterest: "https://pinterest.com/g2istyle",
+    instagram: "https://instagram.com/femmedrip",
+    facebook: "https://facebook.com/femmedrip",
+    twitter: "https://twitter.com/femmedrip",
+    pinterest: "https://pinterest.com/femmedrip",
   },
 } as const;
 

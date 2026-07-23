@@ -1,4 +1,4 @@
-const CACHE_NAME = "g2istyle-v1";
+const CACHE_NAME = "femmedrip-v1";
 const STATIC_ASSETS = [
   "/",
   "/offline",
@@ -102,7 +102,7 @@ self.addEventListener("push", (event) => {
     data = null;
   }
   if (!data) {
-    data = { title: "G2I Style", body: "" };
+    data = { title: "Femme Drip", body: "" };
   }
   event.waitUntil(
     self.registration.showNotification(data.title, {

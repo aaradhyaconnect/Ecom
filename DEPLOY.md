@@ -1,4 +1,4 @@
-# G2I Style — Hostinger VPS Deployment Guide
+# Femme Drip — Hostinger VPS Deployment Guide
 
 ## Prerequisites
 
@@ -61,8 +61,8 @@ pm2 startup systemd -u deploy --hp /home/deploy
 ```bash
 # Clone your repo
 cd /home/deploy
-git clone https://github.com/aaradhyaconnect/Ecom.git g2i-style
-cd g2i-style
+git clone https://github.com/aaradhyaconnect/Ecom.git femme-drip
+cd femme-drip
 
 # Install dependencies
 npm install
@@ -83,10 +83,10 @@ cat > ecosystem.config.js << 'EOF'
 module.exports = {
   apps: [
     {
-      name: "g2i-style",
+      name: "femme-drip",
       script: "node_modules/.bin/next",
       args: "start -p 3000",
-      cwd: "/home/deploy/g2i-style",
+      cwd: "/home/deploy/femme-drip",
       env: {
         NODE_ENV: "production",
         PORT: 3000,
@@ -123,7 +123,7 @@ curl http://localhost:3000
 sudo apt install nginx -y
 
 # Create Nginx config
-sudo nano /etc/nginx/sites-available/g2i-style
+sudo nano /etc/nginx/sites-available/femme-drip
 ```
 
 Paste this config:
@@ -131,7 +131,7 @@ Paste this config:
 ```nginx
 server {
     listen 80;
-    server_name g2istyle.com www.g2istyle.com;
+    server_name femmedrip.com www.femmedrip.com;
 
     # Redirect HTTP to HTTPS
     return 301 https://$server_name$request_uri;
@@ -139,7 +139,7 @@ server {
 
 server {
     listen 443 ssl http2;
-    server_name g2istyle.com www.g2istyle.com;
+    server_name femmedrip.com www.femmedrip.com;
 
     # SSL will be configured by Certbot in Step 7
 
@@ -237,7 +237,7 @@ server {
 
 ```bash
 # Enable the site
-sudo ln -s /etc/nginx/sites-available/g2i-style /etc/nginx/sites-enabled/
+sudo ln -s /etc/nginx/sites-available/femme-drip /etc/nginx/sites-enabled/
 sudo rm /etc/nginx/sites-enabled/default
 
 # Test and reload
@@ -252,7 +252,7 @@ sudo systemctl reload nginx
 sudo apt install certbot python3-certbot-nginx -y
 
 # Get SSL certificate
-sudo certbot --nginx -d g2istyle.com -d www.g2istyle.com
+sudo certbot --nginx -d femmedrip.com -d www.femmedrip.com
 
 # Auto-renewal is set up by default. Verify:
 sudo certbot renew --dry-run
@@ -263,7 +263,7 @@ sudo certbot renew --dry-run
 Update these in `.env.local` on the VPS:
 
 ```env
-NEXT_PUBLIC_SITE_URL=https://g2istyle.com
+NEXT_PUBLIC_SITE_URL=https://femmedrip.com
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_key
@@ -276,7 +276,7 @@ SHIPROCKET_EMAIL=your_shiprocket_email
 SHIPROCKET_PASSWORD=your_shiprocket_password
 
 RESEND_API_KEY=your_resend_key
-EMAIL_FROM_ADDRESS=orders@g2istyle.com
+EMAIL_FROM_ADDRESS=orders@femmedrip.com
 
 NEXT_PUBLIC_R2_PUBLIC_URL=https://pub-bfd52c501031474e9474ff3c3b7e3ca5.r2.dev
 
@@ -289,42 +289,42 @@ SENTRY_AUTH_TOKEN=your_sentry_token
 Then rebuild:
 
 ```bash
-cd /home/deploy/g2i-style
-pm2 restart g2i-style
+cd /home/deploy/femme-drip
+pm2 restart femme-drip
 ```
 
 ## Step 9: Domain & Webhooks
 
 Update these URLs to your new domain:
 
-1. **Cashfree Dashboard** — Set webhook URL to `https://g2istyle.com/api/webhooks/cashfree`
-2. **Shiprocket Dashboard** — Set webhook URL to `https://g2istyle.com/api/webhooks/shiprocket`
-3. **Supabase Auth** — Set Site URL to `https://g2istyle.com`
-4. **Supabase Auth** — Add `https://g2istyle.com` to Redirect URLs
+1. **Cashfree Dashboard** — Set webhook URL to `https://femmedrip.com/api/webhooks/cashfree`
+2. **Shiprocket Dashboard** — Set webhook URL to `https://femmedrip.com/api/webhooks/shiprocket`
+3. **Supabase Auth** — Set Site URL to `https://femmedrip.com`
+4. **Supabase Auth** — Add `https://femmedrip.com` to Redirect URLs
 
 ## Step 10: PM2 Management Commands
 
 ```bash
 pm2 status              # Check status
-pm2 logs g2i-style      # View logs
-pm2 logs g2i-style --err # View errors only
-pm2 restart g2i-style   # Restart app
-pm2 stop g2i-style      # Stop app
-pm2 delete g2i-style    # Delete app
+pm2 logs femme-drip      # View logs
+pm2 logs femme-drip --err # View errors only
+pm2 restart femme-drip   # Restart app
+pm2 stop femme-drip      # Stop app
+pm2 delete femme-drip    # Delete app
 ```
 
 ## Step 11: Auto-Deploy on Git Push (Optional)
 
 ```bash
 # Install git hooks
-cd /home/deploy/g2i-style
+cd /home/deploy/femme-drip
 cat > .git/hooks/post-receive << 'HOOK'
 #!/bin/bash
-GIT_WORK_TREE=/home/deploy/g2i-style git checkout main
-cd /home/deploy/g2i-style
+GIT_WORK_TREE=/home/deploy/femme-drip git checkout main
+cd /home/deploy/femme-drip
 npm install --omit=dev
 npm run build
-pm2 restart g2i-style
+pm2 restart femme-drip
 HOOK
 chmod +x .git/hooks/post-receive
 ```
@@ -351,7 +351,7 @@ In Supabase SQL editor, run:
 
 ### App not loading
 ```bash
-pm2 logs g2i-style --err
+pm2 logs femme-drip --err
 curl -I http://localhost:3000
 ```
 
@@ -364,14 +364,14 @@ sudo nginx -t  # Is Nginx config valid?
 
 ### SSL not working
 ```bash
-sudo certbot --nginx -d g2istyle.com -d www.g2istyle.com
+sudo certbot --nginx -d femmedrip.com -d www.femmedrip.com
 sudo systemctl reload nginx
 ```
 
 ### Webhooks not receiving
 ```bash
 # Check if Cashfree/Shiprocket can reach your server
-curl https://g2istyle.com/api/health
+curl https://femmedrip.com/api/health
 ```
 
 ### Memory issues

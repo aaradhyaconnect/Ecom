@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description: "Get in touch with G2I Style. Reach out for orders, support, or any inquiries about our premium clothing and artificial jewellery.",
+  description: "Get in touch with Femme Drip. Reach out for orders, support, or any inquiries about our premium clothing and artificial jewellery.",
   alternates: { canonical: "/contact" },
 };
 

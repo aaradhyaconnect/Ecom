@@ -44,7 +44,7 @@ export function generateOrderId(): string {
   const array = new Uint8Array(4);
   crypto.getRandomValues(array);
   const random = Array.from(array, (b) => b.toString(36).toUpperCase()).join("").slice(0, 4);
-  return `G2I-${timestamp}${random}`;
+  return `FD-${timestamp}${random}`;
 }
 
 export function getInitials(name: string): string {

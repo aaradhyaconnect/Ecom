@@ -20,9 +20,9 @@ export async function GET() {
 
     // Return defaults if no settings exist
     const settings = data || {
-      store_name: "G2I Style",
+      store_name: "Femme Drip",
       store_description: "Premium Designer Clothing & Jewellery",
-      contact_email: "hello@g2istyle.com",
+      contact_email: "hello@femmedrip.com",
       contact_phone: "",
       address: "",
       currency: "INR",
@@ -36,8 +36,8 @@ export async function GET() {
       social_facebook: "",
       social_twitter: "",
       social_youtube: "",
-      seo_title: "G2I Style - Premium Designer Clothing & Jewellery",
-      seo_description: "Shop premium designer clothing and artificial jewellery at G2I Style.",
+      seo_title: "Femme Drip - Premium Designer Clothing & Jewellery",
+      seo_description: "Shop premium designer clothing and artificial jewellery at Femme Drip.",
       seo_keywords: "fashion, clothing, jewellery, designer, women",
       logo_url: "",
       favicon_url: "",

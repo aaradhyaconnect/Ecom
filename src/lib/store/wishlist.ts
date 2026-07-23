@@ -52,6 +52,6 @@ export const useWishlistStore = create<WishlistStore>()(
 
       clearWishlist: () => set({ items: [] }),
     }),
-    { name: "g2istyle-wishlist" }
+    { name: "femmedrip-wishlist" }
   )
 );

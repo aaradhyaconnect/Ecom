@@ -13,7 +13,7 @@ import { getBanners } from "@/lib/supabase/queries";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  description: "Discover premium self-designed clothing and exquisite artificial jewellery at G2I Style. Shop new arrivals, best sellers, and exclusive collections.",
+  description: "Discover premium self-designed clothing and exquisite artificial jewellery at Femme Drip. Shop new arrivals, best sellers, and exclusive collections.",
   alternates: { canonical: "/" },
 };
 

@@ -103,7 +103,7 @@ export function AdminSidebar() {
             <span className="text-ivory text-xs font-bold tracking-wider">A</span>
           </div>
           <div>
-            <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">G2I Style</span>
+            <span className="text-lg font-serif font-bold tracking-[0.12em] text-charcoal">Femme Drip</span>
             <span className="text-[10px] font-sans tracking-[0.25em] text-charcoal-muted ml-1.5 uppercase">Admin</span>
           </div>
         </Link>

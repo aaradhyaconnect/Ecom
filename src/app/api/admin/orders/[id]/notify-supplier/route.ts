@@ -46,7 +46,7 @@ async function sendSupplierNotification(
 
   if (resend) {
     await resend.emails.send({
-      from: `${SITE.name} <${process.env.EMAIL_FROM_ADDRESS || "orders@g2istyle.com"}>`,
+      from: `${SITE.name} <${process.env.EMAIL_FROM_ADDRESS || "orders@femmedrip.com"}>`,
       to: supplierEmail,
       subject: `New Order to Fulfill - ${orderId}`,
       html,

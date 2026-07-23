@@ -18,7 +18,7 @@ interface SearchResult {
   category: string;
 }
 
-const SEARCH_HISTORY_KEY = "g2istyle-search-history";
+const SEARCH_HISTORY_KEY = "femmedrip-search-history";
 const MAX_HISTORY = 8;
 
 const TRENDING_SEARCHES = [

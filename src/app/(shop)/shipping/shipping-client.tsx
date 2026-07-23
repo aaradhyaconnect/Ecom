@@ -81,7 +81,7 @@ function FallbackContent() {
         <h2 className="text-xl font-serif font-bold text-charcoal mb-4">Tracking Your Order</h2>
         <p className="text-sm text-charcoal-muted leading-relaxed">
           Once your order has shipped, you will receive an email with a tracking number. You can track your order
-          through the carrier&apos;s website or by logging into your G2I Style account and viewing your order history.
+          through the carrier&apos;s website or by logging into your Femme Drip account and viewing your order history.
         </p>
       </div>
 

@@ -3,7 +3,7 @@ import { ReturnsClient } from "./returns-client";
 
 export const metadata: Metadata = {
   title: "Returns & Exchanges",
-  description: "G2I Style return and exchange policy — easy returns within 7 days of delivery.",
+  description: "Femme Drip return and exchange policy — easy returns within 7 days of delivery.",
   alternates: { canonical: "/returns" },
 };
 
