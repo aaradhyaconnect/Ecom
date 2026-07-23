@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 import type { Product } from "@/types";
 
 export async function GET(request: Request) {
@@ -104,6 +105,15 @@ export async function PUT(request: Request) {
               reason: item.reason || "Admin adjustment",
               performed_by: auth.user.id,
             });
+
+            await logActivity({
+              action: "stock_updated",
+              entity: "product",
+              entityId: item.id,
+              userId: auth.user?.id,
+              before: { product_id: item.id, stock: quantityBefore },
+              after: { product_id: item.id, new_stock: newStock, change: quantityChange },
+            });
           }
 
           return { id: item.id, success: true };
@@ -114,6 +124,12 @@ export async function PUT(request: Request) {
 
     if (id !== undefined && stock !== undefined) {
       const stockNum = Math.max(0, Math.floor(Number(stock)));
+      const { data: existingProduct } = await supabase
+        .from("products")
+        .select("stock")
+        .eq("id", id)
+        .single();
+
       const { data, error } = await supabase
         .from("products")
         .update({ stock: stockNum, updated_at: new Date().toISOString() })
@@ -127,6 +143,15 @@ export async function PUT(request: Request) {
           { status: 500 }
         );
       }
+
+      await logActivity({
+        action: "stock_updated",
+        entity: "product",
+        entityId: id,
+        userId: auth.user?.id,
+        before: { product_id: id, stock: existingProduct?.stock },
+        after: { product_id: id, new_stock: stockNum, change: stockNum - (existingProduct?.stock || 0) },
+      });
 
       return NextResponse.json({ success: true, data: data as Product });
     }

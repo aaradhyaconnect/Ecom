@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 import type { Coupon } from "@/types";
 
 export async function GET() {
@@ -94,6 +95,14 @@ export async function POST(request: Request) {
       );
     }
 
+    await logActivity({
+      action: "coupon_created",
+      entity: "coupon",
+      entityId: data.id,
+      userId: auth.user?.id,
+      after: { code: data.code, discount_type: data.discount_type, discount_value: data.discount_value },
+    });
+
     return NextResponse.json({ success: true, data: data as Coupon });
   } catch {
     return NextResponse.json(
@@ -145,6 +154,15 @@ export async function PUT(request: Request) {
       );
     }
 
+    await logActivity({
+      action: "coupon_updated",
+      entity: "coupon",
+      entityId: id,
+      userId: auth.user?.id,
+      before: { code: rawUpdates.code, discount_type: rawUpdates.discount_type, discount_value: rawUpdates.discount_value },
+      after: { code: data.code, discount_type: data.discount_type, discount_value: data.discount_value },
+    });
+
     return NextResponse.json({ success: true, data: data as Coupon });
   } catch {
     return NextResponse.json(
@@ -178,6 +196,13 @@ export async function DELETE(request: Request) {
         { status: 500 }
       );
     }
+
+    await logActivity({
+      action: "coupon_deleted",
+      entity: "coupon",
+      entityId: id,
+      userId: auth.user?.id,
+    });
 
     return NextResponse.json({ success: true, message: "Coupon deleted" });
   } catch {

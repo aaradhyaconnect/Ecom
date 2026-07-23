@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 import type { Banner } from "@/types";
 
 export async function GET() {
@@ -77,6 +78,14 @@ export async function POST(request: Request) {
       );
     }
 
+    await logActivity({
+      action: "banner_created",
+      entity: "banner",
+      entityId: data.id,
+      userId: auth.user?.id,
+      after: { title: data.title, image: data.image },
+    });
+
     return NextResponse.json({ success: true, data: data as Banner });
   } catch {
     return NextResponse.json(
@@ -122,6 +131,15 @@ export async function PUT(request: Request) {
       );
     }
 
+    await logActivity({
+      action: "banner_updated",
+      entity: "banner",
+      entityId: id,
+      userId: auth.user?.id,
+      before: { title: rawUpdates.title, image: rawUpdates.image },
+      after: { title: data.title, image: data.image },
+    });
+
     return NextResponse.json({ success: true, data: data as Banner });
   } catch {
     return NextResponse.json(
@@ -155,6 +173,13 @@ export async function DELETE(request: Request) {
         { status: 500 }
       );
     }
+
+    await logActivity({
+      action: "banner_deleted",
+      entity: "banner",
+      entityId: id,
+      userId: auth.user?.id,
+    });
 
     return NextResponse.json({ success: true, message: "Banner deleted" });
   } catch {

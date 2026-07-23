@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
 import { sendOrderStatusUpdate } from "@/lib/email";
+import { logActivity } from "@/lib/utils/activity";
 import type { Order } from "@/types";
 
 export async function GET(
@@ -157,6 +158,16 @@ export async function PUT(
         { status: 500 }
       );
     }
+
+    const changedFields = Object.keys(updateData).filter((k) => k !== "updated_at");
+    await logActivity({
+      action: body.order_status ? "order_status_changed" : "order_updated",
+      entity: "order",
+      entityId: id,
+      userId: auth.user?.id,
+      after: { order_id: data.order_id, ...updateData },
+      details: { changed_fields: changedFields },
+    });
 
     if (body.fulfillment_status && data) {
       await supabase

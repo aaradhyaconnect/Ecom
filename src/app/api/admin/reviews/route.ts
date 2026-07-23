@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function GET(request: NextRequest) {
   try {
@@ -58,6 +59,15 @@ export async function PUT(request: Request) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 
+    await logActivity({
+      action: is_approved ? "review_approved" : "review_rejected",
+      entity: "review",
+      entityId: id,
+      userId: auth.user?.id,
+      before: { is_approved: !is_approved },
+      after: { is_approved },
+    });
+
     // Recalculate product rating
     const { data: review } = await supabase.from("reviews").select("product_id").eq("id", id).single();
     if (review) {
@@ -95,6 +105,13 @@ export async function DELETE(request: Request) {
     if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
+
+    await logActivity({
+      action: "review_deleted",
+      entity: "review",
+      entityId: id,
+      userId: auth.user?.id,
+    });
 
     // Recalculate product rating after delete
     if (review) {

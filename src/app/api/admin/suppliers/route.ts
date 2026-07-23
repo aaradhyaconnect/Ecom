@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function GET(request: Request) {
   try {
@@ -88,6 +89,14 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    await logActivity({
+      action: "supplier_created",
+      entity: "supplier",
+      entityId: data.id,
+      userId: auth.user?.id,
+      after: { name: data.name, contact_name: data.contact_name, email: data.email },
+    });
 
     return NextResponse.json({ success: true, data });
   } catch {

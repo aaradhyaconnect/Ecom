@@ -8,6 +8,7 @@ import {
   Package,
   Boxes,
   Users,
+  ClipboardList,
 } from "lucide-react";
 
 const tabs = [
@@ -15,6 +16,7 @@ const tabs = [
   { label: "Products", href: "/admin/reports/products", icon: Package },
   { label: "Inventory", href: "/admin/reports/inventory", icon: Boxes },
   { label: "Customers", href: "/admin/reports/customers", icon: Users },
+  { label: "Staff Activity", href: "/admin/reports/staff-activity", icon: ClipboardList },
 ];
 
 export default function ReportsLayout({

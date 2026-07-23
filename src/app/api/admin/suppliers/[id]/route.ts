@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function GET(
   request: Request,
@@ -93,6 +94,15 @@ export async function PUT(
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     }
 
+    await logActivity({
+      action: "supplier_updated",
+      entity: "supplier",
+      entityId: id,
+      userId: auth.user?.id,
+      before: { name: body.name, contact_name: body.contact_name, email: body.email, is_active: body.is_active },
+      after: { name: data.name, contact_name: data.contact_name, email: data.email, is_active: data.is_active },
+    });
+
     return NextResponse.json({ success: true, data });
   } catch {
     return NextResponse.json({ success: false, error: "Internal server error" }, { status: 500 });
@@ -131,6 +141,13 @@ export async function DELETE(
     if (error) {
       return NextResponse.json({ success: false, error: error.message }, { status: 400 });
     }
+
+    await logActivity({
+      action: "supplier_deactivated",
+      entity: "supplier",
+      entityId: id,
+      userId: auth.user?.id,
+    });
 
     return NextResponse.json({ success: true });
   } catch {

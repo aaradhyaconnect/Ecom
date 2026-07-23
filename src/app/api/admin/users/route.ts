@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission, createAdminClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function GET(request: Request) {
   try {
@@ -165,6 +166,14 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
+
+    await logActivity({
+      action: "staff_created",
+      entity: "staff_user",
+      entityId: staffUser.id,
+      userId: auth.user?.id,
+      after: { email, name: display_name, role },
+    });
 
     return NextResponse.json({ success: true, data: staffUser }, { status: 201 });
   } catch {

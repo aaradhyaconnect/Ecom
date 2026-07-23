@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
 import { slugify } from "@/lib/utils/format";
+import { logActivity } from "@/lib/utils/activity";
 import type { Product } from "@/types";
 
 export async function GET(request: Request) {
@@ -128,6 +129,14 @@ export async function POST(request: Request) {
       );
     }
 
+    await logActivity({
+      action: "product_created",
+      entity: "product",
+      entityId: data.id,
+      userId: auth.user?.id,
+      after: { name: data.name, price: data.price, stock: data.stock, category: data.category },
+    });
+
     return NextResponse.json({ success: true, data: data as Product });
   } catch {
     return NextResponse.json(
@@ -196,6 +205,15 @@ export async function PUT(request: Request) {
       );
     }
 
+    await logActivity({
+      action: "product_updated",
+      entity: "product",
+      entityId: id,
+      userId: auth.user?.id,
+      after: { name: data.name, ...updates },
+      details: { changed_fields: Object.keys(updates).filter((k) => k !== "updated_at") },
+    });
+
     return NextResponse.json({ success: true, data: data as Product });
   } catch {
     return NextResponse.json(
@@ -241,6 +259,13 @@ export async function DELETE(request: Request) {
         { status: 500 }
       );
     }
+
+    await logActivity({
+      action: "product_deleted",
+      entity: "product",
+      entityId: id,
+      userId: auth.user?.id,
+    });
 
     return NextResponse.json({ success: true, message: "Product deleted" });
   } catch {

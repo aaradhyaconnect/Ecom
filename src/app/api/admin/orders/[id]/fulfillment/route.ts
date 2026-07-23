@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function POST(
   request: NextRequest,
@@ -108,6 +109,15 @@ export async function POST(
         // Non-critical: order is updated but fulfillment record failed
       }
     }
+
+    await logActivity({
+      action: "fulfillment_assigned",
+      entity: "order",
+      entityId: orderId,
+      userId: auth.user?.id,
+      before: { fulfillment_type: order.fulfillment_type },
+      after: { fulfillment_type, supplier_id: supplier_id || null },
+    });
 
     return Response.json({
       success: true,

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requirePermission } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/utils/activity";
 
 export async function GET(
   _request: Request,
@@ -86,6 +87,15 @@ export async function PUT(
       );
     }
 
+    await logActivity({
+      action: "staff_updated",
+      entity: "staff_user",
+      entityId: id,
+      userId: auth.user?.id,
+      before: { display_name: body.display_name, role: body.role, permissions: body.permissions, is_active: body.is_active },
+      after: { display_name: data.display_name, role: data.role, permissions: data.permissions, is_active: data.is_active },
+    });
+
     return NextResponse.json({ success: true, data });
   } catch {
     return NextResponse.json(
@@ -152,6 +162,13 @@ export async function DELETE(
         { status: 400 }
       );
     }
+
+    await logActivity({
+      action: "staff_deleted",
+      entity: "staff_user",
+      entityId: id,
+      userId: auth.user?.id,
+    });
 
     return NextResponse.json({ success: true });
   } catch {
